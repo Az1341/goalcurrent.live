@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+
+  <!-- Shield background -->
+  <path d="M250 20 L450 100 L450 300 Q450 420 250 480 Q50 420 50 300 L50 100 Z" fill="#9B1C1C"/>
+
+  <!-- Shield border -->
+  <path d="M250 20 L450 100 L450 300 Q450 420 250 480 Q50 420 50 300 L50 100 Z" fill="none" stroke="#ffffff" stroke-width="6"/>
+
+  <!-- Top accent stripe -->
+  <path d="M250 20 L450 100 L420 125 L250 55 L80 125 L50 100 Z" fill="#DB0007"/>
+
+  <!-- Inner white divider line -->
+  <line x1="80" y1="125" x2="420" y2="125" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+
+  <!-- Football - white circle -->
+  <circle cx="250" cy="220" r="75" fill="#ffffff"/>
+  <circle cx="250" cy="220" r="75" fill="none" stroke="#9B1C1C" stroke-width="3"/>
+
+  <!-- Football patches - red -->
+  <polygon points="250,158 282,180 270,215 230,215 218,180" fill="#DB0007"/>
+  <polygon points="218,180 184,190 173,218 198,240 230,215" fill="#DB0007"/>
+  <polygon points="282,180 316,190 327,218 302,240 270,215" fill="#DB0007"/>
+  <polygon points="198,240 173,265 195,284 225,275 228,248" fill="#DB0007"/>
+  <polygon points="302,240 327,265 305,284 275,275 272,248" fill="#DB0007"/>
+
+  <!-- LIVE indicator -->
+  <circle cx="310" cy="158" r="18" fill="#111111"/>
+  <circle cx="310" cy="158" r="11" fill="#22c55e"/>
+  <circle cx="310" cy="158" r="5" fill="#ffffff"/>
+
+  <!-- GOALCURRENT text - BIG and bold -->
+  <text x="250" y="348" text-anchor="middle"
+        font-family="Verdana,Arial,sans-serif"
+        font-size="52" font-weight="700"
+        fill="#ffffff" letter-spacing="-1">GOAL</text>
+
+  <text x="250" y="400" text-anchor="middle"
+        font-family="Verdana,Arial,sans-serif"
+        font-size="52" font-weight="700"
+        fill="#ffcdd2" letter-spacing="-1">CURRENT</text>
+
+  <!-- Divider dots -->
+  <circle cx="210" cy="420" r="3" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="250" cy="420" r="3" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="290" cy="420" r="3" fill="rgba(255,255,255,0.5)"/>
+
+  <!-- .online small text -->
+  <text x="250" y="448" text-anchor="middle"
+        font-family="Verdana,Arial,sans-serif"
+        font-size="20" font-weight="400"
+        fill="rgba(255,255,255,0.8)" letter-spacing="4">.online</text>
+
+</svg>
