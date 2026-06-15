@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { groupHref, groupLabel, type Wc26GroupId } from "@/lib/wc26-groups";
+import { getTeamsByGroup, groupLabel, type Wc26GroupId } from "@/data/wc26";
+import { groupHref } from "@/lib/wc26-groups";
 import styles from "./wc26.module.css";
 
 type GroupCardProps = {
@@ -7,9 +8,16 @@ type GroupCardProps = {
 };
 
 export default function GroupCard({ groupId }: GroupCardProps) {
+  const teams = getTeamsByGroup(groupId);
+
   return (
     <Link href={groupHref(groupId)} className={styles.groupCard}>
       <div className={styles.groupCardLetter}>{groupLabel(groupId)}</div>
+      <ul className={styles.groupCardTeams}>
+        {teams.map((team) => (
+          <li key={team.id}>{team.name}</li>
+        ))}
+      </ul>
       <div className={styles.groupCardSub}>View group page →</div>
     </Link>
   );

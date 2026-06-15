@@ -1,7 +1,6 @@
-import PlaceholderPanel from "./PlaceholderPanel";
+import { WC26_TEAMS, WC26_TEAM_COUNT } from "@/data/wc26";
+import TeamCard from "./TeamCard";
 import styles from "./wc26.module.css";
-
-const TEAM_SLOTS = 48;
 
 export default function TeamsSection() {
   return (
@@ -10,22 +9,16 @@ export default function TeamsSection() {
         Qualified nations
       </h2>
 
-      <PlaceholderPanel
-        title={`${TEAM_SLOTS} teams`}
-        description="Profiles for all qualified nations — flags, groups, squads and quick links. Team data will be added in a later phase."
-      />
+      <p className={styles.phaseNote}>
+        {WC26_TEAM_COUNT} teams from local data — placeholder names until official
+        squads are loaded.
+      </p>
 
       <div className={styles.tileGrid}>
-        {Array.from({ length: TEAM_SLOTS }, (_, i) => (
-          <div key={i} className={styles.tileCard}>
-            <div className={styles.tileIcon}>⚽</div>
-            <div className={styles.tileLabel}>Team {i + 1}</div>
-          </div>
+        {WC26_TEAMS.map((team) => (
+          <TeamCard key={team.id} team={team} />
         ))}
       </div>
-      <p className={styles.gridNote}>
-        Placeholder slots only — team names and data coming in a later phase.
-      </p>
     </section>
   );
 }

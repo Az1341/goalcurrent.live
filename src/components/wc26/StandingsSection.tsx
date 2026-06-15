@@ -1,8 +1,7 @@
-import { WC26_GROUPS, groupLabel } from "@/lib/wc26-groups";
+import { WC26_PLACEHOLDER_STANDINGS } from "@/data/wc26";
 import PlaceholderPanel from "./PlaceholderPanel";
+import StandingsTable from "./StandingsTable";
 import styles from "./wc26.module.css";
-
-const STANDINGS_COLUMNS = ["Team", "P", "W", "D", "L", "GF", "GA", "GD", "Pts"];
 
 export default function StandingsSection() {
   return (
@@ -12,27 +11,17 @@ export default function StandingsSection() {
       </h2>
 
       <PlaceholderPanel
-        title="Tournament-wide standings"
-        description="Live tables for all twelve groups will appear here. Standings are not calculated yet — no data connected."
+        title="Standings calculation pending"
+        description="Tables below use zeroed placeholder rows from local data. Standings will be calculated in a later phase — no live updates or results yet."
       />
 
       <div className={styles.standingsGrid}>
-        {WC26_GROUPS.map((groupId) => (
-          <div key={groupId} className={styles.standingsShell}>
-            <div className={styles.standingsHead}>{groupLabel(groupId)}</div>
-            <table className={styles.standingsTable}>
-              <thead>
-                <tr>
-                  {STANDINGS_COLUMNS.map((col) => (
-                    <th key={col} scope="col">
-                      {col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-            </table>
-            <p className={styles.standingsEmpty}>No data yet</p>
-          </div>
+        {WC26_PLACEHOLDER_STANDINGS.map((standings) => (
+          <StandingsTable
+            key={standings.groupId}
+            standings={standings}
+            title={`Group ${standings.groupId.toUpperCase()}`}
+          />
         ))}
       </div>
     </section>

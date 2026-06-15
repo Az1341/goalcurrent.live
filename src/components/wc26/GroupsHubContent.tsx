@@ -1,8 +1,14 @@
 import Link from "next/link";
+import {
+  WC26_GROUP_COUNT,
+  WC26_TEAM_COUNT,
+  WC26_TOURNAMENT,
+} from "@/data/wc26";
 import { WC26_HUB_HREF } from "@/lib/wc26-groups";
 import GroupsGrid from "@/components/wc26/GroupsGrid";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import styles from "@/components/wc26/wc26.module.css";
+
 export default function GroupsHubContent() {
   return (
     <main className={styles.wc26Content}>
@@ -17,8 +23,9 @@ export default function GroupsHubContent() {
         FIFA World Cup 2026 — <span>Groups</span>
       </h1>
       <p className={styles.pageIntro}>
-        All twelve groups for the expanded 48-team tournament. Select a group to
-        view its dedicated page — standings and fixtures coming in a later phase.
+        {WC26_GROUP_COUNT} groups · {WC26_TEAM_COUNT} teams in the expanded
+        tournament. Select a group to view its teams, standings layout, and
+        scheduled fixtures from local data.
       </p>
 
       <GroupsGrid />
@@ -26,5 +33,6 @@ export default function GroupsHubContent() {
       <p className={styles.hubBack}>
         <Link href={WC26_HUB_HREF}>← Back to World Cup 2026 hub</Link>
       </p>
-    </main>  );
+    </main>
+  );
 }

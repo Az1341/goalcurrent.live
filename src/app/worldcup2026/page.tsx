@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
-import { WC26_HUB_HREF, WC26_SECTIONS } from "@/lib/wc26-sections";
+import { WC26_TOURNAMENT } from "@/data/wc26";
+import { WC26_SECTIONS } from "@/lib/wc26-sections";
 import styles from "@/components/wc26/wc26.module.css";
 
 export const metadata: Metadata = {
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default function WorldCupHubPage() {
+  const hosts = WC26_TOURNAMENT.hosts.join(" · ");
+
   return (
     <main className={styles.wc26Content}>
       <Wc26Breadcrumb items={[{ label: "World Cup 2026" }]} />
@@ -19,9 +22,23 @@ export default function WorldCupHubPage() {
         FIFA World Cup <span>2026</span>
       </h1>
       <p className={styles.pageIntro}>
-        USA · Mexico · Canada · 11 June – 19 July 2026. Explore tournament
-        sections below — content will be added in later phases.
+        {hosts} · 11 June – 19 July 2026. Explore tournament sections below —
+        powered by local typed data, no external APIs.
       </p>
+
+      <div className={styles.hubStats}>
+        {[
+          [String(WC26_TOURNAMENT.teamCount), "Teams"],
+          [String(WC26_TOURNAMENT.fixtureCount), "Matches"],
+          [String(WC26_TOURNAMENT.venueCount), "Venues"],
+          [String(WC26_TOURNAMENT.groupCount), "Groups"],
+        ].map(([num, lbl]) => (
+          <div key={lbl} className={styles.hubStatChip}>
+            <div className={styles.hubStatNum}>{num}</div>
+            <div className={styles.hubStatLbl}>{lbl}</div>
+          </div>
+        ))}
+      </div>
 
       <h2 className={styles.sectionTitle}>Sections</h2>
       <div className={styles.hubGrid}>

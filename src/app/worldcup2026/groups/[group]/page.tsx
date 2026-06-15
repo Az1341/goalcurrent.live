@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import GroupPageContent from "@/components/wc26/GroupPageContent";
-import {
-  WC26_GROUPS,
-  groupLabel,
-  isWc26GroupId,
-} from "@/lib/wc26-groups";
+import { WC26_GROUP_IDS, groupLabel, isWc26GroupId } from "@/data/wc26";
 
 type PageProps = {
   params: Promise<{ group: string }>;
 };
 
 export function generateStaticParams() {
-  return WC26_GROUPS.map((group) => ({ group }));
+  return WC26_GROUP_IDS.map((group) => ({ group }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

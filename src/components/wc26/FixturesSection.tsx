@@ -1,4 +1,5 @@
-import PlaceholderPanel from "./PlaceholderPanel";
+import { WC26_FIXTURES, WC26_TOURNAMENT } from "@/data/wc26";
+import FixturesList from "./FixturesList";
 import styles from "./wc26.module.css";
 
 export default function FixturesSection() {
@@ -8,18 +9,16 @@ export default function FixturesSection() {
         Match schedule
       </h2>
 
+      <p className={styles.phaseNote}>
+        Showing {WC26_FIXTURES.length} sample group-stage fixtures from local
+        data. Full {WC26_TOURNAMENT.fixtureCount}-match slate coming in a later
+        phase — no scores or results.
+      </p>
+
       <div className={styles.shellCard}>
-        <div className={styles.shellHead}>Filter by date · stage · group</div>
+        <div className={styles.shellHead}>Scheduled fixtures</div>
         <div className={styles.shellBody}>
-          <div className={styles.filterRow} aria-hidden="true">
-            <span className={styles.filterChip}>All dates</span>
-            <span className={styles.filterChip}>Group stage</span>
-            <span className={styles.filterChip}>Knockout</span>
-          </div>
-          <PlaceholderPanel
-            title="104 tournament fixtures"
-            description="The full World Cup 2026 schedule will be listed here — dates, kickoffs, teams and venues. No fixture data connected yet."
-          />
+          <FixturesList fixtures={WC26_FIXTURES} />
         </div>
       </div>
     </section>
