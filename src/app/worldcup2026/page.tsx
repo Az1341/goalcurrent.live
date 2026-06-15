@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
-import { GROUPS_HUB_HREF } from "@/lib/wc26-groups";
+import { WC26_HUB_HREF, WC26_SECTIONS } from "@/lib/wc26-sections";
 import styles from "@/components/wc26/wc26.module.css";
 
 export const metadata: Metadata = {
@@ -9,14 +9,6 @@ export const metadata: Metadata = {
   description:
     "FIFA World Cup 2026 hub — groups, fixtures, teams and standings on GoalCurrent.online.",
 };
-
-const HUB_SECTIONS = [
-  {
-    href: GROUPS_HUB_HREF,
-    label: "Groups",
-    description: "All 12 groups (A–L) for the 48-team tournament.",
-  },
-];
 
 export default function WorldCupHubPage() {
   return (
@@ -33,10 +25,10 @@ export default function WorldCupHubPage() {
 
       <h2 className={styles.sectionTitle}>Sections</h2>
       <div className={styles.hubGrid}>
-        {HUB_SECTIONS.map(({ href, label, description }) => (
+        {WC26_SECTIONS.map(({ href, label, hubDescription }) => (
           <Link key={href} href={href} className={styles.hubCard}>
             <div className={styles.hubCardLabel}>{label}</div>
-            <p className={styles.hubCardDesc}>{description}</p>
+            <p className={styles.hubCardDesc}>{hubDescription}</p>
             <span className={styles.hubCardLink}>Open →</span>
           </Link>
         ))}

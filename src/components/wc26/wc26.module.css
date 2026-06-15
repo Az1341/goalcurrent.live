@@ -217,6 +217,174 @@
   font-size: 0.85rem;
 }
 
+.hubBack {
+  margin: 8px 0 32px;
+  font-size: 0.85rem;
+}
+
+.hubBack a {
+  color: #2563eb;
+  font-weight: 700;
+  font-family: var(--font-barlow-condensed), sans-serif;
+}
+
+.hubBack a:hover {
+  text-decoration: underline;
+}
+
+.shellCard,
+.bracketShell {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.08);
+}
+
+.shellHead {
+  background: linear-gradient(135deg, #001a4d, #002b80);
+  color: #fff;
+  padding: 10px 14px;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.shellBody {
+  padding: 14px;
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.filterChip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+.standingsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.tileGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tileCard {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.tileIcon {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.tileLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.venueGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.venueCard {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+}
+
+.venueIcon {
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+}
+
+.venueLabel {
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #64748b;
+}
+
+.venueSub {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.gridNote {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.bracketRounds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 14px;
+}
+
+.bracketRound {
+  background: #f8faff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.bracketRoundLabel {
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #003fb8;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.bracketSlot {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  padding: 6px 8px;
+  background: #fff;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.bracketSlot:last-child {
+  margin-bottom: 0;
+}
+
 @media (max-width: 768px) {
   .hubGrid {
     grid-template-columns: 1fr;
@@ -224,6 +392,22 @@
 
   .groupsGrid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .standingsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .tileGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .venueGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bracketRounds {
+    grid-template-columns: 1fr;
   }
 }
 

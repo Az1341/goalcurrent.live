@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { WC26_HUB_HREF } from "@/lib/wc26-groups";
 import GroupsGrid from "@/components/wc26/GroupsGrid";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import styles from "@/components/wc26/wc26.module.css";
-
 export default function GroupsHubContent() {
   return (
     <main className={styles.wc26Content}>
@@ -22,6 +22,9 @@ export default function GroupsHubContent() {
       </p>
 
       <GroupsGrid />
-    </main>
-  );
+
+      <p className={styles.hubBack}>
+        <Link href={WC26_HUB_HREF}>← Back to World Cup 2026 hub</Link>
+      </p>
+    </main>  );
 }
