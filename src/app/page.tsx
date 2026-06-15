@@ -1,5 +1,4 @@
 import Link from "next/link";
-import SiteShell from "@/components/SiteShell";
 import {
   getFeaturedMatch,
   PLACEHOLDER_MATCHES,
@@ -48,7 +47,7 @@ export default function Home() {
   const featured = getFeaturedMatch();
 
   return (
-    <SiteShell activeNav="home">
+    <>
       <section className={styles.hero}>
         <h2 className={styles.heroTitle}>
           FIFA World Cup <span>2026</span>
@@ -196,6 +195,6 @@ export default function Home() {
           ))}
         </div>
       </main>
-    </SiteShell>
+    </>
   );
 }

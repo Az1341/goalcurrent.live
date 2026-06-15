@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Barlow, Barlow_Condensed } from "next/font/google";
+import Layout from "@/components/layout/Layout";
 import "./globals.css";
 
 const barlow = Barlow({
@@ -16,7 +17,11 @@ const barlowCondensed = Barlow_Condensed({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.goalcurrent.online"),
-  title: "GoalCurrent.online — FIFA World Cup 2026 | Live Scores, News & Teams",
+  title: {
+    template: "%s — GoalCurrent.online",
+    default:
+      "GoalCurrent.online — FIFA World Cup 2026 | Live Scores, News & Teams",
+  },
   description:
     "GoalCurrent.online — live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
   openGraph: {
@@ -37,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${barlow.variable} ${barlowCondensed.variable}`}>
-        {children}
+        <Layout>{children}</Layout>
       </body>
     </html>
   );
