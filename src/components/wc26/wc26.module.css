@@ -149,14 +149,18 @@
   text-align: left;
 }
 
-.groupCardTeams li {
-  font-size: 0.75rem;
+.groupCardTeamRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
   color: var(--gc-text-secondary);
   padding: 4px 0;
   border-bottom: 1px solid var(--gc-border);
 }
 
-.groupCardTeams li:last-child {
+.groupCardTeams li:last-child,
+.groupCardTeamRow:last-child {
   border-bottom: none;
 }
 
@@ -375,6 +379,12 @@
   line-height: 1.45;
 }
 
+.fixtureTeam {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .fixtureVs {
   font-size: 0.8125rem;
   color: var(--gc-text-muted);
@@ -401,9 +411,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   padding: 11px 16px;
   border-bottom: 1px solid var(--gc-border);
   font-size: 0.875rem;
+}
+
+.teamCell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .teamListItem:last-child {

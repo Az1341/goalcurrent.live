@@ -79,7 +79,7 @@ body {
   color: var(--gc-text-primary);
   background: var(--gc-bg);
   min-height: 100vh;
-  font-size: 15px;
+  font-size: 17px;
   line-height: var(--gc-line-height);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

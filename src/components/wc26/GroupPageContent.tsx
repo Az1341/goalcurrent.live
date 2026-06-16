@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TeamFlag from "@/components/TeamFlag";
 import {
   getFixturesByGroup,
   getGroupById,
@@ -50,6 +51,7 @@ export default function GroupPageContent({ groupId }: GroupPageContentProps) {
         <ul className={styles.teamList}>
           {teams.map((team) => (
             <li key={team.id} className={styles.teamListItem}>
+              <TeamFlag teamId={team.id} size={24} />
               <span className={styles.teamListName}>{team.name}</span>
               <span className={styles.teamListCode}>{team.code}</span>
             </li>

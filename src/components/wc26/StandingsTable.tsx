@@ -1,5 +1,6 @@
 import type { GroupStandings } from "@/types/standing";
 import { getTeamById } from "@/data/wc26";
+import TeamFlag from "@/components/TeamFlag";
 import styles from "./wc26.module.css";
 
 const STANDINGS_COLUMNS = [
@@ -43,7 +44,12 @@ export default function StandingsTable({ standings, title }: StandingsTableProps
 
             return (
               <tr key={row.teamId}>
-                <td className={styles.colTeam}>{team?.name ?? row.teamId}</td>
+                <td className={styles.colTeam}>
+                  <span className={styles.teamCell}>
+                    {team ? <TeamFlag teamId={team.id} size={22} /> : null}
+                    <span>{team?.name ?? row.teamId}</span>
+                  </span>
+                </td>
                 <td>{row.played}</td>
                 <td>{row.won}</td>
                 <td>{row.drawn}</td>

@@ -1,6 +1,7 @@
 import type { Fixture } from "@/types/fixture";
 import { getTeamById, getVenueById } from "@/data/wc26";
 import { formatKickoffUtc } from "@/lib/wc26-format";
+import TeamFlag from "@/components/TeamFlag";
 import styles from "./wc26.module.css";
 
 type FixturesListProps = {
@@ -34,9 +35,15 @@ export default function FixturesList({ fixtures }: FixturesListProps) {
               </span>
             </div>
             <div className={styles.fixtureMatchup}>
-              <span>{home?.name ?? fixture.homeTeamId}</span>
+              <span className={styles.fixtureTeam}>
+                {home ? <TeamFlag teamId={home.id} size={24} /> : null}
+                {home?.name ?? fixture.homeTeamId}
+              </span>
               <span className={styles.fixtureVs}>vs</span>
-              <span>{away?.name ?? fixture.awayTeamId}</span>
+              <span className={styles.fixtureTeam}>
+                {away ? <TeamFlag teamId={away.id} size={24} /> : null}
+                {away?.name ?? fixture.awayTeamId}
+              </span>
             </div>
             {venue ? (
               <div className={styles.fixtureVenue}>
