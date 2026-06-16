@@ -1,0 +1,189 @@
+.content {
+  flex: 1;
+  padding: 20px 24px 0;
+  max-width: var(--gc-content-max);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.pageTitle {
+  font-size: 1.625rem;
+  font-weight: 600;
+  color: var(--gc-text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.pageTitle span {
+  color: var(--gc-text-secondary);
+  font-weight: 500;
+}
+
+.pageIntro {
+  font-size: 0.9375rem;
+  color: var(--gc-text-secondary);
+  line-height: var(--gc-line-height);
+  margin-bottom: 22px;
+  max-width: 640px;
+}
+
+.section {
+  margin-bottom: 28px;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gc-navy);
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gc-text-primary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gc-crimson, #9b1b30);
+  flex-shrink: 0;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.sectionCount {
+  font-size: 0.75rem;
+  font-weight: var(--gc-weight-nav);
+  color: var(--gc-text-muted);
+}
+
+.emptyState {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--gc-text-muted);
+  font-size: 0.875rem;
+  line-height: var(--gc-line-height);
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  box-shadow: var(--gc-shadow);
+}
+
+.fixtureList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  box-shadow: var(--gc-shadow);
+  overflow: hidden;
+}
+
+.fixtureRow {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gc-border);
+}
+
+.fixtureRow:last-child {
+  border-bottom: none;
+}
+
+.fixtureMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  color: var(--gc-text-muted);
+}
+
+.fixtureGroup {
+  font-weight: var(--gc-weight-section);
+  color: var(--gc-nav-active);
+}
+
+.fixtureKickoff {
+  font-weight: var(--gc-weight-nav);
+  color: var(--gc-text-secondary);
+}
+
+.fixtureStatus {
+  font-weight: 600;
+  color: var(--gc-text-primary);
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+
+.fixtureStatusLive {
+  color: var(--gc-crimson, #9b1b30);
+}
+
+.fixtureMatchup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gc-text-primary);
+  margin-bottom: 4px;
+  line-height: 1.45;
+}
+
+.fixtureTeam {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fixtureVs {
+  font-size: 0.8125rem;
+  color: var(--gc-text-muted);
+  font-weight: var(--gc-weight-body);
+}
+
+.fixtureVenue {
+  font-size: 0.75rem;
+  color: var(--gc-text-muted);
+}
+
+.hubBack {
+  margin: 8px 0 28px;
+  font-size: 0.8125rem;
+}
+
+.hubBack a {
+  color: var(--gc-nav-active);
+  font-weight: var(--gc-weight-nav);
+}
+
+.hubBack a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 16px 16px 0;
+  }
+}

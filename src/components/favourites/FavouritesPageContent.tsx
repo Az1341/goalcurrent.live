@@ -3,15 +3,14 @@
 import Link from "next/link";
 import TeamFlag from "@/components/TeamFlag";
 import {
-  demoMatchId,
-  isDemoMatchId,
   removeFavouriteCompetition,
   removeFavouriteMatch,
   removeFavouriteTeam,
 } from "@/lib/favourites";
 import { useFavourites } from "@/lib/use-favourites";
 import { formatKickoffUtc } from "@/lib/wc26-format";
-import { PLACEHOLDER_MATCHES } from "@/data/placeholder-matches";
+import { matchHref } from "@/lib/wc26-match";
+import { teamHref } from "@/lib/wc26-teams";
 import {
   getFixtureById,
   getTeamById,
@@ -63,11 +62,13 @@ export default function FavouritesPageContent() {
               }
               return (
                 <li key={teamId} className={styles.favListItem}>
-                  <TeamFlag teamId={team.id} size={24} />
-                  <span className={styles.favListLabel}>{team.name}</span>
-                  <span className={styles.favListMeta}>
-                    {groupLabel(team.groupId)}
-                  </span>
+                  <Link href={teamHref(team.id)} className={styles.favListMain}>
+                    <TeamFlag teamId={team.id} size={24} />
+                    <span className={styles.favListLabel}>{team.name}</span>
+                    <span className={styles.favListMeta}>
+                      {groupLabel(team.groupId)}
+                    </span>
+                  </Link>
                   <button
                     type="button"
                     className={styles.favRemoveBtn}
@@ -98,13 +99,15 @@ export default function FavouritesPageContent() {
                 const label = `${home?.name ?? wc26Fixture.homeTeamId} vs ${away?.name ?? wc26Fixture.awayTeamId}`;
                 return (
                   <li key={matchId} className={styles.favListItem}>
-                    {home ? <TeamFlag teamId={home.id} size={24} /> : null}
-                    <span className={styles.favListVs}>vs</span>
-                    {away ? <TeamFlag teamId={away.id} size={24} /> : null}
-                    <span className={styles.favListLabel}>{label}</span>
-                    <span className={styles.favListMeta}>
-                      {formatKickoffUtc(wc26Fixture.kickoffUtc)} UTC
-                    </span>
+                    <Link href={matchHref(matchId)} className={styles.favListMain}>
+                      {home ? <TeamFlag teamId={home.id} size={24} /> : null}
+                      <span className={styles.favListVs}>vs</span>
+                      {away ? <TeamFlag teamId={away.id} size={24} /> : null}
+                      <span className={styles.favListLabel}>{label}</span>
+                      <span className={styles.favListMeta}>
+                        {formatKickoffUtc(wc26Fixture.kickoffUtc)} UTC
+                      </span>
+                    </Link>
                     <button
                       type="button"
                       className={styles.favRemoveBtn}
@@ -116,33 +119,19 @@ export default function FavouritesPageContent() {
                 );
               }
 
-              if (isDemoMatchId(matchId)) {
-                const demoId = Number.parseInt(matchId.slice(5), 10);
-                const demo = PLACEHOLDER_MATCHES.find((m) => m.id === demoId);
-                if (!demo) {
-                  return null;
-                }
-                return (
-                  <li key={matchId} className={styles.favListItem}>
-                    <TeamFlag teamName={demo.home} size={24} />
-                    <span className={styles.favListVs}>vs</span>
-                    <TeamFlag teamName={demo.away} size={24} />
-                    <span className={styles.favListLabel}>
-                      {demo.home} vs {demo.away}
-                    </span>
-                    <span className={styles.favListMeta}>{demo.round}</span>
-                    <button
-                      type="button"
-                      className={styles.favRemoveBtn}
-                      onClick={() => removeFavouriteMatch(matchId)}
-                    >
-                      Remove
-                    </button>
-                  </li>
-                );
-              }
-
-              return null;
+              return (
+                <li key={matchId} className={styles.favListItem}>
+                  <span className={styles.favListLabel}>Saved match ({matchId})</span>
+                  <span className={styles.favListMeta}>No longer available</span>
+                  <button
+                    type="button"
+                    className={styles.favRemoveBtn}
+                    onClick={() => removeFavouriteMatch(matchId)}
+                  >
+                    Remove
+                  </button>
+                </li>
+              );
             })}
           </ul>
         )}

@@ -1,16 +1,16 @@
 import Link from "next/link";
 import TeamFlag from "@/components/TeamFlag";
+import TeamLink from "@/components/wc26/TeamLink";
 import {
   getFixturesByGroup,
   getGroupById,
-  getPlaceholderStandingsByGroup,
   getTeamsByGroup,
   groupLabel,
   type Wc26GroupId,
 } from "@/data/wc26";
 import { GROUPS_HUB_HREF, WC26_HUB_HREF } from "@/lib/wc26-groups";
 import FixturesList from "./FixturesList";
-import StandingsTable from "./StandingsTable";
+import GroupStandingsSection from "./GroupStandingsSection";
 import Wc26Breadcrumb from "./Wc26Breadcrumb";
 import styles from "./wc26.module.css";
 
@@ -22,7 +22,6 @@ export default function GroupPageContent({ groupId }: GroupPageContentProps) {
   const title = groupLabel(groupId);
   const group = getGroupById(groupId);
   const teams = getTeamsByGroup(groupId);
-  const standings = getPlaceholderStandingsByGroup(groupId);
   const fixtures = getFixturesByGroup(groupId);
 
   return (
@@ -40,7 +39,7 @@ export default function GroupPageContent({ groupId }: GroupPageContentProps) {
       </h1>
       <p className={styles.pageIntro}>
         {group
-          ? `${title} with ${group.teamIds.length} teams. Standings show zeroed placeholder rows until the calculation phase. Fixtures are scheduled entries only — no scores.`
+          ? `${title} with ${group.teamIds.length} teams. Standings are calculated from completed group-stage results. Fixtures show scheduled entries with live overlay status when available.`
           : `${title} overview for the 2026 FIFA World Cup.`}
       </p>
 
@@ -51,25 +50,17 @@ export default function GroupPageContent({ groupId }: GroupPageContentProps) {
         <ul className={styles.teamList}>
           {teams.map((team) => (
             <li key={team.id} className={styles.teamListItem}>
-              <TeamFlag teamId={team.id} size={24} />
-              <span className={styles.teamListName}>{team.name}</span>
+              <TeamLink teamId={team.id} className={styles.teamListMain}>
+                <TeamFlag teamId={team.id} size={24} />
+                <span className={styles.teamListName}>{team.name}</span>
+              </TeamLink>
               <span className={styles.teamListCode}>{team.code}</span>
             </li>
           ))}
         </ul>
       </section>
 
-      {standings ? (
-        <section aria-labelledby="standings-heading">
-          <h2 id="standings-heading" className={styles.sectionTitle}>
-            Standings
-          </h2>
-          <p className={styles.phaseNote}>
-            Placeholder table — all values zero until standings are calculated.
-          </p>
-          <StandingsTable standings={standings} title={`${title} table`} />
-        </section>
-      ) : null}
+      <GroupStandingsSection groupId={groupId} />
 
       <section aria-labelledby="fixtures-heading">
         <h2 id="fixtures-heading" className={styles.sectionTitle}>

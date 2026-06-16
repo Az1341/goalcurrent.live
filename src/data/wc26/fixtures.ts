@@ -160,5 +160,11 @@ export function getFixturesByStage(stage: Fixture["stage"]): readonly Fixture[] 
   return WC26_FIXTURES.filter((fixture) => fixture.stage === stage);
 }
 
+export function getFixturesByTeam(teamId: string): readonly Fixture[] {
+  return WC26_FIXTURES.filter(
+    (fixture) => fixture.homeTeamId === teamId || fixture.awayTeamId === teamId,
+  );
+}
+
 /** Group-stage fixtures loaded in this phase. */
 export const WC26_GROUP_STAGE_FIXTURE_COUNT = GROUP_STAGE_RAW.length;

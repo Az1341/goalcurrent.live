@@ -128,12 +128,3 @@ export function removeFavouriteCompetition(competitionId: string): void {
     competitions: state.competitions.filter((id) => id !== competitionId),
   });
 }
-
-/** Demo homepage / ribbon match ids — not WC26 fixture ids. */
-export function demoMatchId(id: number): string {
-  return `demo-${id}`;
-}
-
-export function isDemoMatchId(matchId: string): boolean {
-  return matchId.startsWith("demo-");
-}

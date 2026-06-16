@@ -62,6 +62,7 @@ export {
   getFixtureById,
   getFixturesByGroup,
   getFixturesByStage,
+  getFixturesByTeam,
 } from "./fixtures";
 
 // ── Placeholder standings (zeroed rows, not calculated) ───────────────────────

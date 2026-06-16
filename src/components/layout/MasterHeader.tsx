@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
-import { PLACEHOLDER_MATCHES } from "@/data/placeholder-matches";
 import {
   COMPETITION_STRIP,
   MAIN_NAV,
@@ -164,7 +163,7 @@ export default function MasterHeader() {
         </nav>
       </div>
 
-      <LiveRibbon matches={PLACEHOLDER_MATCHES} />
+      <LiveRibbon />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import type { GroupStandings } from "@/types/standing";
 import { getTeamById } from "@/data/wc26";
+import { isQualifyingStandingPosition } from "@/lib/wc26-standings";
 import TeamFlag from "@/components/TeamFlag";
+import TeamLink from "@/components/wc26/TeamLink";
 import styles from "./wc26.module.css";
 
 const STANDINGS_COLUMNS = [
@@ -18,9 +20,14 @@ const STANDINGS_COLUMNS = [
 type StandingsTableProps = {
   standings: GroupStandings;
   title?: string;
+  qualifyingSpots?: number;
 };
 
-export default function StandingsTable({ standings, title }: StandingsTableProps) {
+export default function StandingsTable({
+  standings,
+  title,
+  qualifyingSpots = 0,
+}: StandingsTableProps) {
   return (
     <div className={styles.standingsShell}>
       {title ? <div className={styles.standingsHead}>{title}</div> : null}
@@ -39,15 +46,35 @@ export default function StandingsTable({ standings, title }: StandingsTableProps
           </tr>
         </thead>
         <tbody>
-          {standings.rows.map((row) => {
+          {standings.rows.map((row, index) => {
             const team = getTeamById(row.teamId);
+            const qualified =
+              qualifyingSpots > 0 &&
+              isQualifyingStandingPosition(index, qualifyingSpots);
 
             return (
-              <tr key={row.teamId}>
+              <tr
+                key={row.teamId}
+                className={qualified ? styles.standingsRowQualified : undefined}
+                aria-label={
+                  qualified && team
+                    ? `${team.name} — qualification zone`
+                    : undefined
+                }
+              >
                 <td className={styles.colTeam}>
                   <span className={styles.teamCell}>
+                    {qualified ? (
+                      <span className={styles.standingsQualBadge} aria-hidden="true">
+                        Q
+                      </span>
+                    ) : null}
                     {team ? <TeamFlag teamId={team.id} size={22} /> : null}
-                    <span>{team?.name ?? row.teamId}</span>
+                    {team ? (
+                      <TeamLink teamId={team.id}>{team.name}</TeamLink>
+                    ) : (
+                      <span>{row.teamId}</span>
+                    )}
                   </span>
                 </td>
                 <td>{row.played}</td>

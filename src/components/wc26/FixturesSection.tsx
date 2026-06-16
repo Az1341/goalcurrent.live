@@ -1,29 +1,40 @@
-import { WC26_FIXTURES, WC26_TOURNAMENT } from "@/data/wc26";
-import FixturesList from "./FixturesList";
-import Wc26GamesProgress from "./Wc26GamesProgress";
+import FixturesCalendar from "./FixturesCalendar";
+
 import styles from "./wc26.module.css";
 
+
+
 export default function FixturesSection() {
+
   return (
+
     <section aria-labelledby="fixtures-section-heading">
+
       <h2 id="fixtures-section-heading" className={styles.sectionTitle}>
-        Match schedule
+
+        Official match schedule
+
       </h2>
 
+
+
       <p className={styles.phaseNote}>
-        Showing {WC26_FIXTURES.length} sample group-stage fixtures from local
-        data. Full {WC26_TOURNAMENT.fixtureCount}-match slate coming in a later
-        phase — no scores or results.
+
+        Verified FIFA World Cup 2026 group-stage fixtures from local data.
+
+        Times display in your local timezone. Status reflects the current overlay
+
+        — scores sync in a later phase.
+
       </p>
 
-      <Wc26GamesProgress />
 
-      <div className={styles.shellCard}>
-        <div className={styles.shellHead}>Scheduled fixtures</div>
-        <div className={styles.shellBody}>
-          <FixturesList fixtures={WC26_FIXTURES} />
-        </div>
-      </div>
+
+      <FixturesCalendar />
+
     </section>
+
   );
+
 }
+

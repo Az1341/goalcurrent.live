@@ -3,16 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { WC26_TOURNAMENT } from "@/data/wc26";
-import {
-  getFeaturedMatch,
-  PLACEHOLDER_MATCHES,
-  type MatchStatus,
-  type PlaceholderMatch,
-} from "@/data/placeholder-matches";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
-import { demoMatchId } from "@/lib/favourites";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
+import {
+  buildHomepageMatchView,
+  selectFeaturedFixture,
+  selectHomepageFixtures,
+  type HomepageMatchClass,
+  type HomepageMatchView,
+} from "@/lib/wc26-live";
 import TeamFlag from "@/components/TeamFlag";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
+import { matchHref } from "@/lib/wc26-match";
 import styles from "./page.module.css";
 
 const R = {
@@ -121,21 +123,20 @@ const FIFA_MATCH_PREVIEWS = [
 const FEATURED_FLAG = 56;
 const FEATURED_NAME_SIZE = "1.75rem";
 
-function formatScore(match: PlaceholderMatch) {
-  const { homeGoals, awayGoals } = match;
-  if (homeGoals == null || awayGoals == null) return null;
-  return `${homeGoals}–${awayGoals}`;
+function formatScore(match: HomepageMatchView) {
+  if (!match.score) return null;
+  return `${match.score.home}–${match.score.away}`;
 }
 
-function statusPillClass(status: MatchStatus) {
+function statusPillClass(status: HomepageMatchClass) {
   if (status === "live") return styles.statusLive;
   if (status === "ft") return styles.statusFinished;
   return styles.statusUpcoming;
 }
 
-function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
+function FeaturedMatchBlock({ match }: { match: HomepageMatchView }) {
   const score = formatScore(match);
-  const isLive = match.status === "live";
+  const isLive = match.matchClass === "live";
 
   return (
     <article
@@ -171,10 +172,10 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
             "FEATURED MATCH"
           )}
         </span>
-        <span style={{ opacity: 0.85 }}>{match.round}</span>
+        <span style={{ opacity: 0.85 }}>{match.roundLabel}</span>
         <FavouriteMatchButton
-          matchId={demoMatchId(match.id)}
-          label={`${match.home} vs ${match.away}`}
+          matchId={match.fixtureId}
+          label={`${match.homeName} vs ${match.awayName}`}
           className={styles.favBtnOnDark}
         />
       </div>
@@ -182,7 +183,7 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
       <div style={{ padding: "28px 20px 22px" }}>
         <div className={styles.featuredRow}>
           <div className={`${styles.featuredSide} ${styles.featuredSideHome}`}>
-            <TeamFlag teamName={match.home} size={FEATURED_FLAG} />
+            <TeamFlag teamId={match.homeTeamId} size={FEATURED_FLAG} />
             <span
               style={{
                 fontSize: FEATURED_NAME_SIZE,
@@ -192,7 +193,7 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
                 textAlign: "right",
               }}
             >
-              {match.home}
+              {match.homeName}
             </span>
           </div>
 
@@ -210,7 +211,7 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
                 <span style={{ fontSize: "1.25rem", color: R.muted, fontWeight: 600 }}>vs</span>
               )}
             </div>
-            {isLive && match.minute != null && (
+            {isLive && match.elapsed != null && (
               <div
                 style={{
                   marginTop: 10,
@@ -220,10 +221,10 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
                   lineHeight: 1,
                 }}
               >
-                {match.minute}&apos;
+                {match.elapsed}&apos;
               </div>
             )}
-            {match.status === "ft" && (
+            {match.matchClass === "ft" && (
               <div
                 style={{
                   marginTop: 10,
@@ -247,9 +248,9 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
                 textAlign: "left",
               }}
             >
-              {match.away}
+              {match.awayName}
             </span>
-            <TeamFlag teamName={match.away} size={FEATURED_FLAG} />
+            <TeamFlag teamId={match.awayTeamId} size={FEATURED_FLAG} />
           </div>
         </div>
 
@@ -262,7 +263,8 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
             marginTop: 16,
           }}
         >
-          {match.kickoff} · {match.venue}
+          {match.kickoffLabel}
+          {match.venueLabel ? ` · ${match.venueLabel}` : ""}
         </p>
 
         <div
@@ -274,7 +276,7 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
           }}
         >
           <Link
-            href="/live"
+            href={matchHref(match.fixtureId)}
             style={{
               padding: "10px 16px",
               borderRadius: 8,
@@ -284,7 +286,7 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
               color: R.white,
             }}
           >
-            Live Centre →
+            Match details →
           </Link>
           <Link
             href="/worldcup2026/fixtures"
@@ -571,8 +573,16 @@ function FifaPreviewCard({
 }
 
 export default function Home() {
-  const featured = getFeaturedMatch();
-  const liveFootballMatches = PLACEHOLDER_MATCHES.filter((m) => m.id !== featured.id);
+  const fixtures = useEffectiveFixtures();
+  const featuredFixture = selectFeaturedFixture(fixtures);
+  const featured = featuredFixture
+    ? buildHomepageMatchView(featuredFixture)
+    : undefined;
+  const liveFootballMatches = selectHomepageFixtures(
+    fixtures,
+    featured?.fixtureId,
+    6,
+  );
   const { gamesPlayed, gamesLeft } = useTournamentStats();
   const totalMatches = WC26_TOURNAMENT.fixtureCount;
 
@@ -620,13 +630,19 @@ export default function Home() {
 
           <section aria-labelledby="featured-match-heading" style={{ marginBottom: 28 }}>
             <h2 id="featured-match-heading" className={styles.sectionTitle}>Featured Match</h2>
-            <FeaturedMatchBlock match={featured} />
+            {featured ? (
+              <FeaturedMatchBlock match={featured} />
+            ) : (
+              <p style={{ fontSize: "1.0625rem", color: R.muted }}>
+                No World Cup fixtures loaded.
+              </p>
+            )}
           </section>
 
           <section aria-labelledby="live-football-heading">
             <h2 id="live-football-heading" className={styles.sectionTitle}>Live Football</h2>
             <p style={{ fontSize: "1.125rem", color: R.muted, marginBottom: 16 }}>
-              Today&apos;s live scores and recent results across world football.
+              World Cup 2026 live, completed and upcoming fixtures from the overlay.
             </p>
 
             <div className={styles.matchCard} style={{ borderColor: R.border }}>
@@ -640,68 +656,87 @@ export default function Home() {
               >
                 <span>Live &amp; recent results</span>
                 <span className={styles.updated} style={{ fontSize: "0.875rem" }}>
-                  Local demo
+                  WC26 overlay
                 </span>
               </div>
 
-              {liveFootballMatches.map((match) => {
-                const score = formatScore(match);
-                const matchLabel = `${match.home} vs ${match.away}`;
+              {liveFootballMatches.length === 0 ? (
+                <p
+                  style={{
+                    padding: "20px 16px",
+                    fontSize: "1rem",
+                    color: R.muted,
+                    textAlign: "center",
+                  }}
+                >
+                  No additional fixtures to show right now.
+                </p>
+              ) : (
+                liveFootballMatches.map((match) => {
+                  const score = formatScore(match);
+                  const matchLabel = `${match.homeName} vs ${match.awayName}`;
 
-                return (
-                  <div
-                    key={match.id}
-                    className={styles.matchRow}
-                    style={{ borderColor: R.border, minHeight: 60 }}
-                  >
-                    <span
-                      className={`${styles.statusPill} ${statusPillClass(match.status)}`}
-                      style={{ fontSize: "0.875rem" }}
+                  return (
+                    <div
+                      key={match.fixtureId}
+                      className={styles.matchRow}
+                      style={{ borderColor: R.border, minHeight: 60 }}
                     >
-                      {match.statusLabel}
-                    </span>
-                    <span
-                      className={styles.colHome}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-end",
-                        gap: 10,
-                        fontSize: MATCH_ROW_TEAM_SIZE,
-                        fontWeight: 700,
-                      }}
-                    >
-                      <TeamFlag teamName={match.home} size={30} />
-                      {match.home}
-                    </span>
-                    <span className={styles.colScore} style={{ fontSize: "1.625rem" }}>
-                      {score ?? "–"}
-                      {match.status === "live" && match.minute != null && (
-                        <small className={styles.minLive} style={{ fontSize: "0.75rem" }}>
-                          {match.minute}&apos;
-                        </small>
-                      )}
-                    </span>
-                    <span
-                      className={styles.colAway}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        fontSize: MATCH_ROW_TEAM_SIZE,
-                        fontWeight: 700,
-                      }}
-                    >
-                      {match.away}
-                      <TeamFlag teamName={match.away} size={30} />
-                    </span>
-                    <FavouriteMatchButton
-                      matchId={demoMatchId(match.id)}
-                      label={matchLabel}
-                    />
-                  </div>
-                );
-              })}
+                      <span
+                        className={`${styles.statusPill} ${statusPillClass(match.matchClass)}`}
+                        style={{ fontSize: "0.875rem" }}
+                      >
+                        {match.statusLabel}
+                      </span>
+                      <span
+                        className={styles.colHome}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                          gap: 10,
+                          fontSize: MATCH_ROW_TEAM_SIZE,
+                          fontWeight: 700,
+                        }}
+                      >
+                        <TeamFlag teamId={match.homeTeamId} size={30} />
+                        {match.homeName}
+                      </span>
+                      <span className={styles.colScore} style={{ fontSize: "1.625rem" }}>
+                        {score ?? "–"}
+                        {match.matchClass === "live" && match.elapsed != null && (
+                          <small className={styles.minLive} style={{ fontSize: "0.75rem" }}>
+                            {match.elapsed}&apos;
+                          </small>
+                        )}
+                      </span>
+                      <span
+                        className={styles.colAway}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10,
+                          fontSize: MATCH_ROW_TEAM_SIZE,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {match.awayName}
+                        <TeamFlag teamId={match.awayTeamId} size={30} />
+                      </span>
+                      <FavouriteMatchButton
+                        matchId={match.fixtureId}
+                        label={matchLabel}
+                      />
+                      <Link
+                        href={matchHref(match.fixtureId)}
+                        className={styles.matchRowDetail}
+                      >
+                        Details →
+                      </Link>
+                    </div>
+                  );
+                })
+              )}
 
               <Link
                 href="/live"
