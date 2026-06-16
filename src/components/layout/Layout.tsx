@@ -1,6 +1,5 @@
 import Footer from "./Footer";
 import Header from "./Header";
-import Sidebar from "./Sidebar";
 import styles from "./layout.module.css";
 
 type LayoutProps = {
@@ -10,9 +9,8 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   return (
     <div className={styles.page}>
-      <Sidebar />
+      <Header />
       <div className={styles.main}>
-        <Header />
         {children}
         <Footer />
       </div>

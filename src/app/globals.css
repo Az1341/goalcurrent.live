@@ -29,10 +29,9 @@
   --gc-error: #e30613;
   --gc-text-on-accent: #ffffff;
 
-  /* ── Chrome (sidebar / header) ── */
-  --gc-sidebar-from: #0a3470;
-  --gc-sidebar-to: #082b5f;
-  --gc-header: #0a3470;
+  /* ── Chrome (header) ── */
+  --gc-header-from: #0a3470;
+  --gc-header: #082b5f;
   --gc-chrome-text: #f8fafc;
   --gc-chrome-text-secondary: #b8c4d9;
   --gc-chrome-text-muted: rgba(184, 196, 217, 0.62);
@@ -53,7 +52,6 @@
 
   /* ── Layout ── */
   --gc-content-max: 960px;
-  --gc-sidebar-width: 228px;
   --gc-radius-sm: 8px;
   --gc-radius: 10px;
   --gc-radius-lg: 12px;

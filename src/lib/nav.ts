@@ -8,25 +8,17 @@ export type NavItem = {
 /** Global favourites — saved items across all competitions. */
 export const FAVOURITES_HREF = "/favourites";
 
-/** Header pill navigation */
-export const SUBNAV: NavItem[] = [
-  { href: "/", label: "Home", icon: "🏠", exact: true },
-  { href: "/worldcup2026", label: "World Cup", icon: "🏆" },
-  { href: "/live", label: "Live Scores", icon: "🔴" },
-  { href: "/news", label: "News", icon: "📰" },
-];
-
-/** Sidebar — main menu */
-export const SIDEBAR_MAIN: NavItem[] = [
+/** Primary navigation links */
+export const MAIN_NAV: NavItem[] = [
   { href: "/", label: "Home", icon: "🏠", exact: true },
   { href: "/live", label: "Live Scores", icon: "🔴" },
   { href: FAVOURITES_HREF, label: "Favourites", icon: "⭐" },
-  { href: "/news", label: "Latest News", icon: "📰" },
+  { href: "/news", label: "News", icon: "📰" },
+  { href: "/worldcup2026", label: "World Cup 2026", icon: "🏆", exact: true },
 ];
 
-/** Sidebar — World Cup 2026 section */
-export const SIDEBAR_WC26: NavItem[] = [
-  { href: "/worldcup2026", label: "World Cup 2026", icon: "🏆", exact: true },
+/** World Cup 2026 section links */
+export const WC26_NAV: NavItem[] = [
   { href: "/worldcup2026/groups", label: "Groups", icon: "📋" },
   { href: "/worldcup2026/fixtures", label: "Fixtures", icon: "📅" },
   { href: "/worldcup2026/standings", label: "Standings", icon: "📊" },
@@ -35,10 +27,17 @@ export const SIDEBAR_WC26: NavItem[] = [
   { href: "/worldcup2026/bracket", label: "Bracket", icon: "🏅" },
 ];
 
-/** Sidebar — site sections */
-export const SIDEBAR_SITE: NavItem[] = [
+/** About and contact */
+export const SITE_NAV: NavItem[] = [
   { href: "/about", label: "About", icon: "ℹ️" },
   { href: "/contact", label: "Contact", icon: "✉️" },
+];
+
+/** Desktop top bar — all navigation links in one horizontal row */
+export const TOP_NAV: NavItem[] = [
+  ...MAIN_NAV,
+  ...WC26_NAV,
+  ...SITE_NAV,
 ];
 
 export const FOOTER_LINKS = [
