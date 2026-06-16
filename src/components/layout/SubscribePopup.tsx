@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SUBSCRIBE_POPUP_KEY } from "@/lib/site-keys";
+import {
+  COOKIE_CONSENT_KEY,
+  SUBSCRIBE_POPUP_DISMISSED,
+  SUBSCRIBE_POPUP_KEY,
+} from "@/lib/site-keys";
 import styles from "./master-chrome.module.css";
 
 export default function SubscribePopup() {
@@ -9,7 +13,7 @@ export default function SubscribePopup() {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem(SUBSCRIBE_POPUP_KEY)) return;
+      if (localStorage.getItem(SUBSCRIBE_POPUP_KEY) === SUBSCRIBE_POPUP_DISMISSED) return;
       const timer = window.setTimeout(() => setOpen(true), 1200);
       return () => window.clearTimeout(timer);
     } catch {
@@ -19,7 +23,7 @@ export default function SubscribePopup() {
 
   function dismiss() {
     try {
-      localStorage.setItem(SUBSCRIBE_POPUP_KEY, "1");
+      localStorage.setItem(SUBSCRIBE_POPUP_KEY, SUBSCRIBE_POPUP_DISMISSED);
     } catch {
       /* ignore */
     }

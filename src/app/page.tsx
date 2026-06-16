@@ -71,7 +71,7 @@ const FOOTBALL_NEWS = [
   {
     category: "GoalCurrent Editorial",
     headline: "Football Is Inspiring Canada's Next Generation",
-    href: "/news/football-inspiring-canadas-next-generation",
+    href: "/news",
     accent: "#fbbf24",
     flagTeam: "Canada",
   },
@@ -794,7 +794,7 @@ export default function Home() {
           <section aria-labelledby="feature-article-heading" style={{ marginBottom: 0 }}>
             <h2 id="feature-article-heading" className={styles.sectionTitle}>Featured Article</h2>
             <Link
-              href="/news/football-inspiring-canadas-next-generation"
+              href="/news"
               style={{
                 display: "block",
                 background: R.card,

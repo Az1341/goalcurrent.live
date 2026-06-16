@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Layout from "@/components/layout/Layout";
+import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
 const inter = Inter({
@@ -11,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.goalcurrent.online"),
+  metadataBase: new URL(SITE_URL),
   title: {
     template: "%s — GoalCurrent.online",
     default:
@@ -19,11 +20,14 @@ export const metadata: Metadata = {
   },
   description:
     "GoalCurrent.online — live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "GoalCurrent.online — FIFA World Cup 2026",
     description:
       "Live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
-    url: "https://www.goalcurrent.online/",
+    url: SITE_URL,
     siteName: "GoalCurrent.online",
     type: "website",
   },

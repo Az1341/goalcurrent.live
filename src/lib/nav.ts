@@ -63,10 +63,10 @@ export const TOP_NAV: NavItem[] = [
 export const FOOTER_LINKS: NavLinkItem[] = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
-  { href: "/about", label: "Terms" },
-  { href: "/about", label: "Privacy" },
-  { href: "/about", label: "Cookies" },
-  { href: "/about", label: "Affiliate Disclosure" },
+  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/cookies", label: "Cookies" },
+  { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
 ];
 
 export const FOOTER_SOCIAL: NavLinkItem[] = [

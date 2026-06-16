@@ -86,7 +86,7 @@ export function MatchTimeline({ detail, loading }: MatchTimelineProps) {
           <p className={styles.emptyState}>
             {detail.configured
               ? "No events recorded yet. Goals, cards and substitutions will appear here when the live feed provides them."
-              : "Match events will appear when API sync is configured and the match is underway or finished."}
+              : "Match events will appear when server API sync is configured and the match is underway or finished."}
           </p>
         ) : (
           <ul className={styles.timelineList}>

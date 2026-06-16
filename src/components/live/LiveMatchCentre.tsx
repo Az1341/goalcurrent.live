@@ -141,16 +141,16 @@ export default function LiveMatchCentre() {
         Live Scores — <span>World Cup 2026</span>
       </h1>
       <p className={styles.pageIntro}>
-        World Cup 2026 fixtures from local schedule data. Status reflects the
-        current overlay — scores and live API sync will be added in a later
-        phase.
+        World Cup 2026 fixtures from local schedule data. Status and scores update
+        when server API sync is active; otherwise fixtures show as scheduled with
+        honest empty states — no hardcoded results.
       </p>
 
       <LiveSection
         id="live-now-heading"
         title="Live now"
         fixtures={buckets.live}
-        emptyMessage="No live matches currently"
+        emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
         showLiveIndicator
       />
 
@@ -158,7 +158,7 @@ export default function LiveMatchCentre() {
         id="today-heading"
         title="Today"
         fixtures={buckets.today}
-        emptyMessage="No World Cup matches scheduled for today"
+        emptyMessage="No World Cup matches scheduled for today in the local schedule."
       />
 
       <LiveSection
@@ -171,7 +171,7 @@ export default function LiveMatchCentre() {
         id="completed-heading"
         title="Completed"
         fixtures={buckets.completed}
-        emptyMessage="No completed matches yet"
+        emptyMessage="No completed matches yet. Full-time results appear when API sync returns finished fixtures."
       />
 
       <p className={styles.hubBack}>

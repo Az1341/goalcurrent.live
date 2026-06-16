@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import UnderConstruction from "@/components/UnderConstruction";
+import { buildPageMetadata } from "@/lib/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Contact",
   description: "Contact GoalCurrent.online.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

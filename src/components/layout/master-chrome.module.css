@@ -431,6 +431,16 @@
   line-height: 1.5;
 }
 
+.cookiePolicyLink {
+  color: #9b1b30;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cookiePolicyLink:hover {
+  text-decoration: underline;
+}
+
 .cookieActions {
   display: flex;
   gap: 10px;

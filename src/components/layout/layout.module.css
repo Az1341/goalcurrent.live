@@ -136,7 +136,71 @@
 
 }
 
+/* ── Legal / policy pages ── */
 
+.legalArticle {
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  padding: 28px 24px 32px;
+  box-shadow: var(--gc-shadow);
+  margin: 8px 0 40px;
+  max-width: 720px;
+}
+
+.legalArticle h1 {
+  font-size: 1.4375rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--gc-text-primary);
+}
+
+.legalIntro {
+  font-size: 0.9375rem;
+  color: var(--gc-text-secondary);
+  line-height: var(--gc-line-height);
+  margin-bottom: 24px;
+}
+
+.legalArticle section {
+  margin-bottom: 20px;
+}
+
+.legalArticle h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--gc-text-primary);
+}
+
+.legalArticle p {
+  font-size: 0.9375rem;
+  color: var(--gc-text-secondary);
+  line-height: var(--gc-line-height);
+  margin: 0 0 8px;
+}
+
+.legalArticle a {
+  color: var(--gc-nav-active);
+  font-weight: var(--gc-weight-nav);
+}
+
+.legalArticle code {
+  font-size: 0.8125rem;
+  background: var(--gc-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.legalBack {
+  margin-top: 28px;
+  font-size: 0.875rem;
+}
+
+.legalBack a {
+  color: var(--gc-nav-active);
+  font-weight: var(--gc-weight-nav);
+}
 
 @media (max-width: 768px) {
 
