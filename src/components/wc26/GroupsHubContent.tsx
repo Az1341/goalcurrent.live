@@ -6,6 +6,7 @@ import {
 } from "@/data/wc26";
 import { WC26_HUB_HREF } from "@/lib/wc26-groups";
 import GroupsGrid from "@/components/wc26/GroupsGrid";
+import Wc26GamesProgress from "@/components/wc26/Wc26GamesProgress";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import styles from "@/components/wc26/wc26.module.css";
 
@@ -27,6 +28,8 @@ export default function GroupsHubContent() {
         tournament. Select a group to view its teams, standings layout, and
         scheduled fixtures from local data.
       </p>
+
+      <Wc26GamesProgress />
 
       <GroupsGrid />
 

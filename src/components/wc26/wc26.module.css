@@ -351,6 +351,7 @@
 .fixtureMeta {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
   margin-bottom: 6px;
   font-size: 0.75rem;
@@ -511,6 +512,124 @@
   border-color: var(--gc-border);
 }
 
+.tileCardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.favBtn {
+  border: none;
+  background: transparent;
+  color: var(--gc-text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+
+.favBtn:hover {
+  color: var(--gc-nav-active);
+}
+
+.favBtnActive {
+  color: #c9a227;
+}
+
+.favEmpty {
+  background: var(--gc-card);
+  border: 1px dashed var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  padding: 24px 18px;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+.favEmpty h2 {
+  font-size: 1rem;
+  font-weight: var(--gc-weight-section);
+  color: var(--gc-text-primary);
+  margin-bottom: 8px;
+}
+
+.favEmpty p {
+  font-size: 0.875rem;
+  color: var(--gc-text-muted);
+  line-height: var(--gc-line-height);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.favEmpty a {
+  color: var(--gc-nav-active);
+  font-weight: var(--gc-weight-nav);
+}
+
+.favSectionEmpty {
+  font-size: 0.875rem;
+  color: var(--gc-text-muted);
+  margin: 0 0 18px;
+}
+
+.favList {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--gc-shadow);
+}
+
+.favListItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--gc-border);
+  font-size: 0.875rem;
+}
+
+.favListItem:last-child {
+  border-bottom: none;
+}
+
+.favListLabel {
+  font-weight: var(--gc-weight-nav);
+  color: var(--gc-text-primary);
+}
+
+.favListMeta {
+  font-size: 0.75rem;
+  color: var(--gc-text-muted);
+}
+
+.favListVs {
+  font-size: 0.75rem;
+  color: var(--gc-text-muted);
+}
+
+.favRemoveBtn {
+  margin-left: auto;
+  padding: 5px 10px;
+  border-radius: var(--gc-radius-sm);
+  font-size: 0.75rem;
+  font-weight: var(--gc-weight-nav);
+  color: var(--gc-nav-active);
+  background: var(--gc-inset);
+  border: 1px solid var(--gc-border);
+  cursor: pointer;
+}
+
+.favRemoveBtn:hover {
+  background: var(--gc-card-hover);
+}
+
 .tileIcon {
   font-size: 1.1rem;
   margin-bottom: 4px;
@@ -562,6 +681,18 @@
 .venueCard:hover {
   background: var(--gc-card-hover);
   border-color: var(--gc-border);
+}
+
+.venueCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.venueHostFlag {
+  flex-shrink: 0;
 }
 
 .venueIcon {

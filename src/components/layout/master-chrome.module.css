@@ -293,6 +293,21 @@
   opacity: 0.95;
 }
 
+.liveMatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+}
+
+.liveMatchTeams {
+  display: inline;
+}
+
+.liveMatchStatus {
+  opacity: 0.85;
+}
+
 @keyframes gcChromePulse {
   0%,
   100% {

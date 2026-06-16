@@ -37,9 +37,17 @@
   font-weight: 400;
 }
 
+.favBtnOnDark {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.favBtnOnDark:hover {
+  color: #ffffff !important;
+}
+
 .matchRow {
   display: grid;
-  grid-template-columns: 72px 1fr 80px 1fr;
+  grid-template-columns: 72px 1fr 80px 1fr 32px;
   align-items: center;
   padding: 12px 16px;
   border-bottom: 1px solid var(--gc-border);
@@ -192,7 +200,7 @@
 
 @media (max-width: 768px) {
   .matchRow {
-    grid-template-columns: 64px 1fr 72px 1fr;
+    grid-template-columns: 64px 1fr 72px 1fr 28px;
     padding: 10px 12px;
     gap: 6px;
   }

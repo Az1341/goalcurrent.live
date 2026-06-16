@@ -1,5 +1,6 @@
 import { WC26_FIXTURES, WC26_TOURNAMENT } from "@/data/wc26";
 import FixturesList from "./FixturesList";
+import Wc26GamesProgress from "./Wc26GamesProgress";
 import styles from "./wc26.module.css";
 
 export default function FixturesSection() {
@@ -14,6 +15,8 @@ export default function FixturesSection() {
         data. Full {WC26_TOURNAMENT.fixtureCount}-match slate coming in a later
         phase — no scores or results.
       </p>
+
+      <Wc26GamesProgress />
 
       <div className={styles.shellCard}>
         <div className={styles.shellHead}>Scheduled fixtures</div>

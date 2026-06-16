@@ -9,14 +9,10 @@ import {
   type MatchStatus,
   type PlaceholderMatch,
 } from "@/data/placeholder-matches";
-import {
-  getGamesLeftToPlay,
-  getGamesPlayed,
-} from "@/lib/wc26-tournament-stats";
-import { resolveTeamId } from "@/lib/teamIdentity";
-import { getTeamFlagSrc } from "@/lib/teamFlag";
-import type { TeamId } from "@/types/team";
+import { useTournamentStats } from "@/lib/use-tournament-stats";
+import { demoMatchId } from "@/lib/favourites";
 import TeamFlag from "@/components/TeamFlag";
+import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import styles from "./page.module.css";
 
 const R = {
@@ -38,8 +34,6 @@ const R = {
 const BODY_SIZE = "20px";
 const TEAM_NAME_SIZE = "1.5rem";
 const MATCH_ROW_TEAM_SIZE = "1.375rem";
-const ROW_FLAG_W = 30;
-const ROW_FLAG_H = 22;
 
 const FOOTBALL_NEWS = [
   {
@@ -178,6 +172,11 @@ function FeaturedMatchBlock({ match }: { match: PlaceholderMatch }) {
           )}
         </span>
         <span style={{ opacity: 0.85 }}>{match.round}</span>
+        <FavouriteMatchButton
+          matchId={demoMatchId(match.id)}
+          label={`${match.home} vs ${match.away}`}
+          className={styles.favBtnOnDark}
+        />
       </div>
 
       <div style={{ padding: "28px 20px 22px" }}>
@@ -574,8 +573,7 @@ function FifaPreviewCard({
 export default function Home() {
   const featured = getFeaturedMatch();
   const liveFootballMatches = PLACEHOLDER_MATCHES.filter((m) => m.id !== featured.id);
-  const gamesPlayed = getGamesPlayed();
-  const gamesLeft = getGamesLeftToPlay();
+  const { gamesPlayed, gamesLeft } = useTournamentStats();
   const totalMatches = WC26_TOURNAMENT.fixtureCount;
 
   return (
@@ -648,8 +646,7 @@ export default function Home() {
 
               {liveFootballMatches.map((match) => {
                 const score = formatScore(match);
-                const homeId = resolveTeamId(match.home);
-                const awayId = resolveTeamId(match.away);
+                const matchLabel = `${match.home} vs ${match.away}`;
 
                 return (
                   <div
@@ -674,15 +671,7 @@ export default function Home() {
                         fontWeight: 700,
                       }}
                     >
-                      {homeId && getTeamFlagSrc(homeId as TeamId) && (
-                        <img
-                          src={getTeamFlagSrc(homeId as TeamId)!}
-                          alt=""
-                          width={ROW_FLAG_W}
-                          height={ROW_FLAG_H}
-                          style={{ borderRadius: 2 }}
-                        />
-                      )}
+                      <TeamFlag teamName={match.home} size={30} />
                       {match.home}
                     </span>
                     <span className={styles.colScore} style={{ fontSize: "1.625rem" }}>
@@ -703,17 +692,13 @@ export default function Home() {
                         fontWeight: 700,
                       }}
                     >
-                      {awayId && getTeamFlagSrc(awayId as TeamId) && (
-                        <img
-                          src={getTeamFlagSrc(awayId as TeamId)!}
-                          alt=""
-                          width={ROW_FLAG_W}
-                          height={ROW_FLAG_H}
-                          style={{ borderRadius: 2 }}
-                        />
-                      )}
                       {match.away}
+                      <TeamFlag teamName={match.away} size={30} />
                     </span>
+                    <FavouriteMatchButton
+                      matchId={demoMatchId(match.id)}
+                      label={matchLabel}
+                    />
                   </div>
                 );
               })}
