@@ -9,6 +9,8 @@ export interface Venue {
   readonly name: string;
   readonly city: string;
   readonly country: HostCountry;
-  /** Seating capacity when known; omitted for placeholder entries. */
+  /** IANA timezone for the host city when verified. */
+  readonly timezone?: string;
+  /** Seating capacity when officially verified; omitted otherwise. */
   readonly capacity?: number;
 }

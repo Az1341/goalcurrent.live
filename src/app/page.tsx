@@ -1,10 +1,15 @@
 import Link from "next/link";
+import { WC26_TOURNAMENT } from "@/data/wc26";
 import {
   getFeaturedMatch,
   PLACEHOLDER_MATCHES,
   type MatchStatus,
   type PlaceholderMatch,
 } from "@/data/placeholder-matches";
+import {
+  getGamesLeftToPlay,
+  getGamesPlayed,
+} from "@/lib/wc26-tournament-stats";
 import styles from "./page.module.css";
 
 function formatScore(match: PlaceholderMatch) {
@@ -45,9 +50,20 @@ const NEWS = [
 
 export default function Home() {
   const featured = getFeaturedMatch();
+  const gamesPlayed = getGamesPlayed();
+  const gamesLeft = getGamesLeftToPlay();
+
+  const heroStats: { value: number; label: string; highlight?: boolean }[] = [
+    { value: WC26_TOURNAMENT.teamCount, label: "Teams" },
+    { value: WC26_TOURNAMENT.fixtureCount, label: "Matches" },
+    { value: WC26_TOURNAMENT.venueCount, label: "Venues" },
+    { value: WC26_TOURNAMENT.hosts.length, label: "Hosts" },
+    { value: gamesPlayed, label: "Games Played" },
+    { value: gamesLeft, label: "Games Left To Play", highlight: true },
+  ];
 
   return (
-    <>
+    <div className={styles.homepage}>
       <section className={styles.hero}>
         <h2 className={styles.heroTitle}>
           FIFA World Cup <span>2026</span>
@@ -55,31 +71,31 @@ export default function Home() {
         <p className={styles.heroSub}>
           USA · Mexico · Canada · 11 June – 19 July 2026
         </p>
+
         <div className={styles.statsRow}>
-          {[
-            ["48", "Teams"],
-            ["104", "Matches"],
-            ["16", "Venues"],
-            ["3", "Hosts"],
-          ].map(([num, lbl]) => (
-            <div key={lbl} className={styles.statChip}>
-              <div className={styles.statNum}>{num}</div>
-              <div className={styles.statLbl}>{lbl}</div>
+          {heroStats.map(({ value, label, highlight }) => (
+            <div
+              key={label}
+              className={`${styles.statChip} ${highlight ? styles.statChipHighlight : ""}`}
+            >
+              <div className={styles.statNum}>{value}</div>
+              <div className={styles.statLbl}>{label}</div>
             </div>
           ))}
         </div>
+
         <div className={styles.heroNav}>
           <Link
             href="/worldcup2026"
             className={`${styles.heroBtn} ${styles.heroBtnPrimary}`}
           >
-            🌍 WC2026 Hub →
+            WC2026 Hub →
           </Link>
           <Link href="/live" className={styles.heroBtn}>
-            🔴 Live Scores
+            Live Scores
           </Link>
           <Link href="/news" className={styles.heroBtn}>
-            📰 News
+            News
           </Link>
         </div>
       </section>
@@ -96,7 +112,14 @@ export default function Home() {
         <article className={styles.featured}>
           <div className={styles.featuredHead}>
             <span>
-              {featured.status === "live" ? "🔴 LIVE NOW" : "📅 FEATURED"}
+              {featured.status === "live" ? (
+                <>
+                  <span className={styles.liveTag} aria-hidden="true" />
+                  LIVE NOW
+                </>
+              ) : (
+                "FEATURED"
+              )}
             </span>
             <span>{featured.round}</span>
           </div>
@@ -118,20 +141,20 @@ export default function Home() {
               </div>
             </div>
             <p className={styles.kickoff}>
-              ⏰ {featured.kickoff} · 🏟 {featured.venue}
+              {featured.kickoff} · {featured.venue}
             </p>
             <div className={styles.featuredActions}>
               <Link
                 href="/worldcup2026"
                 className={`${styles.actionBtn} ${styles.actionPrimary}`}
               >
-                🌍 World Cup Hub →
+                World Cup Hub →
               </Link>
               <Link
                 href="/live"
                 className={`${styles.actionBtn} ${styles.actionSecondary}`}
               >
-                🔴 Live Scores
+                Live Scores
               </Link>
             </div>
           </div>
@@ -178,9 +201,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <h2 className={styles.sectionLabel} style={{ marginTop: 22 }}>
-          📰 World Cup 2026 — Latest News
-        </h2>
+        <h2 className={styles.sectionLabel}>World Cup 2026 — Latest News</h2>
 
         <div className={styles.newsGrid}>
           {NEWS.map((item) => (
@@ -195,6 +216,6 @@ export default function Home() {
           ))}
         </div>
       </main>
-    </>
+    </div>
   );
 }

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { SIDEBAR_MAIN, SIDEBAR_SITE } from "@/lib/nav";
+import { SIDEBAR_MAIN, SIDEBAR_SITE, SIDEBAR_WC26 } from "@/lib/nav";
 import NavLink from "./NavLink";
 import styles from "./layout.module.css";
 
@@ -42,8 +42,8 @@ export default function Sidebar() {
               className={styles.sidebarLogoIcon}
               src="/logo.svg"
               alt="GoalCurrent.online logo"
-              width={42}
-              height={42}
+              width={34}
+              height={34}
             />
             <div>
               <div className={styles.sidebarLogoName}>
@@ -65,6 +65,25 @@ export default function Sidebar() {
         <div className={styles.sidebarSectionLabel}>Main Menu</div>
         <div className={styles.sidebarNav}>
           {SIDEBAR_MAIN.map(({ href, label, icon, exact }) => (
+            <NavLink
+              key={href}
+              href={href}
+              exact={exact}
+              className={styles.sidebarLink}
+              activeClassName={styles.sidebarLinkActive}
+              onNavigate={close}
+            >
+              <span className={styles.navIcon} aria-hidden="true">
+                {icon}
+              </span>
+              {label}
+            </NavLink>
+          ))}
+        </div>
+
+        <div className={styles.sidebarSectionLabel}>World Cup 2026</div>
+        <div className={styles.sidebarNav}>
+          {SIDEBAR_WC26.map(({ href, label, icon, exact }) => (
             <NavLink
               key={href}
               href={href}

@@ -18,6 +18,8 @@ export type FixtureStatus = "scheduled" | "postponed" | "cancelled";
 /** A scheduled match — kickoff and participants only, no scores. */
 export interface Fixture {
   readonly id: string;
+  /** Official FIFA match number (1–104). */
+  readonly matchNumber: number;
   readonly stage: FixtureStage;
   readonly homeTeamId: TeamId;
   readonly awayTeamId: TeamId;

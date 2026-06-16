@@ -13,8 +13,8 @@ export default function Header() {
             className={styles.brandIcon}
             src="/logo.svg"
             alt="GoalCurrent.online logo"
-            width={44}
-            height={44}
+            width={36}
+            height={36}
             priority
           />
           <div>

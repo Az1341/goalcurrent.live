@@ -6,19 +6,85 @@
   padding: 0;
 }
 
+:root {
+  /* ── Broadcast palette (content surfaces) ── */
+  --gc-navy: #041e42;
+  --gc-blue: #0057ff;
+  --gc-blue-hover: #0046cc;
+  --gc-red: #e30613;
+  --gc-bg: #f4f7fb;
+  --gc-surface: #ffffff;
+  --gc-text-primary: #0f172a;
+  --gc-text-secondary: #334155;
+  --gc-text-muted: #64748b;
+  --gc-card: #ffffff;
+  --gc-card-hover: #f4f7fb;
+  --gc-inset: #f4f7fb;
+  --gc-nav-active: #0057ff;
+  --gc-nav-active-hover: #0046cc;
+  --gc-accent-gold: #fbbf24;
+  --gc-border: #d7dee8;
+  --gc-border-strong: #c5ced9;
+  --gc-success: #15803d;
+  --gc-error: #e30613;
+  --gc-text-on-accent: #ffffff;
+
+  /* ── Chrome (sidebar / header) ── */
+  --gc-sidebar-from: #0a3470;
+  --gc-sidebar-to: #082b5f;
+  --gc-header: #0a3470;
+  --gc-chrome-text: #f8fafc;
+  --gc-chrome-text-secondary: #b8c4d9;
+  --gc-chrome-text-muted: rgba(184, 196, 217, 0.62);
+  --gc-chrome-card: rgba(255, 255, 255, 0.07);
+  --gc-chrome-card-hover: rgba(255, 255, 255, 0.11);
+  --gc-chrome-border: rgba(255, 255, 255, 0.1);
+  --gc-chrome-border-strong: rgba(255, 255, 255, 0.14);
+  --gc-chrome-inset: rgba(255, 255, 255, 0.06);
+
+  /* ── Typography (Inter only) ── */
+  --gc-font: var(--font-inter), system-ui, sans-serif;
+  --gc-weight-body: 400;
+  --gc-weight-nav: 500;
+  --gc-weight-section: 600;
+  --gc-weight-heading: 600;
+  --gc-line-height: 1.65;
+  --gc-line-height-tight: 1.45;
+
+  /* ── Layout ── */
+  --gc-content-max: 960px;
+  --gc-sidebar-width: 228px;
+  --gc-radius-sm: 8px;
+  --gc-radius: 10px;
+  --gc-radius-lg: 12px;
+  --gc-shadow: 0 1px 3px rgba(4, 30, 66, 0.06), 0 4px 14px rgba(4, 30, 66, 0.05);
+  --gc-shadow-hover: 0 4px 16px rgba(4, 30, 66, 0.1);
+}
+
+@keyframes gcPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: var(--font-barlow), system-ui, sans-serif;
-  color: #0f172a;
-  background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 50%, #e0f2fe 100%);
-  background-attachment: fixed;
+  font-family: var(--gc-font);
+  font-weight: var(--gc-weight-body);
+  color: var(--gc-text-primary);
+  background: var(--gc-bg);
   min-height: 100vh;
   font-size: 15px;
-  line-height: 1.6;
+  line-height: var(--gc-line-height);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -29,4 +95,8 @@ a {
 img {
   max-width: 100%;
   height: auto;
+}
+
+button {
+  font-family: inherit;
 }

@@ -1,120 +1,120 @@
 import type { Venue, VenueId } from "@/types/venue";
 
-/** Sixteen host stadiums — location metadata only. */
+/** Sixteen official host venues — FIFA World Cup 2026. */
 export const WC26_VENUES: readonly Venue[] = [
   {
-    id: "venue-atlanta",
-    name: "Mercedes-Benz Stadium",
-    city: "Atlanta",
-    country: "USA",
-    capacity: 71000,
-  },
-  {
-    id: "venue-boston",
-    name: "Gillette Stadium",
-    city: "Foxborough",
-    country: "USA",
-    capacity: 65878,
-  },
-  {
-    id: "venue-dallas",
-    name: "AT&T Stadium",
-    city: "Arlington",
-    country: "USA",
-    capacity: 80000,
-  },
-  {
-    id: "venue-houston",
-    name: "NRG Stadium",
-    city: "Houston",
-    country: "USA",
-    capacity: 72220,
-  },
-  {
-    id: "venue-kc",
-    name: "Arrowhead Stadium",
-    city: "Kansas City",
-    country: "USA",
-    capacity: 76416,
-  },
-  {
-    id: "venue-la",
-    name: "SoFi Stadium",
-    city: "Inglewood",
-    country: "USA",
-    capacity: 70000,
-  },
-  {
-    id: "venue-miami",
-    name: "Hard Rock Stadium",
-    city: "Miami Gardens",
-    country: "USA",
-    capacity: 65326,
-  },
-  {
-    id: "venue-nj",
-    name: "MetLife Stadium",
-    city: "East Rutherford",
-    country: "USA",
-    capacity: 82500,
-  },
-  {
-    id: "venue-philadelphia",
-    name: "Lincoln Financial Field",
-    city: "Philadelphia",
-    country: "USA",
-    capacity: 69796,
-  },
-  {
-    id: "venue-seattle",
-    name: "Lumen Field",
-    city: "Seattle",
-    country: "USA",
-    capacity: 68740,
-  },
-  {
-    id: "venue-sf",
-    name: "Levi's Stadium",
-    city: "Santa Clara",
-    country: "USA",
-    capacity: 68500,
-  },
-  {
-    id: "venue-toronto",
-    name: "BMO Field",
-    city: "Toronto",
-    country: "Canada",
-    capacity: 45736,
-  },
-  {
-    id: "venue-vancouver",
-    name: "BC Place",
-    city: "Vancouver",
-    country: "Canada",
-    capacity: 54500,
+    id: "venue-mexico-city",
+    name: "Mexico City Stadium",
+    city: "Mexico City",
+    country: "Mexico",
+    timezone: "America/Mexico_City",
   },
   {
     id: "venue-guadalajara",
-    name: "Estadio Akron",
-    city: "Zapopan",
+    name: "Guadalajara Stadium",
+    city: "Guadalajara",
     country: "Mexico",
-    capacity: 49850,
-  },
-  {
-    id: "venue-mexico-city",
-    name: "Estadio Azteca",
-    city: "Mexico City",
-    country: "Mexico",
-    capacity: 87523,
+    timezone: "America/Mexico_City",
   },
   {
     id: "venue-monterrey",
-    name: "Estadio BBVA",
-    city: "Guadalupe",
+    name: "Monterrey Stadium",
+    city: "Monterrey",
     country: "Mexico",
-    capacity: 53500,
+    timezone: "America/Monterrey",
   },
-];
+  {
+    id: "venue-toronto",
+    name: "Toronto Stadium",
+    city: "Toronto",
+    country: "Canada",
+    timezone: "America/Toronto",
+  },
+  {
+    id: "venue-vancouver",
+    name: "BC Place Vancouver",
+    city: "Vancouver",
+    country: "Canada",
+    timezone: "America/Vancouver",
+  },
+  {
+    id: "venue-la",
+    name: "Los Angeles Stadium",
+    city: "Los Angeles",
+    country: "USA",
+    timezone: "America/Los_Angeles",
+  },
+  {
+    id: "venue-sf",
+    name: "San Francisco Bay Area Stadium",
+    city: "Santa Clara",
+    country: "USA",
+    timezone: "America/Los_Angeles",
+  },
+  {
+    id: "venue-seattle",
+    name: "Seattle Stadium",
+    city: "Seattle",
+    country: "USA",
+    timezone: "America/Los_Angeles",
+  },
+  {
+    id: "venue-kc",
+    name: "Kansas City Stadium",
+    city: "Kansas City",
+    country: "USA",
+    timezone: "America/Chicago",
+  },
+  {
+    id: "venue-dallas",
+    name: "Dallas Stadium",
+    city: "Arlington",
+    country: "USA",
+    timezone: "America/Chicago",
+  },
+  {
+    id: "venue-houston",
+    name: "Houston Stadium",
+    city: "Houston",
+    country: "USA",
+    timezone: "America/Chicago",
+  },
+  {
+    id: "venue-atlanta",
+    name: "Atlanta Stadium",
+    city: "Atlanta",
+    country: "USA",
+    timezone: "America/New_York",
+  },
+  {
+    id: "venue-miami",
+    name: "Miami Stadium",
+    city: "Miami Gardens",
+    country: "USA",
+    timezone: "America/New_York",
+  },
+  {
+    id: "venue-nj",
+    name: "New York/New Jersey Stadium",
+    city: "East Rutherford",
+    country: "USA",
+    timezone: "America/New_York",
+  },
+  {
+    id: "venue-boston",
+    name: "Boston Stadium",
+    city: "Foxborough",
+    country: "USA",
+    timezone: "America/New_York",
+  },
+  {
+    id: "venue-philadelphia",
+    name: "Philadelphia Stadium",
+    city: "Philadelphia",
+    country: "USA",
+    timezone: "America/New_York",
+  },
+] as const;
 
 const venueById = new Map<VenueId, Venue>(
   WC26_VENUES.map((venue) => [venue.id, venue]),
@@ -124,5 +124,5 @@ export function getVenueById(id: VenueId): Venue | undefined {
   return venueById.get(id);
 }
 
-/** Total host venues in the placeholder dataset. */
+/** Total host venues. */
 export const WC26_VENUE_COUNT = 16;
