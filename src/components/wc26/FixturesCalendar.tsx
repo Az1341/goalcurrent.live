@@ -23,26 +23,39 @@ import {
   formatFixtureStatusLabel,
 } from "@/lib/wc26-live";
 import {
-  WC26_TV_REGIONS,
   buildCalendarDays,
   filterFixturesForPage,
-  fixtureStatusBadgeLabel,
   formatLongLocalDate,
   formatStageLabel,
   formatVisitorTimezone,
   getDistinctStages,
-  getTvChannels,
   localDateKey,
   pickDefaultDateKey,
   sortFixturesByKickoff,
   type FixturePageFilters,
   type Wc26TvRegionCode,
   classifyFixtureMatch,
+  type FixtureMatchClass,
 } from "@/lib/wc26-fixtures-page";
+import { formatVisitorKickoffTime } from "@/lib/wc26-format";
+import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
+import TvRegionSelect from "@/components/wc26/TvRegionSelect";
+import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import type { Wc26GroupId } from "@/types/group";
 import { WC26_GROUP_IDS } from "@/types/group";
 import Wc26GamesProgress from "./Wc26GamesProgress";
 import styles from "./wc26.module.css";
+
+function topStatusLabel(fixture: EffectiveFixture, matchClass: FixtureMatchClass): string {
+  if (matchClass === "live") {
+    const label = formatFixtureStatusLabel(fixture.status);
+    return label === "Live" ? "LIVE" : label;
+  }
+  if (matchClass === "ft") {
+    return formatFixtureStatusLabel(fixture.status);
+  }
+  return "Upcoming";
+}
 
 function FixtureMatchCard({
   fixture,
@@ -57,18 +70,28 @@ function FixtureMatchCard({
   const matchClass = classifyFixtureMatch(fixture);
   const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
   const groupPrefix = fixture.groupId ? `${groupLabel(fixture.groupId)} · ` : "";
-  const channels = getTvChannels(tvRegion);
   const score = getFixtureScore(fixture);
+  const kickoffLocal = formatVisitorKickoffTime(fixture.kickoffUtc);
+
+  const cardStateClass =
+    matchClass === "ft"
+      ? styles.fixMatchDone
+      : matchClass === "live"
+        ? styles.fixMatchLive
+        : styles.fixMatchUpcoming;
+
+  const statusClass =
+    matchClass === "live"
+      ? styles.fixStatusLive
+      : matchClass === "ft"
+        ? styles.fixStatusFt
+        : styles.fixStatusScheduled;
 
   return (
     <article
-      className={`${styles.fixMatch} ${
-        matchClass === "ft"
-          ? styles.fixMatchDone
-          : matchClass === "live"
-            ? styles.fixMatchLive
-            : ""
-      }`}
+      className={`${styles.fixMatch} ${cardStateClass}`}
+      data-match-state={matchClass}
+      aria-label={`${label} — ${topStatusLabel(fixture, matchClass)}`}
     >
       <div className={styles.fixMatchTop}>
         <div>
@@ -84,21 +107,13 @@ function FixtureMatchCard({
           ) : null}
         </div>
         <div className={styles.fixMatchStatusWrap}>
-          <span
-            className={`${styles.fixStatus} ${
-              matchClass === "live"
-                ? styles.fixStatusLive
-                : matchClass === "ft"
-                  ? styles.fixStatusFt
-                  : styles.fixStatusScheduled
-            }`}
-          >
+          <span className={`${styles.fixStatus} ${statusClass}`}>
             {matchClass === "live" ? (
               <span className={styles.fixLiveDot} aria-hidden="true">
                 ●
               </span>
             ) : null}
-            {fixtureStatusBadgeLabel(fixture)}
+            {topStatusLabel(fixture, matchClass)}
           </span>
           <FavouriteMatchButton matchId={fixture.id} label={label} />
         </div>
@@ -116,37 +131,38 @@ function FixtureMatchCard({
           </div>
         </div>
         <div className={styles.fixCentre}>
-          {score ? (
+          {matchClass === "live" ? (
             <>
-              <div className={styles.fixCentreTime}>
-                {score.home} – {score.away}
-              </div>
+              {score ? (
+                <div className={styles.fixCentreScore}>{score.home} – {score.away}</div>
+              ) : (
+                <div className={styles.fixCentreScore}>– – –</div>
+              )}
+              {fixture.elapsed != null ? (
+                <div className={styles.fixCentreMinute}>{fixture.elapsed}&apos;</div>
+              ) : (
+                <div className={styles.fixCentreNote}>
+                  {formatFixtureStatusLabel(fixture.status)}
+                </div>
+              )}
+            </>
+          ) : matchClass === "ft" ? (
+            <>
+              {score ? (
+                <div className={`${styles.fixCentreScore} ${styles.fixCentreScoreFt}`}>
+                  {score.home} – {score.away}
+                </div>
+              ) : (
+                <div className={styles.fixCentreScore}>– – –</div>
+              )}
               <div className={styles.fixCentreNote}>
                 {formatFixtureStatusLabel(fixture.status)}
-                {fixture.elapsed != null && matchClass === "live"
-                  ? ` · ${fixture.elapsed}'`
-                  : ""}
               </div>
-            </>
-          ) : matchClass === "upcoming" ? (
-            <>
-              <div className={styles.fixCentreTime}>
-                {new Intl.DateTimeFormat(undefined, {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                }).format(new Date(fixture.kickoffUtc))}
-              </div>
-              <div className={styles.fixCentreNote}>{formatVisitorTimezone()}</div>
             </>
           ) : (
             <>
-              <div className={styles.fixCentreStatus}>
-                {matchClass === "live" ? "Live" : "Full time"}
-              </div>
-              <div className={styles.fixCentreNote}>
-                {formatFixtureStatusLabel(fixture.status)}
-              </div>
+              <div className={styles.fixCentreKickoff}>{kickoffLocal}</div>
+              <div className={styles.fixCentreNote}>{formatVisitorTimezone()}</div>
             </>
           )}
         </div>
@@ -169,13 +185,7 @@ function FixtureMatchCard({
         </p>
         <div className={styles.fixExtrasActions}>
           <MatchDetailLink fixtureId={fixture.id} className={styles.fixDetailLink} />
-          <div className={styles.fixTv}>
-            {channels.map((channel) => (
-              <span key={channel} className={styles.fixTvChip}>
-                {channel}
-              </span>
-            ))}
-          </div>
+          <MatchTvBroadcast tvRegion={tvRegion} variant="chips" />
         </div>
       </div>
     </article>
@@ -190,11 +200,16 @@ export default function FixturesCalendar() {
   const [groupId, setGroupId] = useState<"" | Wc26GroupId>("");
   const [stage, setStage] = useState<FixturePageFilters["stage"]>("");
   const [status, setStatus] = useState<FixturePageFilters["status"]>("");
-  const [tvRegion, setTvRegion] = useState<Wc26TvRegionCode>("GB");
+  const { tvRegion, setTvRegion, ready: tvReady } = useWc26TvRegion();
   const [selectedDate, setSelectedDate] = useState("");
+  const [clientReady, setClientReady] = useState(false);
 
   const refreshFixtures = useCallback(() => {
     setFixtures(getEffectiveFixtures());
+  }, []);
+
+  useEffect(() => {
+    setClientReady(true);
   }, []);
 
   useEffect(() => {
@@ -213,8 +228,11 @@ export default function FixturesCalendar() {
     if (selectedDate && calendarDays.some((d) => d.dateKey === selectedDate)) {
       return selectedDate;
     }
+    if (!clientReady) {
+      return calendarDays[0]?.dateKey ?? "";
+    }
     return pickDefaultDateKey(calendarDays);
-  }, [calendarDays, selectedDate]);
+  }, [calendarDays, selectedDate, clientReady]);
 
   const stages = useMemo(() => getDistinctStages(fixtures), [fixtures]);
 
@@ -232,7 +250,7 @@ export default function FixturesCalendar() {
     [fixtures, search, groupId, stage, status, activeDateKey],
   );
 
-  const todayKey = localDateKey(new Date().toISOString());
+  const todayKey = clientReady ? localDateKey(new Date().toISOString()) : "";
 
   return (
     <section aria-labelledby="fixtures-calendar-heading" className={styles.fixturesCalendar}>
@@ -320,7 +338,7 @@ export default function FixturesCalendar() {
         <div className={styles.fixCalHead}>
           <div>
             <div className={styles.fixCalTitle}>Official Match Calendar</div>
-            <div className={styles.fixCalMeta}>
+            <div className={styles.fixCalMeta} suppressHydrationWarning>
               {activeDateKey
                 ? formatLongLocalDate(activeDateKey)
                 : "Select a match day"}
@@ -352,22 +370,14 @@ export default function FixturesCalendar() {
         </div>
       </section>
 
-      <div className={styles.fixTvBar}>
-        <strong>TV in:</strong>
-        <select
-          className={styles.fixTvSelect}
-          value={tvRegion}
-          onChange={(e) => setTvRegion(e.target.value as Wc26TvRegionCode)}
-          aria-label="TV region"
-        >
-          {WC26_TV_REGIONS.map((region) => (
-            <option key={region.code} value={region.code}>
-              {region.label}
-            </option>
-          ))}
-        </select>
-        <span className={styles.fixTzPill}>{formatVisitorTimezone()} times</span>
-      </div>
+      {tvReady ? (
+        <TvRegionSelect tvRegion={tvRegion} onChange={setTvRegion} />
+      ) : (
+        <div className={styles.fixTvBar} aria-hidden="true">
+          <strong>TV in:</strong>
+          <span className={styles.fixTvSelectPlaceholder}>Loading regions…</span>
+        </div>
+      )}
 
       {activeDateKey ? (
         <section className={styles.fixDayBlock} aria-labelledby="fix-day-head">
@@ -381,8 +391,10 @@ export default function FixturesCalendar() {
                 <div id="fix-day-head" className={styles.fixDayName}>
                   {formatLongLocalDate(activeDateKey)}
                 </div>
-                <div className={styles.fixDaySub}>
-                  Times in your local timezone ({formatVisitorTimezone()})
+                <div className={styles.fixDaySub} suppressHydrationWarning>
+                  {clientReady
+                    ? `Times in your local timezone (${formatVisitorTimezone()})`
+                    : "Times in your local timezone"}
                 </div>
               </div>
             </div>

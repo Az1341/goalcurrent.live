@@ -935,6 +935,11 @@
   letter-spacing: 0.04em;
 }
 
+.fixMetricsProgress {
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: -4px;
+}
+
 .fixFilters {
   display: grid;
   grid-template-columns: 1fr 150px 160px 150px;
@@ -1185,16 +1190,32 @@
   border: 1px solid var(--gc-border);
   border-radius: var(--gc-radius-lg);
   padding: 13px 14px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.fixMatchUpcoming {
+  background: var(--gc-card);
+  border-color: var(--gc-border);
 }
 
 .fixMatchDone {
-  border-color: rgba(21, 128, 61, 0.35);
-  background: linear-gradient(90deg, rgba(21, 128, 61, 0.06), var(--gc-surface));
+  border-color: rgba(21, 128, 61, 0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(21, 128, 61, 0.08) 0%,
+    var(--gc-surface) 38%
+  );
+  box-shadow: 0 0 0 1px rgba(21, 128, 61, 0.1);
 }
 
 .fixMatchLive {
-  border-color: var(--wc26-red-border);
-  background: linear-gradient(90deg, var(--wc26-red-soft), var(--gc-surface));
+  border-color: rgba(155, 27, 48, 0.55);
+  background: linear-gradient(
+    180deg,
+    rgba(155, 27, 48, 0.1) 0%,
+    var(--gc-surface) 42%
+  );
+  box-shadow: 0 0 0 2px rgba(155, 27, 48, 0.14);
 }
 
 .fixMatchTop {
@@ -1234,18 +1255,25 @@
 }
 
 .fixStatusScheduled {
-  background: var(--wc26-red-soft);
-  color: var(--wc26-accent);
+  background: rgba(92, 10, 26, 0.06);
+  color: var(--wc26-red-mid);
+  border: 1px solid rgba(155, 27, 48, 0.18);
 }
 
 .fixStatusLive {
-  background: rgba(227, 6, 19, 0.12);
-  color: var(--gc-red);
+  background: rgba(227, 6, 19, 0.14);
+  color: var(--wc26-red);
+  border: 1px solid rgba(155, 27, 48, 0.35);
+  font-weight: 800;
+  letter-spacing: 0.05em;
 }
 
 .fixStatusFt {
-  background: rgba(21, 128, 61, 0.12);
+  background: rgba(21, 128, 61, 0.14);
   color: var(--gc-success);
+  border: 1px solid rgba(21, 128, 61, 0.28);
+  font-weight: 800;
+  letter-spacing: 0.05em;
 }
 
 .fixLiveDot {
@@ -1255,16 +1283,18 @@
 
 .fixTeams {
   display: grid;
-  grid-template-columns: 1fr 105px 1fr;
+  grid-template-columns: 1fr 110px 1fr;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 4px 0 2px;
 }
 
 .fixTeam {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  min-width: 0;
   text-align: center;
 }
 
@@ -1288,6 +1318,40 @@
 
 .fixCentre {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.fixCentreScore {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--gc-text-primary);
+}
+
+.fixMatchLive .fixCentreScore {
+  color: var(--wc26-red);
+}
+
+.fixCentreScoreFt {
+  color: var(--gc-text-primary);
+}
+
+.fixCentreKickoff {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--wc26-accent);
+  line-height: 1.2;
+}
+
+.fixCentreMinute {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--wc26-red);
+  line-height: 1.2;
 }
 
 .fixCentreTime {
@@ -1354,6 +1418,26 @@
   justify-content: flex-end;
 }
 
+.fixTvWrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.fixTvRegionalLabel {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--gc-text-muted);
+  white-space: nowrap;
+}
+
+.fixTvSelectPlaceholder {
+  font-size: 0.8125rem;
+  color: var(--gc-text-muted);
+}
+
 .fixTvChip {
   background: var(--wc26-red-soft);
   border: 1px solid var(--wc26-red-border);
@@ -1362,6 +1446,30 @@
   font-weight: 600;
   font-size: 0.625rem;
   padding: 4px 7px;
+}
+
+.fixTvUnavailable {
+  font-size: 0.6875rem;
+  color: var(--gc-text-muted);
+  line-height: 1.4;
+}
+
+.fixTvInline {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--wc26-accent);
+  margin-top: 4px;
+}
+
+.fixtureTvRow {
+  margin-top: 8px;
+}
+
+.favListTv {
+  display: flex;
+  margin-top: 6px;
+  justify-content: flex-start;
 }
 
 .fixEmpty {
@@ -1409,7 +1517,20 @@
   }
 
   .fixTeams {
-    grid-template-columns: 1fr 82px 1fr;
+    grid-template-columns: 1fr 88px 1fr;
+    gap: 6px;
+  }
+
+  .fixCentreScore {
+    font-size: 1.45rem;
+  }
+
+  .fixCentreKickoff {
+    font-size: 1.05rem;
+  }
+
+  .fixTeamName {
+    font-size: 0.6875rem;
   }
 
   .fixExtras {

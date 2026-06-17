@@ -38,15 +38,6 @@ export const MORE_NAV: NavLinkItem[] = [
   ...WC26_NAV,
 ];
 
-/** Competition strip below master header */
-export const COMPETITION_STRIP: NavLinkItem[] = [
-  { href: "/worldcup2026", label: "World Cup 2026" },
-  { href: "/live", label: "Premier League" },
-  { href: "/live", label: "Champions League" },
-  { href: "/live", label: "Europa League" },
-  { href: "/live", label: "International Football" },
-];
-
 /** About and contact */
 export const SITE_NAV: NavItem[] = [
   { href: "/about", label: "About" },

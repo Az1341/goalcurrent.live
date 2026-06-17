@@ -110,6 +110,33 @@
   color: var(--gc-text-secondary);
 }
 
+.watchOn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  box-shadow: var(--gc-shadow);
+}
+
+.watchOnLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--wc26-accent);
+}
+
+.watchOnChannels {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--gc-text-primary);
+}
+
 .section {
   margin-bottom: 18px;
 }

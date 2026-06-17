@@ -13,6 +13,23 @@ import styles from "./match.module.css";
 
 import type { HomepageMatchView } from "@/lib/wc26-live";
 
+const API_UNAVAILABLE_MESSAGE =
+  "Unable to load match details from the API. Try refreshing the page.";
+
+function detailEmptyMessage(
+  detail: MatchDetailPayload,
+  emptyConfigured: string,
+  emptyUnconfigured: string,
+): string {
+  if (detail.configured && !detail.apiAvailable) {
+    return API_UNAVAILABLE_MESSAGE;
+  }
+  if (detail.configured) {
+    return emptyConfigured;
+  }
+  return emptyUnconfigured;
+}
+
 type MatchDetailHeaderProps = {
   header: HomepageMatchView;
 };
@@ -84,9 +101,11 @@ export function MatchTimeline({ detail, loading }: MatchTimelineProps) {
           <p className={styles.emptyState}>Loading match events…</p>
         ) : detail.events.length === 0 ? (
           <p className={styles.emptyState}>
-            {detail.configured
-              ? "No events recorded yet. Goals, cards and substitutions will appear here when the live feed provides them."
-              : "Match events will appear when server API sync is configured and the match is underway or finished."}
+            {detailEmptyMessage(
+              detail,
+              "No events recorded yet. Goals, cards and substitutions will appear here when the live feed provides them.",
+              "Match events will appear when server API sync is configured and the match is underway or finished.",
+            )}
           </p>
         ) : (
           <ul className={styles.timelineList}>
@@ -126,8 +145,11 @@ export function MatchStatistics({ detail, loading }: MatchStatisticsProps) {
           <p className={styles.emptyState}>Loading statistics…</p>
         ) : detail.statistics.length === 0 ? (
           <p className={styles.emptyState}>
-            Team statistics will appear when the match is in progress or completed
-            and the API feed is available.
+            {detailEmptyMessage(
+              detail,
+              "Team statistics will appear when the match is in progress or completed and the API feed is available.",
+              "Team statistics will appear when server API sync is configured and the match is underway or finished.",
+            )}
           </p>
         ) : (
           detail.statistics.map((stat) => (
@@ -223,8 +245,11 @@ export function MatchLineups({
           <p className={styles.emptyState}>Loading lineups…</p>
         ) : !detail.lineups.home && !detail.lineups.away ? (
           <p className={styles.emptyState}>
-            Lineups will be published closer to kickoff when the API feed is
-            available.
+            {detailEmptyMessage(
+              detail,
+              "Lineups will be published closer to kickoff when the API feed is available.",
+              "Lineups will appear when server API sync is configured and the match is underway or finished.",
+            )}
           </p>
         ) : (
           <div className={styles.lineupGrid}>

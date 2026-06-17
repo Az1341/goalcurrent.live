@@ -8,6 +8,8 @@ import { isLiveMatchStatus } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useMatchDetail } from "@/lib/use-match-detail";
 import MatchRelatedLinks from "@/components/match/MatchRelatedLinks";
+import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
+import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import {
   MatchDetailHeader,
   MatchLineups,
@@ -28,6 +30,7 @@ export default function MatchDetailContent({ fixtureId }: MatchDetailContentProp
     fixtureId,
     fixture ? isLiveMatchStatus(fixture.status) : false,
   );
+  const { tvRegion } = useWc26TvRegion();
 
   if (!fixture) {
     return (
@@ -58,6 +61,7 @@ export default function MatchDetailContent({ fixtureId }: MatchDetailContentProp
       </nav>
 
       <MatchDetailHeader header={header} />
+      <MatchTvBroadcast tvRegion={tvRegion} variant="detail" />
       <MatchTimeline detail={detail} loading={loading} />
       <MatchStatistics detail={detail} loading={loading} />
       <MatchLineups

@@ -212,45 +212,6 @@
   display: block;
 }
 
-.compStripWrap {
-  background: #ece4e7;
-  border-bottom: 1px solid #ddd0d5;
-}
-
-.compStrip {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  padding: 10px 1vw;
-  max-width: 98vw;
-  margin: 0 auto;
-}
-
-.compStrip::-webkit-scrollbar {
-  display: none;
-}
-
-.compPill {
-  flex-shrink: 0;
-  display: inline-block;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: #4a3540;
-  background: #ffffff;
-  border: 1px solid #ddd0d5;
-  white-space: nowrap;
-}
-
-.compPillActive {
-  background: #9b1b30;
-  border-color: #9b1b30;
-  color: #ffffff;
-}
-
 .liveRibbon {
   display: flex;
   align-items: center;

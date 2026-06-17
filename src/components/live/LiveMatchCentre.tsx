@@ -1,46 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useMemo } from "react";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
+import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import TeamFlag from "@/components/TeamFlag";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { getTeamById, getVenueById, groupLabel } from "@/data/wc26";
+import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import {
-  getEffectiveFixtures,
   getFixtureScore,
-  WC26_FIXTURES_UPDATED_EVENT,
+  isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
-import { formatKickoffUtc } from "@/lib/wc26-format";
+import { formatVisitorKickoff } from "@/lib/wc26-format";
 import {
   formatFixtureStatusLabel,
   isLiveMatchStatus,
   partitionFixturesForLiveCentre,
-  type LiveFixtureBuckets,
 } from "@/lib/wc26-live";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
+import type { Wc26TvRegionCode } from "@/lib/wc26-fixtures-page";
 import styles from "./live.module.css";
-
-function computeBuckets(): LiveFixtureBuckets {
-  return partitionFixturesForLiveCentre(getEffectiveFixtures());
-}
 
 type LiveSectionProps = {
   id: string;
   title: string;
   fixtures: readonly EffectiveFixture[];
+  tvRegion: Wc26TvRegionCode;
   emptyMessage?: string;
   showLiveIndicator?: boolean;
 };
 
-function LiveFixtureRow({ fixture }: { fixture: EffectiveFixture }) {
+function LiveFixtureRow({
+  fixture,
+  tvRegion,
+}: {
+  fixture: EffectiveFixture;
+  tvRegion: Wc26TvRegionCode;
+}) {
   const home = getTeamById(fixture.homeTeamId);
   const away = getTeamById(fixture.awayTeamId);
   const venue = getVenueById(fixture.venueId);
   const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
   const groupText = fixture.groupId ? groupLabel(fixture.groupId) : null;
-  const statusLabel = formatFixtureStatusLabel(fixture.status);
   const isLive = isLiveMatchStatus(fixture.status);
+  const isCompleted = isEffectiveFixtureCompleted(fixture);
+  const statusLabel = isCompleted
+    ? formatFixtureStatusLabel(fixture.status === "scheduled" ? "ft" : fixture.status)
+    : formatFixtureStatusLabel(fixture.status);
   const score = getFixtureScore(fixture);
 
   return (
@@ -54,7 +62,7 @@ function LiveFixtureRow({ fixture }: { fixture: EffectiveFixture }) {
           </span>
         )}
         <span className={styles.fixtureKickoff}>
-          {formatKickoffUtc(fixture.kickoffUtc)} UTC
+          {formatVisitorKickoff(fixture.kickoffUtc)}
         </span>
         <span
           className={`${styles.fixtureStatus} ${isLive ? styles.fixtureStatusLive : ""}`}
@@ -84,6 +92,9 @@ function LiveFixtureRow({ fixture }: { fixture: EffectiveFixture }) {
           {venue.name}, {venue.city}
         </div>
       ) : null}
+      <div className={styles.fixtureTvRow}>
+        <MatchTvBroadcast tvRegion={tvRegion} variant="chips" />
+      </div>
     </li>
   );
 }
@@ -92,6 +103,7 @@ function LiveSection({
   id,
   title,
   fixtures,
+  tvRegion,
   emptyMessage,
   showLiveIndicator,
 }: LiveSectionProps) {
@@ -114,7 +126,7 @@ function LiveSection({
       {fixtures.length > 0 ? (
         <ul className={styles.fixtureList}>
           {fixtures.map((fixture) => (
-            <LiveFixtureRow key={fixture.id} fixture={fixture} />
+            <LiveFixtureRow key={fixture.id} fixture={fixture} tvRegion={tvRegion} />
           ))}
         </ul>
       ) : null}
@@ -123,17 +135,12 @@ function LiveSection({
 }
 
 export default function LiveMatchCentre() {
-  const [buckets, setBuckets] = useState<LiveFixtureBuckets>(() => computeBuckets());
-
-  const refresh = useCallback(() => {
-    setBuckets(computeBuckets());
-  }, []);
-
-  useEffect(() => {
-    refresh();
-    window.addEventListener(WC26_FIXTURES_UPDATED_EVENT, refresh);
-    return () => window.removeEventListener(WC26_FIXTURES_UPDATED_EVENT, refresh);
-  }, [refresh]);
+  const fixtures = useEffectiveFixtures();
+  const buckets = useMemo(
+    () => partitionFixturesForLiveCentre(fixtures),
+    [fixtures],
+  );
+  const { tvRegion } = useWc26TvRegion();
 
   return (
     <main className={styles.content}>
@@ -150,6 +157,7 @@ export default function LiveMatchCentre() {
         id="live-now-heading"
         title="Live now"
         fixtures={buckets.live}
+        tvRegion={tvRegion}
         emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
         showLiveIndicator
       />
@@ -158,6 +166,7 @@ export default function LiveMatchCentre() {
         id="today-heading"
         title="Today"
         fixtures={buckets.today}
+        tvRegion={tvRegion}
         emptyMessage="No World Cup matches scheduled for today in the local schedule."
       />
 
@@ -165,12 +174,14 @@ export default function LiveMatchCentre() {
         id="upcoming-heading"
         title="Upcoming World Cup fixtures"
         fixtures={buckets.upcoming}
+        tvRegion={tvRegion}
       />
 
       <LiveSection
         id="completed-heading"
         title="Completed"
         fixtures={buckets.completed}
+        tvRegion={tvRegion}
         emptyMessage="No completed matches yet. Full-time results appear when API sync returns finished fixtures."
       />
 

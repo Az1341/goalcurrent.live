@@ -3,10 +3,14 @@ import type { Wc26GroupId } from "@/types/group";
 import { WC26_GROUP_IDS } from "@/types/group";
 import { getTeamById, getVenueById } from "@/data/wc26";
 import {
+  formatVisitorKickoffTime,
+  formatVisitorTimezone as formatVisitorTimezoneFromFormat,
+} from "@/lib/wc26-format";
+import {
   formatFixtureStatusLabel,
   isLiveMatchStatus,
 } from "@/lib/wc26-live";
-import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
+import { isEffectiveFixtureCompleted } from "@/lib/wc26-fixture-overlay";
 
 export type FixtureStatusFilter = "" | "upcoming" | "live" | "ft";
 
@@ -50,6 +54,44 @@ export function getTvChannels(region: Wc26TvRegionCode): readonly string[] {
   return TV_BY_REGION[region] ?? TV_BY_REGION.GB;
 }
 
+export function isWc26TvRegionCode(value: string): value is Wc26TvRegionCode {
+  return (WC26_TV_REGIONS as readonly { code: string }[]).some(
+    (entry) => entry.code === value,
+  );
+}
+
+export function formatTvBroadcastLine(region: Wc26TvRegionCode): string {
+  return getTvChannels(region).join(" / ");
+}
+
+export function getTvBroadcastDisplay(region: Wc26TvRegionCode | null): {
+  available: boolean;
+  line: string;
+  regionalLine: string;
+} {
+  if (!region || !isWc26TvRegionCode(region)) {
+    return {
+      available: false,
+      line: "Broadcast information unavailable for your region",
+      regionalLine: "Broadcast information unavailable for your region",
+    };
+  }
+  const channels = getTvChannels(region);
+  if (channels.length === 0) {
+    return {
+      available: false,
+      line: "Broadcast information unavailable for your region",
+      regionalLine: "Broadcast information unavailable for your region",
+    };
+  }
+  const line = channels.join(" / ");
+  return {
+    available: true,
+    line,
+    regionalLine: `Regional coverage: ${line}`,
+  };
+}
+
 function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
@@ -61,22 +103,11 @@ export function localDateKey(iso: string): string {
 }
 
 export function formatLocalKickoff(iso: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(new Date(iso));
+  return formatVisitorKickoffTime(iso);
 }
 
 export function formatVisitorTimezone(): string {
-  try {
-    const parts = new Intl.DateTimeFormat(undefined, {
-      timeZoneName: "short",
-    }).formatToParts(new Date());
-    return parts.find((p) => p.type === "timeZoneName")?.value ?? "Local";
-  } catch {
-    return "Local";
-  }
+  return formatVisitorTimezoneFromFormat();
 }
 
 export function formatLongLocalDate(dateKey: string): string {
@@ -113,11 +144,13 @@ export function formatStageLabel(stage: FixtureStage): string {
 
 export type FixtureMatchClass = "live" | "ft" | "upcoming";
 
-export function classifyFixtureMatch(fixture: Fixture): FixtureMatchClass {
+export function classifyFixtureMatch(
+  fixture: Fixture & { readonly homeScore?: number; readonly awayScore?: number },
+): FixtureMatchClass {
   if (isLiveMatchStatus(fixture.status)) {
     return "live";
   }
-  if (isCompletedMatchStatus(fixture.status)) {
+  if (isEffectiveFixtureCompleted(fixture)) {
     return "ft";
   }
   return "upcoming";

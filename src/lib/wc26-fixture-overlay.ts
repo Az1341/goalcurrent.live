@@ -1,4 +1,5 @@
 import { WC26_FIXTURES } from "@/data/wc26";
+import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import type { Fixture, FixtureStatus } from "@/types/fixture";
 import type { FixtureOverlayEntry } from "@/types/fixture-overlay";
 
@@ -118,4 +119,18 @@ export function getFixtureScore(
     return { home: fixture.homeScore, away: fixture.awayScore };
   }
   return null;
+}
+
+/** True when overlay status or synced scores indicate a finished match. */
+export function isEffectiveFixtureCompleted(
+  fixture: EffectiveFixture,
+  now: Date = new Date(),
+): boolean {
+  if (isCompletedMatchStatus(fixture.status)) {
+    return true;
+  }
+  const score = getFixtureScore(fixture);
+  return (
+    score !== null && new Date(fixture.kickoffUtc).getTime() <= now.getTime()
+  );
 }

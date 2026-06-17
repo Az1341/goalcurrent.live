@@ -3,13 +3,14 @@ import type { TeamId } from "@/types/team";
 import { getTeamById, getVenueById, groupLabel } from "@/data/wc26";
 import {
   getFixtureScore,
+  isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
-import { formatKickoffUtc } from "@/lib/wc26-format";
 import {
-  formatLocalKickoff,
-  formatVisitorTimezone,
-} from "@/lib/wc26-fixtures-page";
+  formatVisitorKickoff,
+  formatVisitorKickoffTime,
+} from "@/lib/wc26-format";
+import { localDateKey } from "@/lib/wc26-fixtures-page";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 const LIVE_STATUSES = new Set([
   "live",
@@ -37,15 +38,11 @@ export function isLiveMatchStatus(status: FixtureStatus | string): boolean {
   return LIVE_STATUSES.has(normalizeStatus(String(status)));
 }
 
-function utcDateKey(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
 export type LiveFixtureBuckets = {
-  readonly live: readonly Fixture[];
-  readonly today: readonly Fixture[];
-  readonly upcoming: readonly Fixture[];
-  readonly completed: readonly Fixture[];
+  readonly live: readonly EffectiveFixture[];
+  readonly today: readonly EffectiveFixture[];
+  readonly upcoming: readonly EffectiveFixture[];
+  readonly completed: readonly EffectiveFixture[];
 };
 
 function sortByKickoffAsc(a: Fixture, b: Fixture): number {
@@ -58,15 +55,15 @@ function sortByKickoffDesc(a: Fixture, b: Fixture): number {
 
 /** Partition effective fixtures into Live Match Centre sections. */
 export function partitionFixturesForLiveCentre(
-  fixtures: readonly Fixture[],
+  fixtures: readonly EffectiveFixture[],
   now: Date = new Date(),
 ): LiveFixtureBuckets {
-  const live: Fixture[] = [];
-  const today: Fixture[] = [];
-  const upcoming: Fixture[] = [];
-  const completed: Fixture[] = [];
+  const live: EffectiveFixture[] = [];
+  const today: EffectiveFixture[] = [];
+  const upcoming: EffectiveFixture[] = [];
+  const completed: EffectiveFixture[] = [];
 
-  const todayKey = utcDateKey(now);
+  const todayKey = localDateKey(now.toISOString());
 
   for (const fixture of fixtures) {
     const { status } = fixture;
@@ -76,15 +73,16 @@ export function partitionFixturesForLiveCentre(
       continue;
     }
 
-    if (isCompletedMatchStatus(status)) {
+    if (isEffectiveFixtureCompleted(fixture, now)) {
       completed.push(fixture);
       continue;
     }
 
-    const kickoffKey = utcDateKey(new Date(fixture.kickoffUtc));
+    const kickoffAt = new Date(fixture.kickoffUtc);
+    const kickoffKey = localDateKey(fixture.kickoffUtc);
     if (kickoffKey === todayKey) {
       today.push(fixture);
-    } else {
+    } else if (kickoffAt.getTime() > now.getTime()) {
       upcoming.push(fixture);
     }
   }
@@ -158,7 +156,7 @@ function classifyHomepageMatch(fixture: EffectiveFixture): HomepageMatchClass {
   if (isLiveMatchStatus(fixture.status)) {
     return "live";
   }
-  if (isCompletedMatchStatus(fixture.status)) {
+  if (isEffectiveFixtureCompleted(fixture)) {
     return "ft";
   }
   return "upcoming";
@@ -175,7 +173,7 @@ function homepageStatusLabel(fixture: EffectiveFixture, matchClass: HomepageMatc
   if (matchClass === "ft") {
     return formatFixtureStatusLabel(fixture.status);
   }
-  return formatLocalKickoff(fixture.kickoffUtc);
+  return formatVisitorKickoffTime(fixture.kickoffUtc);
 }
 
 export function buildHomepageMatchView(fixture: EffectiveFixture): HomepageMatchView {
@@ -196,7 +194,7 @@ export function buildHomepageMatchView(fixture: EffectiveFixture): HomepageMatch
     matchClass,
     statusLabel: homepageStatusLabel(fixture, matchClass),
     score: getFixtureScore(fixture),
-    kickoffLabel: `${formatKickoffUtc(fixture.kickoffUtc)} UTC · ${formatVisitorTimezone()}`,
+    kickoffLabel: formatVisitorKickoff(fixture.kickoffUtc),
     venueLabel: venue ? `${venue.name}, ${venue.city}` : "",
     roundLabel,
     elapsed: fixture.elapsed ?? null,

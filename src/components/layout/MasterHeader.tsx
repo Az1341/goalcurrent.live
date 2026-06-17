@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
-  COMPETITION_STRIP,
   MAIN_NAV,
   MORE_NAV,
   isMainNavActive,
@@ -123,18 +122,6 @@ export default function MasterHeader() {
             );
           })}
 
-          <div className={styles.mobileSectionLabel}>Competitions</div>
-          {COMPETITION_STRIP.map((comp) => (
-            <Link
-              key={comp.label}
-              href={comp.href}
-              className={styles.mobileLink}
-              onClick={closeAll}
-            >
-              {comp.label}
-            </Link>
-          ))}
-
           <div className={styles.mobileSectionLabel}>More — World Cup 2026</div>
           {MORE_NAV.map((link) => (
             <Link
@@ -148,20 +135,6 @@ export default function MasterHeader() {
           ))}
         </nav>
       </header>
-
-      <div className={styles.compStripWrap}>
-        <nav aria-label="Competitions" className={styles.compStrip}>
-          {COMPETITION_STRIP.map((comp) => (
-            <Link
-              key={comp.label}
-              href={comp.href}
-              className={`${styles.compPill} ${comp.label === "World Cup 2026" ? styles.compPillActive : ""}`}
-            >
-              {comp.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
 
       <LiveRibbon />
     </div>

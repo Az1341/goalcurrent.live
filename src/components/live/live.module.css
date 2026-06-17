@@ -168,6 +168,10 @@
   color: var(--gc-text-muted);
 }
 
+.fixtureTvRow {
+  margin-top: 8px;
+}
+
 .hubBack {
   margin: 8px 0 28px;
   font-size: 0.8125rem;

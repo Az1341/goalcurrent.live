@@ -8,7 +8,7 @@ import {
   removeFavouriteTeam,
 } from "@/lib/favourites";
 import { useFavourites } from "@/lib/use-favourites";
-import { formatKickoffUtc } from "@/lib/wc26-format";
+import { formatVisitorKickoff } from "@/lib/wc26-format";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
 import {
@@ -16,6 +16,8 @@ import {
   getTeamById,
   groupLabel,
 } from "@/data/wc26";
+import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
+import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import layoutStyles from "@/components/layout/layout.module.css";
 import styles from "@/components/wc26/wc26.module.css";
 
@@ -25,6 +27,7 @@ const COMPETITION_LABELS: Record<string, string> = {
 
 export default function FavouritesPageContent() {
   const { teams, matches, competitions } = useFavourites();
+  const { tvRegion } = useWc26TvRegion();
   const hasAny =
     teams.length > 0 || matches.length > 0 || competitions.length > 0;
 
@@ -105,8 +108,13 @@ export default function FavouritesPageContent() {
                       {away ? <TeamFlag teamId={away.id} size={24} /> : null}
                       <span className={styles.favListLabel}>{label}</span>
                       <span className={styles.favListMeta}>
-                        {formatKickoffUtc(wc26Fixture.kickoffUtc)} UTC
+                        {formatVisitorKickoff(wc26Fixture.kickoffUtc)}
                       </span>
+                      <MatchTvBroadcast
+                        tvRegion={tvRegion}
+                        variant="chips"
+                        className={styles.favListTv}
+                      />
                     </Link>
                     <button
                       type="button"
