@@ -18,6 +18,15 @@ function emptyResponse(phase?: string): Wc26ScoresApiResponse {
   };
 }
 
+function isUpstreamQuotaError(message: string): boolean {
+  const lower = message.toLowerCase();
+  return (
+    lower.includes("ratelimit") ||
+    lower.includes("too many requests") ||
+    lower.includes("request limit")
+  );
+}
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const { searchParams } = request.nextUrl;
   const live = searchParams.get("live");
@@ -78,6 +87,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("[api/wc26/scores]", message);
+
+    if (isUpstreamQuotaError(message)) {
+      return NextResponse.json(emptyResponse("rate-limited"), {
+        status: 200,
+        headers: { "Cache-Control": "no-store" },
+      });
+    }
+
     return NextResponse.json(
       { error: "Failed to fetch WC26 match data", detail: message },
       { status: 500 },

@@ -1,8 +1,10 @@
 import type { GroupStandings } from "@/types/standing";
 import { getTeamById } from "@/data/wc26";
 import { isQualifyingStandingPosition } from "@/lib/wc26-standings";
+import type { GroupFormResult } from "@/lib/wc26-group-hub";
 import TeamFlag from "@/components/TeamFlag";
 import TeamLink from "@/components/wc26/TeamLink";
+import type { TeamId } from "@/types/team";
 import styles from "./wc26.module.css";
 
 const STANDINGS_COLUMNS = [
@@ -15,19 +17,47 @@ const STANDINGS_COLUMNS = [
   { key: "goalsAgainst", label: "GA" },
   { key: "goalDifference", label: "GD" },
   { key: "points", label: "Pts" },
-];
+] as const;
 
 type StandingsTableProps = {
   standings: GroupStandings;
   title?: string;
   qualifyingSpots?: number;
+  formByTeamId?: ReadonlyMap<TeamId, readonly GroupFormResult[]>;
 };
+
+function FormBadges({ form }: { form: readonly GroupFormResult[] }) {
+  if (form.length === 0) {
+    return <span className={styles.formEmpty}>—</span>;
+  }
+
+  return (
+    <span className={styles.formBadges} aria-label={`Form: ${form.join(" ")}`}>
+      {form.map((result, index) => (
+        <span
+          key={`${result}-${index}`}
+          className={
+            result === "W"
+              ? styles.formWin
+              : result === "D"
+                ? styles.formDraw
+                : styles.formLoss
+          }
+        >
+          {result}
+        </span>
+      ))}
+    </span>
+  );
+}
 
 export default function StandingsTable({
   standings,
   title,
   qualifyingSpots = 0,
+  formByTeamId,
 }: StandingsTableProps) {
+  const showForm = Boolean(formByTeamId);
   return (
     <div className={styles.standingsShell}>
       {title ? <div className={styles.standingsHead}>{title}</div> : null}
@@ -38,11 +68,16 @@ export default function StandingsTable({
               <th
                 key={col.key}
                 scope="col"
-                className={col.align === "left" ? styles.colTeam : undefined}
+                className={col.key === "team" ? styles.colTeam : undefined}
               >
                 {col.label}
               </th>
             ))}
+            {showForm ? (
+              <th scope="col" className={styles.colForm}>
+                Form
+              </th>
+            ) : null}
           </tr>
         </thead>
         <tbody>
@@ -85,6 +120,11 @@ export default function StandingsTable({
                 <td>{row.goalsAgainst}</td>
                 <td>{row.goalDifference}</td>
                 <td>{row.points}</td>
+                {showForm ? (
+                  <td className={styles.colForm}>
+                    <FormBadges form={formByTeamId?.get(row.teamId) ?? []} />
+                  </td>
+                ) : null}
               </tr>
             );
           })}

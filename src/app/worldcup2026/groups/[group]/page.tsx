@@ -4,13 +4,17 @@ import { notFound, redirect } from "next/navigation";
 
 import GroupPageContent from "@/components/wc26/GroupPageContent";
 
-import { WC26_GROUP_IDS, groupLabel, isWc26GroupId } from "@/data/wc26";
+import { WC26_GROUP_IDS, isWc26GroupId } from "@/data/wc26";
 
 import type { Wc26GroupId } from "@/types/group";
 
 import { groupHref } from "@/lib/wc26-groups";
 
 import { buildPageMetadata } from "@/lib/page-metadata";
+import {
+  groupHubDescription,
+  groupHubTitle,
+} from "@/lib/wc26-group-hub";
 
 
 
@@ -61,8 +65,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 
   return buildPageMetadata({
-    title: `${groupLabel(groupId)} — World Cup 2026`,
-    description: `FIFA World Cup 2026 ${groupLabel(groupId)} — standings, fixtures and teams on GoalCurrent.online.`,
+    title: groupHubTitle(groupId),
+    description: groupHubDescription(groupId),
     path: groupHref(groupId),
   });
 
