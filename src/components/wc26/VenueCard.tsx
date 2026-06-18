@@ -4,7 +4,11 @@ import { useId } from "react";
 import type { Venue } from "@/types/venue";
 import TeamFlag from "@/components/TeamFlag";
 import { getHostCountryTeamId } from "@/lib/host-country-flag";
-import type { VenueStats } from "@/lib/wc26-venue-stats";
+import {
+  buildVenueDescription,
+  formatVenueTimezoneLabel,
+  type VenueStats,
+} from "@/lib/wc26-venue-stats";
 import styles from "./wc26.module.css";
 
 type VenueCardProps = {
@@ -24,6 +28,8 @@ export default function VenueCard({
 }: VenueCardProps) {
   const panelId = useId();
   const hostTeamId = getHostCountryTeamId(venue.country);
+  const description = buildVenueDescription(venue, stats);
+  const timezoneLabel = formatVenueTimezoneLabel(venue.timezone);
 
   return (
     <div
@@ -78,9 +84,14 @@ export default function VenueCard({
               </div>
             </div>
           </div>
+          <p className={styles.venuePanelDescription}>{description}</p>
           <dl className={styles.venuePanelFacts}>
             <div>
-              <dt>Host city</dt>
+              <dt>Stadium</dt>
+              <dd>{venue.name}</dd>
+            </div>
+            <div>
+              <dt>City</dt>
               <dd>{venue.city}</dd>
             </div>
             <div>
@@ -93,31 +104,34 @@ export default function VenueCard({
                 <dd>{venue.capacity.toLocaleString("en-GB")}</dd>
               </div>
             ) : null}
-            {stats.matchCount > 0 ? (
+            <div>
+              <dt>Matches hosted</dt>
+              <dd>
+                {stats.matchCount > 0
+                  ? `${stats.matchCount} group-stage ${stats.matchCount === 1 ? "match" : "matches"}`
+                  : "No group-stage matches on current schedule"}
+              </dd>
+            </div>
+            <div>
+              <dt>Opening match</dt>
+              <dd>
+                {stats.hostsOpeningMatch
+                  ? "Yes — tournament opener (Match 1)"
+                  : "Not on current schedule"}
+              </dd>
+            </div>
+            <div>
+              <dt>Final</dt>
+              <dd>
+                {stats.hostsFinal
+                  ? "Yes — hosts the World Cup final"
+                  : "Not on current schedule"}
+              </dd>
+            </div>
+            {timezoneLabel ? (
               <div>
-                <dt>Matches hosted</dt>
-                <dd>
-                  {stats.matchCount} group-stage{" "}
-                  {stats.matchCount === 1 ? "match" : "matches"}
-                </dd>
-              </div>
-            ) : null}
-            {stats.hostsOpeningMatch ? (
-              <div>
-                <dt>Opening match</dt>
-                <dd>Hosts tournament opener (Match 1)</dd>
-              </div>
-            ) : null}
-            {stats.hostsFinal ? (
-              <div>
-                <dt>Final</dt>
-                <dd>Hosts the World Cup final</dd>
-              </div>
-            ) : null}
-            {venue.timezone ? (
-              <div>
-                <dt>Timezone</dt>
-                <dd>{venue.timezone}</dd>
+                <dt>Time zone</dt>
+                <dd>{timezoneLabel}</dd>
               </div>
             ) : null}
           </dl>

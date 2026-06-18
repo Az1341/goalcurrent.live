@@ -32,25 +32,9 @@ export default function VenuesSection() {
       </h2>
 
       <p className={styles.phaseNote}>
-        World Cup 2026 venues across USA, Canada and Mexico. {WC26_VENUE_COUNT}{" "}
-        host stadiums from the verified FIFA group-stage schedule — hover or tap a
-        venue for match counts and tournament roles.
+        {WC26_VENUE_COUNT} host stadiums on the verified FIFA schedule — hover or tap
+        a card for venue details, match counts and tournament roles.
       </p>
-
-      <ul className={styles.venueSeoList} aria-label="World Cup 2026 venue summary">
-        {WC26_VENUES.map((venue) => {
-          const stats = getVenueStats(venue.id);
-          return (
-            <li key={venue.id}>
-              {venue.name} — {venue.city}, {venue.country}.
-              {stats.matchCount > 0
-                ? ` ${stats.matchCount} group-stage matches scheduled.`
-                : ""}
-              {stats.hostsOpeningMatch ? " Hosts the tournament opening match." : ""}
-            </li>
-          );
-        })}
-      </ul>
 
       <div className={styles.venueGrid}>
         {WC26_VENUES.map((venue) => {
