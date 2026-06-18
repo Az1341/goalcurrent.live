@@ -20,9 +20,6 @@ export const metadata: Metadata = {
   },
   description:
     "GoalCurrent.online — live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "GoalCurrent.online — FIFA World Cup 2026",
     description:

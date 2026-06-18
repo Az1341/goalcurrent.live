@@ -18,7 +18,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Groups",
     titleHighlight: "Groups",
     description:
-      "All twelve groups for the expanded 48-team tournament. Select a group to view standings and fixtures in a later phase.",
+      "All twelve groups for the expanded 48-team tournament. Browse each group for live standings, fixtures and qualified teams.",
     hubDescription: "All 12 groups (A–L) for the 48-team tournament.",
   },
   {
@@ -28,7 +28,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Fixtures",
     titleHighlight: "Fixtures",
     description:
-      "Full tournament schedule — group stage, knockout rounds, dates, kickoffs and venues. Match data will be added in a later phase.",
+      "Full World Cup 2026 group-stage schedule — all 72 matches with dates, UTC kickoffs, venues and links to each match centre.",
     hubDescription: "Complete schedule for all 104 tournament matches.",
   },
   {
@@ -38,7 +38,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Standings",
     titleHighlight: "Standings",
     description:
-      "Live group tables with P, W, D, L, GF, GA, GD and Pts for all twelve groups. Standings will be calculated in a later phase.",
+      "Live group tables for all twelve groups — P, W, D, L, GF, GA, GD and Pts updated from verified match results.",
     hubDescription: "Group tables for all twelve groups (A–L).",
   },
   {
@@ -48,7 +48,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Teams",
     titleHighlight: "Teams",
     description:
-      "All 48 qualified nations — squads, groups and quick links. Team profiles will be added in a later phase.",
+      "All 48 qualified nations at World Cup 2026 — browse squads, groups and links to every team's fixtures and standings.",
     hubDescription: "All 48 nations at World Cup 2026.",
   },
   {
@@ -58,7 +58,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Venues",
     titleHighlight: "Venues",
     description:
-      "Sixteen host stadiums across USA, Mexico and Canada. Venue guides and maps will be added in a later phase.",
+      "Sixteen host stadiums across USA, Mexico and Canada — cities, capacities and tournament venues for World Cup 2026.",
     hubDescription: "16 host stadiums across three nations.",
   },
   {
@@ -68,7 +68,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Bracket",
     titleHighlight: "Knockout Bracket",
     description:
-      "Knockout stage path from the Round of 32 through to the final. Bracket progression will be added in a later phase.",
+      "Knockout stage path from the Round of 32 through to the final. Bracket fills in as knockout fixtures are confirmed.",
     hubDescription: "Round of 32 through to the final.",
   },
 ];

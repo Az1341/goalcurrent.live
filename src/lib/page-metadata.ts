@@ -5,6 +5,8 @@ type PageMetadataInput = {
   title: string;
   description: string;
   path: string;
+  /** Bypass root layout title template (homepage only). */
+  absoluteTitle?: boolean;
 };
 
 /** Shared metadata helper — title template applied by root layout. */
@@ -12,11 +14,12 @@ export function buildPageMetadata({
   title,
   description,
   path,
+  absoluteTitle = false,
 }: PageMetadataInput): Metadata {
   const url = absoluteUrl(path);
 
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: {
       canonical: url,

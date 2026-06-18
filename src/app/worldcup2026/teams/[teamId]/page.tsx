@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import TeamPageContent from "@/components/wc26/TeamPageContent";
 import { getTeamById, WC26_TEAMS } from "@/data/wc26";
-import { isKnownTeamId } from "@/lib/wc26-teams";
+import { isKnownTeamId, teamHref } from "@/lib/wc26-teams";
+import { buildPageMetadata } from "@/lib/page-metadata";
 
 type TeamPageProps = {
   params: Promise<{ teamId: string }>;
@@ -23,10 +24,11 @@ export async function generateMetadata({ params }: TeamPageProps): Promise<Metad
     return { title: "Team — World Cup 2026" };
   }
 
-  return {
+  return buildPageMetadata({
     title: `${team.name} — World Cup 2026`,
     description: `${team.name} at the FIFA World Cup 2026 — fixtures, group standings and match details on GoalCurrent.online.`,
-  };
+    path: teamHref(teamId),
+  });
 }
 
 export default async function TeamPage({ params }: TeamPageProps) {
