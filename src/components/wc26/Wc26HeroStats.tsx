@@ -26,13 +26,15 @@ export default function Wc26HeroStats({ variant = "hub" }: Wc26HeroStatsProps) {
       ? { value: WC26_TOURNAMENT.hosts.length, label: "Hosts" }
       : { value: WC26_TOURNAMENT.groupCount, label: "Groups" };
 
-  const goalsPending =
-    goalsLoading ||
-    (topScorers.configured &&
-      topScorers.totalGoals === 0 &&
-      topScorers.matchesWithVerifiedEvents === 0);
+  const goalsHasTotal =
+    topScorers.totalGoals > 0 || topScorers.matchesWithVerifiedEvents > 0;
 
-  const goalsValue = goalsPending ? "…" : topScorers.totalGoals;
+  const goalsStillLoading =
+    goalsLoading && !goalsHasTotal && !topScorers.partialData;
+
+  const goalsValue: number | string = goalsStillLoading
+    ? ""
+    : topScorers.totalGoals;
 
   const stats: StatItem[] = [
     { value: WC26_TOURNAMENT.teamCount, label: "Teams" },
@@ -66,11 +68,24 @@ export default function Wc26HeroStats({ variant = "hub" }: Wc26HeroStatsProps) {
               styles.hubStatNum,
               accent ? styles.hubStatNumAccent : "",
               goals ? styles.hubStatNumGoals : "",
+              goals && goalsStillLoading ? styles.hubStatNumGoalsLoading : "",
             ]
               .filter(Boolean)
               .join(" ")}
+            aria-busy={goals && goalsStillLoading ? true : undefined}
+            aria-label={
+              goals && goalsStillLoading
+                ? "Calculating verified goals"
+                : undefined
+            }
           >
-            {value}
+            {goals && goalsStillLoading ? (
+              <span className={styles.hubStatGoalsLoadingText}>
+                Calculating verified goals…
+              </span>
+            ) : (
+              value
+            )}
           </div>
           <div
             className={[

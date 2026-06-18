@@ -514,6 +514,20 @@
   font-size: 1.125rem;
 }
 
+.hubStatNumGoalsLoading {
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1.25;
+  padding: 2px 0;
+}
+
+.hubStatGoalsLoadingText {
+  display: block;
+  max-width: 6.5rem;
+  margin: 0 auto;
+  text-wrap: balance;
+}
+
 .hubStatLbl {
   font-size: 0.625rem;
   color: var(--gc-text-muted);

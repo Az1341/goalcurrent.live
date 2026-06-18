@@ -1,10 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { WC26_FIXTURES_UPDATED_EVENT } from "@/lib/wc26-fixture-overlay";
 import type { Wc26TopScorersResponse } from "@/types/wc26-top-scorers";
 
 const POLL_MS = 300_000;
+
+type TopScorersSnapshot = {
+  readonly data: Wc26TopScorersResponse;
+  readonly loading: boolean;
+};
 
 function emptyResponse(): Wc26TopScorersResponse {
   return {
@@ -24,9 +29,21 @@ function mergeTopScorersResponse(
   prev: Wc26TopScorersResponse,
   next: Wc26TopScorersResponse,
 ): Wc26TopScorersResponse {
+  const prevVerified = prev.matchesWithVerifiedEvents;
+  const nextVerified = next.matchesWithVerifiedEvents;
+
+  if (prevVerified > 0 && nextVerified < prevVerified) {
+    return {
+      ...prev,
+      fetchedAt: next.fetchedAt,
+      partialData: true,
+    };
+  }
+
   if (
-    prev.matchesWithVerifiedEvents > 0 &&
-    next.matchesWithVerifiedEvents < prev.matchesWithVerifiedEvents
+    prev.totalGoals > 0 &&
+    next.totalGoals < prev.totalGoals &&
+    nextVerified <= prevVerified
   ) {
     return {
       ...prev,
@@ -38,87 +55,153 @@ function mergeTopScorersResponse(
   return next;
 }
 
+const serverSnapshot: TopScorersSnapshot = {
+  data: emptyResponse(),
+  loading: true,
+};
+
+let clientSnapshot: TopScorersSnapshot = {
+  data: emptyResponse(),
+  loading: true,
+};
+
+const listeners = new Set<() => void>();
+let subscriberCount = 0;
+let abortController: AbortController | null = null;
+let requestSeq = 0;
+let overlayTimer: ReturnType<typeof setTimeout> | null = null;
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+let fetchInFlight = false;
+
+function emit(): void {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+function setSnapshot(next: TopScorersSnapshot): void {
+  clientSnapshot = next;
+  emit();
+}
+
+function getSnapshot(): TopScorersSnapshot {
+  return clientSnapshot;
+}
+
+function getServerSnapshot(): TopScorersSnapshot {
+  return serverSnapshot;
+}
+
+function refreshTopScorers(options?: { showLoading?: boolean }): void {
+  if (fetchInFlight) {
+    return;
+  }
+
+  const controller = new AbortController();
+  abortController = controller;
+  const requestId = ++requestSeq;
+  fetchInFlight = true;
+
+  if (options?.showLoading !== false) {
+    setSnapshot({ ...clientSnapshot, loading: true });
+  }
+
+  fetch("/api/wc26/top-scorers", {
+    cache: "no-store",
+    signal: controller.signal,
+  })
+    .then((res) => (res.ok ? res.json() : emptyResponse()))
+    .then((payload: Wc26TopScorersResponse) => {
+      if (requestId !== requestSeq) {
+        return;
+      }
+      setSnapshot({
+        data: mergeTopScorersResponse(clientSnapshot.data, payload),
+        loading: false,
+      });
+    })
+    .catch((err: unknown) => {
+      if (controller.signal.aborted) {
+        return;
+      }
+      if (requestId !== requestSeq) {
+        return;
+      }
+      setSnapshot({
+        data: emptyResponse(),
+        loading: false,
+      });
+    })
+    .finally(() => {
+      fetchInFlight = false;
+      if (controller.signal.aborted) {
+        return;
+      }
+      if (requestId !== requestSeq) {
+        return;
+      }
+      setSnapshot({ ...clientSnapshot, loading: false });
+    });
+}
+
+function onOverlay(): void {
+  if (overlayTimer) {
+    clearTimeout(overlayTimer);
+  }
+  overlayTimer = setTimeout(() => {
+    refreshTopScorers({ showLoading: false });
+  }, 500);
+}
+
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
+  subscriberCount += 1;
+
+  if (subscriberCount === 1) {
+    refreshTopScorers({ showLoading: true });
+    pollTimer = setInterval(() => refreshTopScorers({ showLoading: false }), POLL_MS);
+    window.addEventListener(WC26_FIXTURES_UPDATED_EVENT, onOverlay);
+  }
+
+  return () => {
+    listeners.delete(listener);
+    subscriberCount -= 1;
+
+    if (subscriberCount === 0) {
+      abortController?.abort();
+      abortController = null;
+      fetchInFlight = false;
+      if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+      }
+      if (overlayTimer) {
+        clearTimeout(overlayTimer);
+        overlayTimer = null;
+      }
+      window.removeEventListener(WC26_FIXTURES_UPDATED_EVENT, onOverlay);
+    }
+  };
+}
+
 export function useWc26TopScorers(): {
   data: Wc26TopScorersResponse;
   loading: boolean;
   refresh: () => void;
 } {
-  const [data, setData] = useState<Wc26TopScorersResponse>(emptyResponse);
-  const [loading, setLoading] = useState(true);
-  const requestSeqRef = useRef(0);
-  const abortRef = useRef<AbortController | null>(null);
-  const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const snapshot = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
-  const refresh = useCallback((options?: { showLoading?: boolean }) => {
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-    const requestSeq = ++requestSeqRef.current;
-
-    if (options?.showLoading !== false) {
-      setLoading(true);
-    }
-
-    fetch("/api/wc26/top-scorers", {
-      cache: "no-store",
-      signal: controller.signal,
-    })
-      .then((res) => (res.ok ? res.json() : emptyResponse()))
-      .then((payload: Wc26TopScorersResponse) => {
-        if (requestSeq !== requestSeqRef.current) {
-          return;
-        }
-        setData((prev) => mergeTopScorersResponse(prev, payload));
-      })
-      .catch((err: unknown) => {
-        if (controller.signal.aborted) {
-          return;
-        }
-        if (requestSeq !== requestSeqRef.current) {
-          return;
-        }
-        setData(emptyResponse());
-      })
-      .finally(() => {
-        if (controller.signal.aborted) {
-          return;
-        }
-        if (requestSeq !== requestSeqRef.current) {
-          return;
-        }
-        setLoading(false);
-      });
+  const refresh = useCallback(() => {
+    refreshTopScorers({ showLoading: false });
   }, []);
 
-  useEffect(() => {
-    refresh({ showLoading: true });
-    return () => {
-      abortRef.current?.abort();
-    };
-  }, [refresh]);
-
-  useEffect(() => {
-    const timer = setInterval(() => refresh({ showLoading: false }), POLL_MS);
-    return () => clearInterval(timer);
-  }, [refresh]);
-
-  useEffect(() => {
-    const onOverlay = () => {
-      if (overlayTimerRef.current) {
-        clearTimeout(overlayTimerRef.current);
-      }
-      overlayTimerRef.current = setTimeout(() => {
-        refresh({ showLoading: false });
-      }, 500);
-    };
-    window.addEventListener(WC26_FIXTURES_UPDATED_EVENT, onOverlay);
-    return () => {
-      if (overlayTimerRef.current) {
-        clearTimeout(overlayTimerRef.current);
-      }
-      window.removeEventListener(WC26_FIXTURES_UPDATED_EVENT, onOverlay);
-    };
-  }, [refresh]);
-
-  return { data, loading, refresh };
+  return {
+    data: snapshot.data,
+    loading: snapshot.loading,
+    refresh,
+  };
 }
