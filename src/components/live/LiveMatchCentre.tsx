@@ -93,7 +93,7 @@ function LiveFixtureRow({
         </div>
       ) : null}
       <div className={styles.fixtureTvRow}>
-        <MatchTvBroadcast tvRegion={tvRegion} variant="chips" />
+        <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="chips" />
       </div>
     </li>
   );

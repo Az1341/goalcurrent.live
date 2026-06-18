@@ -209,6 +209,46 @@ function resolveLineupSides(
   return { home, away };
 }
 
+export async function fetchWc26EventsForApiFixture(
+  apiFixtureId: number,
+): Promise<{ events: MatchEventItem[]; apiAvailable: boolean }> {
+  if (!isWc26ApiConfigured()) {
+    return { events: [], apiAvailable: false };
+  }
+
+  try {
+    const rows = await apiFetchResponse<ApiEventRow>(
+      `/fixtures/events?fixture=${apiFixtureId}`,
+    );
+    return { events: mapEvents(rows), apiAvailable: true };
+  } catch {
+    return { events: [], apiAvailable: false };
+  }
+}
+
+export async function fetchWc26MatchEvents(
+  fixtureId: string,
+): Promise<{ events: MatchEventItem[]; apiAvailable: boolean }> {
+  if (!getFixtureById(fixtureId) || !isWc26ApiConfigured()) {
+    return { events: [], apiAvailable: false };
+  }
+
+  try {
+    const apiFixtureId = await findApiFootballFixtureId(fixtureId);
+    if (!apiFixtureId) {
+      return { events: [], apiAvailable: false };
+    }
+
+    const rows = await apiFetchResponse<ApiEventRow>(
+      `/fixtures/events?fixture=${apiFixtureId}`,
+    );
+
+    return { events: mapEvents(rows), apiAvailable: true };
+  } catch {
+    return { events: [], apiAvailable: false };
+  }
+}
+
 export async function fetchWc26MatchDetail(
   fixtureId: string,
 ): Promise<MatchDetailPayload> {

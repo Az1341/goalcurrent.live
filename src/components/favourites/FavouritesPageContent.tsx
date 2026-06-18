@@ -112,6 +112,7 @@ export default function FavouritesPageContent() {
                       </span>
                       <MatchTvBroadcast
                         tvRegion={tvRegion}
+                        matchNumber={wc26Fixture.matchNumber}
                         variant="chips"
                         className={styles.favListTv}
                       />

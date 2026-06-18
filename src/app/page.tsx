@@ -15,6 +15,7 @@ import {
 import TeamFlag from "@/components/TeamFlag";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
+import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
 import styles from "./page.module.css";
 
 const R = {
@@ -754,6 +755,8 @@ export default function Home() {
           gamesPlayed={gamesPlayed}
           gamesLeft={gamesLeft}
         />
+
+        <Wc26TopScorers />
 
         <div className={styles.sectionBand}>
           <div className={styles.bandLabel}>News desk</div>

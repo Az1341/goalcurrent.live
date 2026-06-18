@@ -16,6 +16,8 @@ export type Wc26ApiMatch = {
   readonly homeScore: number | null;
   readonly awayScore: number | null;
   readonly kickoffUtc: string;
+  /** api-sports fixture id — present when row comes from the live API feed. */
+  readonly apiFixtureId?: number;
 };
 
 export type Wc26ScoresApiResponse = {

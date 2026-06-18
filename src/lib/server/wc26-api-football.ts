@@ -101,6 +101,7 @@ function normalizeApiFixture(raw: ApiFootballFixture): Wc26ApiMatch | null {
     homeScore: raw.goals.home,
     awayScore: raw.goals.away,
     kickoffUtc: raw.fixture.date,
+    apiFixtureId: raw.fixture.id,
   };
 }
 

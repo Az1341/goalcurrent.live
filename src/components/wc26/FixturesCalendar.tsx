@@ -185,7 +185,7 @@ function FixtureMatchCard({
         </p>
         <div className={styles.fixExtrasActions}>
           <MatchDetailLink fixtureId={fixture.id} className={styles.fixDetailLink} />
-          <MatchTvBroadcast tvRegion={tvRegion} variant="chips" />
+          <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="chips" />
         </div>
       </div>
     </article>

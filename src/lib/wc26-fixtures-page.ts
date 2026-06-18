@@ -11,6 +11,10 @@ import {
   isLiveMatchStatus,
 } from "@/lib/wc26-live";
 import { isEffectiveFixtureCompleted } from "@/lib/wc26-fixture-overlay";
+import {
+  getUkBroadcaster,
+  ukBroadcasterChannels,
+} from "@/data/wc26/uk-broadcasters";
 
 export type FixtureStatusFilter = "" | "upcoming" | "live" | "ft";
 
@@ -89,6 +93,70 @@ export function getTvBroadcastDisplay(region: Wc26TvRegionCode | null): {
     available: true,
     line,
     regionalLine: `Regional coverage: ${line}`,
+  };
+}
+
+export type MatchTvBroadcastDisplay = {
+  available: boolean;
+  line: string;
+  regionalLine: string;
+  label: "Watch on:" | "Regional coverage:";
+  channels: readonly string[];
+  fixtureSpecific: boolean;
+};
+
+export function getMatchTvChannels(
+  region: Wc26TvRegionCode,
+  matchNumber?: number,
+): readonly string[] {
+  if (region === "GB" && matchNumber !== undefined) {
+    const uk = getUkBroadcaster(matchNumber);
+    if (uk) {
+      return ukBroadcasterChannels(uk);
+    }
+  }
+  return getTvChannels(region);
+}
+
+export function getMatchTvBroadcastDisplay(
+  region: Wc26TvRegionCode | null,
+  matchNumber?: number,
+): MatchTvBroadcastDisplay {
+  const unavailable: MatchTvBroadcastDisplay = {
+    available: false,
+    line: "Broadcast information unavailable for your region",
+    regionalLine: "Broadcast information unavailable for your region",
+    label: "Regional coverage:",
+    channels: [],
+    fixtureSpecific: false,
+  };
+
+  if (!region || !isWc26TvRegionCode(region)) {
+    return unavailable;
+  }
+
+  if (region === "GB" && matchNumber !== undefined) {
+    const uk = getUkBroadcaster(matchNumber);
+    if (uk) {
+      const channels = ukBroadcasterChannels(uk);
+      const line = channels.join(" / ");
+      return {
+        available: true,
+        line,
+        regionalLine: `Watch on: ${line}`,
+        label: "Watch on:",
+        channels,
+        fixtureSpecific: true,
+      };
+    }
+  }
+
+  const regional = getTvBroadcastDisplay(region);
+  return {
+    ...regional,
+    label: "Regional coverage:",
+    channels: getTvChannels(region),
+    fixtureSpecific: false,
   };
 }
 

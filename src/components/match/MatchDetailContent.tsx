@@ -60,9 +60,14 @@ export default function MatchDetailContent({ fixtureId }: MatchDetailContentProp
         )}
       </nav>
 
-      <MatchDetailHeader header={header} />
-      <MatchTvBroadcast tvRegion={tvRegion} variant="detail" />
-      <MatchTimeline detail={detail} loading={loading} />
+      <MatchDetailHeader header={header} detail={detail} loading={loading} />
+      <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="detail" />
+      <MatchTimeline
+        detail={detail}
+        loading={loading}
+        homeTeamName={header.homeName}
+        awayTeamName={header.awayName}
+      />
       <MatchStatistics detail={detail} loading={loading} />
       <MatchLineups
         detail={detail}
