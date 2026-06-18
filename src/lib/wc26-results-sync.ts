@@ -19,6 +19,10 @@ const LIVE_OVERLAY_STATUSES = new Set([
   "penalties",
 ]);
 
+type FetchScoresOutcome =
+  | { status: "ok"; data: Wc26ScoresApiResponse }
+  | { status: "unconfigured" };
+
 function overlayEntryFromApiMatch(match: Wc26ApiMatch): FixtureOverlayEntry {
   const entry: FixtureOverlayEntry = {
     status: match.status,
@@ -46,41 +50,78 @@ function overlayFromMatches(
   return partial;
 }
 
-async function fetchScores(url: string): Promise<Wc26ScoresApiResponse | null> {
+function isMissingKeyPayload(body: unknown): boolean {
+  if (!body || typeof body !== "object") {
+    return false;
+  }
+  const text = JSON.stringify(body).toLowerCase();
+  return (
+    text.includes("missing application key") ||
+    text.includes("application key missing")
+  );
+}
+
+function isUnconfiguredScoresResponse(data: Wc26ScoresApiResponse): boolean {
+  return data.configured === false || data.phase === "unconfigured";
+}
+
+async function fetchScores(url: string): Promise<FetchScoresOutcome> {
   try {
     const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) {
-      return null;
+    let body: unknown = null;
+    try {
+      body = await res.json();
+    } catch {
+      body = null;
     }
-    return (await res.json()) as Wc26ScoresApiResponse;
+
+    if (!res.ok) {
+      if (isMissingKeyPayload(body)) {
+        return { status: "unconfigured" };
+      }
+      return { status: "unconfigured" };
+    }
+
+    const data = body as Wc26ScoresApiResponse;
+    if (isUnconfiguredScoresResponse(data)) {
+      return { status: "unconfigured" };
+    }
+
+    return { status: "ok", data };
   } catch {
-    return null;
+    return { status: "unconfigured" };
   }
+}
+
+function applyScoresOutcome(outcome: FetchScoresOutcome): boolean {
+  if (outcome.status === "unconfigured") {
+    return false;
+  }
+
+  if (outcome.data.matches.length === 0) {
+    return true;
+  }
+
+  mergeFixtureOverlay(overlayFromMatches(outcome.data.matches));
+  return true;
 }
 
 /** Merge finished WC26 results into the client overlay. */
 export async function syncWc26Results(): Promise<boolean> {
-  const data = await fetchScores(RESULTS_URL);
-  if (!data?.configured || data.matches.length === 0) {
+  const outcome = await fetchScores(RESULTS_URL);
+  if (outcome.status === "unconfigured") {
     return false;
   }
-  mergeFixtureOverlay(overlayFromMatches(data.matches));
-  return true;
+  return applyScoresOutcome(outcome);
 }
 
 /** Merge in-progress WC26 matches into the client overlay. */
 export async function syncWc26Live(): Promise<boolean> {
-  const data = await fetchScores(LIVE_URL);
-  if (!data?.configured) {
+  const outcome = await fetchScores(LIVE_URL);
+  if (outcome.status === "unconfigured") {
     return false;
   }
-
-  if (data.matches.length === 0) {
-    return false;
-  }
-
-  mergeFixtureOverlay(overlayFromMatches(data.matches));
-  return true;
+  return applyScoresOutcome(outcome);
 }
 
 export type Wc26SyncController = {
@@ -97,36 +138,59 @@ export function startWc26ResultsSync(): Wc26SyncController {
   let liveTimer: ReturnType<typeof setInterval> | undefined;
   let stopped = false;
 
-  const tickResults = () => {
-    if (!stopped) {
-      void syncWc26Results();
+  const stopPolling = () => {
+    if (stopped) {
+      return;
     }
+    stopped = true;
+    if (resultsTimer) {
+      clearInterval(resultsTimer);
+      resultsTimer = undefined;
+    }
+    if (liveTimer) {
+      clearInterval(liveTimer);
+      liveTimer = undefined;
+    }
+  };
+
+  const pollScores = async (url: string): Promise<boolean> => {
+    if (stopped) {
+      return false;
+    }
+
+    const outcome = await fetchScores(url);
+    if (outcome.status === "unconfigured") {
+      stopPolling();
+      return false;
+    }
+
+    applyScoresOutcome(outcome);
+    return true;
+  };
+
+  const tickResults = () => {
+    void pollScores(RESULTS_URL);
   };
 
   const tickLive = () => {
-    if (!stopped) {
-      void syncWc26Live();
-    }
+    void pollScores(LIVE_URL);
   };
 
   void (async () => {
-    await syncWc26Results();
-    await syncWc26Live();
+    if (!(await pollScores(RESULTS_URL))) {
+      return;
+    }
+    if (!(await pollScores(LIVE_URL))) {
+      return;
+    }
+    if (!stopped) {
+      resultsTimer = setInterval(tickResults, RESULTS_INTERVAL_MS);
+      liveTimer = setInterval(tickLive, LIVE_INTERVAL_MS);
+    }
   })();
 
-  resultsTimer = setInterval(tickResults, RESULTS_INTERVAL_MS);
-  liveTimer = setInterval(tickLive, LIVE_INTERVAL_MS);
-
   return {
-    stop: () => {
-      stopped = true;
-      if (resultsTimer) {
-        clearInterval(resultsTimer);
-      }
-      if (liveTimer) {
-        clearInterval(liveTimer);
-      }
-    },
+    stop: stopPolling,
   };
 }
 

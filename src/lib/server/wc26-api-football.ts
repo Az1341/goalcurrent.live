@@ -26,6 +26,21 @@ type ApiFootballFixture = {
   };
 };
 
+export class MissingApiKeyError extends Error {
+  constructor() {
+    super("MISSING_API_KEY");
+    this.name = "MissingApiKeyError";
+  }
+}
+
+export function isMissingApiKeyError(message: string): boolean {
+  const lower = message.toLowerCase();
+  return (
+    lower.includes("missing application key") ||
+    lower.includes("application key missing")
+  );
+}
+
 function getApiKey(): string | undefined {
   return process.env.API_FOOTBALL_KEY?.trim() || undefined;
 }
@@ -59,7 +74,11 @@ async function apiFetch(path: string): Promise<ApiFootballFixture[]> {
   };
 
   if (json.errors && Object.keys(json.errors).length > 0) {
-    throw new Error(JSON.stringify(json.errors));
+    const errorText = JSON.stringify(json.errors);
+    if (isMissingApiKeyError(errorText)) {
+      throw new MissingApiKeyError();
+    }
+    throw new Error(errorText);
   }
 
   return json.response ?? [];

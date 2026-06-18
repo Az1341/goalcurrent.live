@@ -2,18 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   fetchFinishedWc26Matches,
   fetchLiveWc26Matches,
+  isMissingApiKeyError,
   isTournamentLive,
   isWc26ApiConfigured,
+  MissingApiKeyError,
 } from "@/lib/server/wc26-api-football";
 import type { Wc26ScoresApiResponse } from "@/types/fixture-overlay";
 
 export const dynamic = "force-dynamic";
 
+function unconfiguredResponse(): Wc26ScoresApiResponse {
+  return {
+    matches: [],
+    fetchedAt: new Date().toISOString(),
+    configured: false,
+    phase: "unconfigured",
+  };
+}
+
 function emptyResponse(phase?: string): Wc26ScoresApiResponse {
   return {
     matches: [],
     fetchedAt: new Date().toISOString(),
-    configured: isWc26ApiConfigured(),
+    configured: phase === "unconfigured" ? false : isWc26ApiConfigured(),
     phase,
   };
 }
@@ -33,7 +44,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const results = searchParams.get("results");
 
   if (!isWc26ApiConfigured()) {
-    return NextResponse.json(emptyResponse("unconfigured"), {
+    return NextResponse.json(unconfiguredResponse(), {
       status: 200,
       headers: { "Cache-Control": "no-store" },
     });
@@ -86,6 +97,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
+
+    if (
+      error instanceof MissingApiKeyError ||
+      isMissingApiKeyError(message)
+    ) {
+      return NextResponse.json(unconfiguredResponse(), {
+        status: 200,
+        headers: { "Cache-Control": "no-store" },
+      });
+    }
+
     console.error("[api/wc26/scores]", message);
 
     if (isUpstreamQuotaError(message)) {
