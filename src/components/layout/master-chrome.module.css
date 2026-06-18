@@ -216,28 +216,36 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 7px 1vw;
-  max-width: 98vw;
+  overflow: hidden;
+  padding: 12px clamp(14px, 2.5vw, 24px);
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   background: #1a0a0e;
   color: #f8f4f5;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   border-bottom: 2px solid #9b1b30;
+  box-sizing: border-box;
 }
 
 .liveRibbonLabel {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 6px;
   color: #fbbf24;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.liveRibbonMessage {
+  flex: 1 1 auto;
+  min-width: 0;
+  opacity: 0.9;
+  line-height: 1.35;
 }
 
 .liveDot {
@@ -245,22 +253,36 @@
   height: 7px;
   border-radius: 50%;
   background: #e30613;
-  animation: gcChromePulse 1.4s infinite;
+  flex-shrink: 0;
 }
 
-.liveItem {
-  flex-shrink: 0;
-  white-space: nowrap;
-  opacity: 0.95;
+.liveRibbonList {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+}
+
+.liveRibbonItem {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .liveMatch {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  vertical-align: middle;
+  gap: 7px;
+  max-width: 100%;
   color: inherit;
   text-decoration: none;
+  white-space: nowrap;
+  padding: 3px 0;
 }
 
 .liveMatch:hover {
@@ -268,20 +290,69 @@
 }
 
 .liveMatchTeams {
-  display: inline;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .liveMatchStatus {
+  flex-shrink: 0;
   opacity: 0.85;
+  font-size: 0.75rem;
 }
 
-@keyframes gcChromePulse {
-  0%,
-  100% {
-    opacity: 1;
+.liveRibbonMore {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: #fbbf24;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 999px;
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.liveRibbonMore:hover {
+  background: rgba(251, 191, 36, 0.16);
+  text-decoration: none;
+}
+
+@media (min-width: 768px) {
+  .liveRibbon {
+    gap: 16px;
+    font-size: 0.875rem;
   }
-  50% {
-    opacity: 0.45;
+
+  .liveRibbonLabel {
+    font-size: 0.75rem;
+  }
+
+  .liveRibbonList {
+    gap: 18px;
+  }
+
+  .liveMatch {
+    gap: 8px;
+    padding: 4px 0;
+  }
+
+  .liveRibbonMore {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .liveRibbon {
+    gap: 20px;
+  }
+
+  .liveRibbonList {
+    gap: 22px;
   }
 }
 
