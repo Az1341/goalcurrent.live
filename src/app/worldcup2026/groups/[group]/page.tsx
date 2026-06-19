@@ -49,20 +49,12 @@ export function generateStaticParams() {
 
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-
   const { group } = await params;
-
   const groupId = resolveGroupParam(group);
 
-
-
   if (!groupId) {
-
     return { title: "Group — World Cup 2026" };
-
   }
-
-
 
   return buildPageMetadata({
     title: groupHubTitle(groupId),
