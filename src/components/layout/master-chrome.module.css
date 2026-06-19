@@ -182,8 +182,10 @@
   display: none;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   background: linear-gradient(180deg, var(--gc-brand-from) 0%, var(--gc-brand-to) 100%);
-  max-height: min(70vh, 520px);
+  max-height: min(50vh, 400px);
   overflow-y: auto;
+  padding-top: max(0px, env(safe-area-inset-top));
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
 }
 
 .mobilePanelOpen {
@@ -196,13 +198,13 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   opacity: 0.5;
-  padding: 16px 16px 4px;
+  padding: 12px 16px 4px;
 }
 
 .mobileLink {
   display: block;
   padding: 12px 16px;
-  font-size: 1.0625rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #ffffff;
 }
@@ -214,6 +216,21 @@
 .mobileLinkActive {
   background: rgba(255, 255, 255, 0.18);
   border-left: 3px solid var(--gc-content-highlight);
+}
+
+@media (max-width: 430px) {
+  .mobilePanel {
+    max-height: min(45vh, 350px);
+  }
+
+  .mobileLink {
+    font-size: 0.9375rem;
+    padding: 10px 14px;
+  }
+
+  .mobileSectionLabel {
+    padding: 10px 14px 4px;
+  }
 }
 
 .mobileOverlay {

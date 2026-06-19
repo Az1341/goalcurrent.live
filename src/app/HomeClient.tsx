@@ -4,6 +4,7 @@ import Link from "next/link";
 import { WC26_TOURNAMENT } from "@/data/wc26";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
+import { useLiveScores } from "@/lib/use-live-scores";
 import {
   buildHomepageMatchView,
   selectFeaturedFixture,
@@ -199,6 +200,7 @@ function MatchListSection({
 }
 
 export default function Home() {
+  useLiveScores();
   const fixtures = useEffectiveFixtures();
   const featuredFixture = selectFeaturedFixture(fixtures);
   const featured = featuredFixture
@@ -251,7 +253,7 @@ export default function Home() {
           id="latest-results-heading"
           title="Latest results"
           matches={latestResults}
-          emptyMessage="No recent full-time results to show yet."
+          emptyMessage="No recent full-time results. Check back after matches finish."
           moreHref="/live"
           moreLabel="View all results"
         />
