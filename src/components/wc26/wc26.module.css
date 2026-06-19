@@ -372,13 +372,14 @@
 }
 
 .standingsHead {
-  background: var(--wc26-red-dark);
+  background: #243247;
   color: #f8fafc;
-  padding: 12px 16px;
-  font-size: 0.875rem;
+  padding: 11px 16px;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
-  border-bottom: 1px solid var(--gc-content-border);
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid #1e293b;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .standingsTable {
@@ -494,15 +495,41 @@
   box-shadow: var(--gc-shadow);
 }
 
-.hubStatChipAccent {
-  border-color: rgba(251, 191, 36, 0.45);
-  background: rgba(251, 191, 36, 0.08);
+/* Muted stat-card tints — pastel, professional */
+.hubStatChipTeams {
+  background: #f4f7fb;
+  border-color: #e2e8f0;
+}
+
+.hubStatChipMatches {
+  background: #f6f4f8;
+  border-color: #e8e4ec;
+}
+
+.hubStatChipVenues {
+  background: #f8f9fa;
+  border-color: #e5e7eb;
+}
+
+.hubStatChipGroups,
+.hubStatChipHosts {
+  background: #f2f8f5;
+  border-color: #dfece6;
+}
+
+.hubStatChipPlayed {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.hubStatChipLeft {
+  background: #fdf8f0;
+  border-color: #f0e6d4;
 }
 
 .hubStatChipGoals {
-  border-color: var(--gc-content-border);
-  background: var(--gc-card);
-  box-shadow: var(--gc-shadow);
+  background: #fdfaf0;
+  border-color: #f5ead0;
 }
 
 .hubStatNum {
@@ -510,16 +537,6 @@
   font-weight: 600;
   color: var(--gc-content-heading);
   line-height: 1.2;
-}
-
-.hubStatNumAccent {
-  color: var(--gc-content-heading);
-}
-
-.hubStatNumGoals {
-  color: var(--gc-content-heading);
-  font-weight: 700;
-  font-size: 1.125rem;
 }
 
 .hubStatNumGoalsLoading {
@@ -544,11 +561,6 @@
   margin-top: 5px;
   font-weight: 500;
   line-height: 1.35;
-}
-
-.hubStatLblGoals {
-  color: var(--gc-content-accent);
-  font-weight: 700;
 }
 
 .fixtureList {
@@ -736,14 +748,28 @@
   letter-spacing: 0.04em;
 }
 
-.shellCard,
-.bracketShell {
+.shellCard {
   background: var(--gc-card);
   border: 1px solid var(--gc-border);
   border-radius: var(--gc-radius-lg);
   overflow: hidden;
   margin-bottom: 18px;
   box-shadow: var(--gc-shadow);
+}
+
+.bracketShell {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--gc-radius-lg);
+  overflow: hidden;
+  margin-bottom: 18px;
+  box-shadow: var(--gc-shadow);
+}
+
+.bracketShell .shellHead {
+  background: #ffffff;
+  color: var(--gc-content-heading);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .shellHead {
@@ -1177,8 +1203,9 @@
 
 .groupHubStat b {
   display: block;
-  font-size: 1.25rem;
-  color: var(--gc-text-primary);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gc-content-heading);
   line-height: 1.1;
 }
 
@@ -1285,8 +1312,8 @@
 
 .groupFixtureScore {
   text-align: center;
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.9375rem;
+  font-weight: 600;
 }
 
 .groupFixtureStatus {
@@ -1369,7 +1396,8 @@
 
 .groupStatCard b {
   display: block;
-  font-size: 1.375rem;
+  font-size: 1.125rem;
+  font-weight: 600;
   line-height: 1.1;
 }
 
@@ -1507,30 +1535,31 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   padding: 16px;
+  background: #f8fafc;
 }
 
 .bracketRound {
-  background: var(--gc-inset);
-  border: 1px dashed var(--gc-border);
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: var(--gc-radius);
   padding: 12px;
 }
 
 .bracketRoundLabel {
-  font-size: 0.75rem;
-  font-weight: var(--gc-weight-section);
-  color: var(--wc26-accent);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--gc-content-accent-hover);
   margin-bottom: 8px;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .bracketSlot {
   font-size: 0.75rem;
   color: var(--gc-text-muted);
-  padding: 7px 8px;
-  background: var(--gc-card);
-  border: 1px solid var(--gc-border);
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: var(--gc-radius-sm);
   margin-bottom: 4px;
   text-align: center;
@@ -1577,14 +1606,40 @@
 
 .fixMetric b {
   display: block;
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: 600;
   line-height: 1.2;
   color: var(--gc-content-heading);
 }
 
-.fixMetricsProgress .fixMetric:first-child {
-  border-left: 3px solid var(--gc-brand-accent, #963848);
+.fixMetricTeams {
+  background: #f4f7fb;
+  border-color: #e2e8f0;
+}
+
+.fixMetricMatches {
+  background: #f6f4f8;
+  border-color: #e8e4ec;
+}
+
+.fixMetricVenues {
+  background: #f8f9fa;
+  border-color: #e5e7eb;
+}
+
+.fixMetricHosts {
+  background: #f2f8f5;
+  border-color: #dfece6;
+}
+
+.fixMetricPlayed {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.fixMetricLeft {
+  background: #fdf8f0;
+  border-color: #f0e6d4;
 }
 
 .fixMetric span {

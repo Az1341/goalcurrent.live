@@ -259,19 +259,19 @@ export default function FixturesCalendar() {
       </h2>
 
       <div className={styles.fixMetrics} aria-label="Tournament facts">
-        <div className={styles.fixMetric}>
+        <div className={`${styles.fixMetric} ${styles.fixMetricTeams}`}>
           <b>{WC26_TEAM_COUNT}</b>
           <span>Teams</span>
         </div>
-        <div className={styles.fixMetric}>
+        <div className={`${styles.fixMetric} ${styles.fixMetricMatches}`}>
           <b>{WC26_TOURNAMENT.fixtureCount}</b>
           <span>Matches</span>
         </div>
-        <div className={styles.fixMetric}>
+        <div className={`${styles.fixMetric} ${styles.fixMetricVenues}`}>
           <b>{WC26_VENUE_COUNT}</b>
           <span>Venues</span>
         </div>
-        <div className={styles.fixMetric}>
+        <div className={`${styles.fixMetric} ${styles.fixMetricHosts}`}>
           <b>{WC26_TOURNAMENT.hosts.length}</b>
           <span>Host nations</span>
         </div>

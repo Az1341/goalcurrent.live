@@ -7,7 +7,7 @@ import {
 import { WC26_HUB_HREF } from "@/lib/wc26-groups";
 import GroupsGrid from "@/components/wc26/GroupsGrid";
 import GroupsHubStandings from "@/components/wc26/GroupsHubStandings";
-import Wc26GamesProgress from "@/components/wc26/Wc26GamesProgress";
+import Wc26HeroStats from "@/components/wc26/Wc26HeroStats";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import styles from "@/components/wc26/wc26.module.css";
 
@@ -29,7 +29,7 @@ export default function GroupsHubContent() {
         tournament. Select a group for detail or review live standings below.
       </p>
 
-      <Wc26GamesProgress />
+      <Wc26HeroStats variant="hub" />
 
       <GroupsGrid />
 

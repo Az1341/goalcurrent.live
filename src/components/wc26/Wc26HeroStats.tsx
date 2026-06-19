@@ -5,16 +5,36 @@ import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useWc26TopScorers } from "@/lib/use-wc26-top-scorers";
 import styles from "./wc26.module.css";
 
+export type HubStatTone =
+  | "teams"
+  | "matches"
+  | "venues"
+  | "groups"
+  | "hosts"
+  | "played"
+  | "left"
+  | "goals";
+
 type StatItem = {
   value: number | string;
   label: string;
-  accent?: boolean;
-  goals?: boolean;
+  tone: HubStatTone;
 };
 
 type Wc26HeroStatsProps = {
   /** Hub shows Groups; homepage hero shows Hosts. */
   variant?: "home" | "hub";
+};
+
+const TONE_CLASS: Record<HubStatTone, string> = {
+  teams: styles.hubStatChipTeams,
+  matches: styles.hubStatChipMatches,
+  venues: styles.hubStatChipVenues,
+  groups: styles.hubStatChipGroups,
+  hosts: styles.hubStatChipHosts,
+  played: styles.hubStatChipPlayed,
+  left: styles.hubStatChipLeft,
+  goals: styles.hubStatChipGoals,
 };
 
 export default function Wc26HeroStats({ variant = "hub" }: Wc26HeroStatsProps) {
@@ -23,8 +43,8 @@ export default function Wc26HeroStats({ variant = "hub" }: Wc26HeroStatsProps) {
 
   const fourthStat: StatItem =
     variant === "home"
-      ? { value: WC26_TOURNAMENT.hosts.length, label: "Hosts" }
-      : { value: WC26_TOURNAMENT.groupCount, label: "Groups" };
+      ? { value: WC26_TOURNAMENT.hosts.length, label: "Hosts", tone: "hosts" }
+      : { value: WC26_TOURNAMENT.groupCount, label: "Groups", tone: "groups" };
 
   const goalsHasTotal =
     topScorers.totalGoals > 0 || topScorers.matchesWithVerifiedEvents > 0;
@@ -37,68 +57,53 @@ export default function Wc26HeroStats({ variant = "hub" }: Wc26HeroStatsProps) {
     : topScorers.totalGoals;
 
   const stats: StatItem[] = [
-    { value: WC26_TOURNAMENT.teamCount, label: "Teams" },
-    { value: WC26_TOURNAMENT.fixtureCount, label: "Matches" },
-    { value: WC26_TOURNAMENT.venueCount, label: "Venues" },
+    { value: WC26_TOURNAMENT.teamCount, label: "Teams", tone: "teams" },
+    { value: WC26_TOURNAMENT.fixtureCount, label: "Matches", tone: "matches" },
+    { value: WC26_TOURNAMENT.venueCount, label: "Venues", tone: "venues" },
     fourthStat,
-    { value: gamesPlayed, label: "Games Played" },
-    { value: gamesLeft, label: "Games Left To Play", accent: true },
+    { value: gamesPlayed, label: "Games Played", tone: "played" },
+    { value: gamesLeft, label: "Games Left", tone: "left" },
     {
       value: goalsValue,
-      label: "Goals Scored",
-      goals: true,
+      label: "Total Goals Scored",
+      tone: "goals",
     },
   ];
 
   return (
     <div className={styles.hubStats}>
-      {stats.map(({ value, label, accent, goals }) => (
-        <div
-          key={label}
-          className={[
-            styles.hubStatChip,
-            accent ? styles.hubStatChipAccent : "",
-            goals ? styles.hubStatChipGoals : "",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
+      {stats.map(({ value, label, tone }) => {
+        const goalsLoadingChip = tone === "goals" && goalsStillLoading;
+
+        return (
           <div
-            className={[
-              styles.hubStatNum,
-              accent ? styles.hubStatNumAccent : "",
-              goals ? styles.hubStatNumGoals : "",
-              goals && goalsStillLoading ? styles.hubStatNumGoalsLoading : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            aria-busy={goals && goalsStillLoading ? true : undefined}
-            aria-label={
-              goals && goalsStillLoading
-                ? "Calculating verified goals"
-                : undefined
-            }
+            key={label}
+            className={[styles.hubStatChip, TONE_CLASS[tone]].join(" ")}
           >
-            {goals && goalsStillLoading ? (
-              <span className={styles.hubStatGoalsLoadingText}>
-                Calculating verified goals…
-              </span>
-            ) : (
-              value
-            )}
+            <div
+              className={[
+                styles.hubStatNum,
+                goalsLoadingChip ? styles.hubStatNumGoalsLoading : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              aria-busy={goalsLoadingChip ? true : undefined}
+              aria-label={
+                goalsLoadingChip ? "Calculating verified goals" : undefined
+              }
+            >
+              {goalsLoadingChip ? (
+                <span className={styles.hubStatGoalsLoadingText}>
+                  Calculating verified goals…
+                </span>
+              ) : (
+                value
+              )}
+            </div>
+            <div className={styles.hubStatLbl}>{label}</div>
           </div>
-          <div
-            className={[
-              styles.hubStatLbl,
-              goals ? styles.hubStatLblGoals : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-          >
-            {label}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
