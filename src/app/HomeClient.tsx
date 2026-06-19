@@ -16,7 +16,10 @@ import TeamFlag from "@/components/TeamFlag";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
 import { SITE_NAME } from "@/lib/site-url";
+import AdSenseUnit from "@/components/AdSenseUnit";
 import styles from "@/app/page.module.css";
+
+const ADSENSE_PUBLISHER_ID = "ca-pub-8697460993506171";
 
 const FEATURED_FLAG = 64;
 
@@ -240,6 +243,10 @@ export default function Home() {
           )}
         </section>
 
+        <div className={styles.sectionBlock}>
+          <AdSenseUnit slot="1234567890" className={styles.adUnit} />
+        </div>
+
         <MatchListSection
           id="live-matches-heading"
           title={liveMatches.length > 0 ? "Live matches" : "Next up"}
@@ -257,6 +264,10 @@ export default function Home() {
           moreHref="/live"
           moreLabel="View all results"
         />
+
+        <div className={styles.sectionBlock}>
+          <AdSenseUnit slot="2345678901" className={styles.adUnit} />
+        </div>
 
         <section className={styles.sectionBlock} aria-labelledby="wc26-nav-heading">
           <div className={styles.sectionHeader}>

@@ -66,6 +66,11 @@
   margin-bottom: 28px;
 }
 
+.adUnit {
+  min-height: 100px;
+  margin: 20px 0;
+}
+
 .sectionHeader {
   display: flex;
   align-items: baseline;

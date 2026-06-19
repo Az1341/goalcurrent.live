@@ -19,13 +19,9 @@ export default function FixturesSection() {
 
 
       <p className={styles.phaseNote}>
-
         Verified FIFA World Cup 2026 group-stage fixtures from local data.
-
-        Times display in your local timezone. Status reflects the current overlay
-
-        — scores sync in a later phase.
-
+        Times display in your local timezone. Live scores and status updates
+        reflect real-time data when available.
       </p>
 
 
