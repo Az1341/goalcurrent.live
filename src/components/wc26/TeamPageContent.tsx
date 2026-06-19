@@ -34,7 +34,7 @@ export default function TeamPageContent({ teamId }: TeamPageContentProps) {
     );
   }
 
-  const title = groupLabel(team.groupId);
+  const groupTitle = groupLabel(team.groupId);
 
   return (
     <main className={styles.wc26Content}>
@@ -53,16 +53,28 @@ export default function TeamPageContent({ teamId }: TeamPageContentProps) {
             FIFA World Cup 2026 — <span>{team.name}</span>
           </h1>
           <p className={styles.pageIntro}>
-            {team.code} ·{" "}
-            <Link href={groupHref(team.groupId)} className={styles.entityLink}>
-              {title}
+            {team.name} · {team.code} ·{" "}
+            <Link
+              href={groupHref(team.groupId)}
+              className={styles.entityLink}
+              aria-label={`View ${groupTitle}`}
+            >
+              {groupTitle}
+            </Link>
+          </p>
+          <p className={styles.teamViewGroup}>
+            <Link href={groupHref(team.groupId)} className={styles.teamViewGroupLink}>
+              View {groupTitle}
             </Link>
           </p>
         </div>
         <FavouriteTeamButton teamId={team.id} teamName={team.name} />
       </div>
 
-      <GroupStandingsSection groupId={team.groupId} />
+      <GroupStandingsSection
+        groupId={team.groupId}
+        sectionHeading={`${groupTitle} standings`}
+      />
 
       <section aria-labelledby="team-fixtures-heading">
         <h2 id="team-fixtures-heading" className={styles.sectionTitle}>
@@ -72,7 +84,7 @@ export default function TeamPageContent({ teamId }: TeamPageContentProps) {
       </section>
 
       <p className={styles.hubBack}>
-        <Link href={groupHref(team.groupId)}>← {title}</Link>
+        <Link href={groupHref(team.groupId)}>View {groupTitle}</Link>
         {" · "}
         <Link href="/worldcup2026/teams">All teams</Link>
       </p>

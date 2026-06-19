@@ -19,10 +19,17 @@ export default function GroupCard({ groupId }: GroupCardProps) {
       </Link>
       <ul className={styles.groupCardTeams}>
         {teams.map((team) => (
-          <li key={team.id}>
-            <Link href={teamHref(team.id)} className={styles.groupCardTeamRow}>
+          <li key={team.id} className={styles.groupCardTeamItem}>
+            <div className={styles.groupCardTeamRow}>
               <TeamFlag teamId={team.id} size={22} />
               <span>{team.name}</span>
+            </div>
+            <Link
+              href={teamHref(team.id)}
+              className={styles.groupCardTeamProfile}
+              aria-label={`View ${team.name} team profile`}
+            >
+              View profile
             </Link>
           </li>
         ))}

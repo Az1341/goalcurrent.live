@@ -171,23 +171,35 @@
   text-align: left;
 }
 
+.groupCardTeamItem {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--gc-border);
+}
+
 .groupCardTeamRow {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.8125rem;
   color: var(--gc-text-secondary);
-  padding: 4px 0;
-  border-bottom: 1px solid var(--gc-border);
+  padding: 2px 0;
+}
+
+.groupCardTeamProfile {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 0.75rem;
+  font-weight: var(--gc-weight-nav);
+  color: var(--wc26-accent);
   text-decoration: none;
 }
 
-.groupCardTeamRow:hover {
-  color: var(--wc26-accent);
+.groupCardTeamProfile:hover {
+  text-decoration: underline;
 }
 
 .groupCardTeams li:last-child,
-.groupCardTeamRow:last-child {
+.groupCardTeamItem:last-child {
   border-bottom: none;
 }
 
@@ -695,6 +707,27 @@
   min-width: 200px;
 }
 
+.teamViewGroup {
+  margin: 10px 0 0;
+}
+
+.teamViewGroupLink {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: var(--gc-radius);
+  border: 1px solid rgba(155, 27, 48, 0.35);
+  background: var(--gc-card);
+  color: var(--wc26-accent);
+  font-size: 0.8125rem;
+  font-weight: var(--gc-weight-nav);
+  text-decoration: none;
+}
+
+.teamViewGroupLink:hover {
+  background: var(--gc-card-hover);
+  text-decoration: none;
+}
+
 .teamListName {
   font-weight: var(--gc-weight-nav);
   color: var(--gc-text-primary);
@@ -979,6 +1012,13 @@
   letter-spacing: 0.04em;
 }
 
+.tileProfileHint {
+  font-size: 0.625rem;
+  font-weight: var(--gc-weight-section);
+  color: var(--wc26-accent);
+  margin-top: 4px;
+}
+
 .tileGroupLink {
   display: block;
   font-size: 0.625rem;
@@ -1114,14 +1154,8 @@
   border: 1px solid var(--gc-border);
   background: var(--gc-card);
   color: inherit;
-  text-decoration: none;
   font-size: 0.8125rem;
   font-weight: var(--gc-weight-nav);
-}
-
-.groupHubTeamChip:hover {
-  border-color: rgba(155, 27, 48, 0.35);
-  background: var(--gc-card-hover);
 }
 
 .groupHubTeamCode {

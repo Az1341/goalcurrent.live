@@ -11,11 +11,14 @@ import styles from "./wc26.module.css";
 type GroupStandingsSectionProps = {
   groupId: Wc26GroupId;
   formByTeamId?: ReadonlyMap<TeamId, readonly GroupFormResult[]>;
+  /** Override section h2 — defaults to "Standings" (group hub). */
+  sectionHeading?: string;
 };
 
 export default function GroupStandingsSection({
   groupId,
   formByTeamId,
+  sectionHeading = "Standings",
 }: GroupStandingsSectionProps) {
   const title = groupLabel(groupId);
   const standings = useWc26GroupStandings(groupId);
@@ -23,7 +26,7 @@ export default function GroupStandingsSection({
   return (
     <section aria-labelledby="standings-heading">
       <h2 id="standings-heading" className={styles.sectionTitle}>
-        Standings
+        {sectionHeading}
       </h2>
       <p className={styles.phaseNote}>
         Calculated from completed group matches. Top {WC26_QUALIFYING_SPOTS}{" "}
