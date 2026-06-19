@@ -5,7 +5,9 @@ import { WC26_GROUP_IDS, WC26_TEAMS, WC26_TEAM_COUNT } from "@/data/wc26";
 import TeamCard from "./TeamCard";
 import {
   filterTeams,
+  formatTeamEmptyMessage,
   formatTeamResultCount,
+  formatTeamSearchSummary,
   type TeamGroupFilter,
 } from "@/lib/wc26-team-filter";
 import styles from "./wc26.module.css";
@@ -26,12 +28,26 @@ export default function TeamsSection() {
     groupFilter,
   );
 
-  const searchSummary =
-    query.trim() || groupFilter !== "all"
-      ? `Showing ${filteredTeams.length} of ${WC26_TEAM_COUNT} qualified nations${
-          query.trim() ? ` matching “${query.trim()}”` : ""
-        }${groupFilter !== "all" ? ` in Group ${groupFilter.toUpperCase()}` : ""}.`
-      : `All ${WC26_TEAM_COUNT} qualified nations at FIFA World Cup 2026. Search by team name, FIFA code, or group.`;
+  const searchSummary = formatTeamSearchSummary(
+    filteredTeams.length,
+    WC26_TEAM_COUNT,
+    query,
+    groupFilter,
+  );
+
+  const emptyMessage = formatTeamEmptyMessage(query, groupFilter);
+
+  function handleSearchChange(value: string) {
+    setQuery(value);
+    if (value.trim()) {
+      setGroupFilter("all");
+    }
+  }
+
+  function handleGroupFilterChange(nextGroup: TeamGroupFilter) {
+    setGroupFilter(nextGroup);
+    setQuery("");
+  }
 
   return (
     <section aria-labelledby="teams-section-heading">
@@ -50,7 +66,7 @@ export default function TeamsSection() {
           className={styles.fixFilterInput}
           placeholder="Search team, code, or group…"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => handleSearchChange(event.target.value)}
           aria-label="Search teams"
         />
         <p className={styles.teamsResultCount} aria-live="polite">
@@ -67,7 +83,7 @@ export default function TeamsSection() {
           type="button"
           className={`${styles.filterChip} ${groupFilter === "all" ? styles.filterChipActive : ""}`}
           aria-pressed={groupFilter === "all"}
-          onClick={() => setGroupFilter("all")}
+          onClick={() => handleGroupFilterChange("all")}
         >
           ALL
         </button>
@@ -77,7 +93,7 @@ export default function TeamsSection() {
             type="button"
             className={`${styles.filterChip} ${groupFilter === groupId ? styles.filterChipActive : ""}`}
             aria-pressed={groupFilter === groupId}
-            onClick={() => setGroupFilter(groupId)}
+            onClick={() => handleGroupFilterChange(groupId)}
           >
             {groupId.toUpperCase()}
           </button>
@@ -88,7 +104,7 @@ export default function TeamsSection() {
 
       {filteredTeams.length === 0 ? (
         <p className={styles.teamsEmpty} role="status">
-          No teams match your search. Try a different name, FIFA code, or group.
+          {emptyMessage}
         </p>
       ) : (
         <div className={styles.tileGrid}>
