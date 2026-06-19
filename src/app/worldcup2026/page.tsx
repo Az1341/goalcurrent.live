@@ -6,12 +6,13 @@ import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
 import { WC26_TOURNAMENT } from "@/data/wc26";
 import { WC26_SECTIONS } from "@/lib/wc26-sections";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { SITE_NAME } from "@/lib/site-url";
 import styles from "@/components/wc26/wc26.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "World Cup 2026",
   description:
-    "FIFA World Cup 2026 hub — groups, fixtures, teams and standings on GoalCurrent.online.",
+    `FIFA World Cup 2026 hub — groups, fixtures, teams and standings on ${SITE_NAME}.`,
   path: "/worldcup2026",
 });
 export default function WorldCupHubPage() {

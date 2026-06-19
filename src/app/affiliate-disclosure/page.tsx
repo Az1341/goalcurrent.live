@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { NORDVPN_HREF } from "@/lib/site-keys";
+import { SITE_NAME } from "@/lib/site-url";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Affiliate Disclosure",
   description:
-    "Affiliate disclosure for GoalCurrent.online — NordVPN and other partner links.",
+    `Affiliate disclosure for ${SITE_NAME} — NordVPN and other partner links.`,
   path: "/affiliate-disclosure",
 });
 
@@ -14,7 +15,7 @@ export default function AffiliateDisclosurePage() {
   return (
     <LegalPage
       title="Affiliate Disclosure"
-      intro="Some links on GoalCurrent.online may earn a commission at no extra cost to you."
+      intro={`Some links on ${SITE_NAME} may earn a commission at no extra cost to you.`}
     >
       <section>
         <h2>NordVPN</h2>

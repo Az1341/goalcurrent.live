@@ -18,6 +18,7 @@ import {
 } from "@/data/wc26";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
+import { SITE_NAME } from "@/lib/site-url";
 import layoutStyles from "@/components/layout/layout.module.css";
 import styles from "@/components/wc26/wc26.module.css";
 
@@ -35,7 +36,7 @@ export default function FavouritesPageContent() {
     <main className={layoutStyles.content}>
       <h1 className={styles.pageTitle}>Favourites</h1>
       <p className={styles.pageIntro}>
-        Your saved teams, matches and competitions across GoalCurrent.online.
+        Your saved teams, matches and competitions across {SITE_NAME}.
       </p>
 
       {!hasAny ? (

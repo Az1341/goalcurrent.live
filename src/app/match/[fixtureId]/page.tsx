@@ -4,6 +4,7 @@ import MatchDetailContent from "@/components/match/MatchDetailContent";
 import { WC26_FIXTURES, getFixtureById, getTeamById } from "@/data/wc26";
 import { isKnownFixtureId, matchHref } from "@/lib/wc26-match";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { SITE_NAME } from "@/lib/site-url";
 
 type MatchPageProps = {
   params: Promise<{ fixtureId: string }>;
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: MatchPageProps): Promise<Meta
 
   return buildPageMetadata({
     title,
-    description: `World Cup 2026 match — ${title}. Live centre, timeline, statistics and lineups on GoalCurrent.online.`,
+    description: `World Cup 2026 match — ${title}. Live centre, timeline, statistics and lineups on ${SITE_NAME}.`,
     path: matchHref(fixtureId),
   });
 }

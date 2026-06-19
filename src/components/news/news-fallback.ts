@@ -1,4 +1,5 @@
 import type { NewsArticle } from "@/types/news";
+import { SITE_NAME } from "@/lib/site-url";
 
 /** Safe fallback when RSS fetch fails — page never blank. */
 export const NEWS_FALLBACK_ARTICLES: readonly NewsArticle[] = [
@@ -8,7 +9,7 @@ export const NEWS_FALLBACK_ARTICLES: readonly NewsArticle[] = [
     excerpt:
       "Group-stage matches are in progress across USA, Mexico and Canada. Scores refresh on our live scores page.",
     date: new Date().toISOString(),
-    source: "GoalCurrent.online",
+    source: SITE_NAME,
     tag: "BREAKING",
   },
   {
@@ -17,7 +18,7 @@ export const NEWS_FALLBACK_ARTICLES: readonly NewsArticle[] = [
     excerpt:
       "Points, goals and qualification positions for every group. Tables update as results are confirmed.",
     date: new Date().toISOString(),
-    source: "GoalCurrent.online",
+    source: SITE_NAME,
     tag: "NEWS",
   },
   {
@@ -53,7 +54,7 @@ export const NEWS_FALLBACK_ARTICLES: readonly NewsArticle[] = [
     excerpt:
       "Complete fixture list with kickoff times in your local timezone, venues and broadcasters for every match.",
     date: new Date().toISOString(),
-    source: "GoalCurrent.online",
+    source: SITE_NAME,
     tag: "PREVIEW",
   },
 ];

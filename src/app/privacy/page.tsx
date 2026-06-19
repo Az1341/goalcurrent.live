@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { SITE_NAME } from "@/lib/site-url";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Privacy Policy",
-  description: "Privacy policy for GoalCurrent.online.",
+  description: `Privacy policy for ${SITE_NAME}.`,
   path: "/privacy",
 });
 
@@ -12,7 +13,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy Policy"
-      intro="How GoalCurrent.online handles data on this site. Full policy to be expanded before production launch."
+      intro={`How ${SITE_NAME} handles data on this site. Full policy to be expanded before production launch.`}
     >
       <section>
         <h2>Data we store locally</h2>

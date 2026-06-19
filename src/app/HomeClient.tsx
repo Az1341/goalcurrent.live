@@ -14,6 +14,7 @@ import {
 import TeamFlag from "@/components/TeamFlag";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
+import { SITE_NAME } from "@/lib/site-url";
 import styles from "@/app/page.module.css";
 
 const FEATURED_FLAG = 64;
@@ -220,7 +221,7 @@ export default function Home() {
         <header className={styles.homeIntro}>
           <h1>Football live scores &amp; match centre</h1>
           <p>
-            Live results, fixtures and news from GoalCurrent.online — World Cup 2026
+            Live results, fixtures and news from {SITE_NAME} — World Cup 2026
             is the lead competition.
           </p>
           <span className={styles.homeBadge}>World Cup 2026 · lead competition</span>

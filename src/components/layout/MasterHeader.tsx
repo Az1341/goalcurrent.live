@@ -10,6 +10,7 @@ import {
   isMainNavActive,
 } from "@/lib/nav";
 import LiveRibbon from "./LiveRibbon";
+import { SITE_NAME } from "@/lib/site-url";
 import styles from "./master-chrome.module.css";
 
 export default function MasterHeader() {
@@ -39,7 +40,7 @@ export default function MasterHeader() {
             </div>
             <div>
               <div className={styles.brandName}>
-                Goal<span>Current</span>.online
+                Goal<span>Current</span>.live
               </div>
               <div className={styles.brandSub}>
                 Independent football media · live scores &amp; news

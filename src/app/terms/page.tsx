@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { SITE_NAME } from "@/lib/site-url";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Terms of Use",
   description:
-    "Terms of use for GoalCurrent.online — independent FIFA World Cup 2026 fan site.",
+    `Terms of use for ${SITE_NAME} — independent FIFA World Cup 2026 fan site.`,
   path: "/terms",
 });
 
@@ -13,7 +14,7 @@ export default function TermsPage() {
   return (
     <LegalPage
       title="Terms of Use"
-      intro="GoalCurrent.online is an independent fan site. These terms are a placeholder summary until full legal copy is published."
+      intro={`${SITE_NAME} is an independent fan site. These terms are a placeholder summary until full legal copy is published.`}
     >
       <section>
         <h2>Use of the site</h2>
@@ -26,7 +27,7 @@ export default function TermsPage() {
       <section>
         <h2>No affiliation</h2>
         <p>
-          GoalCurrent.online is not affiliated with FIFA, UEFA, the Premier
+          {SITE_NAME} is not affiliated with FIFA, UEFA, the Premier
           League, or any national federation.
         </p>
       </section>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { NEWS_FALLBACK_ARTICLES } from "@/components/news/news-fallback";
 import type { NewsArticle, NewsApiResponse, NewsTag } from "@/types/news";
+import { SITE_NAME } from "@/lib/site-url";
 import styles from "./news.module.css";
 
 const REFRESH_MS = 3_600_000;
@@ -70,7 +71,7 @@ function FeaturedArticle({ article }: { article: NewsArticle }) {
       <div className={styles.featuredSource}>
         {isExternalLink(article.link)
           ? `Source: ${article.source} · Read full article →`
-          : `${article.source} · View on GoalCurrent.online →`}
+          : `${article.source} · View on ${SITE_NAME} →`}
       </div>
     </ArticleLink>
   );
@@ -148,7 +149,7 @@ export default function NewsHub() {
       );
     } catch {
       setArticles([...NEWS_FALLBACK_ARTICLES]);
-      setSources(["GoalCurrent.online"]);
+      setSources([SITE_NAME]);
       setUsingFallback(true);
       setUpdatedLabel("Showing fallback news · Live feed updating…");
     } finally {
@@ -196,7 +197,7 @@ export default function NewsHub() {
         <>
           {usingFallback ? (
             <p className={styles.fallbackNote}>
-              Live news feed temporarily unavailable — showing GoalCurrent.online
+              Live news feed temporarily unavailable — showing {SITE_NAME}
               fallback stories.
             </p>
           ) : null}

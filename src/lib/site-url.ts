@@ -1,5 +1,7 @@
-/** Canonical production origin for GoalCurrent.online */
-export const SITE_URL = "https://www.goalcurrent.online";
+/** Canonical production origin for GoalCurrent.live */
+export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || "GoalCurrent.live";
+export const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN || "goalcurrent.live";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.goalcurrent.live";
 
 export function absoluteUrl(path: string): string {
   if (path === "" || path === "/") {

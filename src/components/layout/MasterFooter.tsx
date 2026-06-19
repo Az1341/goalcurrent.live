@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FOOTER_LINKS, FOOTER_SOCIAL } from "@/lib/nav";
 import { NORDVPN_HREF } from "@/lib/site-keys";
+import { SITE_NAME } from "@/lib/site-url";
 import styles from "./master-chrome.module.css";
 
 export default function MasterFooter() {
@@ -41,7 +42,7 @@ export default function MasterFooter() {
         </div>
 
         <p className={styles.footerCopy}>
-          © 2026 Ashna4All · Ahmad Zafarani · GoalCurrent.online independent fan
+          © 2026 Ashna4All · Ahmad Zafarani · {SITE_NAME} independent fan
           site · Not affiliated with FIFA, UEFA or the Premier League.
         </p>
       </div>

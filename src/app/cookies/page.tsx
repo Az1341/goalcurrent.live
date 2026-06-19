@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { SITE_NAME } from "@/lib/site-url";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Cookie Policy",
-  description: "Cookie and local storage policy for GoalCurrent.online.",
+  description: `Cookie and local storage policy for ${SITE_NAME}.`,
   path: "/cookies",
 });
 
@@ -12,7 +13,7 @@ export default function CookiesPage() {
   return (
     <LegalPage
       title="Cookie Policy"
-      intro="GoalCurrent.online uses minimal client-side storage. No advertising cookies are set by this placeholder build."
+      intro={`${SITE_NAME} uses minimal client-side storage. No advertising cookies are set by this placeholder build.`}
     >
       <section>
         <h2>Cookie consent banner</h2>

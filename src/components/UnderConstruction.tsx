@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SITE_NAME } from "@/lib/site-url";
 import styles from "@/components/layout/layout.module.css";
 
 type UnderConstructionProps = {
@@ -10,7 +11,7 @@ type UnderConstructionProps = {
 export default function UnderConstruction({
   title,
   emoji = "🚧",
-  description = "This section is being built for GoalCurrent.online. Check back soon.",
+  description = `This section is being built for ${SITE_NAME}. Check back soon.`,
 }: UnderConstructionProps) {
   return (
     <main className={styles.content}>

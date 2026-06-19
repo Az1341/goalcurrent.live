@@ -8,6 +8,7 @@ import { buildHomepageMatchView } from "@/lib/wc26-live";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import { filterTopScorersForTeams } from "@/lib/wc26-top-scorers-group";
+import { SITE_NAME } from "@/lib/site-url";
 import type { Wc26GroupId } from "@/types/group";
 import type { NewsArticle } from "@/types/news";
 import type { Team, TeamId } from "@/types/team";
@@ -283,7 +284,7 @@ export function groupHubTitle(groupId: Wc26GroupId): string {
 
 export function groupHubDescription(groupId: Wc26GroupId): string {
   const teams = buildGroupTeamNamesList(groupId);
-  return `${groupLabel(groupId)} at FIFA World Cup 2026 — live standings, fixtures, results, top scorers and news for ${teams} on GoalCurrent.online.`;
+  return `${groupLabel(groupId)} at FIFA World Cup 2026 — live standings, fixtures, results, top scorers and news for ${teams} on ${SITE_NAME}.`;
 }
 
 export { buildHomepageMatchView };

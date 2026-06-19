@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import UnderConstruction from "@/components/UnderConstruction";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { SITE_NAME } from "@/lib/site-url";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Contact",
-  description: "Contact GoalCurrent.online.",
+  description: `Contact ${SITE_NAME}.`,
   path: "/contact",
 });
 
@@ -13,7 +14,7 @@ export default function ContactPage() {
     <UnderConstruction
       title="Contact"
       emoji="✉️"
-      description="Get in touch with the GoalCurrent.online team."
+      description={`Get in touch with the ${SITE_NAME} team.`}
     />
   );
 }

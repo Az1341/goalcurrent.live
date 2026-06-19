@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import Layout from "@/components/layout/Layout";
 import StagingIntegrations from "@/components/layout/StagingIntegrations";
 import { BRAND_THEME_COLOR } from "@/lib/site-integrations";
-import { SITE_URL } from "@/lib/site-url";
+import { SITE_URL, SITE_NAME } from "@/lib/site-url";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,18 +16,18 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    template: "%s - GoalCurrent.online",
+    template: `%s - ${SITE_NAME}`,
     default:
-      "GoalCurrent.online - FIFA World Cup 2026 | Live Scores, News & Teams",
+      `${SITE_NAME} - FIFA World Cup 2026 | Live Scores, News & Teams`,
   },
   description:
-    "GoalCurrent.online - live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
+    `${SITE_NAME} - live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.`,
   openGraph: {
-    title: "GoalCurrent.online - FIFA World Cup 2026",
+    title: `${SITE_NAME} - FIFA World Cup 2026`,
     description:
       "Live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
     url: SITE_URL,
-    siteName: "GoalCurrent.online",
+    siteName: SITE_NAME,
     type: "website",
   },
   manifest: "/manifest.json",
