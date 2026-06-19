@@ -514,11 +514,29 @@
 
 @media (max-width: 768px) {
   .homeMain {
-    padding: 16px 14px 0;
+    padding: 16px 12px 0;
+  }
+
+  .homeIntro h1 {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .homeIntro p {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .sectionBlock {
+    margin-bottom: 24px;
   }
 
   .featuredHeroBody {
-    padding: 20px 14px 18px;
+    padding: 16px 12px 14px;
+  }
+
+  .featuredHeroTop {
+    padding: 10px 12px;
   }
 
   .featuredSide {
@@ -532,29 +550,34 @@
   }
 
   .featuredTeamName {
+    font-size: 1rem;
+    line-height: 1.3;
     white-space: normal;
   }
 
   .featuredScorebox {
     order: -1;
     width: 100%;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   .featuredMeta {
+    font-size: 0.8125rem;
     white-space: normal;
+    line-height: 1.4;
   }
 
   .matchRow {
-    grid-template-columns: 68px 1fr 64px 1fr 28px;
-    padding: 10px 12px;
-    gap: 6px;
+    grid-template-columns: 56px 1fr 56px 1fr 24px;
+    padding: 12px 10px;
+    gap: 8px;
   }
 
   .colHome,
   .colAway {
     font-size: 0.875rem;
     font-weight: 500;
+    line-height: 1.3;
   }
 
   .colHome > span,
@@ -577,6 +600,73 @@
 
   .wcNav {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .wcNavLink {
+    padding: 12px;
+  }
+
+  .wcNavLink strong {
+    font-size: 0.875rem;
+  }
+
+  .wcNavLink span {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .homeMain {
+    padding: 14px 10px 0;
+  }
+
+  .homeIntro h1 {
+    font-size: 1.125rem;
+  }
+
+  .homeIntro p {
+    font-size: 0.8125rem;
+  }
+
+  .sectionBlock {
+    margin-bottom: 20px;
+  }
+
+  .featuredHeroBody {
+    padding: 14px 10px 12px;
+  }
+
+  .featuredTeamName {
+    font-size: 0.9375rem;
+  }
+
+  .featuredMeta {
+    font-size: 0.75rem;
+  }
+
+  .matchRow {
+    grid-template-columns: 48px 1fr 48px 1fr 20px;
+    padding: 10px 8px;
+    gap: 6px;
+  }
+
+  .colHome,
+  .colAway {
+    font-size: 0.8125rem;
+  }
+
+  .colScore {
+    font-size: 0.9375rem;
+  }
+
+  .sectionTitle {
+    font-size: 0.625rem;
+    padding: 2px 8px;
+  }
+
+  .sectionLink {
+    font-size: 0.8125rem;
   }
 }
 
