@@ -175,6 +175,9 @@
   font-weight: 700;
   line-height: 1.25;
   color: var(--hp-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .featuredSideHome .featuredTeamName {
@@ -211,6 +214,9 @@
   color: var(--hp-muted);
   margin: 10px 0 14px;
   line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .featuredActions {
@@ -339,6 +345,14 @@
   font-weight: 500;
   color: var(--hp-text);
   min-width: 0;
+  overflow: hidden;
+}
+
+.colHome > span,
+.colAway > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .colHome {
@@ -512,10 +526,18 @@
     text-align: center;
   }
 
+  .featuredTeamName {
+    white-space: normal;
+  }
+
   .featuredScorebox {
     order: -1;
     width: 100%;
     margin-bottom: 4px;
+  }
+
+  .featuredMeta {
+    white-space: normal;
   }
 
   .matchRow {
@@ -528,6 +550,11 @@
   .colAway {
     font-size: 0.875rem;
     font-weight: 500;
+  }
+
+  .colHome > span,
+  .colAway > span {
+    white-space: normal;
   }
 
   .colScore {
