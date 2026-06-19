@@ -76,16 +76,16 @@
 }
 
 .sectionTitle {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   color: #ffffff;
   margin: 0;
-  padding: 4px 12px;
+  padding: 3px 10px;
   background: var(--gc-green, #16A34A);
-  border-radius: 5px;
+  border-radius: 4px;
   display: inline-block;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
 }
 
 .sectionLink {
@@ -124,7 +124,7 @@
   padding: 12px 18px;
   background: var(--hp-surface);
   border-bottom: 1px solid var(--hp-border);
-  border-left: 3px solid var(--hp-accent);
+  border-left: 4px solid #C8102E;
 }
 
 .featuredHeroLabel {
@@ -142,7 +142,7 @@
 }
 
 .featuredHeroBody {
-  padding: 22px 20px 20px;
+  padding: 20px 20px 18px;
 }
 
 .featuredRow {
@@ -171,8 +171,8 @@
 }
 
 .featuredTeamName {
-  font-size: clamp(1.0625rem, 2.4vw, 1.25rem);
-  font-weight: 600;
+  font-size: clamp(1.125rem, 2.6vw, 1.3rem);
+  font-weight: 700;
   line-height: 1.25;
   color: var(--hp-text);
 }
@@ -200,16 +200,17 @@
 }
 
 .featuredVs {
-  font-size: 1.125rem;
-  color: var(--hp-muted);
-  font-weight: 600;
+  font-size: 1rem;
+  color: #C8102E;
+  font-weight: 700;
 }
 
 .featuredMeta {
   text-align: center;
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   color: var(--hp-muted);
-  margin: 18px 0 20px;
+  margin: 10px 0 14px;
+  line-height: 1.6;
 }
 
 .featuredActions {
@@ -401,8 +402,8 @@
 
 .wcNavLink {
   display: block;
-  background: var(--hp-card);
-  border: 1px solid var(--hp-border);
+  background: #fafafa;
+  border: 1.5px solid #d1d5db;
   border-radius: 10px;
   padding: 14px 16px;
   text-decoration: none;
@@ -410,8 +411,9 @@
 }
 
 .wcNavLink:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  border-color: #C8102E;
+  box-shadow: 0 4px 14px rgba(200, 16, 46, 0.1);
+  background: #fff;
 }
 
 .wcNavLink strong {
@@ -457,11 +459,13 @@
   overflow: hidden;
   text-decoration: none;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  transition: box-shadow 0.15s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .newsItem:hover {
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+  border-color: #C8102E;
+  transform: translateY(-2px);
 }
 
 .newsTag {
