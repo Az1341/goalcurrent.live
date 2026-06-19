@@ -182,10 +182,12 @@
   display: none;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   background: linear-gradient(180deg, var(--gc-brand-from) 0%, var(--gc-brand-to) 100%);
-  max-height: min(50vh, 400px);
+  max-height: min(70vh, 600px);
   overflow-y: auto;
   padding-top: max(0px, env(safe-area-inset-top));
   padding-bottom: max(0px, env(safe-area-inset-bottom));
+  position: relative;
+  z-index: 260;
 }
 
 .mobilePanelOpen {
@@ -220,7 +222,7 @@
 
 @media (max-width: 430px) {
   .mobilePanel {
-    max-height: min(45vh, 350px);
+    max-height: min(65vh, 500px);
   }
 
   .mobileLink {
