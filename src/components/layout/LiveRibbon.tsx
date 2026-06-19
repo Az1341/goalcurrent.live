@@ -9,11 +9,12 @@ import {
   type HomepageMatchView,
 } from "@/lib/wc26-live";
 import {
+  formatTickerMatchTitle,
   formatTickerTeamName,
   getRibbonVisibleLimit,
 } from "@/lib/wc26-ticker-names";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import styles from "./master-chrome.module.css";
+import styles from "./live-ribbon.module.css";
 
 const FIXTURES_HREF = "/worldcup2026/fixtures";
 
@@ -71,10 +72,19 @@ export default function LiveRibbon() {
               : match.matchClass === "ft"
                 ? " FT"
                 : ` · ${match.statusLabel}`;
+          const matchTitle = formatTickerMatchTitle(
+            match.homeName,
+            match.awayName,
+            score,
+          );
 
           return (
             <li key={match.fixtureId} className={styles.liveRibbonItem}>
-              <Link href={matchHref(match.fixtureId)} className={styles.liveMatch}>
+              <Link
+                href={matchHref(match.fixtureId)}
+                className={styles.liveMatch}
+                title={matchTitle}
+              >
                 <TeamFlag teamId={match.homeTeamId} size={16} />
                 <span className={styles.liveMatchTeams}>
                   {homeName}
