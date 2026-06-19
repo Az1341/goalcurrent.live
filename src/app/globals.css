@@ -12,19 +12,19 @@
   --gc-blue: #0057ff;
   --gc-blue-hover: #0046cc;
   --gc-red: #e30613;
-  --gc-bg: #f4f7fb;
+  --gc-bg: #f8fafc;
   --gc-surface: #ffffff;
-  --gc-text-primary: #0f172a;
+  --gc-text-primary: #1e293b;
   --gc-text-secondary: #334155;
-  --gc-text-muted: #64748b;
+  --gc-text-muted: #475569;
   --gc-card: #ffffff;
-  --gc-card-hover: #f4f7fb;
-  --gc-inset: #f4f7fb;
+  --gc-card-hover: #f8fafc;
+  --gc-inset: #f8fafc;
   --gc-nav-active: #0057ff;
   --gc-nav-active-hover: #0046cc;
   --gc-accent-gold: #fbbf24;
-  --gc-border: #d7dee8;
-  --gc-border-strong: #c5ced9;
+  --gc-border: #e5e7eb;
+  --gc-border-strong: #d1d5db;
   --gc-success: #15803d;
   --gc-error: #e30613;
   --gc-text-on-accent: #ffffff;
@@ -57,6 +57,23 @@
   --gc-radius-lg: 12px;
   --gc-shadow: 0 1px 3px rgba(4, 30, 66, 0.06), 0 4px 14px rgba(4, 30, 66, 0.05);
   --gc-shadow-hover: 0 4px 16px rgba(4, 30, 66, 0.1);
+
+  /* ── Brand burgundy (header chrome only) ── */
+  --gc-brand-from: #963848;
+  --gc-brand-to: #7b0d1e;
+  --gc-brand-border: #b85a66;
+  --gc-brand-accent: #963848;
+  --gc-brand-active: #ffffff;
+  --gc-brand-active-text: #7b0d1e;
+
+  /* ── Content palette (slate + gold — no burgundy blocks) ── */
+  --gc-content-heading: #1e293b;
+  --gc-content-accent: #475569;
+  --gc-content-accent-hover: #334155;
+  --gc-content-surface: #f8fafc;
+  --gc-content-surface-alt: #f1f5f9;
+  --gc-content-border: #e5e7eb;
+  --gc-content-highlight: #fbbf24;
 }
 
 @keyframes gcPulse {

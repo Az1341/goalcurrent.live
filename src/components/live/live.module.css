@@ -38,7 +38,7 @@
   align-items: center;
   gap: 8px;
   padding-bottom: 8px;
-  border-bottom: 2px solid var(--gc-navy);
+  border-bottom: 2px solid var(--gc-content-border);
   margin-bottom: 14px;
 }
 
@@ -54,7 +54,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--gc-crimson, #9b1b30);
+  background: #22c55e;
   flex-shrink: 0;
   animation: livePulse 1.5s ease-in-out infinite;
 }
@@ -119,7 +119,7 @@
 
 .fixtureGroup {
   font-weight: var(--gc-weight-section);
-  color: var(--gc-nav-active);
+  color: var(--gc-content-accent-hover);
 }
 
 .fixtureKickoff {
@@ -136,7 +136,7 @@
 }
 
 .fixtureStatusLive {
-  color: var(--gc-crimson, #9b1b30);
+  color: #22c55e;
 }
 
 .fixtureMatchup {
@@ -144,7 +144,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: var(--gc-text-primary);
   margin-bottom: 4px;
@@ -178,7 +178,7 @@
 }
 
 .hubBack a {
-  color: var(--gc-nav-active);
+  color: var(--gc-content-accent-hover);
   font-weight: var(--gc-weight-nav);
 }
 

@@ -16,7 +16,7 @@
 }
 
 .pageTitle span {
-  color: #9b1b30;
+  color: var(--gc-content-accent-hover);
   font-weight: 700;
 }
 
@@ -65,7 +65,7 @@
 
 .featured {
   display: block;
-  background: linear-gradient(135deg, #5c0a1a 0%, #9b1b30 50%, #7a1020 100%);
+  background: linear-gradient(135deg, #334155 0%, #475569 50%, #64748b 100%);
   border-radius: var(--gc-radius-lg);
   padding: 24px;
   color: #fff;
@@ -123,9 +123,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #7a1020;
+  color: var(--gc-content-heading);
   padding-bottom: 8px;
-  border-bottom: 2px solid #9b1b30;
+  border-bottom: 2px solid var(--gc-content-border);
   margin-bottom: 14px;
 }
 
@@ -157,7 +157,7 @@
   width: 100%;
   height: 150px;
   overflow: hidden;
-  background: linear-gradient(135deg, #f6f0f2 0%, #9b1b30 100%);
+  background: linear-gradient(135deg, var(--gc-content-surface-alt) 0%, #cbd5e1 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,7 +207,7 @@
 }
 
 .tagBREAKING {
-  background: #9b1b30;
+  background: var(--gc-content-accent-hover);
   color: #fff;
 }
 
@@ -293,7 +293,7 @@
 }
 
 .hubBack a {
-  color: #9b1b30;
+  color: var(--gc-content-accent-hover);
   font-weight: 600;
   text-decoration: none;
 }

@@ -1,12 +1,12 @@
 .wc26Content {
-  --wc26-red-dark: #5c0a1a;
-  --wc26-red: #9b1b30;
-  --wc26-red-mid: #7a1020;
-  --wc26-red-gradient: linear-gradient(135deg, #5c0a1a 0%, #9b1b30 52%, #7a1020 100%);
-  --wc26-red-soft: rgba(155, 27, 48, 0.08);
-  --wc26-red-border: rgba(155, 27, 48, 0.28);
-  --wc26-accent: #9b1b30;
-  --wc26-accent-hover: #7a1020;
+  --wc26-red-dark: #1e293b;
+  --wc26-red: #475569;
+  --wc26-red-mid: #334155;
+  --wc26-red-gradient: linear-gradient(135deg, #334155 0%, #475569 52%, #64748b 100%);
+  --wc26-red-soft: rgba(71, 85, 105, 0.08);
+  --wc26-red-border: rgba(71, 85, 105, 0.24);
+  --wc26-accent: #475569;
+  --wc26-accent-hover: #334155;
   --wc26-gold: #fbbf24;
 
   flex: 1;
@@ -287,9 +287,9 @@
   padding: 11px 12px;
   text-align: center;
   font-weight: 700;
-  color: #5c0a1a;
-  background: color-mix(in srgb, var(--wc26-accent, #9b1b30) 11%, #fff6f7);
-  border-bottom: 1px solid color-mix(in srgb, var(--wc26-accent, #9b1b30) 20%, var(--gc-border));
+  color: var(--gc-content-heading);
+  background: color-mix(in srgb, var(--wc26-accent) 11%, #ffffff);
+  border-bottom: 1px solid color-mix(in srgb, var(--wc26-accent) 20%, var(--gc-border));
   letter-spacing: 0.04em;
   text-transform: uppercase;
   font-size: 0.6875rem;
@@ -317,12 +317,12 @@
 }
 
 .topScorersRowMoreStart td {
-  border-top: 1px solid color-mix(in srgb, var(--wc26-accent, #9b1b30) 14%, var(--gc-border));
+  border-top: 1px solid color-mix(in srgb, var(--wc26-accent) 14%, var(--gc-border));
   padding-top: 12px;
 }
 
 .topScorersTable tbody tr:hover td {
-  background: color-mix(in srgb, var(--wc26-accent, #9b1b30) 4%, var(--gc-card-hover));
+  background: color-mix(in srgb, var(--wc26-accent) 4%, var(--gc-card-hover));
 }
 
 .topScorersExpandBtn {
@@ -331,9 +331,9 @@
   margin: 0;
   padding: 12px 16px;
   border: none;
-  border-top: 1px solid color-mix(in srgb, var(--wc26-accent, #9b1b30) 12%, var(--gc-border));
-  background: color-mix(in srgb, var(--wc26-accent, #9b1b30) 5%, var(--gc-card));
-  color: #7a1020;
+  border-top: 1px solid color-mix(in srgb, var(--wc26-accent) 12%, var(--gc-border));
+  background: var(--gc-content-surface);
+  color: var(--gc-content-accent-hover);
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.35;
@@ -344,12 +344,12 @@
 }
 
 .topScorersExpandBtn:hover {
-  background: color-mix(in srgb, var(--wc26-accent, #9b1b30) 9%, var(--gc-card));
-  color: #5c0a1a;
+  background: var(--gc-content-surface-alt);
+  color: var(--gc-content-heading);
 }
 
 .topScorersExpandBtn:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--wc26-accent, #9b1b30) 45%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--wc26-accent) 45%, transparent);
   outline-offset: -2px;
 }
 
@@ -372,13 +372,13 @@
 }
 
 .standingsHead {
-  background: var(--wc26-red-gradient);
-  color: var(--gc-text-on-accent);
+  background: var(--wc26-red-dark);
+  color: #f8fafc;
   padding: 12px 16px;
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.01em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid var(--gc-content-border);
 }
 
 .standingsTable {
@@ -391,9 +391,9 @@
   padding: 9px 10px;
   text-align: center;
   font-weight: 600;
-  color: var(--gc-text-on-accent);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: var(--wc26-red-mid);
+  color: var(--gc-content-accent-hover);
+  border-bottom: 1px solid var(--gc-content-border);
+  background: var(--gc-content-surface);
   font-size: 0.6875rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -495,34 +495,30 @@
 }
 
 .hubStatChipAccent {
-  border-color: rgba(227, 6, 19, 0.35);
-  background: rgba(227, 6, 19, 0.06);
+  border-color: rgba(251, 191, 36, 0.45);
+  background: rgba(251, 191, 36, 0.08);
 }
 
 .hubStatChipGoals {
-  border-color: color-mix(in srgb, var(--wc26-accent, #9b1b30) 42%, var(--gc-border));
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--wc26-accent, #9b1b30) 12%, #ffffff) 0%,
-    color-mix(in srgb, var(--wc26-accent, #9b1b30) 6%, #fff7f8) 100%
-  );
-  box-shadow: 0 2px 10px rgba(155, 27, 48, 0.1);
+  border-color: var(--gc-content-border);
+  background: var(--gc-card);
+  box-shadow: var(--gc-shadow);
 }
 
 .hubStatNum {
   font-size: 1.0625rem;
   font-weight: 600;
-  color: var(--gc-text-primary);
+  color: var(--gc-content-heading);
   line-height: 1.2;
 }
 
 .hubStatNumAccent {
-  color: var(--gc-red);
+  color: var(--gc-content-heading);
 }
 
 .hubStatNumGoals {
-  color: var(--wc26-accent, #9b1b30);
-  font-weight: 800;
+  color: var(--gc-content-heading);
+  font-weight: 700;
   font-size: 1.125rem;
 }
 
@@ -551,7 +547,7 @@
 }
 
 .hubStatLblGoals {
-  color: #7a1020;
+  color: var(--gc-content-accent);
   font-weight: 700;
 }
 
@@ -715,7 +711,7 @@
   display: inline-block;
   padding: 8px 14px;
   border-radius: var(--gc-radius);
-  border: 1px solid rgba(155, 27, 48, 0.35);
+  border: 1px solid var(--gc-content-border);
   background: var(--gc-card);
   color: var(--wc26-accent);
   font-size: 0.8125rem;
@@ -787,9 +783,9 @@
 
 .filterChipActive {
   color: #ffffff;
-  background: linear-gradient(180deg, #7a1020 0%, #5c0a1a 100%);
-  border-color: #9b1b30;
-  box-shadow: 0 1px 4px rgba(92, 10, 26, 0.28);
+  background: var(--gc-content-accent-hover);
+  border-color: var(--wc26-gold);
+  box-shadow: 0 1px 4px rgba(30, 41, 59, 0.18);
   font-weight: var(--gc-weight-section);
 }
 
@@ -880,11 +876,11 @@
 }
 
 .favBtn:hover {
-  color: var(--wc26-accent);
+  color: var(--gc-content-accent-hover);
 }
 
 .favBtnActive {
-  color: #c9a227;
+  color: #fbbf24;
 }
 
 .favEmpty {
@@ -1060,7 +1056,7 @@
 .venueCard:focus-visible {
   background: var(--gc-card-hover);
   border-color: var(--gc-border);
-  outline: 2px solid rgba(155, 27, 48, 0.35);
+  outline: 2px solid rgba(51, 65, 85, 0.28);
   outline-offset: 2px;
 }
 
@@ -1202,7 +1198,7 @@
 .groupNextMatchCard {
   background: var(--gc-card);
   border: 1px solid var(--gc-border);
-  border-left: 4px solid var(--wc26-accent);
+  border-left: 3px solid var(--gc-brand-accent, #963848);
   border-radius: var(--gc-radius-lg);
   padding: 16px;
   box-shadow: var(--gc-shadow);
@@ -1227,8 +1223,8 @@
 }
 
 .groupNextMatchVs {
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: 600;
   text-align: center;
 }
 
@@ -1418,7 +1414,7 @@
 
 .groupHubNavLink:hover {
   color: var(--wc26-accent);
-  border-color: rgba(155, 27, 48, 0.35);
+  border-color: #cbd5e1;
 }
 
 .colForm {
@@ -1570,26 +1566,31 @@
 }
 
 .fixMetric {
-  background: var(--wc26-red-gradient);
-  color: var(--gc-text-on-accent);
+  background: var(--gc-card);
+  color: var(--gc-text-primary);
   border-radius: var(--gc-radius-lg);
   padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--gc-content-border);
   box-shadow: var(--gc-shadow);
   text-align: center;
 }
 
 .fixMetric b {
   display: block;
-  font-size: 1.375rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
   line-height: 1.2;
+  color: var(--gc-content-heading);
+}
+
+.fixMetricsProgress .fixMetric:first-child {
+  border-left: 3px solid var(--gc-brand-accent, #963848);
 }
 
 .fixMetric span {
   display: block;
   font-size: 0.6875rem;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--gc-text-muted);
   margin-top: 4px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1633,11 +1634,12 @@
 }
 
 .fixCalendar {
-  background: linear-gradient(135deg, #3a0a14 0%, #5c0a1a 52%, #7a1020 100%);
+  background: var(--gc-surface);
+  border: 1px solid var(--gc-border);
   border-radius: var(--gc-radius-lg);
   padding: 16px;
   margin-bottom: 14px;
-  color: var(--gc-text-on-accent);
+  color: var(--gc-text-primary);
   box-shadow: var(--gc-shadow);
 }
 
@@ -1656,7 +1658,7 @@
 
 .fixCalMeta {
   font-size: 0.6875rem;
-  color: var(--wc26-gold);
+  color: var(--gc-content-accent);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1679,19 +1681,19 @@
 
 .fixCalDay {
   min-width: 54px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--gc-border);
   border-radius: var(--gc-radius);
   padding: 9px 6px;
   text-align: center;
   cursor: pointer;
-  background: transparent;
-  color: inherit;
+  background: var(--gc-content-surface-alt);
+  color: var(--gc-text-primary);
   font: inherit;
   flex-shrink: 0;
 }
 
 .fixCalDay:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--gc-content-surface);
 }
 
 .fixCalDayActive {
@@ -1709,7 +1711,7 @@
   display: block;
   font-size: 0.625rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--gc-text-muted);
 }
 
 .fixCalDayActive .fixCalDow,
@@ -1727,7 +1729,7 @@
 .fixCalCnt {
   display: block;
   font-size: 0.5625rem;
-  color: rgba(255, 255, 255, 0.48);
+  color: var(--gc-text-muted);
   margin-top: 2px;
 }
 
@@ -1869,13 +1871,13 @@
 }
 
 .fixMatchLive {
-  border-color: rgba(155, 27, 48, 0.55);
+  border-color: rgba(34, 197, 94, 0.45);
   background: linear-gradient(
     180deg,
-    rgba(155, 27, 48, 0.1) 0%,
+    rgba(34, 197, 94, 0.08) 0%,
     var(--gc-surface) 42%
   );
-  box-shadow: 0 0 0 2px rgba(155, 27, 48, 0.14);
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1);
 }
 
 .fixMatchTop {
@@ -1915,16 +1917,16 @@
 }
 
 .fixStatusScheduled {
-  background: rgba(92, 10, 26, 0.06);
-  color: var(--wc26-red-mid);
-  border: 1px solid rgba(155, 27, 48, 0.18);
+  background: var(--gc-content-surface-alt);
+  color: var(--gc-content-accent);
+  border: 1px solid var(--gc-content-border);
 }
 
 .fixStatusLive {
-  background: rgba(227, 6, 19, 0.14);
-  color: var(--wc26-red);
-  border: 1px solid rgba(155, 27, 48, 0.35);
-  font-weight: 800;
+  background: rgba(34, 197, 94, 0.14);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  font-weight: 700;
   letter-spacing: 0.05em;
 }
 
@@ -1970,8 +1972,8 @@
 }
 
 .fixTeamName {
-  font-weight: 600;
-  font-size: 0.75rem;
+  font-weight: 500;
+  font-size: 0.8125rem;
   line-height: 1.35;
   color: var(--gc-text-primary);
 }
@@ -1985,15 +1987,15 @@
 }
 
 .fixCentreScore {
-  font-size: 1.75rem;
-  font-weight: 800;
+  font-size: 1.25rem;
+  font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.1;
-  color: var(--gc-text-primary);
+  color: var(--gc-content-heading);
 }
 
 .fixMatchLive .fixCentreScore {
-  color: var(--wc26-red);
+  color: #15803d;
 }
 
 .fixCentreScoreFt {
@@ -2001,23 +2003,23 @@
 }
 
 .fixCentreKickoff {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--wc26-accent);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gc-content-accent-hover);
   line-height: 1.2;
 }
 
 .fixCentreMinute {
   font-size: 0.75rem;
-  font-weight: 800;
-  color: var(--wc26-red);
+  font-weight: 700;
+  color: #15803d;
   line-height: 1.2;
 }
 
 .fixCentreTime {
-  font-size: 1.375rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  color: var(--wc26-accent);
+  color: var(--wc-content-accent-hover);
   line-height: 1.2;
 }
 
@@ -2055,8 +2057,8 @@
 
 .fixDetailLink {
   font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--wc26-red);
+  font-weight: 600;
+  color: var(--gc-content-accent-hover);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -2230,15 +2232,15 @@
   }
 
   .fixCentreScore {
-    font-size: 1.45rem;
+    font-size: 1.125rem;
   }
 
   .fixCentreKickoff {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .fixTeamName {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
   }
 
   .fixExtras {
