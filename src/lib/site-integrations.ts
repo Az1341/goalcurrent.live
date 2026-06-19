@@ -10,17 +10,20 @@ export const BRAND_THEME_COLOR = "#5c0a1a";
 export const BRAND_MANIFEST_BACKGROUND = "#f6f0f2";
 
 /**
- * Third-party scripts run on staging/preview hosts only.
- * Never on public goalcurrent.online (detached / no indexing).
+ * Third-party scripts run on all GoalCurrent hosts.
+ * Includes production (goalcurrent.online), localhost, and preview deployments.
  */
 export function isStagingIntegrationsHost(hostname: string): boolean {
   const host = hostname.toLowerCase();
+  // Allow production domains
   if (host === "goalcurrent.online" || host === "www.goalcurrent.online") {
-    return false;
+    return true;
   }
+  // Allow localhost
   if (host === "localhost" || host.endsWith(".localhost")) {
     return true;
   }
+  // Allow preview deployments
   if (host.endsWith(".vercel.app")) {
     return true;
   }
