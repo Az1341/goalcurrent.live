@@ -206,7 +206,10 @@ export default function Home() {
 
   const pool = selectHomepageFixtures(fixtures, featured?.fixtureId, 12);
   const liveMatches = pool.filter((m) => m.matchClass === "live").slice(0, 3);
+  const upcomingMatches = pool.filter((m) => m.matchClass === "upcoming").slice(0, 3);
   const latestResults = pool.filter((m) => m.matchClass === "ft").slice(0, 3);
+  // Show upcoming matches when no live games
+  const liveOrUpcoming = liveMatches.length > 0 ? liveMatches : upcomingMatches;
 
   const { gamesPlayed, gamesLeft } = useTournamentStats();
   const totalMatches = WC26_TOURNAMENT.fixtureCount;
@@ -236,11 +239,11 @@ export default function Home() {
 
         <MatchListSection
           id="live-matches-heading"
-          title="Live matches"
-          matches={liveMatches}
-          emptyMessage="No live matches right now. Check back at kick-off or open the full live centre."
+          title={liveMatches.length > 0 ? "Live matches" : "Next up"}
+          matches={liveOrUpcoming}
+          emptyMessage="No upcoming matches available. Check the full fixtures for the schedule."
           moreHref="/live"
-          moreLabel="Open live scores"
+          moreLabel={liveMatches.length > 0 ? "Open live scores" : "View all fixtures"}
         />
 
         <MatchListSection
