@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Layout from "@/components/layout/Layout";
+import StagingIntegrations from "@/components/layout/StagingIntegrations";
+import { BRAND_THEME_COLOR } from "@/lib/site-integrations";
 import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
@@ -14,20 +16,44 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    template: "%s — GoalCurrent.online",
+    template: "%s - GoalCurrent.online",
     default:
-      "GoalCurrent.online — FIFA World Cup 2026 | Live Scores, News & Teams",
+      "GoalCurrent.online - FIFA World Cup 2026 | Live Scores, News & Teams",
   },
   description:
-    "GoalCurrent.online — live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
+    "GoalCurrent.online - live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
   openGraph: {
-    title: "GoalCurrent.online — FIFA World Cup 2026",
+    title: "GoalCurrent.online - FIFA World Cup 2026",
     description:
       "Live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
     url: SITE_URL,
     siteName: "GoalCurrent.online",
     type: "website",
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "GoalCurrent",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icons/icon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/logo.svg", type: "image/svg+xml" },
+    ],
+    shortcut: ["/favicon.ico"],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "192x192" }],
+  },
+  other: {
+    "msapplication-TileColor": BRAND_THEME_COLOR,
+    "msapplication-TileImage": "/icons/icon-192.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: BRAND_THEME_COLOR,
 };
 
 export default function RootLayout({
@@ -39,7 +65,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.variable}>
         <Layout>{children}</Layout>
+        <StagingIntegrations />
       </body>
     </html>
   );
 }
+
