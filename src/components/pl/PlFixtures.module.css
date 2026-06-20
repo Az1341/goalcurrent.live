@@ -1,0 +1,267 @@
+.plPage {
+  flex: 1;
+  padding: 0 16px 32px;
+  max-width: var(--gc-content-max);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.hero {
+  background: linear-gradient(
+    135deg,
+    var(--gc-brand-from) 0%,
+    var(--gc-brand-to) 100%
+  );
+  border-radius: var(--gc-radius-lg);
+  padding: 20px 18px;
+  margin: 16px 0 14px;
+  color: #fff;
+  box-shadow: var(--gc-shadow);
+}
+
+.heroTitle {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.heroSub {
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.45;
+}
+
+.adWrap {
+  margin: 0 0 16px;
+  min-height: 50px;
+}
+
+.panel {
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: var(--gc-shadow);
+}
+
+.panelTitle {
+  margin: 0 0 8px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--gc-text-primary);
+}
+
+.panelText {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--gc-text-secondary);
+  line-height: 1.5;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--gc-border);
+  border-top-color: var(--gc-brand-accent);
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: plSpin 0.8s linear infinite;
+}
+
+@keyframes plSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sectionTitle {
+  margin: 0 0 10px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gc-brand-accent);
+}
+
+.group {
+  margin-bottom: 18px;
+}
+
+.card {
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--gc-shadow);
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-bottom: 12px;
+  font-size: 0.75rem;
+  color: var(--gc-text-secondary);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.statusUpcoming {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.statusLive {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.statusFt {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.statusPostponed {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.statusCancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.kickoff {
+  font-weight: 600;
+  color: var(--gc-text-primary);
+}
+
+.venue {
+  flex: 1 1 100%;
+}
+
+.matchRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.teamSide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.teamSideAway {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.teamName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--gc-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scoreBox {
+  min-width: 72px;
+  text-align: center;
+}
+
+.score {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--gc-text-primary);
+  line-height: 1.1;
+}
+
+.vs {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--gc-brand-accent);
+}
+
+.elapsed {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--gc-brand-from),
+    var(--gc-brand-to)
+  );
+  color: #fff;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+}
+
+.meta {
+  margin: 10px 2px 0;
+  font-size: 0.75rem;
+  color: var(--gc-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .plPage {
+    padding: 0 12px 28px;
+  }
+
+  .hero {
+    padding: 16px 14px;
+    margin-top: 12px;
+  }
+
+  .heroTitle {
+    font-size: 1.2rem;
+  }
+
+  .teamName {
+    font-size: 0.8125rem;
+  }
+
+  .matchRow {
+    gap: 6px;
+  }
+}

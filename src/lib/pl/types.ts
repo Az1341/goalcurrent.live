@@ -6,6 +6,43 @@ import {
 
 export type PlStandingsSource = "api-football" | "fallback";
 
+export type PlFixtureStatus =
+  | "UPCOMING"
+  | "LIVE"
+  | "FT"
+  | "POSTPONED"
+  | "CANCELLED";
+
+export type PlFixtureRow = {
+  fixtureId: number;
+  kickoffUtc: string;
+  matchweek: number | null;
+  round: string | null;
+  venue: string | null;
+  homeTeamId: number;
+  homeTeamName: string;
+  homeTeamLogo: string | null;
+  awayTeamId: number;
+  awayTeamName: string;
+  awayTeamLogo: string | null;
+  status: PlFixtureStatus;
+  statusShort: string;
+  elapsed: number | null;
+  homeScore: number | null;
+  awayScore: number | null;
+};
+
+export type PlFixturesApiResponse = {
+  configured: boolean;
+  league: typeof PL_LEAGUE_NAME;
+  leagueId: typeof PL_LEAGUE_ID;
+  season: typeof PL_SEASON;
+  fixtures: PlFixtureRow[];
+  source: PlStandingsSource;
+  fetchedAt: string;
+  error?: string;
+};
+
 export type PlStandingRow = {
   rank: number;
   teamId: number;

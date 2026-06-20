@@ -6,6 +6,9 @@ import {
   PL_SEASON_START_ISO,
 } from "@/lib/pl/constants";
 import type {
+  PlFixtureRow,
+  PlFixturesApiResponse,
+  PlFixtureStatus,
   PlStandingRow,
   PlStandingsApiResponse,
   PlStandingsSource,
@@ -218,6 +221,246 @@ export function plStandingsCacheControl(
   }
 
   if (body.standings.length > 0 && body.source === "api-football") {
+    return "s-maxage=300, stale-while-revalidate=60";
+  }
+
+  return "s-maxage=3600, stale-while-revalidate=300";
+}
+
+type ApiFootballFixtureItem = {
+  fixture: {
+    id: number;
+    date: string;
+    status: {
+      short: string;
+      elapsed: number | null;
+    };
+    venue?: {
+      name?: string | null;
+      city?: string | null;
+    } | null;
+  };
+  league: {
+    round?: string | null;
+  };
+  teams: {
+    home: { id: number; name: string; logo: string };
+    away: { id: number; name: string; logo: string };
+  };
+  goals: {
+    home: number | null;
+    away: number | null;
+  };
+};
+
+type ApiFootballFixturesResponse = {
+  errors?: Record<string, string>;
+  results?: number;
+  paging?: {
+    current: number;
+    total: number;
+  };
+  response?: ApiFootballFixtureItem[];
+};
+
+function baseFixturesResponse(
+  source: PlStandingsSource,
+  overrides: Partial<PlFixturesApiResponse> = {},
+): PlFixturesApiResponse {
+  return {
+    configured: isPlApiConfigured(),
+    league: PL_LEAGUE_NAME,
+    leagueId: PL_LEAGUE_ID,
+    season: PL_SEASON,
+    fixtures: [],
+    source,
+    fetchedAt: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
+function mapFixtureStatus(short: string): PlFixtureStatus {
+  const code = short.trim().toUpperCase();
+  if (code === "FT" || code === "AET" || code === "PEN") return "FT";
+  if (
+    code === "1H" ||
+    code === "2H" ||
+    code === "HT" ||
+    code === "ET" ||
+    code === "BT" ||
+    code === "P" ||
+    code === "INT" ||
+    code === "LIVE"
+  ) {
+    return "LIVE";
+  }
+  if (code === "PST") return "POSTPONED";
+  if (code === "CANC" || code === "ABD" || code === "AWD" || code === "WO") {
+    return "CANCELLED";
+  }
+  return "UPCOMING";
+}
+
+function parseMatchweek(round: string | null | undefined): number | null {
+  if (!round) return null;
+  const match = round.match(/(\d+)\s*$/);
+  if (!match) return null;
+  const value = Number.parseInt(match[1], 10);
+  return Number.isFinite(value) ? value : null;
+}
+
+function formatVenue(
+  venue: ApiFootballFixtureItem["fixture"]["venue"],
+): string | null {
+  if (!venue) return null;
+  const parts = [venue.name, venue.city].filter(Boolean);
+  return parts.length ? parts.join(", ") : null;
+}
+
+function normalizeFixture(item: ApiFootballFixtureItem): PlFixtureRow {
+  const status = mapFixtureStatus(item.fixture.status.short);
+  const hasScore =
+    status === "FT" || status === "LIVE"
+      ? item.goals.home !== null && item.goals.away !== null
+      : false;
+
+  return {
+    fixtureId: item.fixture.id,
+    kickoffUtc: new Date(item.fixture.date).toISOString(),
+    matchweek: parseMatchweek(item.league.round),
+    round: item.league.round ?? null,
+    venue: formatVenue(item.fixture.venue),
+    homeTeamId: item.teams.home.id,
+    homeTeamName: item.teams.home.name,
+    homeTeamLogo: item.teams.home.logo || null,
+    awayTeamId: item.teams.away.id,
+    awayTeamName: item.teams.away.name,
+    awayTeamLogo: item.teams.away.logo || null,
+    status,
+    statusShort: item.fixture.status.short,
+    elapsed: item.fixture.status.elapsed,
+    homeScore: hasScore ? item.goals.home : null,
+    awayScore: hasScore ? item.goals.away : null,
+  };
+}
+
+async function fetchFixturesPage(
+  apiKey: string,
+  page: number,
+): Promise<ApiFootballFixturesResponse> {
+  const path =
+    `/fixtures?league=${PL_LEAGUE_ID}&season=${PL_SEASON}&timezone=UTC&page=${page}`;
+  const res = await fetch(`${API_FOOTBALL_BASE_URL}${path}`, {
+    headers: { "x-apisports-key": apiKey },
+    next: { revalidate: 0 },
+  });
+
+  if (res.status === 429) {
+    throw new Error("429 rate limit");
+  }
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error("403 auth");
+  }
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`api-sports ${res.status}: ${text.slice(0, 200)}`);
+  }
+
+  return (await res.json()) as ApiFootballFixturesResponse;
+}
+
+async function fetchFixturesFromApi(): Promise<PlFixturesApiResponse> {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return baseFixturesResponse("fallback", { configured: false });
+  }
+
+  const items: ApiFootballFixtureItem[] = [];
+  let page = 1;
+  let totalPages = 1;
+
+  while (page <= totalPages) {
+    const payload = await fetchFixturesPage(apiKey, page);
+
+    if (payload.errors && Object.keys(payload.errors).length > 0) {
+      const errorText = JSON.stringify(payload.errors);
+      if (isAuthError(errorText)) {
+        return baseFixturesResponse("fallback", {
+          configured: true,
+          error: "API key invalid or missing permissions.",
+        });
+      }
+      return baseFixturesResponse("fallback", {
+        configured: true,
+        error: errorText,
+      });
+    }
+
+    totalPages = payload.paging?.total ?? 1;
+    items.push(...(payload.response ?? []));
+    page += 1;
+  }
+
+  const fixtures = items
+    .map(normalizeFixture)
+    .sort(
+      (a, b) =>
+        new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime(),
+    );
+
+  if (!fixtures.length) {
+    const message = isSeasonStarted()
+      ? "Fixtures are not yet available for this matchweek."
+      : "The 2026/27 Premier League fixtures are not yet available.";
+
+    return baseFixturesResponse("fallback", {
+      configured: true,
+      error: message,
+    });
+  }
+
+  return baseFixturesResponse("api-football", {
+    configured: true,
+    fixtures,
+  });
+}
+
+export async function fetchPlFixtures(): Promise<PlFixturesApiResponse> {
+  if (!isPlApiConfigured()) {
+    return baseFixturesResponse("fallback", { configured: false });
+  }
+
+  try {
+    return await fetchFixturesFromApi();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+
+    if (message.includes("429") || isQuotaError(message)) {
+      return baseFixturesResponse("fallback", {
+        configured: true,
+        error: "API rate limit reached. Please retry shortly.",
+      });
+    }
+
+    if (message.includes("403")) {
+      return baseFixturesResponse("fallback", {
+        configured: true,
+        error: "API key rejected. Check API_FOOTBALL_KEY.",
+      });
+    }
+
+    throw error;
+  }
+}
+
+export function plFixturesCacheControl(body: PlFixturesApiResponse): string {
+  if (!body.configured) {
+    return "no-store";
+  }
+
+  if (body.fixtures.length > 0 && body.source === "api-football") {
     return "s-maxage=300, stale-while-revalidate=60";
   }
 

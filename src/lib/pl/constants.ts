@@ -11,3 +11,9 @@ export const PL_STANDINGS_CACHE_ACTIVE = 300;
 
 /** Standings endpoint cache pre-season / empty (seconds). */
 export const PL_STANDINGS_CACHE_PRESEASON = 3600;
+
+/** Fixtures endpoint cache when season has started (seconds). */
+export const PL_FIXTURES_CACHE_ACTIVE = 300;
+
+/** Fixtures endpoint cache pre-season / empty (seconds). */
+export const PL_FIXTURES_CACHE_PRESEASON = 3600;
