@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MORE_SHEET_NAV } from "@/lib/nav";
+import { MORE_SHEET_SECTIONS, isMoreSheetLinkActive } from "@/lib/nav";
 import styles from "./MoreBottomSheet.module.css";
 
 type MoreBottomSheetProps = {
@@ -40,36 +40,50 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
           </button>
         </div>
 
-        <nav className={styles.sheetList} aria-label="More links">
-          {MORE_SHEET_NAV.map((link) => {
-            if (link.external) {
-              return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className={`${styles.sheetLink} ${styles.sheetLinkExternal}`}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  onClick={onClose}
-                >
-                  {link.label}
-                </a>
-              );
-            }
-
-            return (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={styles.sheetLink}
-                aria-current={pathname === link.href ? "page" : undefined}
-                onClick={onClose}
+        <div className={styles.sheetList}>
+          {MORE_SHEET_SECTIONS.map((section) => (
+            <section key={section.title} aria-labelledby={`more-${section.title}`}>
+              <h3
+                id={`more-${section.title}`}
+                className={styles.sheetSectionLabel}
               >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+                {section.title}
+              </h3>
+              <nav aria-label={`${section.title} links`}>
+                {section.links.map((link) => {
+                  const active = !link.external && isMoreSheetLinkActive(pathname, link.href);
+
+                  if (link.external) {
+                    return (
+                      <a
+                        key={`${section.title}-${link.label}`}
+                        href={link.href}
+                        className={`${styles.sheetLink} ${styles.sheetLinkExternal}`}
+                        target="_blank"
+                        rel="noopener noreferrer sponsored"
+                        onClick={onClose}
+                      >
+                        {link.label}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={`${section.title}-${link.label}`}
+                      href={link.href}
+                      className={`${styles.sheetLink} ${active ? styles.sheetLinkActive : ""}`}
+                      aria-current={active ? "page" : undefined}
+                      onClick={onClose}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </section>
+          ))}
+        </div>
       </div>
     </>
   );
