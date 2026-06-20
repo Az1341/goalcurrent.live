@@ -33,6 +33,8 @@
 
 .sheetOpen {
   transform: translateY(0);
+  /* Panels are absolutely positioned — sheet needs explicit height or content area collapses to 0. */
+  height: min(78vh, 560px);
 }
 
 .sheetHeader {
