@@ -20,6 +20,16 @@
 
 }
 
+.mainWithTabBar {
+  padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 769px) {
+  .mainWithTabBar {
+    padding-bottom: 0;
+  }
+}
+
 
 
 .content {

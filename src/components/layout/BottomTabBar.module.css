@@ -1,0 +1,83 @@
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 500;
+  display: none;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: stretch;
+  background: #fff;
+  border-top: 1px solid rgba(200, 16, 46, 0.14);
+  box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.08);
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+}
+
+.tabLink,
+.tabButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 58px;
+  padding: 6px 4px 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1.1;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.tabLinkActive,
+.tabButtonActive {
+  color: var(--gc-brand-accent, #c8102e);
+}
+
+.tabLinkActive .icon,
+.tabButtonActive .icon {
+  color: var(--gc-brand-accent, #c8102e);
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+}
+
+.tabLinkActive .iconWrap,
+.tabButtonActive .iconWrap {
+  position: relative;
+}
+
+.tabLinkActive .iconWrap::before,
+.tabButtonActive .iconWrap::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--gc-brand-accent, #c8102e);
+}
+
+@media (max-width: 768px) {
+  .bar {
+    display: grid;
+  }
+}
+
+@media (min-width: 769px) {
+  .bar {
+    display: none !important;
+  }
+}
