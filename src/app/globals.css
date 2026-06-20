@@ -9,8 +9,8 @@
 :root {
   /* ── Broadcast palette (content surfaces) ── */
   --gc-navy: #041e42;
-  --gc-blue: #0057ff;
-  --gc-blue-hover: #0046cc;
+  --gc-blue: #7B0D1E;
+  --gc-blue-hover: #5F0917;
   --gc-red: #e30613;
   --gc-bg: #f8fafc;
   --gc-surface: #ffffff;
@@ -20,8 +20,8 @@
   --gc-card: #ffffff;
   --gc-card-hover: #f8fafc;
   --gc-inset: #f8fafc;
-  --gc-nav-active: #0057ff;
-  --gc-nav-active-hover: #0046cc;
+  --gc-nav-active: #7B0D1E;
+  --gc-nav-active-hover: #5F0917;
   --gc-accent-gold: #fbbf24;
   --gc-border: #e5e7eb;
   --gc-border-strong: #d1d5db;

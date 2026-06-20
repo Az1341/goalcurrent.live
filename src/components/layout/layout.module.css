@@ -130,9 +130,11 @@
 
   font-weight: var(--gc-weight-nav);
 
-  background: var(--gc-nav-active);
+  background: #7B0D1E;
 
-  color: var(--gc-text-on-accent);
+  color: #fff;
+
+  text-decoration: none;
 
   transition: background 0.15s ease;
 
@@ -142,7 +144,7 @@
 
 .stubBtn:hover {
 
-  background: var(--gc-nav-active-hover);
+  background: #5F0917;
 
 }
 
@@ -191,7 +193,7 @@
 }
 
 .legalArticle a {
-  color: var(--gc-nav-active);
+  color: #7B0D1E;
   font-weight: var(--gc-weight-nav);
 }
 
@@ -208,7 +210,7 @@
 }
 
 .legalBack a {
-  color: var(--gc-nav-active);
+  color: #7B0D1E;
   font-weight: var(--gc-weight-nav);
 }
 
