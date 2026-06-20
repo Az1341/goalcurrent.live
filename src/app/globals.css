@@ -107,13 +107,14 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: #fdf6f0;
 }
 
 body {
   font-family: var(--gc-font);
   font-weight: var(--gc-weight-body);
   color: var(--gc-text-primary);
-  background: var(--gc-bg);
+  background-color: #fdf6f0;
   min-height: 100vh;
   font-size: 17px;
   line-height: var(--gc-line-height);

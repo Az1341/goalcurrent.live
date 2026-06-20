@@ -17,6 +17,7 @@ import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import styles from "./live-ribbon.module.css";
 
 const FIXTURES_HREF = "/worldcup2026/fixtures";
+const MOBILE_MAX_WIDTH = 767;
 
 function formatScore(match: HomepageMatchView): string | null {
   if (!match.score) {
@@ -25,19 +26,63 @@ function formatScore(match: HomepageMatchView): string | null {
   return `${match.score.home}–${match.score.away}`;
 }
 
+function renderMatchItem(match: HomepageMatchView, keySuffix = "") {
+  const score = formatScore(match);
+  const homeName = formatTickerTeamName(match.homeTeamId, match.homeName);
+  const awayName = formatTickerTeamName(match.awayTeamId, match.awayName);
+  const statusSuffix =
+    match.matchClass === "live"
+      ? ""
+      : match.matchClass === "ft"
+        ? " FT"
+        : ` · ${match.statusLabel}`;
+  const matchTitle = formatTickerMatchTitle(
+    match.homeName,
+    match.awayName,
+    score,
+  );
+
+  return (
+    <li
+      key={`${match.fixtureId}${keySuffix}`}
+      className={styles.liveRibbonItem}
+    >
+      <Link
+        href={matchHref(match.fixtureId)}
+        className={styles.liveMatch}
+        title={matchTitle}
+      >
+        <TeamFlag teamId={match.homeTeamId} size={16} />
+        <span className={styles.liveMatchTeams}>
+          {homeName}
+          {score ? ` ${score} ` : " vs "}
+          {awayName}
+        </span>
+        <TeamFlag teamId={match.awayTeamId} size={16} />
+        {statusSuffix ? (
+          <span className={styles.liveMatchStatus}>{statusSuffix}</span>
+        ) : null}
+      </Link>
+    </li>
+  );
+}
+
 export default function LiveRibbon() {
   const fixtures = useEffectiveFixtures();
   const allMatches = selectRibbonFixtures(fixtures);
+  const [isMobile, setIsMobile] = useState(false);
   const [visibleLimit, setVisibleLimit] = useState(3);
 
   useEffect(() => {
-    function syncLimit() {
-      setVisibleLimit(getRibbonVisibleLimit(window.innerWidth));
+    function syncLayout() {
+      const width = window.innerWidth;
+      setIsMobile(width <= MOBILE_MAX_WIDTH);
+      setVisibleLimit(getRibbonVisibleLimit(width));
     }
 
-    syncLimit();
-    window.addEventListener("resize", syncLimit);
-    return () => window.removeEventListener("resize", syncLimit);
+    syncLayout();
+    window.addEventListener("resize", syncLayout);
+    return () => window.removeEventListener("resize", syncLayout);
   }, []);
 
   if (allMatches.length === 0) {
@@ -52,7 +97,8 @@ export default function LiveRibbon() {
   }
 
   const hasLive = allMatches.some((match) => match.matchClass === "live");
-  const visibleMatches = allMatches.slice(0, visibleLimit);
+  const desktopMatches = allMatches.slice(0, visibleLimit);
+  const desktopTrackMatches = [...desktopMatches, ...desktopMatches];
   const hiddenCount = Math.max(0, allMatches.length - visibleLimit);
 
   return (
@@ -61,56 +107,40 @@ export default function LiveRibbon() {
         {hasLive ? <span className={styles.liveDot} aria-hidden="true" /> : null}
         {hasLive ? "LIVE NOW" : "LATEST RESULTS"}
       </span>
-      <ul className={styles.liveRibbonList}>
-        {visibleMatches.map((match) => {
-          const score = formatScore(match);
-          const homeName = formatTickerTeamName(match.homeTeamId, match.homeName);
-          const awayName = formatTickerTeamName(match.awayTeamId, match.awayName);
-          const statusSuffix =
-            match.matchClass === "live"
-              ? ""
-              : match.matchClass === "ft"
-                ? " FT"
-                : ` · ${match.statusLabel}`;
-          const matchTitle = formatTickerMatchTitle(
-            match.homeName,
-            match.awayName,
-            score,
-          );
-
-          return (
-            <li key={match.fixtureId} className={styles.liveRibbonItem}>
+      <div className={styles.tickerScroll}>
+        <ul
+          className={`${styles.tickerTrack} ${styles.liveRibbonList}`}
+          aria-label={hasLive ? "Live matches" : "Latest results"}
+        >
+          {isMobile
+            ? allMatches.map((match) => renderMatchItem(match))
+            : desktopTrackMatches.map((match, index) =>
+                renderMatchItem(match, `-loop-${index}`),
+              )}
+          {!isMobile && hiddenCount > 0 ? (
+            <li className={styles.liveRibbonItem}>
               <Link
-                href={matchHref(match.fixtureId)}
-                className={styles.liveMatch}
-                title={matchTitle}
+                href={FIXTURES_HREF}
+                className={styles.liveRibbonMore}
+                aria-label={`View ${hiddenCount} more matches`}
               >
-                <TeamFlag teamId={match.homeTeamId} size={16} />
-                <span className={styles.liveMatchTeams}>
-                  {homeName}
-                  {score ? ` ${score} ` : " vs "}
-                  {awayName}
-                </span>
-                <TeamFlag teamId={match.awayTeamId} size={16} />
-                {statusSuffix ? (
-                  <span className={styles.liveMatchStatus}>{statusSuffix}</span>
-                ) : null}
+                +{hiddenCount} MORE MATCHES
               </Link>
             </li>
-          );
-        })}
-        {hiddenCount > 0 ? (
-          <li className={styles.liveRibbonItem}>
-            <Link
-              href={FIXTURES_HREF}
-              className={styles.liveRibbonMore}
-              aria-label={`View ${hiddenCount} more matches`}
-            >
-              +{hiddenCount} MORE MATCHES
-            </Link>
-          </li>
-        ) : null}
-      </ul>
+          ) : null}
+          {isMobile ? (
+            <li className={styles.liveRibbonItem}>
+              <Link
+                href={FIXTURES_HREF}
+                className={styles.liveRibbonMore}
+                aria-label="View all fixtures"
+              >
+                ALL FIXTURES
+              </Link>
+            </li>
+          ) : null}
+        </ul>
+      </div>
     </div>
   );
 }

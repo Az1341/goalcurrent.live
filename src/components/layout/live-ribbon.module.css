@@ -42,21 +42,41 @@
   flex-shrink: 0;
 }
 
-.liveRibbonList {
-  display: flex;
-  align-items: center;
+.tickerScroll {
   flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
+}
+
+.tickerTrack {
+  display: flex;
+  align-items: center;
   gap: 14px;
   margin: 0;
   padding: 0;
   list-style: none;
-  overflow: hidden;
+  width: max-content;
+  white-space: nowrap;
+  animation: tickerMarquee 36s linear infinite;
 }
 
-/* Never shrink match rows — show fewer matches instead of truncated names. */
+@keyframes tickerMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.liveRibbonList {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .liveRibbonItem {
   flex: 0 0 auto;
+  scroll-snap-align: start;
 }
 
 .liveMatch {
@@ -104,6 +124,33 @@
   text-decoration: none;
 }
 
+@media (max-width: 767px) {
+  .tickerScroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    cursor: grab;
+    white-space: nowrap;
+    touch-action: pan-x;
+  }
+
+  .tickerScroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tickerScroll:active {
+    cursor: grabbing;
+  }
+
+  .tickerTrack {
+    animation: none;
+    white-space: nowrap;
+    width: max-content;
+  }
+}
+
 @media (min-width: 768px) {
   .liveRibbon {
     gap: 16px;
@@ -114,7 +161,7 @@
     font-size: 0.75rem;
   }
 
-  .liveRibbonList {
+  .tickerTrack {
     gap: 18px;
   }
 
@@ -134,7 +181,7 @@
     gap: 20px;
   }
 
-  .liveRibbonList {
+  .tickerTrack {
     gap: 22px;
   }
 }
