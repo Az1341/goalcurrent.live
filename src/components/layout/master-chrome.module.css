@@ -8,6 +8,9 @@
 }
 
 .masterHeader {
+  position: relative;
+  z-index: 400;
+  overflow: visible;
   background: linear-gradient(180deg, var(--gc-brand-from) 0%, var(--gc-brand-to) 100%);
   color: #ffffff;
   border-bottom: 2px solid var(--gc-brand-border);
@@ -111,13 +114,13 @@
 .dropdownWrap {
   position: relative;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .dropdownPanel {
   position: absolute;
-  top: 100%;
+  top: calc(100% - 1px);
   left: 0;
-  margin-top: 0;
   min-width: 220px;
   max-height: min(70vh, 520px);
   overflow-y: auto;
@@ -125,7 +128,8 @@
   border: 1px solid #e8dce0;
   border-radius: 0 0 8px 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  z-index: 800;
+  z-index: 1000;
+  pointer-events: auto;
 }
 
 .dropdownLink {
