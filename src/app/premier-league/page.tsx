@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { PlAdSlot } from "@/components/pl/PlCommercialStrip";
 import { PL_NAV } from "@/lib/nav";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
@@ -14,6 +15,7 @@ export const metadata: Metadata = buildPageMetadata({
 export default function PremierLeagueHubPage() {
   return (
     <main className={styles.content}>
+      <PlAdSlot slot="5678901234" />
       <div className={styles.stub}>
         <span className={styles.stubEmoji} aria-hidden="true">
           ⚽

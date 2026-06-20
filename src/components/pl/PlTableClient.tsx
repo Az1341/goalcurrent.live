@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import AdSenseUnit from "@/components/AdSenseUnit";
 import type {
   PlStandingRow,
   PlStandingsApiResponse,
@@ -156,10 +155,6 @@ export default function PlTableClient() {
           available.
         </p>
       </header>
-
-      <div className={styles.adWrap}>
-        <AdSenseUnit slot="3456789012" />
-      </div>
 
       {view === "loading" ? (
         <div className={styles.panel} role="status" aria-live="polite">

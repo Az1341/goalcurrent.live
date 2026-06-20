@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PlAdSlot } from "@/components/pl/PlCommercialStrip";
 import PlFixturesClient from "@/components/pl/PlFixturesClient";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
@@ -10,5 +11,10 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function PremierLeagueFixturesPage() {
-  return <PlFixturesClient />;
+  return (
+    <>
+      <PlAdSlot slot="4567890123" />
+      <PlFixturesClient />
+    </>
+  );
 }

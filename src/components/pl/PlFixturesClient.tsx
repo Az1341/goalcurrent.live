@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import AdSenseUnit from "@/components/AdSenseUnit";
 import type {
   PlFixtureRow,
   PlFixturesApiResponse,
@@ -237,10 +236,6 @@ export default function PlFixturesClient() {
           timezone.
         </p>
       </header>
-
-      <div className={styles.adWrap}>
-        <AdSenseUnit slot="4567890123" />
-      </div>
 
       {view === "loading" ? (
         <div className={styles.panel} role="status" aria-live="polite">
