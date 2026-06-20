@@ -3,6 +3,11 @@ import {
   PL_LEAGUE_NAME,
   PL_SEASON,
 } from "@/lib/pl/constants";
+import type {
+  MatchEventItem,
+  MatchLineupSide,
+  MatchStatisticPair,
+} from "@/types/match-detail";
 
 export type PlStandingsSource = "api-football" | "fallback";
 
@@ -173,6 +178,42 @@ export type PlTransfersApiResponse = {
   season: typeof PL_SEASON;
   transfers: PlTransferRow[];
   supported: boolean;
+  source: PlStandingsSource;
+  fetchedAt: string;
+  error?: string;
+};
+
+export type PlMatchFixture = PlFixtureRow & {
+  referee: string | null;
+  venueCity: string | null;
+};
+
+export type PlMatchH2HRow = {
+  fixtureId: number;
+  kickoffUtc: string;
+  homeTeamName: string;
+  awayTeamName: string;
+  homeScore: number | null;
+  awayScore: number | null;
+  status: PlFixtureStatus;
+};
+
+export type PlMatchApiResponse = {
+  configured: boolean;
+  league: typeof PL_LEAGUE_NAME;
+  leagueId: typeof PL_LEAGUE_ID;
+  season: typeof PL_SEASON;
+  fixtureId: number;
+  fixture: PlMatchFixture | null;
+  apiAvailable: boolean;
+  events: MatchEventItem[];
+  lineups: {
+    home: MatchLineupSide | null;
+    away: MatchLineupSide | null;
+  };
+  statistics: MatchStatisticPair[];
+  h2h: PlMatchH2HRow[];
+  standingsSnapshot: PlStandingRow[];
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
