@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { isAdSenseHost } from "@/lib/site-integrations";
 
 interface AdSenseUnitProps {
   slot: string;
@@ -10,16 +11,27 @@ interface AdSenseUnitProps {
 export default function AdSenseUnit({ slot, className = "" }: AdSenseUnitProps) {
   const adRef = useRef<HTMLModElement>(null);
   const publisherId = "ca-pub-8697460993506171";
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
+    setEnabled(isAdSenseHost(window.location.hostname));
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
     try {
-      if (typeof window !== "undefined" && (window as any).adsbygoogle) {
-        (window as any).adsbygoogle.push({});
+      const w = window as Window & { adsbygoogle?: unknown[] };
+      if (w.adsbygoogle) {
+        w.adsbygoogle.push({});
       }
     } catch (error) {
-      console.error("AdSense error:", error);
+      console.warn("AdSense push skipped:", error);
     }
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) {
+    return null;
+  }
 
   return (
     <ins

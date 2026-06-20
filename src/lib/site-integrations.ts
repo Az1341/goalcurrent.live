@@ -9,26 +9,48 @@ export const BRAND_THEME_COLOR = "#5c0a1a";
 /** Light red-tinted page surface for PWA splash (master-chrome subscribe panel). */
 export const BRAND_MANIFEST_BACKGROUND = "#f6f0f2";
 
+function normalizeHost(hostname: string): string {
+  return hostname.toLowerCase();
+}
+
+function siteDomain(): string {
+  return process.env.NEXT_PUBLIC_SITE_DOMAIN || "goalcurrent.live";
+}
+
+/** Production apex or www — integrations allowed on the live domain only. */
+export function isProductionSiteHost(hostname: string): boolean {
+  const host = normalizeHost(hostname);
+  const domain = siteDomain();
+  return host === domain || host === `www.${domain}`;
+}
+
 /**
- * Third-party scripts run on all GoalCurrent.live hosts.
- * Includes production (goalcurrent.live), localhost, and preview deployments.
+ * GA is safe on localhost and preview (no domain lock).
  */
-export function isStagingIntegrationsHost(hostname: string): boolean {
-  const host = hostname.toLowerCase();
-  const siteDomain = process.env.NEXT_PUBLIC_SITE_DOMAIN || "goalcurrent.live";
-  // Allow production domains
-  if (host === siteDomain || host === `www.${siteDomain}`) {
-    return true;
-  }
-  // Allow localhost
-  if (host === "localhost" || host.endsWith(".localhost")) {
-    return true;
-  }
-  // Allow preview deployments
-  if (host.endsWith(".vercel.app")) {
-    return true;
-  }
+export function isAnalyticsHost(hostname: string): boolean {
+  const host = normalizeHost(hostname);
+  if (isProductionSiteHost(host)) return true;
+  if (host === "localhost" || host.endsWith(".localhost")) return true;
+  if (host.endsWith(".vercel.app")) return true;
   return false;
 }
 
+/** AdSense publisher is tied to the live site — do not load on localhost/preview. */
+export function isAdSenseHost(hostname: string): boolean {
+  return isProductionSiteHost(hostname);
+}
 
+/**
+ * OneSignal app is locked to https://www.goalcurrent.live in the dashboard.
+ * Loading on localhost/preview throws a runtime error.
+ */
+export function isOneSignalHost(hostname: string): boolean {
+  const host = normalizeHost(hostname);
+  const domain = siteDomain();
+  return host === `www.${domain}` || host === domain;
+}
+
+/** @deprecated Use isAnalyticsHost — kept for any legacy imports */
+export function isStagingIntegrationsHost(hostname: string): boolean {
+  return isAnalyticsHost(hostname);
+}
