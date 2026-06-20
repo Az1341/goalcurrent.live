@@ -47,6 +47,8 @@ export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/", label: "Home", exact: true },
   { href: "/live", label: "Live" },
   { href: FAVOURITES_HREF, label: "Favourites" },
+  { href: "/news", label: "News" },
+  { href: "/videos", label: "Videos" },
 ];
 
 /** Legacy / footer — full primary list for other consumers. */
@@ -132,6 +134,7 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/worldcup2026/venues", label: "Venues" },
     { href: "/worldcup2026/bracket", label: "Bracket" },
     { href: "/news/world-cup", label: "News" },
+    { href: "/videos/world-cup", label: "📺 WC Videos" },
   ],
   pl: [
     { href: "/premier-league", label: "Home" },
@@ -143,6 +146,7 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/premier-league/statistics", label: "Statistics" },
     { href: "/premier-league/transfers", label: "Transfers" },
     { href: "/news/premier-league", label: "News" },
+    { href: "/videos/premier-league", label: "📺 PL Videos" },
   ],
   clubs: [
     { href: "/favourites/clubs", label: "Favourite Clubs" },
@@ -179,11 +183,11 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/news/transfers", label: "Transfer News" },
   ],
   video: [
-    { href: "/video", label: "Latest Videos" },
+    { href: "/videos", label: "Latest Videos" },
+    { href: "/videos/premier-league", label: "PL Videos" },
+    { href: "/videos/world-cup", label: "WC Videos" },
     { href: "/video/highlights", label: "Match Highlights" },
     { href: "/video/press-conferences", label: "Press Conferences" },
-    { href: "/video", label: "GoalCurrent Video Hub" },
-    { href: "/video/youtube", label: "YouTube" },
     { href: "/video/podcasts", label: "Podcasts" },
   ],
   transfers: [
