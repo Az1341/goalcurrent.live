@@ -1,54 +1,43 @@
 import type { NewsArticle, NewsApiResponse, NewsTag } from "@/types/news";
 
-const WC_KEYWORDS = [
+export type NewsFeedCategory = "wc26" | "pl" | "all";
+
+const WC26_FILTER_KEYWORDS = [
   "world cup",
-  "mundial",
+  "wc26",
   "wc2026",
-  "wc 2026",
-  "fifa 2026",
-  "squad",
-  "injury",
-  "lineup",
-  "line-up",
-  "preview",
+  "fifa",
   "group stage",
   "knockout",
-  "penalty",
-  "golden boot",
-  "hat-trick",
+];
+
+const PL_FILTER_KEYWORDS = [
+  "premier league",
+  "epl",
+  "man city",
+  "arsenal",
+  "liverpool",
+  "chelsea",
   "transfer",
-  "england",
-  "france",
-  "brazil",
-  "argentina",
-  "germany",
-  "spain",
-  "portugal",
-  "mexico",
-  "usa",
-  "canada",
-  "morocco",
-  "nigeria",
-  "messi",
-  "ronaldo",
-  "mbappe",
-  "vinicius",
-  "bellingham",
-  "kane",
-  "saka",
-  "salah",
-  "neymar",
-  "lewandowski",
-  "de bruyne",
 ];
 
 const BBC_FEED = "https://feeds.bbci.co.uk/sport/football/rss.xml";
 const ESPN_FEED = "https://www.espn.com/espn/rss/soccer/news";
 const ARTICLE_LIMIT = 20;
 
-function isRelevant(text: string): boolean {
-  const low = text.toLowerCase();
-  return WC_KEYWORDS.some((keyword) => low.includes(keyword));
+function matchesCategory(
+  title: string,
+  description: string,
+  category: NewsFeedCategory,
+): boolean {
+  if (category === "all") {
+    return true;
+  }
+
+  const text = `${title} ${description}`.toLowerCase();
+  const keywords =
+    category === "wc26" ? WC26_FILTER_KEYWORDS : PL_FILTER_KEYWORDS;
+  return keywords.some((keyword) => text.includes(keyword));
 }
 
 function tagFromText(text: string): NewsTag {
@@ -109,7 +98,10 @@ function decodeHtml(text: string): string {
     .trim();
 }
 
-function parseRssItem(item: string): Omit<NewsArticle, "source"> | null {
+function parseRssItem(
+  item: string,
+  category: NewsFeedCategory,
+): Omit<NewsArticle, "source"> | null {
   const titleMatch =
     item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) ||
     item.match(/<title>(.*?)<\/title>/);
@@ -134,7 +126,7 @@ function parseRssItem(item: string): Omit<NewsArticle, "source"> | null {
     return null;
   }
 
-  if (!isRelevant(title) && !isRelevant(description)) {
+  if (!matchesCategory(title, description, category)) {
     return null;
   }
 
@@ -153,12 +145,15 @@ function parseRssItem(item: string): Omit<NewsArticle, "source"> | null {
   };
 }
 
-function parseRss(xml: string): Omit<NewsArticle, "source">[] {
+function parseRss(
+  xml: string,
+  category: NewsFeedCategory,
+): Omit<NewsArticle, "source">[] {
   const items = xml.match(/<item>([\s\S]*?)<\/item>/g) ?? [];
   const articles: Omit<NewsArticle, "source">[] = [];
 
   for (const item of items) {
-    const parsed = parseRssItem(item);
+    const parsed = parseRssItem(item, category);
     if (parsed) {
       articles.push(parsed);
     }
@@ -199,7 +194,24 @@ function dedupeArticles(articles: NewsArticle[]): NewsArticle[] {
   });
 }
 
-export async function fetchNewsFeed(): Promise<NewsApiResponse> {
+export function parseNewsFeedCategory(
+  raw: string | null | undefined,
+): NewsFeedCategory {
+  if (raw === "wc26" || raw === "world-cup") {
+    return "wc26";
+  }
+  if (raw === "pl" || raw === "premier-league") {
+    return "pl";
+  }
+  if (raw === "all") {
+    return "all";
+  }
+  return "all";
+}
+
+export async function fetchNewsFeed(
+  category: NewsFeedCategory = "all",
+): Promise<NewsApiResponse> {
   const [bbcXml, espnXml] = await Promise.all([
     fetchFeed(BBC_FEED),
     fetchFeed(ESPN_FEED),
@@ -210,14 +222,20 @@ export async function fetchNewsFeed(): Promise<NewsApiResponse> {
 
   if (bbcXml) {
     articles = articles.concat(
-      parseRss(bbcXml).map((article) => ({ ...article, source: "BBC Sport" })),
+      parseRss(bbcXml, category).map((article) => ({
+        ...article,
+        source: "BBC Sport",
+      })),
     );
     sources.push("BBC Sport");
   }
 
   if (espnXml) {
     articles = articles.concat(
-      parseRss(espnXml).map((article) => ({ ...article, source: "ESPN" })),
+      parseRss(espnXml, category).map((article) => ({
+        ...article,
+        source: "ESPN",
+      })),
     );
     sources.push("ESPN");
   }

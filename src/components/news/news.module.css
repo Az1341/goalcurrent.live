@@ -287,6 +287,13 @@
   margin-bottom: 14px;
 }
 
+.emptyState {
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin: 24px 0 32px;
+  line-height: var(--gc-line-height);
+}
+
 .hubBack {
   margin: 8px 0 40px;
   font-size: 0.875rem;

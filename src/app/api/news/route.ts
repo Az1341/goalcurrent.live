@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
-import { fetchNewsFeed } from "@/lib/news-rss";
+import {
+  fetchNewsFeed,
+  parseNewsFeedCategory,
+} from "@/lib/news-rss";
 import type { NewsApiResponse } from "@/types/news";
 
-export async function GET(): Promise<NextResponse<NewsApiResponse>> {
+export async function GET(request: Request): Promise<NextResponse<NewsApiResponse>> {
+  const { searchParams } = new URL(request.url);
+  const category = parseNewsFeedCategory(searchParams.get("category"));
+
   try {
-    const payload = await fetchNewsFeed();
+    const payload = await fetchNewsFeed(category);
     return NextResponse.json(payload, {
       headers: {
         "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=600",

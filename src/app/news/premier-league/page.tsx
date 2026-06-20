@@ -1,28 +1,29 @@
 import type { Metadata } from "next";
-import {
-  buildComingSoonMetadata,
-  ComingSoonPage,
-} from "@/lib/coming-soon-page";
+import NewsCategoryFeed from "@/components/news/NewsCategoryFeed";
+import { fetchNewsFeed } from "@/lib/news-rss";
+import { buildPageMetadata } from "@/lib/page-metadata";
 
-export const metadata: Metadata = buildComingSoonMetadata({
-  title: "Premier League News",
-  path: "/news/premier-league",
+export const revalidate = 3600;
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Premier League News | GoalCurrent.live",
+  description:
+    "Latest Premier League news from BBC Sport and ESPN on GoalCurrent.live.",
+  path: "/news/premier-league/",
+  absoluteTitle: true,
 });
 
-export default function PremierLeagueNewsPage() {
+export default async function PremierLeagueNewsPage() {
+  const { articles, sources } = await fetchNewsFeed("pl");
+
   return (
-    <ComingSoonPage
-      title="Premier League News"
-      path="/news/premier-league"
-      emoji="📰"
-      description="Premier League news round-ups are coming soon on GoalCurrent.live."
-      links={[
-        { href: "/news", label: "Latest News" },
-        { href: "/premier-league", label: "PL Home" },
-        { href: "/premier-league/transfers", label: "Transfers" },
-      ]}
-      backHref="/news"
-      backLabel="← Latest News"
+    <NewsCategoryFeed
+      heading="Premier League"
+      headingAccent="News"
+      intro="Premier League headlines from BBC Sport and ESPN — refreshed hourly."
+      articles={articles}
+      sources={sources}
+      emptyMessage="No Premier League news right now. Check back soon."
     />
   );
 }

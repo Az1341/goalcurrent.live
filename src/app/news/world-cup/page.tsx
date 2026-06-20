@@ -1,28 +1,29 @@
 import type { Metadata } from "next";
-import {
-  buildComingSoonMetadata,
-  ComingSoonPage,
-} from "@/lib/coming-soon-page";
+import NewsCategoryFeed from "@/components/news/NewsCategoryFeed";
+import { fetchNewsFeed } from "@/lib/news-rss";
+import { buildPageMetadata } from "@/lib/page-metadata";
 
-export const metadata: Metadata = buildComingSoonMetadata({
-  title: "World Cup 2026 News",
-  path: "/news/world-cup",
+export const revalidate = 3600;
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "World Cup 2026 News | GoalCurrent.live",
+  description:
+    "Latest FIFA World Cup 2026 news from BBC Sport and ESPN on GoalCurrent.live.",
+  path: "/news/world-cup/",
+  absoluteTitle: true,
 });
 
-export default function WorldCupNewsPage() {
+export default async function WorldCupNewsPage() {
+  const { articles, sources } = await fetchNewsFeed("wc26");
+
   return (
-    <ComingSoonPage
-      title="World Cup 2026 News"
-      path="/news/world-cup"
-      emoji="📰"
-      description="World Cup 2026 news and daily round-ups are coming soon on GoalCurrent.live."
-      links={[
-        { href: "/news", label: "Latest News" },
-        { href: "/worldcup2026", label: "WC26 Hub" },
-        { href: "/worldcup2026/fixtures", label: "Fixtures" },
-      ]}
-      backHref="/news"
-      backLabel="← Latest News"
+    <NewsCategoryFeed
+      heading="World Cup 2026"
+      headingAccent="News"
+      intro="World Cup 2026 headlines from BBC Sport and ESPN — refreshed hourly."
+      articles={articles}
+      sources={sources}
+      emptyMessage="No World Cup news available right now. Check back soon."
     />
   );
 }
