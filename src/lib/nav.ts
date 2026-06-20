@@ -20,6 +20,13 @@ export const MAIN_NAV: NavItem[] = [
   { href: FAVOURITES_HREF, label: "Favourites" },
   { href: "/news", label: "News" },
   { href: "/worldcup2026", label: "World Cup 2026", exact: true },
+  { href: "/premier-league", label: "Premier League", exact: true },
+];
+
+/** Premier League 2026/27 section links */
+export const PL_NAV: NavItem[] = [
+  { href: "/premier-league/table", label: "Table" },
+  { href: "/premier-league/fixtures", label: "Fixtures" },
 ];
 
 /** World Cup 2026 section links */
@@ -48,6 +55,7 @@ export const SITE_NAV: NavItem[] = [
 export const TOP_NAV: NavItem[] = [
   ...MAIN_NAV,
   ...WC26_NAV,
+  ...PL_NAV,
   ...SITE_NAV,
 ];
 
