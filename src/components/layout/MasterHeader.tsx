@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
-  DESKTOP_MORE_DROPDOWN,
   DESKTOP_PL_DROPDOWN,
   DESKTOP_PRIMARY_NAV,
   DESKTOP_WC26_DROPDOWN,
@@ -16,7 +15,7 @@ import {
 import LiveRibbon from "./LiveRibbon";
 import styles from "./master-chrome.module.css";
 
-type OpenDropdown = "pl" | "wc26" | "more" | null;
+type OpenDropdown = "pl" | "wc26" | null;
 
 export default function MasterHeader() {
   const pathname = usePathname();
@@ -139,35 +138,6 @@ export default function MasterHeader() {
             ) : null}
           </div>
 
-          <div className={styles.dropdownWrap}>
-            <button
-              type="button"
-              className={`${styles.navBtn} ${openDropdown === "more" ? styles.navBtnOpen : ""}`}
-              aria-expanded={openDropdown === "more"}
-              onClick={() => toggleDropdown("more")}
-            >
-              More ▾
-            </button>
-            {openDropdown === "more" ? (
-              <div className={`${styles.dropdownPanel} ${styles.dropdownPanelWide}`}>
-                {DESKTOP_MORE_DROPDOWN.map((section) => (
-                  <div key={section.title} className={styles.dropdownSection}>
-                    <p className={styles.dropdownSectionTitle}>{section.title}</p>
-                    {section.links.map((link) => (
-                      <Link
-                        key={`${section.title}-${link.label}`}
-                        href={link.href}
-                        className={styles.dropdownLink}
-                        onClick={closeDropdowns}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </div>
         </nav>
       </header>
 

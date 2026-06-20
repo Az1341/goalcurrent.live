@@ -45,7 +45,7 @@ export const FAVOURITES_HREF = "/favourites";
 /** Desktop primary links (before dropdowns). */
 export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/", label: "Home", exact: true },
-  { href: "/live", label: "Live Scores" },
+  { href: "/live", label: "Live" },
   { href: FAVOURITES_HREF, label: "Favourites" },
 ];
 
@@ -128,6 +128,7 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/worldcup2026/standings", label: "Standings" },
     { href: "/worldcup2026/groups", label: "Groups" },
     { href: "/worldcup2026/teams", label: "Teams" },
+    { href: "/worldcup2026/players", label: "Players" },
     { href: "/worldcup2026/venues", label: "Venues" },
     { href: "/worldcup2026/bracket", label: "Bracket" },
     { href: "/news/world-cup", label: "News" },
@@ -137,6 +138,8 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/premier-league/fixtures", label: "Fixtures" },
     { href: "/premier-league/live", label: "Live Matches" },
     { href: "/premier-league/table", label: "Table" },
+    { href: "/premier-league/clubs", label: "Clubs" },
+    { href: "/premier-league/players", label: "Players" },
     { href: "/premier-league/statistics", label: "Statistics" },
     { href: "/premier-league/transfers", label: "Transfers" },
     { href: "/news/premier-league", label: "News" },
@@ -208,28 +211,6 @@ export const DESKTOP_PL_DROPDOWN: NavLinkItem[] = MORE_SHEET_SUBMENUS.pl;
 
 /** Desktop WC26 dropdown */
 export const DESKTOP_WC26_DROPDOWN: NavLinkItem[] = MORE_SHEET_SUBMENUS.wc26;
-
-/** Desktop More dropdown — grouped sections */
-export const DESKTOP_MORE_DROPDOWN: DesktopDropdownSection[] = [
-  { title: "Clubs", links: MORE_SHEET_SUBMENUS.clubs },
-  { title: "Players", links: MORE_SHEET_SUBMENUS.players },
-  { title: "Tables", links: MORE_SHEET_SUBMENUS.tables },
-  { title: "Statistics", links: MORE_SHEET_SUBMENUS.statistics },
-  { title: "News", links: MORE_SHEET_SUBMENUS.news },
-  { title: "Video & Audio", links: MORE_SHEET_SUBMENUS.video },
-  { title: "Transfers", links: MORE_SHEET_SUBMENUS.transfers },
-  {
-    title: "Site",
-    links: [
-      { href: "/about", label: "About" },
-      { href: "/contact", label: "Contact" },
-      { href: "/terms", label: "Terms" },
-      { href: "/privacy", label: "Privacy" },
-      { href: "/cookies", label: "Cookies" },
-      { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
-    ],
-  },
-];
 
 /** About and contact */
 export const SITE_NAV: NavItem[] = [
