@@ -68,12 +68,9 @@
   align-items: stretch;
   background: var(--gc-nav-bg, #ffffff);
   border-bottom: 0.5px solid #E5E7EB;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.desktopNav::-webkit-scrollbar {
-  display: none;
+  overflow: visible;
+  position: relative;
+  z-index: 320;
 }
 
 .navLink,
@@ -116,15 +113,6 @@
   flex-shrink: 0;
 }
 
-.dropdownBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 55;
-  border: none;
-  background: transparent;
-  cursor: default;
-}
-
 .dropdownPanel {
   position: absolute;
   top: 100%;
@@ -137,7 +125,7 @@
   border: 1px solid #e8dce0;
   border-radius: 0 0 8px 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  z-index: 70;
+  z-index: 800;
 }
 
 .dropdownLink {

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DESKTOP_PL_DROPDOWN,
   DESKTOP_PRIMARY_NAV,
@@ -20,6 +20,7 @@ type OpenDropdown = "pl" | "wc26" | null;
 export default function MasterHeader() {
   const pathname = usePathname();
   const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
+  const navRef = useRef<HTMLElement | null>(null);
 
   const closeDropdowns = useCallback(() => setOpenDropdown(null), []);
 
@@ -33,9 +34,19 @@ export default function MasterHeader() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") closeDropdowns();
     };
+    const onPointerDown = (event: MouseEvent) => {
+      if (!navRef.current) return;
+      if (!navRef.current.contains(event.target as Node)) {
+        closeDropdowns();
+      }
+    };
 
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    window.addEventListener("mousedown", onPointerDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("mousedown", onPointerDown);
+    };
   }, [openDropdown, closeDropdowns]);
 
   const toggleDropdown = (id: OpenDropdown) => {
@@ -47,15 +58,6 @@ export default function MasterHeader() {
 
   return (
     <div className={styles.chromeWrap} data-gc-chrome="site-header">
-      {openDropdown ? (
-        <button
-          type="button"
-          className={styles.dropdownBackdrop}
-          aria-label="Close menu"
-          onClick={closeDropdowns}
-        />
-      ) : null}
-
       <header className={styles.masterHeader} role="banner">
         <div className={styles.bar}>
           <Link href="/" className={styles.brand} onClick={closeDropdowns}>
@@ -73,7 +75,11 @@ export default function MasterHeader() {
           </Link>
         </div>
 
-        <nav className={styles.desktopNav} aria-label="Main navigation">
+        <nav
+          ref={navRef}
+          className={styles.desktopNav}
+          aria-label="Main navigation"
+        >
           {DESKTOP_PRIMARY_NAV.map((item) => {
             const active = isMainNavActive(pathname, item.href, item.exact);
             return (
@@ -88,7 +94,13 @@ export default function MasterHeader() {
             );
           })}
 
-          <div className={styles.dropdownWrap}>
+          <div
+            className={styles.dropdownWrap}
+            onMouseEnter={() => setOpenDropdown("pl")}
+            onMouseLeave={() =>
+              setOpenDropdown((current) => (current === "pl" ? null : current))
+            }
+          >
             <button
               type="button"
               className={`${styles.navBtn} ${plActive ? styles.navLinkActive : ""} ${openDropdown === "pl" ? styles.navBtnOpen : ""}`}
@@ -113,7 +125,13 @@ export default function MasterHeader() {
             ) : null}
           </div>
 
-          <div className={styles.dropdownWrap}>
+          <div
+            className={styles.dropdownWrap}
+            onMouseEnter={() => setOpenDropdown("wc26")}
+            onMouseLeave={() =>
+              setOpenDropdown((current) => (current === "wc26" ? null : current))
+            }
+          >
             <button
               type="button"
               className={`${styles.navBtn} ${wc26Active ? styles.navLinkActive : ""} ${openDropdown === "wc26" ? styles.navBtnOpen : ""}`}
