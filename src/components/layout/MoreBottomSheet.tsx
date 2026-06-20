@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MORE_SHEET_SECTIONS, isMoreSheetLinkActive } from "@/lib/nav";
+import { useEffect, useState } from "react";
+import {
+  MORE_SHEET_LEVEL1,
+  MORE_SHEET_SUBMENU_TITLES,
+  MORE_SHEET_SUBMENUS,
+  type MoreSheetSubmenuId,
+  isMoreSheetLinkActive,
+} from "@/lib/nav";
 import styles from "./MoreBottomSheet.module.css";
 
 type MoreBottomSheetProps = {
@@ -12,12 +19,31 @@ type MoreBottomSheetProps = {
 
 export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps) {
   const pathname = usePathname();
+  const [submenu, setSubmenu] = useState<MoreSheetSubmenuId | null>(null);
+
+  useEffect(() => {
+    if (!open) {
+      setSubmenu(null);
+    }
+  }, [open]);
+
+  const handleClose = () => {
+    setSubmenu(null);
+    onClose();
+  };
+
+  const handleNavigate = () => {
+    setSubmenu(null);
+    onClose();
+  };
+
+  const submenuTitle = submenu ? MORE_SHEET_SUBMENU_TITLES[submenu] : "More";
 
   return (
     <>
       <div
         className={`${styles.moreOverlay} ${open ? styles.moreOverlayOpen : ""}`}
-        onClick={onClose}
+        onClick={handleClose}
         aria-hidden={!open}
       />
 
@@ -29,39 +55,109 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
         aria-hidden={!open}
       >
         <div className={styles.sheetHeader}>
-          <h2 className={styles.sheetTitle}>More</h2>
+          {submenu ? (
+            <button
+              type="button"
+              className={styles.backBtn}
+              aria-label="Back to menu"
+              onClick={() => setSubmenu(null)}
+            >
+              ←
+            </button>
+          ) : (
+            <span className={styles.headerSpacer} aria-hidden="true" />
+          )}
+
+          <h2 className={styles.sheetTitle}>{submenuTitle}</h2>
+
           <button
             type="button"
             className={styles.closeBtn}
             aria-label="Close menu"
-            onClick={onClose}
+            onClick={handleClose}
           >
             ×
           </button>
         </div>
 
-        <div className={styles.sheetList}>
-          {MORE_SHEET_SECTIONS.map((section) => (
-            <section key={section.title} aria-labelledby={`more-${section.title}`}>
-              <h3
-                id={`more-${section.title}`}
-                className={styles.sheetSectionLabel}
-              >
-                {section.title}
-              </h3>
-              <nav aria-label={`${section.title} links`}>
-                {section.links.map((link) => {
+        <div className={styles.panelStack}>
+          <div
+            className={`${styles.panel} ${submenu ? styles.panelHidden : styles.panelActive}`}
+            aria-hidden={Boolean(submenu)}
+          >
+            <nav className={styles.sheetList} aria-label="More menu">
+              {MORE_SHEET_LEVEL1.map((item, index) => {
+                if (item.type === "divider") {
+                  return <hr key={`divider-${index}`} className={styles.sheetDivider} />;
+                }
+
+                if (item.type === "submenu") {
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={styles.sheetRow}
+                      onClick={() => setSubmenu(item.id)}
+                    >
+                      <span>{item.label}</span>
+                      <span className={styles.chevron} aria-hidden="true">
+                        ›
+                      </span>
+                    </button>
+                  );
+                }
+
+                if (item.external) {
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      className={`${styles.sheetLink} ${styles.sheetLinkExternal}`}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      onClick={handleNavigate}
+                    >
+                      {item.label}
+                    </a>
+                  );
+                }
+
+                const active = isMoreSheetLinkActive(pathname, item.href);
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={`${styles.sheetLink} ${active ? styles.sheetLinkActive : ""}`}
+                    aria-current={active ? "page" : undefined}
+                    onClick={handleNavigate}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div
+            className={`${styles.panel} ${submenu ? styles.panelActive : styles.panelHidden}`}
+            aria-hidden={!submenu}
+          >
+            {submenu && (
+              <nav className={styles.sheetList} aria-label={`${submenuTitle} links`}>
+                {MORE_SHEET_SUBMENUS[submenu].map((link, index) => {
+                  const key = `${submenu}-${link.label}-${index}`;
                   const active = !link.external && isMoreSheetLinkActive(pathname, link.href);
 
                   if (link.external) {
                     return (
                       <a
-                        key={`${section.title}-${link.label}`}
+                        key={key}
                         href={link.href}
                         className={`${styles.sheetLink} ${styles.sheetLinkExternal}`}
                         target="_blank"
                         rel="noopener noreferrer sponsored"
-                        onClick={onClose}
+                        onClick={handleNavigate}
                       >
                         {link.label}
                       </a>
@@ -70,19 +166,19 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
 
                   return (
                     <Link
-                      key={`${section.title}-${link.label}`}
+                      key={key}
                       href={link.href}
                       className={`${styles.sheetLink} ${active ? styles.sheetLinkActive : ""}`}
                       aria-current={active ? "page" : undefined}
-                      onClick={onClose}
+                      onClick={handleNavigate}
                     >
                       {link.label}
                     </Link>
                   );
                 })}
               </nav>
-            </section>
-          ))}
+            )}
+          </div>
         </div>
       </div>
     </>

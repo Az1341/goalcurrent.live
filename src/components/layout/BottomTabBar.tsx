@@ -10,7 +10,7 @@ import {
 import MoreBottomSheet from "./MoreBottomSheet";
 import styles from "./BottomTabBar.module.css";
 
-function LatestIcon() {
+function HomeIcon() {
   return (
     <svg className={styles.icon} viewBox="0 0 24 24" aria-hidden="true">
       <path
@@ -78,11 +78,11 @@ function MoreIcon() {
 
 function TabIcon({ tabId }: { tabId: string }) {
   switch (tabId) {
-    case "latest":
-      return <LatestIcon />;
+    case "home":
+      return <HomeIcon />;
     case "live":
       return <LiveIcon />;
-    case "favourite":
+    case "favourites":
       return <FavouriteIcon />;
     case "pl":
       return <PlIcon />;

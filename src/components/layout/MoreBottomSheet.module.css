@@ -19,7 +19,7 @@
   right: 0;
   bottom: 0;
   z-index: 610;
-  max-height: min(72vh, 520px);
+  max-height: min(78vh, 560px);
   background: #fff;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -36,12 +36,18 @@
 }
 
 .sheetHeader {
-  display: flex;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   padding: 14px 16px 10px;
   border-bottom: 1px solid var(--gc-border, #e5e7eb);
   flex-shrink: 0;
+}
+
+.headerSpacer {
+  width: 40px;
+  height: 32px;
 }
 
 .sheetTitle {
@@ -49,8 +55,10 @@
   font-size: 0.9375rem;
   font-weight: 700;
   color: var(--gc-text-primary, #0f172a);
+  text-align: center;
 }
 
+.backBtn,
 .closeBtn {
   border: none;
   background: #f1f5f9;
@@ -61,22 +69,75 @@
   font-size: 1.125rem;
   line-height: 1;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panelStack {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.panelActive {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.panelHidden {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .sheetList {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  height: 100%;
   padding: 4px 0 8px;
 }
 
-.sheetSectionLabel {
-  margin: 0;
-  padding: 12px 18px 6px;
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.sheetDivider {
+  border: none;
+  border-top: 1px solid rgba(226, 232, 240, 0.95);
+  margin: 8px 18px;
+}
+
+.sheetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 18px;
+  border: none;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  background: transparent;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--gc-text-primary, #0f172a);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.sheetRow:active {
+  background: #fff1f2;
   color: var(--gc-brand-accent, #c8102e);
+}
+
+.chevron {
+  color: var(--gc-brand-accent, #c8102e);
+  font-size: 1.125rem;
+  line-height: 1;
 }
 
 .sheetLink {
