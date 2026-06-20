@@ -8,6 +8,9 @@ import {
   type CalendarEventInput,
 } from "@/lib/calendar";
 import type { PlFixtureRow, PlFixtureStatus } from "@/lib/pl/types";
+import {
+  isPlBroadcasterAvailable,
+} from "@/lib/pl/pl-broadcasters";
 import { absoluteUrl } from "@/lib/site-url";
 import styles from "./PlFixtures.module.css";
 
@@ -77,9 +80,11 @@ function toCalendarEvent(fixture: PlFixtureRow): CalendarEventInput {
     venue: fixture.venue ?? undefined,
     competition: PL_COMPETITION,
     matchPageUrl: absoluteUrl(
-      `/premier-league/fixtures?fixture=${fixture.fixtureId}`,
+      `/premier-league/match/${fixture.fixtureId}`,
     ),
-    broadcaster: fixture.broadcaster,
+    broadcaster: isPlBroadcasterAvailable(fixture.broadcaster)
+      ? fixture.broadcaster
+      : undefined,
   };
 }
 
@@ -142,7 +147,9 @@ export default function PlFixtureCard({ fixture }: PlFixtureCardProps) {
         {fixture.venue ? (
           <span className={styles.venue}>{fixture.venue}</span>
         ) : null}
-        <span className={styles.broadcaster}>{fixture.broadcaster}</span>
+        {isPlBroadcasterAvailable(fixture.broadcaster) ? (
+          <span className={styles.broadcaster}>{fixture.broadcaster}</span>
+        ) : null}
       </div>
 
       <div className={styles.matchRow}>
@@ -174,26 +181,28 @@ export default function PlFixtureCard({ fixture }: PlFixtureCardProps) {
 
       <div className={styles.calendarActions}>
         <Link
-          href={`/premier-league/fixtures?fixture=${fixture.fixtureId}`}
-          className={styles.calendarLink}
+          href={`/premier-league/match/${fixture.fixtureId}`}
+          className={`${styles.calendarLink} ${styles.calendarLinkPrimary}`}
         >
           Match Centre
         </Link>
-        <a
-          href={googleCalendarUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.calendarLink}
-        >
-          Add to Google Calendar
-        </a>
-        <button
-          type="button"
-          className={styles.calendarLink}
-          onClick={() => downloadIcsFile(calendarEvent)}
-        >
-          Download .ics
-        </button>
+        <div className={styles.calendarActionsRow}>
+          <a
+            href={googleCalendarUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.calendarLink}
+          >
+            Calendar
+          </a>
+          <button
+            type="button"
+            className={styles.calendarLink}
+            onClick={() => downloadIcsFile(calendarEvent)}
+          >
+            Download
+          </button>
+        </div>
       </div>
     </article>
   );

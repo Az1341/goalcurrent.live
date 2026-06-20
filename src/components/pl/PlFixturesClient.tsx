@@ -1,7 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
+import { PlMobileAdSlot } from "@/components/pl/PlCommercialStrip";
 import type { PlFixtureRow, PlFixturesApiResponse } from "@/lib/pl/types";
 import {
   PL_BROADCASTER_UNAVAILABLE,
@@ -14,6 +21,8 @@ type ViewState = "loading" | "error" | "empty" | "ready";
 type WeekFilter = "all" | number;
 
 const MATCHWEEKS = Array.from({ length: 38 }, (_, index) => index + 1);
+const ALL_TAB_BATCH = 40;
+const FETCH_TIMEOUT_MS = 45_000;
 
 function withVisitorBroadcasters(
   body: PlFixturesApiResponse,
@@ -43,49 +52,82 @@ export default function PlFixturesClient() {
   const [view, setView] = useState<ViewState>("loading");
   const [data, setData] = useState<PlFixturesApiResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [selectedWeek, setSelectedWeek] = useState<WeekFilter>("all");
+  /** Default to matchweek 1 — rendering all 380 cards blocks the main thread. */
+  const [selectedWeek, setSelectedWeek] = useState<WeekFilter>(1);
+  const [allTabVisible, setAllTabVisible] = useState(ALL_TAB_BATCH);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
+    const raw = new URLSearchParams(window.location.search).get("fixture");
+    if (!raw) return;
+    const id = Number.parseInt(raw, 10);
+    if (Number.isFinite(id) && id > 0) {
+      window.location.replace(`/premier-league/match/${id}`);
+    }
+  }, []);
 
-    async function loadFixtures() {
-      setView("loading");
-      setErrorMessage(null);
+  const loadFixtures = useCallback(async (signal: AbortSignal) => {
+    setView("loading");
+    setErrorMessage(null);
 
-      try {
-        const res = await fetch("/api/pl/fixtures", { cache: "no-store" });
-        if (!res.ok) {
-          throw new Error(`Request failed (${res.status})`);
-        }
-
-        const body = withVisitorBroadcasters(
-          (await res.json()) as PlFixturesApiResponse,
-        );
-        if (cancelled) return;
-
-        setData(body);
-
-        if (!body.fixtures.length) {
-          setView("empty");
-          return;
-        }
-
-        setView("ready");
-      } catch (error) {
-        if (cancelled) return;
-        setData(null);
-        setErrorMessage(
-          error instanceof Error ? error.message : "Unknown error",
-        );
-        setView("error");
-      }
+    const res = await fetch("/api/pl/fixtures", {
+      cache: "no-store",
+      signal,
+    });
+    if (!res.ok) {
+      throw new Error(`Request failed (${res.status})`);
     }
 
-    void loadFixtures();
+    const raw = (await res.json()) as PlFixturesApiResponse;
+    const fixtures = Array.isArray(raw.fixtures) ? raw.fixtures : [];
+    const body = withVisitorBroadcasters({ ...raw, fixtures });
+
+    setData(body);
+    setAllTabVisible(ALL_TAB_BATCH);
+
+    if (!body.fixtures.length) {
+      setView("empty");
+      return;
+    }
+
+    setView("ready");
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let cancelled = false;
+    let timedOut = false;
+    const timeoutId = window.setTimeout(() => {
+      if (!cancelled) {
+        timedOut = true;
+        controller.abort();
+      }
+    }, FETCH_TIMEOUT_MS);
+
+    void loadFixtures(controller.signal).catch((error) => {
+      if (cancelled) return;
+
+      setData(null);
+      setErrorMessage(
+        timedOut
+          ? "Fixtures request timed out. Check your connection and try again."
+          : error instanceof Error
+            ? error.message
+            : "Unknown error",
+      );
+      setView("error");
+    });
+
     return () => {
       cancelled = true;
+      window.clearTimeout(timeoutId);
+      controller.abort();
     };
-  }, []);
+  }, [loadFixtures, reloadKey]);
+
+  useEffect(() => {
+    setAllTabVisible(ALL_TAB_BATCH);
+  }, [selectedWeek]);
 
   const availableWeeks = useMemo(() => {
     if (!data?.fixtures.length) return [] as number[];
@@ -108,6 +150,15 @@ export default function PlFixturesClient() {
 
     return sortByKickoff(fixtures);
   }, [data?.fixtures, selectedWeek]);
+
+  const deferredFixtures = useDeferredValue(filteredFixtures);
+  const fixturesToRender =
+    selectedWeek === "all"
+      ? deferredFixtures.slice(0, allTabVisible)
+      : deferredFixtures;
+  const listIsDeferred = deferredFixtures !== filteredFixtures;
+  const hasMoreAll =
+    selectedWeek === "all" && allTabVisible < deferredFixtures.length;
 
   const emptyMessage =
     data?.error ??
@@ -140,6 +191,13 @@ export default function PlFixturesClient() {
             {errorMessage ??
               "The fixtures API is temporarily unavailable. Please try again shortly."}
           </p>
+          <button
+            type="button"
+            className={styles.retryBtn}
+            onClick={() => setReloadKey((key) => key + 1)}
+          >
+            Try again
+          </button>
         </div>
       ) : null}
 
@@ -179,7 +237,16 @@ export default function PlFixturesClient() {
             })}
           </div>
 
-          {filteredFixtures.length === 0 ? (
+          <PlMobileAdSlot slot="4567890124" />
+
+          {listIsDeferred ? (
+            <div className={styles.panel} role="status" aria-live="polite">
+              <div className={styles.spinner} aria-hidden="true" />
+              <p className={styles.panelTitle}>Updating fixtures</p>
+            </div>
+          ) : null}
+
+          {filteredFixtures.length === 0 && !listIsDeferred ? (
             <div className={styles.panel} role="status">
               <p className={styles.panelTitle}>
                 {selectedWeek === "all"
@@ -190,16 +257,32 @@ export default function PlFixturesClient() {
                 Try another matchweek or check back when the schedule is published.
               </p>
             </div>
-          ) : (
+          ) : null}
+
+          {fixturesToRender.length > 0 && !listIsDeferred ? (
             <section className={styles.group} aria-label="Fixtures list">
               {selectedWeek !== "all" ? (
                 <h2 className={styles.sectionTitle}>Matchweek {selectedWeek}</h2>
               ) : null}
-              {filteredFixtures.map((fixture) => (
+              {fixturesToRender.map((fixture) => (
                 <PlFixtureCard key={fixture.fixtureId} fixture={fixture} />
               ))}
+              {hasMoreAll ? (
+                <button
+                  type="button"
+                  className={styles.loadMoreBtn}
+                  onClick={() =>
+                    setAllTabVisible((count) =>
+                      Math.min(count + ALL_TAB_BATCH, deferredFixtures.length),
+                    )
+                  }
+                >
+                  Show more fixtures (
+                  {deferredFixtures.length - allTabVisible} remaining)
+                </button>
+              ) : null}
             </section>
-          )}
+          ) : null}
 
           <p className={styles.meta}>
             Source: {data.source} · {data.fixtures.length} fixtures · Updated{" "}

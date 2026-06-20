@@ -66,6 +66,28 @@
   min-height: 50px;
 }
 
+.adWrapDesktopOnly {
+  display: block;
+}
+
+.mobileAdWrap {
+  display: none;
+  max-width: var(--gc-content-max);
+  width: 100%;
+  margin: 0 0 12px;
+  min-height: 50px;
+}
+
+@media (max-width: 767px) {
+  .adWrapDesktopOnly {
+    display: none;
+  }
+
+  .mobileAdWrap {
+    display: block;
+  }
+}
+
 @media (max-width: 640px) {
   .strip {
     margin-top: 10px;

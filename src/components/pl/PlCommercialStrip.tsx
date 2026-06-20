@@ -5,12 +5,22 @@ import styles from "./PlCommercialStrip.module.css";
 
 type PlAdSlotProps = {
   slot: string;
+  className?: string;
 };
 
-export function PlAdSlot({ slot }: PlAdSlotProps) {
+export function PlAdSlot({ slot, className = "" }: PlAdSlotProps) {
   return (
-    <div className={styles.adWrap} data-gc-pl-ad="">
+    <div className={`${styles.adWrap} ${className}`.trim()} data-gc-pl-ad="">
       <AdSenseUnit slot={slot} />
+    </div>
+  );
+}
+
+/** Mobile-only fixtures ad — below matchweek pills on small screens. */
+export function PlMobileAdSlot({ slot }: { slot: string }) {
+  return (
+    <div className={styles.mobileAdWrap} data-gc-pl-mobile-ad="">
+      <AdSenseUnit slot={slot} showPlaceholder />
     </div>
   );
 }

@@ -5,8 +5,34 @@ const PL_BROADCASTERS: Record<string, string> = {
   AU: "Australia: Optus Sport",
 };
 
+/** IANA timezone → country for visitor region (overrides misleading language order). */
+const TZ_TO_COUNTRY: Record<string, string> = {
+  "Europe/London": "GB",
+  "America/Toronto": "CA",
+  "America/Vancouver": "CA",
+  "America/Winnipeg": "CA",
+  "America/Halifax": "CA",
+  "Australia/Sydney": "AU",
+  "Australia/Melbourne": "AU",
+  "Australia/Brisbane": "AU",
+  "Australia/Perth": "AU",
+};
+
 export const PL_BROADCASTER_UNAVAILABLE =
   "Local broadcaster information unavailable";
+
+function countryFromTimezone(): string | null {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (!tz) return null;
+    if (TZ_TO_COUNTRY[tz]) return TZ_TO_COUNTRY[tz];
+    if (tz.startsWith("America/")) return "US";
+    if (tz.startsWith("Australia/")) return "AU";
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
 
 function countryCodeFromLocale(locale: string): string | null {
   const normalized = locale.trim().replace(/_/g, "-");
@@ -50,10 +76,18 @@ export function resolvePlBroadcasterFromLocale(locale: string): string {
   return getPlBroadcasterForCountry(countryCode);
 }
 
-/** Client-side locale resolution when navigator is available. */
+/** Client-side region resolution — timezone first, then explicit locale regions. */
 export function resolvePlBroadcasterForVisitor(): string {
   if (typeof navigator === "undefined") {
     return PL_BROADCASTER_UNAVAILABLE;
+  }
+
+  const tzCountry = countryFromTimezone();
+  if (tzCountry) {
+    const tzLabel = getPlBroadcasterForCountry(tzCountry);
+    if (tzLabel !== PL_BROADCASTER_UNAVAILABLE) {
+      return tzLabel;
+    }
   }
 
   const candidates = [
@@ -62,11 +96,17 @@ export function resolvePlBroadcasterForVisitor(): string {
   ].filter(Boolean);
 
   for (const locale of candidates) {
-    const label = resolvePlBroadcasterFromLocale(locale);
+    const code = countryCodeFromLocale(locale);
+    if (!code) continue;
+    const label = getPlBroadcasterForCountry(code);
     if (label !== PL_BROADCASTER_UNAVAILABLE) {
       return label;
     }
   }
 
   return PL_BROADCASTER_UNAVAILABLE;
+}
+
+export function isPlBroadcasterAvailable(label: string): boolean {
+  return label.trim() !== "" && label !== PL_BROADCASTER_UNAVAILABLE;
 }

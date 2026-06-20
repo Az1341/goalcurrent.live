@@ -4,6 +4,7 @@
   max-width: var(--gc-content-max);
   width: 100%;
   margin: 0 auto;
+  overflow-x: clip;
 }
 
 .hero {
@@ -62,6 +63,30 @@
   line-height: 1.5;
   max-width: 420px;
   margin-inline: auto;
+}
+
+.retryBtn,
+.loadMoreBtn {
+  margin-top: 14px;
+  border: 1px solid rgba(200, 16, 46, 0.25);
+  background: #fff;
+  color: var(--gc-brand-accent);
+  border-radius: var(--gc-radius-sm);
+  padding: 10px 16px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.retryBtn:hover,
+.loadMoreBtn:hover {
+  background: #fff1f2;
+}
+
+.loadMoreBtn {
+  display: block;
+  width: 100%;
 }
 
 .spinner {
@@ -297,6 +322,10 @@
   border-top: 1px solid var(--gc-border);
 }
 
+.calendarActionsRow {
+  display: contents;
+}
+
 .calendarLink {
   font-size: 0.75rem;
   font-weight: 700;
@@ -309,6 +338,7 @@
   text-decoration: none;
   cursor: pointer;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .calendarLink:hover {
@@ -318,7 +348,7 @@
 
 @media (max-width: 640px) {
   .plPage {
-    padding: 0 12px 28px;
+    padding: 0 12px calc(28px + env(safe-area-inset-bottom, 0px));
   }
 
   .hero {
@@ -340,10 +370,31 @@
 
   .calendarActions {
     flex-direction: column;
+    gap: 6px;
   }
 
-  .calendarLink {
+  .calendarLinkPrimary {
     width: 100%;
     text-align: center;
+    padding: 8px 10px;
+  }
+
+  .calendarActionsRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .calendarActionsRow .calendarLink {
+    width: 100%;
+    text-align: center;
+    padding: 6px 8px;
+    font-size: 0.6875rem;
+  }
+
+  .weekFilter {
+    margin-inline: -2px;
+    padding-inline: 2px;
   }
 }
