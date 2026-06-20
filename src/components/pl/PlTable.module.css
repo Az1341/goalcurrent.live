@@ -1,0 +1,272 @@
+.plPage {
+  flex: 1;
+  padding: 0 16px 32px;
+  max-width: var(--gc-content-max);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.hero {
+  background: linear-gradient(
+    135deg,
+    var(--gc-brand-from) 0%,
+    var(--gc-brand-to) 100%
+  );
+  border-radius: var(--gc-radius-lg);
+  padding: 20px 18px;
+  margin: 16px 0 14px;
+  color: #fff;
+  box-shadow: var(--gc-shadow);
+}
+
+.heroTitle {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.heroSub {
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.45;
+}
+
+.adWrap {
+  margin: 0 0 16px;
+  min-height: 50px;
+}
+
+.panel {
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: var(--gc-shadow);
+}
+
+.panelTitle {
+  margin: 0 0 8px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--gc-text-primary);
+}
+
+.panelText {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--gc-text-secondary);
+  line-height: 1.5;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--gc-border);
+  border-top-color: var(--gc-brand-accent);
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: plSpin 0.8s linear infinite;
+}
+
+@keyframes plSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  color: var(--gc-text-secondary);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  background: var(--gc-card);
+  box-shadow: var(--gc-shadow);
+}
+
+.table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--gc-content-surface-alt);
+  color: var(--gc-text-secondary);
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--gc-border);
+  white-space: nowrap;
+}
+
+.table thead th.colClub {
+  text-align: left;
+  padding-left: 12px;
+}
+
+.table thead th.colPts {
+  color: var(--gc-brand-accent);
+}
+
+.table tbody td {
+  padding: 10px 8px;
+  text-align: center;
+  border-bottom: 1px solid var(--gc-border);
+  color: var(--gc-text-primary);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--gc-content-surface);
+}
+
+.colRank {
+  width: 36px;
+  font-weight: 700;
+  color: var(--gc-text-secondary);
+}
+
+.colClub {
+  text-align: left !important;
+  padding-left: 0 !important;
+  min-width: 140px;
+}
+
+.clubCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 4px;
+}
+
+.zoneBar {
+  width: 4px;
+  align-self: stretch;
+  min-height: 28px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.zoneUcl {
+  background: #1d4ed8;
+}
+
+.zoneEl {
+  background: #ea580c;
+}
+
+.zoneConf {
+  background: #9333ea;
+}
+
+.zoneRel {
+  background: #dc2626;
+}
+
+.badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--gc-brand-from),
+    var(--gc-brand-to)
+  );
+  color: #fff;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+}
+
+.clubName {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.colPts {
+  font-weight: 800;
+  color: var(--gc-brand-accent);
+}
+
+.gdPos {
+  color: #16a34a;
+}
+
+.gdNeg {
+  color: #dc2626;
+}
+
+.meta {
+  margin: 10px 2px 0;
+  font-size: 0.75rem;
+  color: var(--gc-text-muted, var(--gc-text-secondary));
+}
+
+@media (max-width: 640px) {
+  .plPage {
+    padding: 0 12px 28px;
+  }
+
+  .hero {
+    padding: 16px 14px;
+    margin-top: 12px;
+  }
+
+  .heroTitle {
+    font-size: 1.2rem;
+  }
+
+  .table {
+    font-size: 0.75rem;
+  }
+
+  .hideSm {
+    display: none;
+  }
+}

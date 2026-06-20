@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import UnderConstruction from "@/components/UnderConstruction";
+import PlTableClient from "@/components/pl/PlTableClient";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 
@@ -10,11 +10,5 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function PremierLeagueTablePage() {
-  return (
-    <UnderConstruction
-      title="Premier League Table 2026/27"
-      emoji="📊"
-      description={`${SITE_NAME} — Premier League standings for the 2026/27 season will appear here.`}
-    />
-  );
+  return <PlTableClient />;
 }
