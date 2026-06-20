@@ -243,6 +243,34 @@
   color: var(--gc-text-secondary);
 }
 
+.calendarActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gc-border);
+}
+
+.calendarLink {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 7px 10px;
+  border-radius: var(--gc-radius-sm);
+  border: 1px solid rgba(200, 16, 46, 0.2);
+  background: #fff;
+  color: var(--gc-brand-accent);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.calendarLink:hover {
+  background: #fff1f2;
+  border-color: rgba(200, 16, 46, 0.35);
+}
+
 @media (max-width: 640px) {
   .plPage {
     padding: 0 12px 28px;
@@ -263,5 +291,14 @@
 
   .matchRow {
     gap: 6px;
+  }
+
+  .calendarActions {
+    flex-direction: column;
+  }
+
+  .calendarLink {
+    width: 100%;
+    text-align: center;
   }
 }

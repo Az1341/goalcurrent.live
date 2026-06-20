@@ -1,149 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type {
-  PlFixtureRow,
-  PlFixturesApiResponse,
-  PlFixtureStatus,
-} from "@/lib/pl/types";
+import PlFixtureCard from "@/components/pl/PlFixtureCard";
+import type { PlFixtureRow, PlFixturesApiResponse } from "@/lib/pl/types";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlFixtures.module.css";
 
 type ViewState = "loading" | "error" | "empty" | "ready";
-
-function teamInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) {
-    return parts[0].slice(0, 3).toUpperCase();
-  }
-  return parts
-    .slice(0, 2)
-    .map((part) => part[0] ?? "")
-    .join("")
-    .toUpperCase();
-}
-
-function formatLocalKickoff(kickoffUtc: string): string {
-  const date = new Date(kickoffUtc);
-  if (Number.isNaN(date.getTime())) return "—";
-
-  return date.toLocaleString(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZoneName: "short",
-  });
-}
-
-function statusClass(status: PlFixtureStatus): string {
-  switch (status) {
-    case "LIVE":
-      return styles.statusLive;
-    case "FT":
-      return styles.statusFt;
-    case "POSTPONED":
-      return styles.statusPostponed;
-    case "CANCELLED":
-      return styles.statusCancelled;
-    default:
-      return styles.statusUpcoming;
-  }
-}
-
-function statusLabel(status: PlFixtureStatus): string {
-  switch (status) {
-    case "LIVE":
-      return "Live";
-    case "FT":
-      return "FT";
-    case "POSTPONED":
-      return "Postponed";
-    case "CANCELLED":
-      return "Cancelled";
-    default:
-      return "Upcoming";
-  }
-}
-
-function TeamBadge({
-  name,
-  logo,
-}: {
-  name: string;
-  logo: string | null;
-}) {
-  const [logoFailed, setLogoFailed] = useState(false);
-  const showLogo = logo && !logoFailed;
-
-  return (
-    <span className={styles.badge} aria-hidden="true">
-      {showLogo ? (
-        <img
-          src={logo}
-          alt=""
-          width={24}
-          height={24}
-          loading="lazy"
-          onError={() => setLogoFailed(true)}
-        />
-      ) : (
-        teamInitials(name)
-      )}
-    </span>
-  );
-}
-
-function FixtureCard({ fixture }: { fixture: PlFixtureRow }) {
-  const showScore =
-    fixture.homeScore !== null &&
-    fixture.awayScore !== null &&
-    (fixture.status === "FT" || fixture.status === "LIVE");
-
-  return (
-    <article className={styles.card}>
-      <div className={styles.cardMeta}>
-        <span className={`${styles.status} ${statusClass(fixture.status)}`}>
-          {statusLabel(fixture.status)}
-        </span>
-        <span className={styles.kickoff}>
-          {formatLocalKickoff(fixture.kickoffUtc)}
-        </span>
-        {fixture.venue ? (
-          <span className={styles.venue}>{fixture.venue}</span>
-        ) : null}
-      </div>
-
-      <div className={styles.matchRow}>
-        <div className={styles.teamSide}>
-          <TeamBadge name={fixture.homeTeamName} logo={fixture.homeTeamLogo} />
-          <span className={styles.teamName}>{fixture.homeTeamName}</span>
-        </div>
-
-        <div className={styles.scoreBox}>
-          {showScore ? (
-            <>
-              <span className={styles.score}>
-                {fixture.homeScore} - {fixture.awayScore}
-              </span>
-              {fixture.status === "LIVE" && fixture.elapsed !== null ? (
-                <span className={styles.elapsed}>{fixture.elapsed}&apos;</span>
-              ) : null}
-            </>
-          ) : (
-            <span className={styles.vs}>VS</span>
-          )}
-        </div>
-
-        <div className={`${styles.teamSide} ${styles.teamSideAway}`}>
-          <TeamBadge name={fixture.awayTeamName} logo={fixture.awayTeamLogo} />
-          <span className={styles.teamName}>{fixture.awayTeamName}</span>
-        </div>
-      </div>
-    </article>
-  );
-}
 
 function groupFixturesByMatchweek(
   fixtures: PlFixtureRow[],
@@ -268,7 +131,7 @@ export default function PlFixturesClient() {
             <section key={group.key} className={styles.group}>
               <h2 className={styles.sectionTitle}>{group.label}</h2>
               {group.items.map((fixture) => (
-                <FixtureCard key={fixture.fixtureId} fixture={fixture} />
+                <PlFixtureCard key={fixture.fixtureId} fixture={fixture} />
               ))}
             </section>
           ))}
