@@ -73,7 +73,8 @@ export const PL_SECTION_NAV: NavItem[] = [
   { href: "/premier-league/players", label: "Players" },
   { href: "/premier-league/statistics", label: "Statistics" },
   { href: "/premier-league/transfers", label: "Transfers" },
-  { href: "/premier-league/2025-26/table", label: "Table 25/26" },
+  // TODO: restore when page is live
+  // { href: "/premier-league/2025-26/table", label: "Table 25/26" },
 ];
 
 /** World Cup 2026 section links */
@@ -108,10 +109,12 @@ export const MORE_SHEET_LEVEL1: MoreSheetLevel1Item[] = [
   { type: "submenu", id: "clubs", label: "Clubs" },
   { type: "submenu", id: "players", label: "Players" },
   { type: "submenu", id: "tables", label: "Tables" },
-  { type: "submenu", id: "statistics", label: "Statistics" },
+  // TODO: restore when page is live
+  // { type: "submenu", id: "statistics", label: "Statistics" },
   { type: "submenu", id: "news", label: "News" },
   { type: "submenu", id: "video", label: "Video & Audio" },
-  { type: "submenu", id: "transfers", label: "Transfers" },
+  // TODO: restore when page is live
+  // { type: "submenu", id: "transfers", label: "Transfers" },
   { type: "divider" },
   { type: "link", href: "/about", label: "About" },
   { type: "link", href: "/contact", label: "Contact" },
@@ -130,7 +133,8 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/worldcup2026/standings", label: "Standings" },
     { href: "/worldcup2026/groups", label: "Groups" },
     { href: "/worldcup2026/teams", label: "Teams" },
-    { href: "/worldcup2026/players", label: "Players" },
+    // TODO: restore when page is live
+    // { href: "/worldcup2026/players", label: "Players" },
     { href: "/worldcup2026/venues", label: "Venues" },
     { href: "/worldcup2026/bracket", label: "Bracket" },
     { href: "/news/world-cup", label: "News" },
@@ -149,52 +153,61 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/videos/premier-league", label: "📺 PL Videos" },
   ],
   clubs: [
-    { href: "/favourites/clubs", label: "Favourite Clubs" },
+    // TODO: restore when page is live
+    // { href: "/favourites/clubs", label: "Favourite Clubs" },
     { href: "/premier-league/clubs", label: "Premier League Clubs" },
     { href: "/worldcup2026/teams", label: "World Cup Teams" },
   ],
   players: [
-    { href: "/favourites/players", label: "Favourite Players" },
+    // TODO: restore when page is live
+    // { href: "/favourites/players", label: "Favourite Players" },
     { href: "/premier-league/players", label: "Premier League Players" },
-    { href: "/worldcup2026/players", label: "World Cup Players" },
-    { href: "/statistics/top-scorers", label: "Top Scorers" },
-    { href: "/statistics/assists", label: "Most Assists" },
-    { href: "/statistics/player-rankings", label: "Player Rankings" },
+    // TODO: restore when page is live
+    // { href: "/worldcup2026/players", label: "World Cup Players" },
+    // TODO: restore when page is live
+    // { href: "/statistics/top-scorers", label: "Top Scorers" },
+    // { href: "/statistics/assists", label: "Most Assists" },
+    // { href: "/statistics/player-rankings", label: "Player Rankings" },
   ],
   tables: [
     { href: "/premier-league/table", label: "Premier League 26/27" },
-    { href: "/premier-league/2025-26/table", label: "Premier League 25/26" },
+    // TODO: restore when page is live
+    // { href: "/premier-league/2025-26/table", label: "Premier League 25/26" },
     { href: "/worldcup2026/groups", label: "WC26 Group Tables" },
     { href: "/worldcup2026/bracket", label: "WC26 Bracket" },
   ],
   statistics: [
-    { href: "/statistics/live", label: "Live Match Stats" },
-    { href: "/statistics/players", label: "Player Stats" },
-    { href: "/statistics/teams", label: "Team Stats" },
-    { href: "/statistics/top-scorers", label: "Top Scorers" },
-    { href: "/statistics/assists", label: "Top Assists" },
-    { href: "/statistics/clean-sheets", label: "Clean Sheets" },
-    { href: "/statistics/disciplinary", label: "Disciplinary" },
+    // TODO: restore when page is live
+    // { href: "/statistics/live", label: "Live Match Stats" },
+    // { href: "/statistics/players", label: "Player Stats" },
+    // { href: "/statistics/teams", label: "Team Stats" },
+    // { href: "/statistics/top-scorers", label: "Top Scorers" },
+    // { href: "/statistics/assists", label: "Top Assists" },
+    // { href: "/statistics/clean-sheets", label: "Clean Sheets" },
+    // { href: "/statistics/disciplinary", label: "Disciplinary" },
   ],
   news: [
     { href: "/news", label: "Latest News" },
     { href: "/news/premier-league", label: "Premier League News" },
     { href: "/news/world-cup", label: "World Cup News" },
-    { href: "/news/transfers", label: "Transfer News" },
+    // TODO: restore when page is live
+    // { href: "/news/transfers", label: "Transfer News" },
   ],
   video: [
     { href: "/videos", label: "Latest Videos" },
     { href: "/videos/premier-league", label: "PL Videos" },
     { href: "/videos/world-cup", label: "WC Videos" },
-    { href: "/video/highlights", label: "Match Highlights" },
-    { href: "/video/press-conferences", label: "Press Conferences" },
-    { href: "/video/podcasts", label: "Podcasts" },
+    // TODO: restore when page is live
+    // { href: "/video/highlights", label: "Match Highlights" },
+    // { href: "/video/press-conferences", label: "Press Conferences" },
+    // { href: "/video/podcasts", label: "Podcasts" },
   ],
   transfers: [
-    { href: "/transfers", label: "Latest Transfers" },
-    { href: "/transfers/rumours", label: "Rumours" },
-    { href: "/transfers/completed", label: "Completed Deals" },
-    { href: "/transfers/free-agents", label: "Free Agents" },
+    // TODO: restore when page is live
+    // { href: "/transfers", label: "Latest Transfers" },
+    // { href: "/transfers/rumours", label: "Rumours" },
+    // { href: "/transfers/completed", label: "Completed Deals" },
+    // { href: "/transfers/free-agents", label: "Free Agents" },
   ],
 };
 
