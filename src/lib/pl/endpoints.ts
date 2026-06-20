@@ -2,6 +2,7 @@ import { PL_LEAGUE_ID, PL_SEASON } from "@/lib/pl/constants";
 import { resolvePlBroadcasterFromLocale } from "@/lib/pl/pl-broadcasters";
 import {
   apiFootballFetch,
+  apiFootballFetchAllPages,
   isQuotaError,
   plBaseEnvelope,
   plGenericCacheControl,
@@ -72,6 +73,18 @@ type ApiFixtureItem = {
     away: { id: number; name: string; logo: string };
   };
   goals: { home: number | null; away: number | null };
+};
+
+type ApiSquadItem = {
+  team: { id: number; name: string; logo: string };
+  players: Array<{
+    id: number;
+    name: string;
+    age: number | null;
+    number: number | null;
+    position: string | null;
+    photo: string | null;
+  }>;
 };
 
 function mapFetchError<T extends { configured: boolean; source: "api-football" | "fallback"; error?: string }>(
@@ -184,6 +197,47 @@ function normalizePlayerLeader(
     appearances: stat?.games?.appearences ?? null,
     value,
   };
+}
+
+function dedupePlayersById(players: PlPlayerStatRow[]): PlPlayerStatRow[] {
+  const seen = new Set<number>();
+  return players.filter((player) => {
+    if (seen.has(player.playerId)) return false;
+    seen.add(player.playerId);
+    return true;
+  });
+}
+
+async function fetchPlPlayersFromSquads(
+  teams: PlTeamRow[],
+): Promise<PlPlayerStatRow[]> {
+  const players: PlPlayerStatRow[] = [];
+
+  for (const team of teams) {
+    const result = await apiFootballFetch<ApiSquadItem[]>(
+      `/players/squads?team=${team.teamId}`,
+    );
+    if (!result.ok || !result.data.length) continue;
+
+    const squad = result.data[0];
+    for (const player of squad.players ?? []) {
+      players.push({
+        playerId: player.id,
+        name: player.name,
+        photo: player.photo,
+        position: player.position,
+        teamId: team.teamId,
+        teamName: team.name,
+        teamLogo: team.logo,
+        appearances: null,
+        value: player.number,
+      });
+    }
+  }
+
+  return dedupePlayersById(players).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
 }
 
 function normalizeTopScorers(items: ApiPlayerLeaderItem[]): PlPlayerStatRow[] {
@@ -361,26 +415,47 @@ export async function fetchPlCleanSheets(): Promise<PlPlayerLeaderboardApiRespon
 }
 
 export async function fetchPlPlayers(): Promise<PlPlayersApiResponse> {
-  const scorers = await fetchPlTopScorers();
   const base = plBaseEnvelope("fallback", { players: [] as PlPlayerStatRow[] });
+  if (!base.configured) return base;
 
-  if (!scorers.configured) return base;
+  try {
+    const leagueResult = await apiFootballFetchAllPages<ApiPlayerLeaderItem>(
+      (page) =>
+        `/players?league=${PL_LEAGUE_ID}&season=${PL_SEASON}&page=${page}`,
+    );
 
-  if (scorers.leaders.length) {
-    return plBaseEnvelope(scorers.source, {
-      configured: scorers.configured,
-      players: scorers.leaders,
-      error: scorers.error,
-    });
+    if (leagueResult.ok && leagueResult.data.length) {
+      const players = dedupePlayersById(
+        leagueResult.data.map((item) => normalizePlayerLeader(item, null)),
+      ).sort((a, b) => a.name.localeCompare(b.name));
+
+      return plBaseEnvelope("api-football", { configured: true, players });
+    }
+
+    const teamsBody = await fetchPlTeams();
+    if (teamsBody.teams.length) {
+      const players = await fetchPlPlayersFromSquads(teamsBody.teams);
+      if (players.length) {
+        return plBaseEnvelope("api-football", { configured: true, players });
+      }
+    }
+
+    if (!leagueResult.ok && leagueResult.kind !== "unconfigured") {
+      return mapFetchError(base, leagueResult);
+    }
+
+    return plBaseEnvelope("fallback", { configured: true, players: [] });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    if (isQuotaError(message)) {
+      return plBaseEnvelope("fallback", {
+        configured: true,
+        players: [],
+        error: "API rate limit reached. Please retry shortly.",
+      });
+    }
+    throw error;
   }
-
-  return plBaseEnvelope("fallback", {
-    configured: scorers.configured,
-    players: [],
-    error:
-      scorers.error ??
-      "Player data is not available yet for the 2026/27 Premier League season.",
-  });
 }
 
 export async function fetchPlStatistics(): Promise<PlStatisticsApiResponse> {
@@ -395,29 +470,27 @@ export async function fetchPlStatistics(): Promise<PlStatisticsApiResponse> {
   if (!base.configured) return base;
 
   try {
-    const [topScorers, topAssists, cleanSheets, discipline] = await Promise.all([
+    const [topScorers, topAssists, discipline] = await Promise.all([
       fetchPlTopScorers(),
       fetchPlAssists(),
-      fetchPlCleanSheets(),
       fetchPlDisciplinary(),
     ]);
 
     const statistics: PlStatisticsBundle = {
       topScorers: topScorers.leaders,
       topAssists: topAssists.leaders,
-      cleanSheets: cleanSheets.leaders,
+      cleanSheets: [],
       discipline: discipline.leaders,
     };
 
-    const hasAny = Object.values(statistics).some((rows) => rows.length > 0);
-    const error = hasAny
-      ? undefined
-      : "Statistics are not available yet for the 2026/27 Premier League season.";
+    const hasAny =
+      statistics.topScorers.length > 0 ||
+      statistics.topAssists.length > 0 ||
+      statistics.discipline.length > 0;
 
     return plBaseEnvelope(hasAny ? "api-football" : "fallback", {
       configured: true,
       statistics,
-      error,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

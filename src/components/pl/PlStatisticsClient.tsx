@@ -8,12 +8,11 @@ import type {
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlData.module.css";
 import {
-  PlEmptyPanel,
   PlErrorPanel,
   PlLoadingPanel,
 } from "./PlShared";
 
-type ViewState = "loading" | "error" | "empty" | "ready";
+type ViewState = "loading" | "error" | "ready";
 
 function LeaderList({
   title,
@@ -24,14 +23,7 @@ function LeaderList({
   rows: PlPlayerStatRow[];
   valueLabel: string;
 }) {
-  if (!rows.length) {
-    return (
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>{title}</h2>
-        <PlEmptyPanel title="No data yet" text={`${title} are not available yet.`} />
-      </section>
-    );
-  }
+  if (!rows.length) return null;
 
   return (
     <section className={styles.section}>
@@ -72,10 +64,7 @@ export default function PlStatisticsClient() {
         const body = (await res.json()) as PlStatisticsApiResponse;
         if (cancelled) return;
         setData(body);
-        const hasAny = Object.values(body.statistics).some(
-          (rows) => rows.length > 0,
-        );
-        setView(hasAny ? "ready" : "empty");
+        setView("ready");
       } catch (error) {
         if (cancelled) return;
         setErrorMessage(
@@ -91,18 +80,18 @@ export default function PlStatisticsClient() {
     };
   }, []);
 
-  const emptyMessage =
-    data?.error ??
-    (data?.configured === false
-      ? "Statistics will appear when the API key is configured on the server."
-      : "Statistics are not available yet for the 2026/27 season.");
+  const hasLeaders =
+    data &&
+    (data.statistics.topScorers.length > 0 ||
+      data.statistics.topAssists.length > 0 ||
+      data.statistics.discipline.length > 0);
 
   return (
     <main className={styles.plPage}>
       <header className={styles.hero}>
         <h1 className={styles.heroTitle}>Premier League Statistics 2026/27</h1>
         <p className={styles.heroSub}>
-          Season leaders on {SITE_NAME} — API-backed only, no invented stats.
+          Season leaders on {SITE_NAME} — top scorers, assists and discipline.
         </p>
       </header>
 
@@ -114,9 +103,6 @@ export default function PlStatisticsClient() {
           title="Could not load statistics"
           text={errorMessage ?? "The statistics API is temporarily unavailable."}
         />
-      ) : null}
-      {view === "empty" ? (
-        <PlEmptyPanel title="Statistics not available yet" text={emptyMessage} />
       ) : null}
 
       {view === "ready" && data ? (
@@ -132,15 +118,15 @@ export default function PlStatisticsClient() {
             valueLabel="assists"
           />
           <LeaderList
-            title="Clean Sheets"
-            rows={data.statistics.cleanSheets}
-            valueLabel=""
-          />
-          <LeaderList
             title="Discipline"
             rows={data.statistics.discipline}
             valueLabel="cards"
           />
+          {!hasLeaders ? (
+            <p className={styles.meta}>
+              Season statistics will populate here once matches are played.
+            </p>
+          ) : null}
           <p className={styles.meta}>
             Source: {data.source} · Updated{" "}
             {new Date(data.fetchedAt).toLocaleString(undefined, {

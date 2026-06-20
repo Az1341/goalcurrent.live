@@ -16,7 +16,7 @@ import {
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlTable.module.css";
 
-type ViewState = "loading" | "error" | "empty" | "ready";
+type ViewState = "loading" | "error" | "ready";
 
 function teamInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -159,6 +159,8 @@ export default function PlTableClient() {
                     logo: team.logo,
                   })),
                 ),
+                error: undefined,
+                source: "api-football",
               };
             }
           }
@@ -175,6 +177,8 @@ export default function PlTableClient() {
                 body = {
                   ...body,
                   standings: buildZeroStandingsFromTeams(teams),
+                  error: undefined,
+                  source: "api-football",
                 };
               }
             }
@@ -183,12 +187,6 @@ export default function PlTableClient() {
 
         if (cancelled) return;
         setData(body);
-
-        if (!body.standings.length) {
-          setView("empty");
-          return;
-        }
-
         setView("ready");
       } catch (error) {
         if (cancelled) return;
@@ -213,12 +211,6 @@ export default function PlTableClient() {
 
   const preseasonTable =
     displayStandings.length > 0 && isPreseasonStandings(displayStandings);
-
-  const emptyMessage =
-    data?.error ??
-    (data?.configured === false
-      ? "Live standings will appear when the API key is configured on the server."
-      : "The 2026/27 Premier League table is not available yet. Check back when the season starts.");
 
   return (
     <main className={styles.plPage}>
@@ -248,14 +240,7 @@ export default function PlTableClient() {
         </div>
       ) : null}
 
-      {view === "empty" ? (
-        <div className={styles.panel} role="status">
-          <p className={styles.panelTitle}>Table not available yet</p>
-          <p className={styles.panelText}>{emptyMessage}</p>
-        </div>
-      ) : null}
-
-      {view === "ready" && data ? (
+      {view === "ready" && data && displayStandings.length > 0 ? (
         <>
           {preseasonTable ? (
             <p className={styles.preseasonNote} role="note">

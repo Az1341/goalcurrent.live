@@ -5,14 +5,13 @@ import type { PlPlayerStatRow, PlPlayersApiResponse } from "@/lib/pl/types";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlData.module.css";
 import {
-  PlEmptyPanel,
   PlErrorPanel,
   PlLoadingPanel,
   PlSearchInput,
   PlTeamBadge,
 } from "./PlShared";
 
-type ViewState = "loading" | "error" | "empty" | "ready";
+type ViewState = "loading" | "error" | "ready";
 
 function PlayerPhoto({
   name,
@@ -55,7 +54,7 @@ export default function PlPlayersClient() {
         const body = (await res.json()) as PlPlayersApiResponse;
         if (cancelled) return;
         setData(body);
-        setView(body.players.length ? "ready" : "empty");
+        setView("ready");
       } catch (error) {
         if (cancelled) return;
         setErrorMessage(
@@ -82,18 +81,12 @@ export default function PlPlayersClient() {
     );
   }, [data?.players, query]);
 
-  const emptyMessage =
-    data?.error ??
-    (data?.configured === false
-      ? "Players will appear when the API key is configured on the server."
-      : "Player data is not available yet for the 2026/27 season.");
-
   return (
     <main className={styles.plPage}>
       <header className={styles.hero}>
         <h1 className={styles.heroTitle}>Premier League Players 2026/27</h1>
         <p className={styles.heroSub}>
-          Season player leaders on {SITE_NAME} — sourced from API-Football.
+          Premier League squads on {SITE_NAME} — sourced from API-Football.
         </p>
       </header>
 
@@ -106,9 +99,6 @@ export default function PlPlayersClient() {
           text={errorMessage ?? "The players API is temporarily unavailable."}
         />
       ) : null}
-      {view === "empty" ? (
-        <PlEmptyPanel title="Players not available yet" text={emptyMessage} />
-      ) : null}
 
       {view === "ready" && data ? (
         <>
@@ -117,26 +107,34 @@ export default function PlPlayersClient() {
             onChange={setQuery}
             placeholder="Search players or clubs…"
           />
-          <div className={styles.list}>
-            {filtered.map((player, index) => (
-              <div key={`${player.playerId}-${index}`} className={styles.listRow}>
-                <PlayerPhoto name={player.name} photo={player.photo} />
-                <div className={styles.listMain}>
-                  <div className={styles.listTitle}>{player.name}</div>
-                  <div className={styles.listSub}>
-                    {[player.teamName, player.position].filter(Boolean).join(" · ")}
+          {filtered.length === 0 ? (
+            <p className={styles.meta}>
+              {data.players.length
+                ? "No players match your search."
+                : "Player squads will appear here when registered for the season."}
+            </p>
+          ) : (
+            <div className={styles.list}>
+              {filtered.map((player, index) => (
+                <div key={`${player.playerId}-${index}`} className={styles.listRow}>
+                  <PlayerPhoto name={player.name} photo={player.photo} />
+                  <div className={styles.listMain}>
+                    <div className={styles.listTitle}>{player.name}</div>
+                    <div className={styles.listSub}>
+                      {[player.teamName, player.position].filter(Boolean).join(" · ")}
+                    </div>
                   </div>
+                  {player.teamLogo ? (
+                    <PlTeamBadge
+                      name={player.teamName ?? "Team"}
+                      logo={player.teamLogo}
+                      size={28}
+                    />
+                  ) : null}
                 </div>
-                {player.teamLogo ? (
-                  <PlTeamBadge
-                    name={player.teamName ?? "Team"}
-                    logo={player.teamLogo}
-                    size={28}
-                  />
-                ) : null}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           <p className={styles.meta}>
             Source: {data.source} · {data.players.length} players · Updated{" "}
             {new Date(data.fetchedAt).toLocaleString(undefined, {

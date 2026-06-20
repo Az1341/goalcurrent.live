@@ -1,9 +1,9 @@
+import { resolveStandingsWithClubFallback } from "@/lib/pl/standings-resolve";
 import {
   API_FOOTBALL_BASE_URL,
   PL_LEAGUE_ID,
   PL_LEAGUE_NAME,
   PL_SEASON,
-  PL_SEASON_START_ISO,
 } from "@/lib/pl/constants";
 import { resolvePlBroadcasterFromLocale } from "@/lib/pl/pl-broadcasters";
 import type {
@@ -55,10 +55,6 @@ function getApiKey(): string | undefined {
 
 export function isPlApiConfigured(): boolean {
   return Boolean(getApiKey());
-}
-
-function isSeasonStarted(now: Date = new Date()): boolean {
-  return now >= new Date(PL_SEASON_START_ISO);
 }
 
 function baseResponse(
@@ -177,13 +173,9 @@ async function fetchStandingsFromApi(): Promise<PlStandingsApiResponse> {
   const standings = mapStandings(payload);
 
   if (!standings.length || payload.results === 0) {
-    const message = isSeasonStarted()
-      ? "Standings are not yet available for this matchweek."
-      : "The 2026/27 Premier League season standings are not yet available.";
-
     return baseResponse("fallback", {
       configured: true,
-      error: message,
+      standings: [],
     });
   }
 
@@ -199,7 +191,24 @@ export async function fetchPlStandings(): Promise<PlStandingsApiResponse> {
   }
 
   try {
-    return await fetchStandingsFromApi();
+    let body = await fetchStandingsFromApi();
+
+    if (
+      !body.standings.length &&
+      !body.error?.toLowerCase().includes("rate limit") &&
+      !body.error?.toLowerCase().includes("key")
+    ) {
+      let fixtures: PlFixtureRow[] = [];
+      try {
+        const fixturesBody = await fetchPlFixtures();
+        fixtures = fixturesBody.fixtures;
+      } catch {
+        /* fixtures optional for club fallback */
+      }
+      body = await resolveStandingsWithClubFallback(body, fixtures);
+    }
+
+    return body;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
 
@@ -349,23 +358,32 @@ function normalizeFixture(
   };
 }
 
-async function fetchFixturesPage(
-  apiKey: string,
-  page: number,
-): Promise<ApiFootballFixturesResponse> {
+async function fetchFixturesFromApi(locale: string): Promise<PlFixturesApiResponse> {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return baseFixturesResponse("fallback", { configured: false });
+  }
+
+  // /fixtures does not support the page parameter — one league+season request.
   const path =
-    `/fixtures?league=${PL_LEAGUE_ID}&season=${PL_SEASON}&timezone=UTC&page=${page}`;
+    `/fixtures?league=${PL_LEAGUE_ID}&season=${PL_SEASON}&timezone=UTC`;
   const res = await fetch(`${API_FOOTBALL_BASE_URL}${path}`, {
     headers: { "x-apisports-key": apiKey },
     next: { revalidate: 0 },
   });
 
   if (res.status === 429) {
-    throw new Error("429 rate limit");
+    return baseFixturesResponse("fallback", {
+      configured: true,
+      error: "API rate limit reached. Please retry shortly.",
+    });
   }
 
   if (res.status === 401 || res.status === 403) {
-    throw new Error("403 auth");
+    return baseFixturesResponse("fallback", {
+      configured: true,
+      error: "API key rejected. Check API_FOOTBALL_KEY.",
+    });
   }
 
   if (!res.ok) {
@@ -373,42 +391,23 @@ async function fetchFixturesPage(
     throw new Error(`api-sports ${res.status}: ${text.slice(0, 200)}`);
   }
 
-  return (await res.json()) as ApiFootballFixturesResponse;
-}
+  const payload = (await res.json()) as ApiFootballFixturesResponse;
 
-async function fetchFixturesFromApi(locale: string): Promise<PlFixturesApiResponse> {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    return baseFixturesResponse("fallback", { configured: false });
-  }
-
-  const items: ApiFootballFixtureItem[] = [];
-  let page = 1;
-  let totalPages = 1;
-
-  while (page <= totalPages) {
-    const payload = await fetchFixturesPage(apiKey, page);
-
-    if (payload.errors && Object.keys(payload.errors).length > 0) {
-      const errorText = JSON.stringify(payload.errors);
-      if (isAuthError(errorText)) {
-        return baseFixturesResponse("fallback", {
-          configured: true,
-          error: "API key invalid or missing permissions.",
-        });
-      }
+  if (payload.errors && Object.keys(payload.errors).length > 0) {
+    const errorText = JSON.stringify(payload.errors);
+    if (isAuthError(errorText)) {
       return baseFixturesResponse("fallback", {
         configured: true,
-        error: errorText,
+        error: "API key invalid or missing permissions.",
       });
     }
-
-    totalPages = payload.paging?.total ?? 1;
-    items.push(...(payload.response ?? []));
-    page += 1;
+    return baseFixturesResponse("fallback", {
+      configured: true,
+      error: errorText,
+    });
   }
 
-  const fixtures = items
+  const fixtures = (payload.response ?? [])
     .map((item) => normalizeFixture(item, locale))
     .sort(
       (a, b) =>
@@ -416,13 +415,9 @@ async function fetchFixturesFromApi(locale: string): Promise<PlFixturesApiRespon
     );
 
   if (!fixtures.length) {
-    const message = isSeasonStarted()
-      ? "Fixtures are not yet available for this matchweek."
-      : "The 2026/27 Premier League fixtures are not yet available.";
-
     return baseFixturesResponse("fallback", {
       configured: true,
-      error: message,
+      fixtures: [],
     });
   }
 

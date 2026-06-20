@@ -307,13 +307,7 @@ export default function PlHubClient() {
                   </div>
                 </>
               ) : (
-                <PlEmptyPanel
-                  title="Table not available yet"
-                  text={
-                    standingsData?.error ??
-                    "Standings will appear when clubs and results are available."
-                  }
-                />
+                <p className={styles.hubNote}>Loading club list for table snapshot…</p>
               )}
             </section>
 

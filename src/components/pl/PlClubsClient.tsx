@@ -5,14 +5,13 @@ import type { PlTeamRow, PlTeamsApiResponse } from "@/lib/pl/types";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlData.module.css";
 import {
-  PlEmptyPanel,
   PlErrorPanel,
   PlLoadingPanel,
   PlSearchInput,
   PlTeamBadge,
 } from "./PlShared";
 
-type ViewState = "loading" | "error" | "empty" | "ready";
+type ViewState = "loading" | "error" | "ready";
 
 export default function PlClubsClient() {
   const [view, setView] = useState<ViewState>("loading");
@@ -31,7 +30,7 @@ export default function PlClubsClient() {
         const body = (await res.json()) as PlTeamsApiResponse;
         if (cancelled) return;
         setData(body);
-        setView(body.teams.length ? "ready" : "empty");
+        setView("ready");
       } catch (error) {
         if (cancelled) return;
         setErrorMessage(
@@ -56,9 +55,7 @@ export default function PlClubsClient() {
 
   const emptyMessage =
     data?.error ??
-    (data?.configured === false
-      ? "Clubs will appear when the API key is configured on the server."
-      : "Premier League clubs are not available yet.");
+    "Premier League clubs are not available yet.";
 
   return (
     <main className={styles.plPage}>
@@ -78,9 +75,6 @@ export default function PlClubsClient() {
           text={errorMessage ?? "The teams API is temporarily unavailable."}
         />
       ) : null}
-      {view === "empty" ? (
-        <PlEmptyPanel title="Clubs not available yet" text={emptyMessage} />
-      ) : null}
 
       {view === "ready" && data ? (
         <>
@@ -90,17 +84,18 @@ export default function PlClubsClient() {
             placeholder="Search clubs…"
           />
           {filtered.length === 0 ? (
-            <PlEmptyPanel
-              title="No clubs match your search"
-              text="Try a different club name."
-            />
+            <p className={styles.meta}>
+              {data.teams.length
+                ? "No clubs match your search."
+                : emptyMessage}
+            </p>
           ) : (
             <div className={styles.grid}>
               {filtered.map((team) => (
                 <div
                   key={team.teamId}
-                  className={`${styles.card} ${styles.cardDisabled}`}
-                  aria-label={`${team.name} — club page coming soon`}
+                  className={styles.card}
+                  aria-label={team.name}
                 >
                   <PlTeamBadge name={team.name} logo={team.logo} />
                   <span className={styles.cardName}>{team.name}</span>
