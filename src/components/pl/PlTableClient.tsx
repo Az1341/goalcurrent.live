@@ -6,6 +6,7 @@ import type {
   PlFixturesApiResponse,
   PlStandingRow,
   PlStandingsApiResponse,
+  PlTeamsApiResponse,
 } from "@/lib/pl/types";
 import {
   buildZeroStandingsFromTeams,
@@ -145,16 +146,37 @@ export default function PlTableClient() {
         if (cancelled) return;
 
         if (!body.standings.length) {
-          const fixturesRes = await fetch("/api/pl/fixtures", { cache: "no-store" });
-          if (fixturesRes.ok) {
-            const fixturesBody =
-              (await fixturesRes.json()) as PlFixturesApiResponse;
-            const teams = extractTeamsFromFixtures(fixturesBody.fixtures);
-            if (teams.length) {
+          const teamsRes = await fetch("/api/pl/teams", { cache: "no-store" });
+          if (teamsRes.ok) {
+            const teamsBody = (await teamsRes.json()) as PlTeamsApiResponse;
+            if (teamsBody.teams.length) {
               body = {
                 ...body,
-                standings: buildZeroStandingsFromTeams(teams),
+                standings: buildZeroStandingsFromTeams(
+                  teamsBody.teams.map((team) => ({
+                    id: team.teamId,
+                    name: team.name,
+                    logo: team.logo,
+                  })),
+                ),
               };
+            }
+          }
+
+          if (!body.standings.length) {
+            const fixturesRes = await fetch("/api/pl/fixtures", {
+              cache: "no-store",
+            });
+            if (fixturesRes.ok) {
+              const fixturesBody =
+                (await fixturesRes.json()) as PlFixturesApiResponse;
+              const teams = extractTeamsFromFixtures(fixturesBody.fixtures);
+              if (teams.length) {
+                body = {
+                  ...body,
+                  standings: buildZeroStandingsFromTeams(teams),
+                };
+              }
             }
           }
         }
