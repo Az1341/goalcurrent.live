@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   buildGoogleCalendarUrl,
@@ -172,6 +173,12 @@ export default function PlFixtureCard({ fixture }: PlFixtureCardProps) {
       </div>
 
       <div className={styles.calendarActions}>
+        <Link
+          href={`/premier-league/fixtures?fixture=${fixture.fixtureId}`}
+          className={styles.calendarLink}
+        >
+          Match Centre
+        </Link>
         <a
           href={googleCalendarUrl}
           target="_blank"

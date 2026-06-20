@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
+  PlFixtureRow,
+  PlFixturesApiResponse,
   PlStandingRow,
   PlStandingsApiResponse,
 } from "@/lib/pl/types";
+import {
+  buildZeroStandingsFromTeams,
+  isPreseasonStandings,
+  resolveDisplayStandings,
+} from "@/lib/pl/standings-display";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlTable.module.css";
 
@@ -33,6 +40,27 @@ function zoneClass(rank: number, total: number): string | undefined {
   if (rank <= 7) return styles.zoneConf;
   if (rank > total - 3) return styles.zoneRel;
   return undefined;
+}
+
+function extractTeamsFromFixtures(
+  fixtures: PlFixtureRow[],
+): Array<{ id: number; name: string; logo: string | null }> {
+  const teams = new Map<number, { id: number; name: string; logo: string | null }>();
+
+  for (const fixture of fixtures) {
+    teams.set(fixture.homeTeamId, {
+      id: fixture.homeTeamId,
+      name: fixture.homeTeamName,
+      logo: fixture.homeTeamLogo,
+    });
+    teams.set(fixture.awayTeamId, {
+      id: fixture.awayTeamId,
+      name: fixture.awayTeamName,
+      logo: fixture.awayTeamLogo,
+    });
+  }
+
+  return [...teams.values()];
 }
 
 function TeamBadge({ row }: { row: PlStandingRow }) {
@@ -113,9 +141,25 @@ export default function PlTableClient() {
           throw new Error(`Request failed (${res.status})`);
         }
 
-        const body = (await res.json()) as PlStandingsApiResponse;
+        let body = (await res.json()) as PlStandingsApiResponse;
         if (cancelled) return;
 
+        if (!body.standings.length) {
+          const fixturesRes = await fetch("/api/pl/fixtures", { cache: "no-store" });
+          if (fixturesRes.ok) {
+            const fixturesBody =
+              (await fixturesRes.json()) as PlFixturesApiResponse;
+            const teams = extractTeamsFromFixtures(fixturesBody.fixtures);
+            if (teams.length) {
+              body = {
+                ...body,
+                standings: buildZeroStandingsFromTeams(teams),
+              };
+            }
+          }
+        }
+
+        if (cancelled) return;
         setData(body);
 
         if (!body.standings.length) {
@@ -139,6 +183,14 @@ export default function PlTableClient() {
       cancelled = true;
     };
   }, []);
+
+  const displayStandings = useMemo(
+    () => (data?.standings ? resolveDisplayStandings(data.standings) : []),
+    [data?.standings],
+  );
+
+  const preseasonTable =
+    displayStandings.length > 0 && isPreseasonStandings(displayStandings);
 
   const emptyMessage =
     data?.error ??
@@ -183,6 +235,13 @@ export default function PlTableClient() {
 
       {view === "ready" && data ? (
         <>
+          {preseasonTable ? (
+            <p className={styles.preseasonNote} role="note">
+              Pre-season table — clubs listed alphabetically with zero stats until
+              matches begin.
+            </p>
+          ) : null}
+
           <div className={styles.legend} aria-label="Table zone legend">
             <span className={styles.legendItem}>
               <span className={`${styles.legendSwatch} ${styles.zoneUcl}`} />
@@ -227,11 +286,11 @@ export default function PlTableClient() {
                 </tr>
               </thead>
               <tbody>
-                {data.standings.map((row) => (
+                {displayStandings.map((row) => (
                   <StandingRow
                     key={`${row.teamId}-${row.rank}`}
                     row={row}
-                    totalTeams={data.standings.length}
+                    totalTeams={displayStandings.length}
                   />
                 ))}
               </tbody>

@@ -93,6 +93,44 @@
   margin-bottom: 18px;
 }
 
+.weekFilter {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0 14px;
+  margin-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.weekFilter::-webkit-scrollbar {
+  display: none;
+}
+
+.weekChip {
+  flex: 0 0 auto;
+  border: 1px solid rgba(200, 16, 46, 0.18);
+  background: #fff;
+  color: var(--gc-text-primary);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.weekChipActive {
+  background: var(--gc-brand-accent, #c8102e);
+  border-color: var(--gc-brand-accent, #c8102e);
+  color: #fff;
+}
+
+.weekChipMuted {
+  opacity: 0.45;
+}
+
 .card {
   background: var(--gc-card);
   border: 1px solid var(--gc-border);

@@ -242,6 +242,17 @@
   color: #dc2626;
 }
 
+.preseasonNote {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--gc-radius-sm);
+  background: #fff1f2;
+  border: 1px solid rgba(200, 16, 46, 0.15);
+  font-size: 0.8125rem;
+  color: var(--gc-text-secondary);
+  line-height: 1.45;
+}
+
 .meta {
   margin: 10px 2px 0;
   font-size: 0.75rem;

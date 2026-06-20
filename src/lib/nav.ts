@@ -34,14 +34,24 @@ export type MoreSheetLevel1Item =
   | { type: "divider" }
   | { type: "link"; href: string; label: string; external?: boolean };
 
+export type DesktopDropdownSection = {
+  title: string;
+  links: NavLinkItem[];
+};
+
 /** Global favourites — saved items across all competitions. */
 export const FAVOURITES_HREF = "/favourites";
 
-/** Primary navigation links (master header) */
-export const MAIN_NAV: NavItem[] = [
+/** Desktop primary links (before dropdowns). */
+export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/", label: "Home", exact: true },
   { href: "/live", label: "Live Scores" },
   { href: FAVOURITES_HREF, label: "Favourites" },
+];
+
+/** Legacy / footer — full primary list for other consumers. */
+export const MAIN_NAV: NavItem[] = [
+  ...DESKTOP_PRIMARY_NAV,
   { href: "/news", label: "News" },
   { href: "/worldcup2026", label: "World Cup 2026", exact: true },
   { href: "/premier-league", label: "Premier League", exact: true },
@@ -74,7 +84,7 @@ export const WC26_NAV: NavItem[] = [
   { href: "/worldcup2026/bracket", label: "Bracket" },
 ];
 
-/** More dropdown — WC26 hub + section links (desktop) */
+/** More dropdown — WC26 hub + section links (legacy) */
 export const MORE_NAV: NavLinkItem[] = [
   { href: "/worldcup2026", label: "Overview" },
   ...WC26_NAV,
@@ -118,8 +128,8 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/worldcup2026/standings", label: "Standings" },
     { href: "/worldcup2026/groups", label: "Groups" },
     { href: "/worldcup2026/teams", label: "Teams" },
-    { href: "/worldcup2026/bracket", label: "Bracket" },
     { href: "/worldcup2026/venues", label: "Venues" },
+    { href: "/worldcup2026/bracket", label: "Bracket" },
     { href: "/news/world-cup", label: "News" },
   ],
   pl: [
@@ -193,6 +203,34 @@ export const MORE_SHEET_SUBMENU_TITLES: Record<MoreSheetSubmenuId, string> = {
   transfers: "Transfers",
 };
 
+/** Desktop PL 26/27 dropdown */
+export const DESKTOP_PL_DROPDOWN: NavLinkItem[] = MORE_SHEET_SUBMENUS.pl;
+
+/** Desktop WC26 dropdown */
+export const DESKTOP_WC26_DROPDOWN: NavLinkItem[] = MORE_SHEET_SUBMENUS.wc26;
+
+/** Desktop More dropdown — grouped sections */
+export const DESKTOP_MORE_DROPDOWN: DesktopDropdownSection[] = [
+  { title: "Clubs", links: MORE_SHEET_SUBMENUS.clubs },
+  { title: "Players", links: MORE_SHEET_SUBMENUS.players },
+  { title: "Tables", links: MORE_SHEET_SUBMENUS.tables },
+  { title: "Statistics", links: MORE_SHEET_SUBMENUS.statistics },
+  { title: "News", links: MORE_SHEET_SUBMENUS.news },
+  { title: "Video & Audio", links: MORE_SHEET_SUBMENUS.video },
+  { title: "Transfers", links: MORE_SHEET_SUBMENUS.transfers },
+  {
+    title: "Site",
+    links: [
+      { href: "/about", label: "About" },
+      { href: "/contact", label: "Contact" },
+      { href: "/terms", label: "Terms" },
+      { href: "/privacy", label: "Privacy" },
+      { href: "/cookies", label: "Cookies" },
+      { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
+    ],
+  },
+];
+
 /** About and contact */
 export const SITE_NAV: NavItem[] = [
   { href: "/about", label: "About" },
@@ -232,6 +270,14 @@ export function isMainNavActive(pathname: string, href: string, exact?: boolean)
   return isNavActive(pathname, href, exact);
 }
 
+export function isDesktopPlActive(pathname: string): boolean {
+  return pathname === "/premier-league" || pathname.startsWith("/premier-league/");
+}
+
+export function isDesktopWc26Active(pathname: string): boolean {
+  return pathname === "/worldcup2026" || pathname.startsWith("/worldcup2026/");
+}
+
 export function isMobileBottomTabActive(
   pathname: string,
   tab: MobileBottomTab,
@@ -251,11 +297,11 @@ export function isMobileBottomTabActive(
   }
 
   if (tab.id === "pl") {
-    return pathname === "/premier-league" || pathname.startsWith("/premier-league/");
+    return isDesktopPlActive(pathname);
   }
 
   if (tab.id === "wc26") {
-    return pathname === "/worldcup2026" || pathname.startsWith("/worldcup2026/");
+    return isDesktopWc26Active(pathname);
   }
 
   return isNavActive(pathname, tab.href, tab.exact);

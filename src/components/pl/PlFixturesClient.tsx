@@ -11,6 +11,9 @@ import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlFixtures.module.css";
 
 type ViewState = "loading" | "error" | "empty" | "ready";
+type WeekFilter = "all" | number;
+
+const MATCHWEEKS = Array.from({ length: 38 }, (_, index) => index + 1);
 
 function withVisitorBroadcasters(
   body: PlFixturesApiResponse,
@@ -29,36 +32,18 @@ function withVisitorBroadcasters(
   };
 }
 
-function groupFixturesByMatchweek(
-  fixtures: PlFixtureRow[],
-): Array<{ key: string; label: string; items: PlFixtureRow[] }> {
-  const groups = new Map<string, PlFixtureRow[]>();
-
-  for (const fixture of fixtures) {
-    const key =
-      fixture.matchweek !== null
-        ? `mw-${fixture.matchweek}`
-        : fixture.round ?? "unknown";
-    const existing = groups.get(key) ?? [];
-    existing.push(fixture);
-    groups.set(key, existing);
-  }
-
-  return Array.from(groups.entries()).map(([key, items]) => {
-    const matchweek = items[0]?.matchweek;
-    const label =
-      matchweek !== null && matchweek !== undefined
-        ? `Matchweek ${matchweek}`
-        : items[0]?.round ?? "Fixtures";
-
-    return { key, label, items };
-  });
+function sortByKickoff(fixtures: PlFixtureRow[]): PlFixtureRow[] {
+  return [...fixtures].sort(
+    (a, b) =>
+      new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime(),
+  );
 }
 
 export default function PlFixturesClient() {
   const [view, setView] = useState<ViewState>("loading");
   const [data, setData] = useState<PlFixturesApiResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedWeek, setSelectedWeek] = useState<WeekFilter>("all");
 
   useEffect(() => {
     let cancelled = false;
@@ -102,10 +87,27 @@ export default function PlFixturesClient() {
     };
   }, []);
 
-  const groups = useMemo(
-    () => (data?.fixtures ? groupFixturesByMatchweek(data.fixtures) : []),
-    [data?.fixtures],
-  );
+  const availableWeeks = useMemo(() => {
+    if (!data?.fixtures.length) return [] as number[];
+    const weeks = new Set<number>();
+    for (const fixture of data.fixtures) {
+      if (fixture.matchweek !== null) {
+        weeks.add(fixture.matchweek);
+      }
+    }
+    return [...weeks].sort((a, b) => a - b);
+  }, [data?.fixtures]);
+
+  const filteredFixtures = useMemo(() => {
+    if (!data?.fixtures.length) return [] as PlFixtureRow[];
+
+    const fixtures =
+      selectedWeek === "all"
+        ? data.fixtures
+        : data.fixtures.filter((fixture) => fixture.matchweek === selectedWeek);
+
+    return sortByKickoff(fixtures);
+  }, [data?.fixtures, selectedWeek]);
 
   const emptyMessage =
     data?.error ??
@@ -150,14 +152,54 @@ export default function PlFixturesClient() {
 
       {view === "ready" && data ? (
         <>
-          {groups.map((group) => (
-            <section key={group.key} className={styles.group}>
-              <h2 className={styles.sectionTitle}>{group.label}</h2>
-              {group.items.map((fixture) => (
+          <div className={styles.weekFilter} role="tablist" aria-label="Matchweek filter">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={selectedWeek === "all"}
+              className={`${styles.weekChip} ${selectedWeek === "all" ? styles.weekChipActive : ""}`}
+              onClick={() => setSelectedWeek("all")}
+            >
+              ALL
+            </button>
+            {MATCHWEEKS.map((week) => {
+              const hasFixtures = availableWeeks.includes(week);
+              return (
+                <button
+                  key={week}
+                  type="button"
+                  role="tab"
+                  aria-selected={selectedWeek === week}
+                  className={`${styles.weekChip} ${selectedWeek === week ? styles.weekChipActive : ""} ${!hasFixtures ? styles.weekChipMuted : ""}`}
+                  onClick={() => setSelectedWeek(week)}
+                >
+                  W{week}
+                </button>
+              );
+            })}
+          </div>
+
+          {filteredFixtures.length === 0 ? (
+            <div className={styles.panel} role="status">
+              <p className={styles.panelTitle}>
+                {selectedWeek === "all"
+                  ? "No fixtures found"
+                  : `No fixtures for Matchweek ${selectedWeek}`}
+              </p>
+              <p className={styles.panelText}>
+                Try another matchweek or check back when the schedule is published.
+              </p>
+            </div>
+          ) : (
+            <section className={styles.group} aria-label="Fixtures list">
+              {selectedWeek !== "all" ? (
+                <h2 className={styles.sectionTitle}>Matchweek {selectedWeek}</h2>
+              ) : null}
+              {filteredFixtures.map((fixture) => (
                 <PlFixtureCard key={fixture.fixtureId} fixture={fixture} />
               ))}
             </section>
-          ))}
+          )}
 
           <p className={styles.meta}>
             Source: {data.source} · {data.fixtures.length} fixtures · Updated{" "}
