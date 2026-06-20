@@ -78,6 +78,7 @@ function toCalendarEvent(fixture: PlFixtureRow): CalendarEventInput {
     matchPageUrl: absoluteUrl(
       `/premier-league/fixtures?fixture=${fixture.fixtureId}`,
     ),
+    broadcaster: fixture.broadcaster,
   };
 }
 
@@ -140,6 +141,7 @@ export default function PlFixtureCard({ fixture }: PlFixtureCardProps) {
         {fixture.venue ? (
           <span className={styles.venue}>{fixture.venue}</span>
         ) : null}
+        <span className={styles.broadcaster}>{fixture.broadcaster}</span>
       </div>
 
       <div className={styles.matchRow}>

@@ -30,6 +30,7 @@ export type PlFixtureRow = {
   elapsed: number | null;
   homeScore: number | null;
   awayScore: number | null;
+  broadcaster: string;
 };
 
 export type PlFixturesApiResponse = {

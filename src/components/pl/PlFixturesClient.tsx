@@ -3,10 +3,31 @@
 import { useEffect, useMemo, useState } from "react";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
 import type { PlFixtureRow, PlFixturesApiResponse } from "@/lib/pl/types";
+import {
+  PL_BROADCASTER_UNAVAILABLE,
+  resolvePlBroadcasterForVisitor,
+} from "@/lib/pl/pl-broadcasters";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlFixtures.module.css";
 
 type ViewState = "loading" | "error" | "empty" | "ready";
+
+function withVisitorBroadcasters(
+  body: PlFixturesApiResponse,
+): PlFixturesApiResponse {
+  const visitorBroadcaster = resolvePlBroadcasterForVisitor();
+  if (visitorBroadcaster === PL_BROADCASTER_UNAVAILABLE) {
+    return body;
+  }
+
+  return {
+    ...body,
+    fixtures: body.fixtures.map((fixture) => ({
+      ...fixture,
+      broadcaster: visitorBroadcaster,
+    })),
+  };
+}
 
 function groupFixturesByMatchweek(
   fixtures: PlFixtureRow[],
@@ -52,7 +73,9 @@ export default function PlFixturesClient() {
           throw new Error(`Request failed (${res.status})`);
         }
 
-        const body = (await res.json()) as PlFixturesApiResponse;
+        const body = withVisitorBroadcasters(
+          (await res.json()) as PlFixturesApiResponse,
+        );
         if (cancelled) return;
 
         setData(body);

@@ -5,6 +5,7 @@ import {
   PL_SEASON,
   PL_SEASON_START_ISO,
 } from "@/lib/pl/constants";
+import { resolvePlBroadcasterFromLocale } from "@/lib/pl/pl-broadcasters";
 import type {
   PlFixtureRow,
   PlFixturesApiResponse,
@@ -317,7 +318,10 @@ function formatVenue(
   return parts.length ? parts.join(", ") : null;
 }
 
-function normalizeFixture(item: ApiFootballFixtureItem): PlFixtureRow {
+function normalizeFixture(
+  item: ApiFootballFixtureItem,
+  locale: string,
+): PlFixtureRow {
   const status = mapFixtureStatus(item.fixture.status.short);
   const hasScore =
     status === "FT" || status === "LIVE"
@@ -341,6 +345,7 @@ function normalizeFixture(item: ApiFootballFixtureItem): PlFixtureRow {
     elapsed: item.fixture.status.elapsed,
     homeScore: hasScore ? item.goals.home : null,
     awayScore: hasScore ? item.goals.away : null,
+    broadcaster: resolvePlBroadcasterFromLocale(locale),
   };
 }
 
@@ -371,7 +376,7 @@ async function fetchFixturesPage(
   return (await res.json()) as ApiFootballFixturesResponse;
 }
 
-async function fetchFixturesFromApi(): Promise<PlFixturesApiResponse> {
+async function fetchFixturesFromApi(locale: string): Promise<PlFixturesApiResponse> {
   const apiKey = getApiKey();
   if (!apiKey) {
     return baseFixturesResponse("fallback", { configured: false });
@@ -404,7 +409,7 @@ async function fetchFixturesFromApi(): Promise<PlFixturesApiResponse> {
   }
 
   const fixtures = items
-    .map(normalizeFixture)
+    .map((item) => normalizeFixture(item, locale))
     .sort(
       (a, b) =>
         new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime(),
@@ -427,13 +432,15 @@ async function fetchFixturesFromApi(): Promise<PlFixturesApiResponse> {
   });
 }
 
-export async function fetchPlFixtures(): Promise<PlFixturesApiResponse> {
+export async function fetchPlFixtures(
+  locale = "en-GB",
+): Promise<PlFixturesApiResponse> {
   if (!isPlApiConfigured()) {
     return baseFixturesResponse("fallback", { configured: false });
   }
 
   try {
-    return await fetchFixturesFromApi();
+    return await fetchFixturesFromApi(locale);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
 

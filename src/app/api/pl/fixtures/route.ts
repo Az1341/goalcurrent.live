@@ -1,11 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { fetchPlFixtures, plFixturesCacheControl } from "@/lib/pl/api";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(): Promise<NextResponse> {
+function resolveRequestLocale(request: NextRequest): string {
+  return (
+    request.headers.get("accept-language")?.split(",")[0]?.trim() ?? "en-GB"
+  );
+}
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await fetchPlFixtures();
+    const body = await fetchPlFixtures(resolveRequestLocale(request));
 
     return NextResponse.json(body, {
       headers: {
