@@ -1,23 +1,34 @@
 import Link from "next/link";
-import styles from "@/components/layout/layout.module.css";
+import styles from "@/components/info/info-pages.module.css";
 
 type LegalPageProps = {
   title: string;
   intro: string;
+  updated?: string;
   children: React.ReactNode;
 };
 
-export default function LegalPage({ title, intro, children }: LegalPageProps) {
+export default function LegalPage({
+  title,
+  intro,
+  updated,
+  children,
+}: LegalPageProps) {
   return (
-    <main className={styles.content}>
-      <article className={styles.legalArticle}>
-        <h1>{title}</h1>
-        <p className={styles.legalIntro}>{intro}</p>
-        {children}
-        <p className={styles.legalBack}>
-          <Link href="/">← Back to Home</Link>
-        </p>
-      </article>
+    <main className={styles.page}>
+      <div className={styles.stack}>
+        <article className={styles.card}>
+          <h1>{title}</h1>
+          {updated ? <p className={styles.updated}>Last updated: {updated}</p> : null}
+          <p className={styles.intro}>{intro}</p>
+          {children}
+          <div className={styles.btnRow}>
+            <Link href="/" className={styles.btnSecondary}>
+              ← Back to Home
+            </Link>
+          </div>
+        </article>
+      </div>
     </main>
   );
 }

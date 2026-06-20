@@ -1,20 +1,122 @@
 import type { Metadata } from "next";
-import UnderConstruction from "@/components/UnderConstruction";
+import ContactForm from "@/components/info/ContactForm";
+import InfoPageShell, { InfoBackLink } from "@/components/info/InfoPageShell";
+import { FOOTER_SOCIAL } from "@/lib/nav";
 import { buildPageMetadata } from "@/lib/page-metadata";
-import { SITE_NAME } from "@/lib/site-url";
+import { SITE_NAME, SITE_URL } from "@/lib/site-url";
+import styles from "@/components/info/info-pages.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Contact",
-  description: `Contact ${SITE_NAME}.`,
+  title: "Contact Us",
+  description: `Contact ${SITE_NAME}. Get in touch with Ahmad Zafarani (Ashna4All) for questions, feedback or partnership enquiries.`,
   path: "/contact",
 });
 
 export default function ContactPage() {
   return (
-    <UnderConstruction
-      title="Contact"
-      emoji="✉️"
-      description={`Get in touch with the ${SITE_NAME} team.`}
-    />
+    <InfoPageShell>
+      <div className={styles.stack}>
+        <article className={styles.card}>
+          <h1>Contact Us</h1>
+          <p className={styles.intro}>
+            We would love to hear from you! Get in touch with any questions,
+            suggestions or feedback.
+          </p>
+
+          <div className={styles.contactOptions}>
+            <a className={styles.contactOption} href="mailto:info@goalcurrent.live">
+              <div className={styles.contactOptionTitle}>Email Us</div>
+              <div className={styles.contactOptionSub}>info@goalcurrent.live</div>
+            </a>
+            <a
+              className={styles.contactOption}
+              href="https://tiktok.com/@goalcurrent"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className={styles.contactOptionTitle}>TikTok</div>
+              <div className={styles.contactOptionSub}>@goalcurrent</div>
+            </a>
+          </div>
+
+          <h2>Send Us a Message</h2>
+          <ContactForm />
+        </article>
+
+        <article className={styles.card}>
+          <h2>General Enquiries</h2>
+          <p>
+            For general questions about {SITE_NAME}, site features, or football
+            coverage, email{" "}
+            <a href="mailto:info@goalcurrent.live">info@goalcurrent.live</a>.
+          </p>
+        </article>
+
+        <article className={styles.card}>
+          <h2>Editorial Corrections</h2>
+          <p>
+            Spotted a score error, wrong kick-off time, or outdated squad detail?
+            Select <strong>Score Error / Bug Report</strong> in the form above or
+            email us with the match and correction details.
+          </p>
+        </article>
+
+        <article className={styles.card}>
+          <h2>Advertising and Partnerships</h2>
+          <p>
+            For advertising, sponsorship, or partnership enquiries, select{" "}
+            <strong>Advertising / Partnership</strong> in the form or contact{" "}
+            <a href="mailto:info@goalcurrent.live">info@goalcurrent.live</a>.
+          </p>
+        </article>
+
+        <article className={styles.card}>
+          <h2>Affiliate and Legal Enquiries</h2>
+          <p>
+            Questions about affiliate links, privacy, or legal matters? See our{" "}
+            <a href="/affiliate-disclosure">Affiliate Disclosure</a>,{" "}
+            <a href="/privacy">Privacy Policy</a>, and{" "}
+            <a href="/terms">Terms & Conditions</a>, or email{" "}
+            <a href="mailto:info@goalcurrent.live">info@goalcurrent.live</a>.
+          </p>
+        </article>
+
+        <article className={styles.card}>
+          <h2>Other Ways to Reach Us</h2>
+          <div className={styles.highlight}>
+            <strong>{SITE_NAME}</strong>
+            <br />
+            Created by Ahmad Zafarani (Ashna4All)
+            <br />
+            Email: <a href="mailto:info@goalcurrent.live">info@goalcurrent.live</a>
+            <br />
+            Website: <a href={SITE_URL}>goalcurrent.live</a>
+            <br />
+            TikTok:{" "}
+            <a href="https://tiktok.com/@goalcurrent" target="_blank" rel="noopener noreferrer">
+              @goalcurrent
+            </a>
+            <br />
+            <br />
+            <strong>Response time:</strong> We aim to respond within 24–48 hours.
+          </div>
+          <div className={styles.socialList}>
+            {FOOTER_SOCIAL.map((social) => (
+              <a
+                key={social.label}
+                className={styles.socialLink}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {social.label}
+              </a>
+            ))}
+          </div>
+        </article>
+
+        <InfoBackLink />
+      </div>
+    </InfoPageShell>
   );
 }
