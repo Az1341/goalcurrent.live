@@ -16,6 +16,28 @@ const INTEGRATION_CSP = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "goalcurrent.live" }],
+        destination: "https://www.goalcurrent.live/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "goalcurrent.online" }],
+        destination: "https://www.goalcurrent.live/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.goalcurrent.online" }],
+        destination: "https://www.goalcurrent.live/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
