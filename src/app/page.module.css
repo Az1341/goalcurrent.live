@@ -53,6 +53,63 @@
   margin: 0;
 }
 
+/* ── Homepage hero with background image ── */
+.homeHero {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  min-height: 180px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.homeHeroBg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/football-hero-bg.jpg');
+  background-size: cover;
+  background-position: center 30%;
+  z-index: 0;
+}
+
+.homeHeroBg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0.25) 0%,
+    rgba(15, 23, 42, 0.55) 60%,
+    rgba(15, 23, 42, 0.82) 100%
+  );
+}
+
+.homeHeroContent {
+  position: relative;
+  z-index: 1;
+  padding: 20px 20px 22px;
+  width: 100%;
+}
+
+.homeHeroContent h1 {
+  font-size: clamp(1.15rem, 3vw, 1.5rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.homeHeroContent p {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.82);
+  max-width: 640px;
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
 .homeBadge {
   display: inline-block;
   margin-top: 6px;
