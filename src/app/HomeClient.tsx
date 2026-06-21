@@ -33,7 +33,13 @@ const HOME_NEWS = [
   {
     category: "GoalCurrent Editorial",
     headline: "Football Is Inspiring Canada's Next Generation",
-    href: "/news",
+    href: "/news/articles/football-inspiring-canadas-next-generation",
+    editorial: true,
+  },
+  {
+    category: "GoalCurrent Editorial",
+    headline: "World Cup 2026 — The Complete Fan Guide",
+    href: "/news/articles/world-cup-2026-complete-guide",
     editorial: true,
   },
 ] as const;
