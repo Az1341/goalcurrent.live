@@ -220,7 +220,7 @@ export default function Home() {
         <header className={styles.homeIntro}>
           <h1>Football live scores &amp; match centre</h1>
           <p>
-            Live results, fixtures and news from GoalCurrent.online — World Cup 2026
+            Live results, fixtures and news from GoalCurrent.live — World Cup 2026
             is the lead competition.
           </p>
           <span className={styles.homeBadge}>World Cup 2026 · lead competition</span>
