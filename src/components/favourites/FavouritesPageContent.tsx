@@ -8,6 +8,8 @@ import {
   removeFavouriteTeam,
 } from "@/lib/favourites";
 import { useFavourites } from "@/lib/use-favourites";
+import { useLiveScores } from "@/lib/use-live-scores";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { formatVisitorKickoff } from "@/lib/wc26-format";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
@@ -29,6 +31,8 @@ const COMPETITION_LABELS: Record<string, string> = {
 export default function FavouritesPageContent() {
   const { teams, matches, competitions } = useFavourites();
   const { tvRegion } = useWc26TvRegion();
+  useLiveScores(); // polls live scores and updates fixture overlay
+  const effectiveFixtures = useEffectiveFixtures(); // reactive — updates when scores change
   const hasAny =
     teams.length > 0 || matches.length > 0 || competitions.length > 0;
 
@@ -103,12 +107,37 @@ export default function FavouritesPageContent() {
                 const label = `${home?.name ?? wc26Fixture.homeTeamId} vs ${away?.name ?? wc26Fixture.awayTeamId}`;
                 return (
                   <li key={matchId} style={{ listStyle: "none", marginBottom: 10 }}>
+                    {(() => {
+                      const live = effectiveFixtures.find(f => f.id === matchId);
+                      const hasScore = live && live.homeScore !== undefined && live.awayScore !== undefined;
+                      const isLive = live?.status === "live" || live?.status === "1H" || live?.status === "2H" || live?.status === "HT";
+                      const isFT = live?.status === "FT" || live?.status === "AET" || live?.status === "PEN";
+                      const scoreText = hasScore ? `${live!.homeScore} – ${live!.awayScore}` : null;
+                      const statusLabel = isLive ? `LIVE ${live?.elapsed ? live.elapsed + "'" : ""}` : isFT ? "FT" : null;
+                      return (
                     <div style={{
                       background: "#fff",
-                      border: "1px solid #e2e8f0",
+                      border: `1px solid ${isLive ? "#16a34a" : "#e2e8f0"}`,
                       borderRadius: 12,
                       overflow: "hidden",
                     }}>
+                      {/* Status bar if live/ft */}
+                      {statusLabel && (
+                        <div style={{
+                          background: isLive ? "#16a34a" : "#64748b",
+                          color: "#fff",
+                          fontSize: 11,
+                          fontWeight: 700,
+                          padding: "3px 12px",
+                          letterSpacing: "0.06em",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                        }}>
+                          {isLive && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", display: "inline-block", animation: "gcPulse 1.4s infinite" }} />}
+                          {statusLabel}
+                        </div>
+                      )}
                       {/* Match teams row */}
                       <div style={{
                         display: "grid",
@@ -121,11 +150,18 @@ export default function FavouritesPageContent() {
                           {home ? <TeamFlag teamId={home.id} size={28} /> : null}
                           <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{home?.name ?? "Home"}</span>
                         </div>
-                        <div style={{ textAlign: "center", minWidth: 60 }}>
-                          <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>vs</div>
-                          <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
-                            {formatVisitorKickoff(wc26Fixture.kickoffUtc)}
-                          </div>
+                        <div style={{ textAlign: "center", minWidth: 70 }}>
+                          {scoreText ? (
+                            <div style={{ fontSize: 22, fontWeight: 800, color: isLive ? "#16a34a" : "#0f172a", lineHeight: 1 }}>{scoreText}</div>
+                          ) : (
+                            <>
+                              <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>vs</div>
+                              <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
+                                {formatVisitorKickoff(wc26Fixture.kickoffUtc)}
+                              </div>
+                            </>
+                          )}
+                          {!scoreText && <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>{formatVisitorKickoff(wc26Fixture.kickoffUtc)}</div>}
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-start" }}>
                           <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{away?.name ?? "Away"}</span>
@@ -178,6 +214,8 @@ export default function FavouritesPageContent() {
                         </button>
                       </div>
                     </div>
+                      );
+                    })()}
                   </li>
                 );
               }
