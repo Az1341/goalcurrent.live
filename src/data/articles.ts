@@ -93,11 +93,11 @@ export const ARTICLES: Article[] = [
   {
     slug: "football-inspiring-canadas-next-generation",
     title: "Football Is Inspiring Canada's Next Generation",
-    description: "How hosting the World Cup 2026 is transforming football culture in Canada and inspiring a new generation of players.",
-    date: "2026-06-15",
+    description: "In Toronto and across Canada, boys and girls are discovering football's power during the FIFA World Cup 2026 era. A GoalCurrent.live community feature with original photography from Toronto.",
+    date: "2026-06-16",
     category: "editorial",
-    readTime: 4,
-    content: `<h2>A Nation Transformed</h2><p>Canada's co-hosting of the 2026 FIFA World Cup has done more than bring elite football to North America — it has fundamentally changed the relationship between an entire nation and the beautiful game. From Vancouver to Toronto, a new generation of young Canadians is falling in love with football.</p><h2>Grassroots Impact</h2><p>Youth football registrations across Canada have surged since the World Cup announcement. Clubs in every province have reported record numbers of children signing up to play, inspired by seeing their national team compete on the world's biggest stage for the first time in decades.</p><h2>The Canadian Team</h2><p>Canada's national team have carried the hopes of an entire nation during this tournament. Their performances have captivated a country that is rapidly becoming one of football's most exciting emerging markets, with strong domestic league foundations being built across the country.</p><h2>Legacy</h2><p>The legacy of World Cup 2026 will be felt in Canadian football for generations. The infrastructure built, the young players inspired, and the national passion ignited during this tournament will fuel the growth of the sport across the country long after the final whistle blows in New Jersey on 19 July.</p>`
+    readTime: 13,
+    content: `<p>A rich community feature with original photography from Toronto — including a Q&A with young captain Radin Hajipour and quotes from grassroots coaches across the GTA. Read the full article for the complete story.</p>`
   },
 ];
 
