@@ -166,8 +166,29 @@ function mapStatistics(
     byTeam.set(row.team.name, data);
   }
 
-  const homeStats = byTeam.get(homeTeamName) ?? {};
-  const awayStats = byTeam.get(awayTeamName) ?? {};
+  // Resolve team stats using fuzzy name matching via resolveTeamId
+  // Handles cases like API returning "Iran" when our data has "IR Iran"
+  function findStats(officialName: string): Record<string, string | number | null> {
+    // 1. Exact match
+    if (byTeam.has(officialName)) return byTeam.get(officialName)!;
+    // 2. Resolve via teamIdentity aliases
+    const ourId = resolveTeamId(officialName);
+    for (const [apiName, data] of byTeam.entries()) {
+      const apiId = resolveTeamId(apiName);
+      if (apiId && apiId === ourId) return data;
+    }
+    // 3. Case-insensitive partial match
+    const lower = officialName.toLowerCase();
+    for (const [apiName, data] of byTeam.entries()) {
+      if (apiName.toLowerCase().includes(lower) || lower.includes(apiName.toLowerCase())) {
+        return data;
+      }
+    }
+    return {};
+  }
+
+  const homeStats = findStats(homeTeamName);
+  const awayStats = findStats(awayTeamName);
 
   return STAT_KEYS.filter((key) => homeStats[key] != null || awayStats[key] != null).map(
     (key) => ({
