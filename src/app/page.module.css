@@ -551,6 +551,11 @@
   .homeIntro h1 { font-size: 1.15rem; }
   .homeIntro p { font-size: 0.82rem; }
 
+  .homeHero { min-height: 150px; border-radius: 12px; margin-bottom: 14px; }
+  .homeHeroContent { padding: 16px 16px 18px; }
+  .homeHeroContent h1 { font-size: 1.1rem; }
+  .homeHeroContent p { font-size: 0.8rem; }
+
   .sectionBlock { margin-bottom: 12px; }
 
   .featuredHeroBody { padding: 14px 12px 12px; }
