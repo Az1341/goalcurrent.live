@@ -138,7 +138,7 @@ function MatchListRow({ match }: { match: HomepageMatchView }) {
   const matchLabel = `${match.homeName} vs ${match.awayName}`;
 
   return (
-    <Link href={matchHref(match.fixtureId)} className={styles.matchRow} style={{ textDecoration: "none" }}>
+    <div className={styles.matchRow}>
       <span className={`${styles.statusPill} ${statusPillClass(match.matchClass)}`}>
         {match.matchClass === "live" ? (
           <span className={styles.liveDot} aria-hidden="true" />
@@ -150,7 +150,7 @@ function MatchListRow({ match }: { match: HomepageMatchView }) {
         <span>{match.homeName}</span>
       </span>
       <span className={styles.colScore}>
-        <span>{score ?? "vs"}</span>
+        {score ?? "vs"}
         {match.matchClass === "live" && match.elapsed != null && (
           <small className={styles.minLive}>{match.elapsed}&apos;</small>
         )}
@@ -160,7 +160,7 @@ function MatchListRow({ match }: { match: HomepageMatchView }) {
         <span>{match.awayName}</span>
       </span>
       <FavouriteMatchButton matchId={match.fixtureId} label={matchLabel} />
-    </Link>
+    </div>
   );
 }
 
