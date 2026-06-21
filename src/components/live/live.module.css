@@ -140,27 +140,57 @@
 }
 
 .fixtureMatchup {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--gc-text-primary);
-  margin-bottom: 4px;
-  line-height: 1.45;
+  gap: 4px;
+  margin: 6px 0 4px;
 }
 
 .fixtureTeam {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--gc-text-primary);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.fixtureTeam span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fixtureTeamHome {
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.fixtureTeamAway {
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .fixtureVs {
-  font-size: 0.8125rem;
-  color: var(--gc-text-muted);
-  font-weight: var(--gc-weight-body);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--gc-text-primary);
+  text-align: center;
+  line-height: 1;
+}
+
+.fixtureVsLive {
+  color: #16a34a;
+  font-size: 1.15rem;
+}
+
+.fixtureRowLive {
+  border-left: 3px solid #16a34a !important;
+  background: rgba(22,163,74,0.03) !important;
 }
 
 .fixtureVenue {
