@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   getGamesLeftToPlay,
   getGamesPlayed,
+  getTotalGoalsFromOverlay,
 } from "@/lib/wc26-tournament-stats";
 import {
   getEffectiveFixtures,
@@ -13,6 +14,7 @@ import {
 export type TournamentStats = {
   gamesPlayed: number;
   gamesLeft: number;
+  totalGoals: number;
 };
 
 function computeStats(): TournamentStats {
@@ -20,6 +22,7 @@ function computeStats(): TournamentStats {
   return {
     gamesPlayed: getGamesPlayed(fixtures),
     gamesLeft: getGamesLeftToPlay(fixtures),
+    totalGoals: getTotalGoalsFromOverlay(fixtures as never),
   };
 }
 
