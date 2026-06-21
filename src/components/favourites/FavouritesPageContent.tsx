@@ -110,10 +110,11 @@ export default function FavouritesPageContent() {
                     {(() => {
                       const live = effectiveFixtures.find(f => f.id === matchId);
                       const hasScore = live && live.homeScore !== undefined && live.awayScore !== undefined;
-                      const isLive = live?.status === "live" || live?.status === "1H" || live?.status === "2H" || live?.status === "HT";
-                      const isFT = live?.status === "FT" || live?.status === "AET" || live?.status === "PEN";
+                      const liveStatus = (live?.status as string | undefined)?.toLowerCase();
+                      const isLive = liveStatus === "live" || liveStatus === "1h" || liveStatus === "2h" || liveStatus === "ht";
+                      const isFT = liveStatus === "ft" || liveStatus === "aet" || liveStatus === "pen";
                       const scoreText = hasScore ? `${live!.homeScore} – ${live!.awayScore}` : null;
-                      const halfLabel = live?.status === "1H" ? "1st Half" : live?.status === "2H" ? "2nd Half" : live?.status === "HT" ? "Half Time" : "Live";
+                      const halfLabel = liveStatus === "1h" ? "1st Half" : liveStatus === "2h" ? "2nd Half" : liveStatus === "ht" ? "Half Time" : "Live";
                       const statusLabel = isLive ? halfLabel : isFT ? "Full Time" : null;
                       const elapsedLabel = isLive && live?.elapsed != null ? `${live.elapsed}'` : null;
                       return (
