@@ -44,10 +44,10 @@
   <circle cx="250" cy="420" r="3" fill="rgba(255,255,255,0.5)"/>
   <circle cx="290" cy="420" r="3" fill="rgba(255,255,255,0.5)"/>
 
-  <!-- .online small text -->
+  <!-- .live small text -->
   <text x="250" y="448" text-anchor="middle"
         font-family="Verdana,Arial,sans-serif"
         font-size="20" font-weight="400"
-        fill="rgba(255,255,255,0.8)" letter-spacing="4">.online</text>
+        fill="rgba(255,255,255,0.8)" letter-spacing="4">.live</text>
 
 </svg>
