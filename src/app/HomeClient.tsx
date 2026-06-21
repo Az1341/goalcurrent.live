@@ -151,9 +151,6 @@ function MatchListRow({ match }: { match: HomepageMatchView }) {
       </span>
       <span className={styles.colScore}>
         {score ?? "vs"}
-        {match.matchClass === "live" && match.elapsed != null && (
-          <small className={styles.minLive}>{match.elapsed}&apos;</small>
-        )}
       </span>
       <span className={styles.colAway}>
         <TeamFlag teamId={match.awayTeamId} size={26} />
