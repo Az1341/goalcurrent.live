@@ -170,27 +170,53 @@ function mapStatistics(
 
   // Resolve team stats using fuzzy name matching via resolveTeamId
   // Handles cases like API returning "Iran" when our data has "IR Iran"
+  const byTeamEntries = Array.from(byTeam.entries());
+  console.log("[wc26-stats] rows received:", byTeamEntries.length, "names:", byTeamEntries.map(([n]) => n));
+
   function findStats(officialName: string): Record<string, string | number | null> {
     // 1. Exact match
     if (byTeam.has(officialName)) return byTeam.get(officialName)!;
-    // 2. Resolve via teamIdentity aliases
+    // 2. Resolve via teamIdentity aliases (handles "Iran" -> "irn" -> "IR Iran")
     const ourId = resolveTeamId(officialName);
-    for (const [apiName, data] of byTeam.entries()) {
-      const apiId = resolveTeamId(apiName);
-      if (apiId && apiId === ourId) return data;
+    if (ourId) {
+      for (const [apiName, data] of byTeam.entries()) {
+        const apiId = resolveTeamId(apiName);
+        if (apiId === ourId) return data;
+      }
     }
     // 3. Case-insensitive partial match
-    const lower = officialName.toLowerCase();
+    const lower = officialName.toLowerCase().replace(/[^a-z]/g, "");
     for (const [apiName, data] of byTeam.entries()) {
-      if (apiName.toLowerCase().includes(lower) || lower.includes(apiName.toLowerCase())) {
+      const apiLower = apiName.toLowerCase().replace(/[^a-z]/g, "");
+      if (apiLower.includes(lower) || lower.includes(apiLower)) {
         return data;
       }
     }
     return {};
   }
 
-  const homeStats = findStats(homeTeamName);
-  const awayStats = findStats(awayTeamName);
+  // When API returns exactly 2 rows, use positional fallback if name resolution fails
+  const homeStatsByName = findStats(homeTeamName);
+  const awayStatsByName = findStats(awayTeamName);
+
+  let homeStats = homeStatsByName;
+  let awayStats = awayStatsByName;
+
+  if (byTeamEntries.length === 2) {
+    const [firstEntry, secondEntry] = byTeamEntries;
+    const firstId = resolveTeamId(firstEntry![0]);
+    const homeId = resolveTeamId(homeTeamName);
+    if (Object.keys(homeStatsByName).length === 0 || Object.keys(awayStatsByName).length === 0) {
+      // Assign by which entry matches home team id
+      if (firstId === homeId) {
+        homeStats = firstEntry![1];
+        awayStats = secondEntry![1];
+      } else {
+        homeStats = secondEntry![1];
+        awayStats = firstEntry![1];
+      }
+    }
+  }
 
   return STAT_KEYS.filter((key) => homeStats[key] != null || awayStats[key] != null).map(
     (key) => ({
