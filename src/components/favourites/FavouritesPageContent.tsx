@@ -113,7 +113,9 @@ export default function FavouritesPageContent() {
                       const isLive = live?.status === "live" || live?.status === "1H" || live?.status === "2H" || live?.status === "HT";
                       const isFT = live?.status === "FT" || live?.status === "AET" || live?.status === "PEN";
                       const scoreText = hasScore ? `${live!.homeScore} – ${live!.awayScore}` : null;
-                      const statusLabel = isLive ? `LIVE ${live?.elapsed ? live.elapsed + "'" : ""}` : isFT ? "FT" : null;
+                      const halfLabel = live?.status === "1H" ? "1st Half" : live?.status === "2H" ? "2nd Half" : live?.status === "HT" ? "Half Time" : "Live";
+                      const statusLabel = isLive ? halfLabel : isFT ? "Full Time" : null;
+                      const elapsedLabel = isLive && live?.elapsed != null ? `${live.elapsed}'` : null;
                       return (
                     <div style={{
                       background: "#fff",
@@ -136,6 +138,7 @@ export default function FavouritesPageContent() {
                         }}>
                           {isLive && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", display: "inline-block", animation: "gcPulse 1.4s infinite" }} />}
                           {statusLabel}
+                          {elapsedLabel && <span style={{ marginLeft: 6, fontWeight: 800 }}>{elapsedLabel}</span>}
                         </div>
                       )}
                       {/* Match teams row */}
