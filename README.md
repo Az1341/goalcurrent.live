@@ -1,6 +1,6 @@
-# GoalCurrent.online
+# GoalCurrent.live — Next.js
 
-Next.js app for **GoalCurrent.online** — FIFA World Cup 2026 fixtures, live centre, standings, and match detail.
+Next.js app powering **GoalCurrent.live** — FIFA World Cup 2026 live scores, fixtures, standings, groups, teams and match detail.
 
 ## Quick start
 
@@ -14,27 +14,18 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Environment
 
-See **[docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)** for:
+See **[docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)** for API_FOOTBALL_KEY setup.
 
-- `API_FOOTBALL_KEY` (server-side, optional locally)
-- Vercel environment setup
-- API smoke tests
-
-## Build
+## Build & Deploy
 
 ```bash
 npm run build
 npm start
 ```
 
-Prebuild syncs WC26 flag SVGs (`scripts/sync-wc26-flags.mjs`).
+Deploy via Vercel. Domain: goalcurrent.live
+Set API_FOOTBALL_KEY in Vercel Production environment.
 
-## Deploy
-
-Deploy via Vercel. Set `API_FOOTBALL_KEY` in Production and Preview before expecting live scores.
-
-**Do not** commit `.env.local` or real API keys.
-
-## Related repos
-
-- **GoalCurrent.live** (`ashna4all`) — separate codebase; not modified from this repo.
+## Repo history
+- Renamed from: goalcurrent-online to goalcurrent-live-nextjs
+- Old static HTML backup: Az1341/ashna4all
