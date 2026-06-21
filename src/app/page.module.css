@@ -69,7 +69,7 @@
   inset: 0;
   background-image: url('/images/football-hero-bg.jpg');
   background-size: cover;
-  background-position: center 30%;
+  background-position: center center;
   z-index: 0;
 }
 
@@ -374,12 +374,12 @@
 /* Match rows — tighter, no big gaps */
 .matchRow {
   display: grid;
-  grid-template-columns: 52px 1fr 64px 1fr 28px auto;
+  grid-template-columns: 44px 1fr 60px 1fr 44px;
   align-items: center;
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--hp-border);
-  gap: 6px;
-  min-height: 48px;
+  gap: 4px;
+  min-height: 52px;
 }
 
 .matchRow:last-of-type { border-bottom: none; }
@@ -389,8 +389,8 @@
 .colAway {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 0.9rem;
+  gap: 6px;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--hp-text);
   min-width: 0;
@@ -402,17 +402,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
 }
 
-.colHome { justify-content: flex-end; text-align: right; }
+.colHome { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
 .colAway { justify-content: flex-start; }
 
 .colScore {
   text-align: center;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--hp-brand-dark);
   line-height: 1.15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .minLive {
@@ -424,14 +429,8 @@
 }
 
 .matchRowDetail {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--hp-brand);
-  text-decoration: none;
-  white-space: nowrap;
+  display: none;
 }
-
-.matchRowDetail:hover { text-decoration: underline; }
 
 .matchLink {
   display: block;
@@ -586,10 +585,10 @@
   .featuredMeta { font-size: 0.75rem; white-space: normal; }
 
   .matchRow {
-    grid-template-columns: 44px 1fr 52px 1fr 22px;
+    grid-template-columns: 36px 1fr 52px 1fr 36px;
     padding: 8px 10px;
-    gap: 5px;
-    min-height: 44px;
+    gap: 4px;
+    min-height: 48px;
   }
 
   .colHome, .colAway { font-size: 0.82rem; }
