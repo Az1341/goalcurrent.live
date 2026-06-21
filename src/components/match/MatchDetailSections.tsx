@@ -103,6 +103,9 @@ export function MatchDetailHeader({ header, detail, loading }: MatchDetailHeader
             <div className={styles.scoreMain}>{scoreText}</div>
             <div className={styles.scoreSub}>
               {header.statusLabel}
+              {header.elapsed != null && isLive ? (
+                <span className={styles.scoreElapsed}>{header.elapsed}&apos;</span>
+              ) : null}
             </div>
           </div>
           <div className={`${styles.teamCol} ${styles.teamColAway}`}>
