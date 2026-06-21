@@ -174,6 +174,7 @@ function MatchListSection({
   emptyMessage,
   moreHref,
   moreLabel,
+  isResults = false,
 }: {
   id: string;
   title: string;
@@ -181,6 +182,7 @@ function MatchListSection({
   emptyMessage: string;
   moreHref: string;
   moreLabel: string;
+  isResults?: boolean;
 }) {
   return (
     <section className={styles.sectionBlock} aria-labelledby={id}>
@@ -192,7 +194,7 @@ function MatchListSection({
           {moreLabel}
         </Link>
       </div>
-      <div className={styles.matchCard}>
+      <div className={`${styles.matchCard} ${isResults ? styles.matchCardResults : ""}`}>
         {matches.length === 0 ? (
           <p className={styles.matchCardEmpty}>{emptyMessage}</p>
         ) : (
@@ -269,6 +271,7 @@ export default function Home() {
           emptyMessage="No recent full-time results. Check back after matches finish."
           moreHref="/live"
           moreLabel="View all results"
+          isResults={true}
         />
 
         <div className={styles.sectionBlock}>
