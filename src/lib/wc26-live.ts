@@ -95,6 +95,24 @@ export function partitionFixturesForLiveCentre(
   return { live, today, upcoming, completed };
 }
 
+/** Human-readable period label — e.g. "2nd Half", "Half Time", "Full Time". */
+export function formatPeriodLabel(status: FixtureStatus | string): string {
+  const normalized = normalizeStatus(String(status));
+  switch (normalized) {
+    case "1h": return "1st Half";
+    case "2h": return "2nd Half";
+    case "ht": case "halftime": case "half-time": return "Half Time";
+    case "et": case "extra time": return "Extra Time";
+    case "penalties": return "Penalties";
+    case "ft": case "finished": case "full-time": case "completed": return "Full Time";
+    case "aet": return "After Extra Time";
+    case "pen": return "Penalties";
+    case "live": return "Live";
+    case "scheduled": return "Scheduled";
+    default: return String(status).toUpperCase();
+  }
+}
+
 /** Human-readable status label — no scores. */
 export function formatFixtureStatusLabel(status: FixtureStatus | string): string {
   const normalized = normalizeStatus(String(status));
