@@ -204,6 +204,15 @@ function mapStatistics(
     }
   }
 
+  return STAT_KEYS.filter((key) => homeStats[key] != null || awayStats[key] != null).map(
+    (key) => ({
+      key,
+      label: MATCH_STAT_LABELS[key] ?? key,
+      home: homeStats[key] ?? null,
+      away: awayStats[key] ?? null,
+    }),
+  );
+}
 
 function resolveLineupSides(
   rows: ApiLineupRow[],
