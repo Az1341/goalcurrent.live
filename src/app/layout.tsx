@@ -16,18 +16,18 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    template: "%s - GoalCurrent.online",
+    template: "%s - GoalCurrent.live",
     default:
-      "GoalCurrent.online - FIFA World Cup 2026 | Live Scores, News & Teams",
+      "GoalCurrent.live - FIFA World Cup 2026 | Live Scores, News & Teams",
   },
   description:
-    "GoalCurrent.online - live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
+    "GoalCurrent.live - live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
   openGraph: {
-    title: "GoalCurrent.online - FIFA World Cup 2026",
+    title: "GoalCurrent.live - FIFA World Cup 2026",
     description:
       "Live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
     url: SITE_URL,
-    siteName: "GoalCurrent.online",
+    siteName: "GoalCurrent.live",
     type: "website",
   },
   manifest: "/manifest.json",
