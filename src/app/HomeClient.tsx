@@ -231,13 +231,16 @@ export default function Home() {
   return (
     <div className={styles.homeRoot}>
       <main className={styles.homeMain}>
-        <header className={styles.homeIntro}>
-          <h1>Football live scores &amp; match centre</h1>
-          <p>
-            Live results, fixtures and news from {SITE_NAME} — World Cup 2026
-            is the lead competition.
-          </p>
-          <span className={styles.homeBadge}>World Cup 2026 · lead competition</span>
+        <header className={styles.homeHero}>
+          <div className={styles.homeHeroBg} aria-hidden="true" />
+          <div className={styles.homeHeroContent}>
+            <h1>Football live scores &amp; match centre</h1>
+            <p>
+              Live results, fixtures and news from {SITE_NAME} — World Cup 2026
+              is the lead competition.
+            </p>
+            <span className={styles.homeBadge}>World Cup 2026 · lead competition</span>
+          </div>
         </header>
 
         <section className={styles.sectionBlock} aria-labelledby="featured-match-heading">
