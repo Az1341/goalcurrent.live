@@ -67,6 +67,10 @@ export const ARTICLES: Article[] = [
 <h2>The Relegated Clubs and Promotion</h2>
 <p>At the bottom of the table, three clubs suffered the heartbreak of relegation to the Championship. The drop affects clubs financially, culturally, and competitively — losing parachute payments, losing players who seek Premier League football, and losing the commercial opportunities that top-flight status provides. For the supporters of relegated clubs, the season ended in disappointment regardless of what was happening at the top of the table.</p>
 <p>Three Championship clubs will replace them for the 2026/27 season, arriving with the energy of promotion and the challenge of establishing themselves against clubs with far greater resources. History suggests at least one of the promoted trio will return to the Championship the following season — but history also provides examples of clubs defying the odds and surviving.</p>
+
+<h2>The European Picture</h2>
+<p>Arsenal's Premier League triumph gave English football four Champions League places, with the top four clubs earning direct entry into UEFA's elite competition. The battle for those four spots — between Arsenal, City, Liverpool, Chelsea, Tottenham, Newcastle, and Aston Villa — was fiercely competitive throughout the campaign and was only resolved on the final weekend of the season.</p>
+<p>The Europa League and Conference League provided additional European involvement for clubs finishing fifth through seventh. For those clubs, European competition brings prestige, revenue, and the challenge of competing on two fronts across a demanding schedule. Managing squad depth across domestic and European commitments defined several clubs' seasons and will shape recruitment priorities heading into 2026/27.</p>
     `
   },
   {
@@ -145,6 +149,10 @@ export const ARTICLES: Article[] = [
 
 <h2>Prediction</h2>
 <p>England will qualify from Group E. They will be competitive in the knockout rounds. Whether they can win three consecutive knockout matches against the best teams in the world — which is what is required to win the World Cup from the round of 32 onwards — depends on the coming together of quality, timing, and the football fortune that no amount of preparation can guarantee. A semi-final finish is the realistic expectation. The final is possible. The trophy is what sixty years of waiting have been building towards.</p>
+
+<h2>The Manager's Approach</h2>
+<p>England's manager enters the tournament with a clear tactical identity built over years of work with the national squad. The system is adaptable — capable of playing with a high defensive line and pressing intensely when possession allows, and capable of dropping into a compact defensive structure when protecting a lead or facing a superior opponent. This tactical flexibility, combined with the quality of the personnel available, gives England genuine options in how they approach different opponents throughout the knockout rounds.</p>
+<p>The mental side of international tournament football — managing pressure, staying focused across weeks away from club football, performing in elimination matches where a single mistake can end a campaign — is where previous England squads have sometimes struggled. The current group has more experience of high-stakes knockouts, through Champions League campaigns with their clubs, than perhaps any previous England generation. Whether that experience translates to the particular pressure of a World Cup knockout remains to be demonstrated.</p>
     `
   },
   {
@@ -255,6 +263,10 @@ export const ARTICLES: Article[] = [
 <h2>The Promoted Clubs</h2>
 <p>Three Championship clubs join the Premier League for 2026/27. Their challenge is immediate: survive the first season. History shows that approximately one third of promoted clubs return to the Championship immediately. The gap between the Championship and the Premier League — in quality, pace, and the relentlessness of playing against the best players in the world every week — is the widest it has been in the professional game.</p>
 <p>The promoted clubs who survive tend to do so by being well-organised, physically prepared, and managed by coaches who understand the demands of Premier League football. Those who are relegated typically struggle with the pace of the game, with recruitment that does not hit the standard required, or with the psychological burden of playing against clubs with far greater resources and expectations.</p>
+
+<h2>What to Expect in August</h2>
+<p>The opening month of the Premier League season traditionally provides misleading indicators. Teams that start slowly often finish in the top half. Teams that start fast often struggle to maintain intensity across 38 matches. The early season results carry full points, but the conclusions drawn from them deserve caution. The real shape of the 2026/27 season will emerge in October and November, when squads are settled, injuries have accumulated, and the quality of signings becomes apparent in competitive situations.</p>
+<p>Follow GoalCurrent.live for live scores, standings, and match reports throughout the 2026/27 Premier League season from the opening weekend through to the final day in May.</p>
     `
   },
   {
