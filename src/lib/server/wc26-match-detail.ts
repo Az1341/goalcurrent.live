@@ -164,7 +164,9 @@ function mapStatistics(
       data[statKey(item.type)] = item.value;
     }
     byTeam.set(row.team.name, data);
+    console.log("[wc26-stats] API team name:", row.team.name, "keys:", Object.keys(data).length);
   }
+  console.log("[wc26-stats] byTeam keys:", Array.from(byTeam.keys()), "home:", homeTeamName, "away:", awayTeamName);
 
   // Resolve team stats using fuzzy name matching via resolveTeamId
   // Handles cases like API returning "Iran" when our data has "IR Iran"
