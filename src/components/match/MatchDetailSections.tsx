@@ -365,6 +365,102 @@ export function MatchStatistics({ detail, loading }: MatchStatisticsProps) {
         )}
       </div>
     </section>
+
+
+type MatchMovementProps = {
+  detail: MatchDetailPayload;
+  loading: boolean;
+};
+
+/** Movement-style comparison bars for key match statistics */
+export function MatchMovement({ detail, loading }: MatchMovementProps) {
+  const MOVEMENT_KEYS = [
+    "ball_possession",
+    "total_shots",
+    "shots_on_goal",
+    "corner_kicks",
+    "fouls",
+    "yellow_cards",
+  ] as const;
+
+  const MOVEMENT_LABELS: Record<string, string> = {
+    ball_possession: "Possession",
+    total_shots: "Shots",
+    shots_on_goal: "Shots on Target",
+    corner_kicks: "Corners",
+    fouls: "Fouls",
+    yellow_cards: "Yellow Cards",
+  };
+
+  const rows = detail.statistics.filter((s) =>
+    MOVEMENT_KEYS.includes(s.key as never),
+  );
+
+  return (
+    <section className={styles.section} aria-labelledby="match-movement-heading">
+      <h2 id="match-movement-heading" className={styles.sectionTitle}>
+        Match Movement
+      </h2>
+      <div className={styles.panel}>
+        {loading ? (
+          <p className={styles.emptyState}>Loading match movement…</p>
+        ) : rows.length === 0 ? (
+          <p className={styles.emptyState}>
+            Match movement statistics are not currently supplied by the data provider.
+          </p>
+        ) : (
+          rows.map((stat) => {
+            const homeVal = stat.home;
+            const awayVal = stat.away;
+            const isPct = typeof homeVal === "string" && homeVal.includes("%");
+
+            const homeNum = homeVal == null
+              ? null
+              : typeof homeVal === "string"
+              ? parseFloat(homeVal)
+              : homeVal;
+            const awayNum = awayVal == null
+              ? null
+              : typeof awayVal === "string"
+              ? parseFloat(awayVal)
+              : awayVal;
+
+            const total = (homeNum ?? 0) + (awayNum ?? 0);
+            const homePct = total > 0 ? ((homeNum ?? 0) / total) * 100 : 50;
+            const awayPct = total > 0 ? ((awayNum ?? 0) / total) * 100 : 50;
+
+            return (
+              <div key={stat.key} className={styles.movementRow}>
+                <span className={styles.movementHome}>
+                  {homeVal ?? "–"}
+                </span>
+                <div className={styles.movementBar}>
+                  <div
+                    className={styles.movementBarLabel}
+                    style={{ textAlign: "center", fontSize: 11, color: "#64748b", marginBottom: 4 }}
+                  >
+                    {MOVEMENT_LABELS[stat.key] ?? stat.label}
+                  </div>
+                  <div className={styles.movementBarTrack}>
+                    <div
+                      className={styles.movementBarHome}
+                      style={{ width: `${homePct}%` }}
+                    />
+                    <div
+                      className={styles.movementBarAway}
+                      style={{ width: `${awayPct}%` }}
+                    />
+                  </div>
+                </div>
+                <span className={styles.movementAway}>
+                  {awayVal ?? "–"}
+                </span>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </section>
   );
 }
 
