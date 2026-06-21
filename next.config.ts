@@ -16,6 +16,17 @@ const INTEGRATION_CSP = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  images: {
+    // Allow local images from public/ folder and external sources
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.goalcurrent.live",
+      },
+    ],
+    // Local images in public/ don't need remotePatterns — they work by default
+    unoptimized: false,
+  },
   async redirects() {
     return [
       {
