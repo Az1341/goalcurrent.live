@@ -48,6 +48,7 @@ export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/live", label: "Live" },
   { href: FAVOURITES_HREF, label: "Favourites" },
   { href: "/news", label: "News" },
+  { href: "/news/articles", label: "Articles" },
   { href: "/videos", label: "Videos" },
 ];
 
@@ -188,8 +189,9 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
   ],
   news: [
     { href: "/news", label: "Latest News" },
-    { href: "/news/premier-league", label: "Premier League News" },
+    { href: "/news/articles", label: "✍️ Editorial & Articles" },
     { href: "/news/world-cup", label: "World Cup News" },
+    { href: "/news/premier-league", label: "Premier League News" },
     // TODO: restore when page is live
     // { href: "/news/transfers", label: "Transfer News" },
   ],
