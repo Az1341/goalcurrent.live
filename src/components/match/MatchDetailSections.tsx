@@ -365,7 +365,8 @@ export function MatchStatistics({ detail, loading }: MatchStatisticsProps) {
         )}
       </div>
     </section>
-
+  );
+}
 
 type MatchMovementProps = {
   detail: MatchDetailPayload;
