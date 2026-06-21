@@ -191,3 +191,99 @@
     padding: 16px 16px 0;
   }
 }
+
+/* ── Live match card improvements ── */
+
+/* Make each fixture row feel like a tappable card */
+.fixtureRow {
+  padding: 0 !important;
+  border-bottom: 1px solid var(--gc-border) !important;
+  transition: background 0.15s;
+}
+
+.fixtureRow:last-child { border-bottom: none !important; }
+.fixtureRow:hover { background: rgba(0,0,0,0.02); }
+
+/* Inner padding wrapper */
+.fixtureRowInner {
+  padding: 12px 14px;
+}
+
+/* Matchup row: flag | team | score | team | flag */
+.fixtureMatchup {
+  display: grid !important;
+  grid-template-columns: 1fr 64px 1fr !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 8px 0 6px !important;
+}
+
+.fixtureTeam {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  color: var(--gc-text-primary) !important;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.fixtureTeamHome {
+  justify-content: flex-end !important;
+  flex-direction: row-reverse !important;
+  text-align: right !important;
+}
+
+.fixtureTeamAway {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.fixtureTeam span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fixtureVs {
+  text-align: center !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  color: var(--gc-text-primary) !important;
+  line-height: 1 !important;
+}
+
+.fixtureVsLive {
+  color: #16a34a !important;
+  font-size: 1.3rem !important;
+}
+
+/* Live match gets green accent */
+.fixtureRowLive {
+  border-left: 3px solid #16a34a !important;
+  background: rgba(22,163,74,0.03) !important;
+}
+
+/* Match details link — make it prominent */
+.fixtureDetailLink {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  color: var(--gc-text-link, #2563eb) !important;
+  text-decoration: none !important;
+  padding: 3px 0 !important;
+}
+
+.fixtureDetailLink:hover { text-decoration: underline !important; }
+
+/* Status live = green pill */
+.fixtureStatusLive {
+  background: rgba(22,163,74,0.12) !important;
+  color: #16a34a !important;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+}
