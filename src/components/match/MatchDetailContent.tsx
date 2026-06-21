@@ -13,6 +13,7 @@ import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import {
   MatchDetailHeader,
   MatchLineups,
+  MatchMovement,
   MatchStatistics,
   MatchTimeline,
 } from "@/components/match/MatchDetailSections";
@@ -69,6 +70,7 @@ export default function MatchDetailContent({ fixtureId }: MatchDetailContentProp
         awayTeamName={header.awayName}
       />
       <MatchStatistics detail={detail} loading={loading} />
+      <MatchMovement detail={detail} loading={loading} />
       <MatchLineups
         detail={detail}
         homeTeamId={fixture.homeTeamId}
