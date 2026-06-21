@@ -154,9 +154,9 @@
 /* Teams always side-by-side on one line */
 .featuredRow {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr 90px 1fr;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   width: 100%;
 }
 
@@ -170,15 +170,17 @@
 .featuredSideHome {
   justify-content: flex-end;
   flex-direction: row;
+  padding-right: 12px;
 }
 
 .featuredSideAway {
   justify-content: flex-start;
   flex-direction: row;
+  padding-left: 12px;
 }
 
 .featuredTeamName {
-  font-size: clamp(0.9rem, 2.4vw, 1.15rem);
+  font-size: clamp(0.88rem, 2.2vw, 1.1rem);
   font-weight: 700;
   line-height: 1.2;
   color: var(--hp-text);
@@ -191,9 +193,9 @@
 .featuredSideAway .featuredTeamName { text-align: left; }
 
 .featuredScorebox {
-  flex: 0 0 auto;
+  flex: 0 0 90px;
+  width: 90px;
   text-align: center;
-  min-width: 80px;
 }
 
 .featuredScore {
@@ -497,11 +499,14 @@
   .featuredHeroBody { padding: 14px 12px 12px; }
   .featuredHeroTop { padding: 9px 12px; }
 
-  /* Keep teams on ONE horizontal line on mobile */
+  /* Keep teams perfectly balanced on mobile */
   .featuredRow {
-    grid-template-columns: 1fr auto 1fr;
-    gap: 8px;
+    grid-template-columns: 1fr 72px 1fr;
+    gap: 0;
   }
+
+  .featuredSideHome { padding-right: 8px; }
+  .featuredSideAway { padding-left: 8px; }
 
   .featuredTeamName {
     font-size: 0.82rem;
@@ -510,7 +515,10 @@
     text-overflow: ellipsis;
   }
 
-  .featuredScorebox { min-width: 60px; }
+  .featuredScorebox {
+    flex: 0 0 72px;
+    width: 72px;
+  }
   .featuredScore { font-size: 1.4rem; }
 
   .featuredMeta { font-size: 0.75rem; white-space: normal; }
@@ -535,7 +543,10 @@
 @media (max-width: 380px) {
   .featuredTeamName { font-size: 0.75rem; }
   .featuredScore { font-size: 1.2rem; }
-  .featuredScorebox { min-width: 52px; }
+  .featuredRow { grid-template-columns: 1fr 60px 1fr; }
+  .featuredScorebox { flex: 0 0 60px; width: 60px; }
+  .featuredSideHome { padding-right: 6px; }
+  .featuredSideAway { padding-left: 6px; }
   .matchRow {
     grid-template-columns: 38px 1fr 46px 1fr 20px;
     padding: 7px 8px;
