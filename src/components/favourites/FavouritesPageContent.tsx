@@ -102,29 +102,82 @@ export default function FavouritesPageContent() {
                 const away = getTeamById(wc26Fixture.awayTeamId);
                 const label = `${home?.name ?? wc26Fixture.homeTeamId} vs ${away?.name ?? wc26Fixture.awayTeamId}`;
                 return (
-                  <li key={matchId} className={styles.favListItem}>
-                    <Link href={matchHref(matchId)} className={styles.favListMain}>
-                      {home ? <TeamFlag teamId={home.id} size={24} /> : null}
-                      <span className={styles.favListVs}>vs</span>
-                      {away ? <TeamFlag teamId={away.id} size={24} /> : null}
-                      <span className={styles.favListLabel}>{label}</span>
-                      <span className={styles.favListMeta}>
-                        {formatVisitorKickoff(wc26Fixture.kickoffUtc)}
-                      </span>
-                      <MatchTvBroadcast
-                        tvRegion={tvRegion}
-                        matchNumber={wc26Fixture.matchNumber}
-                        variant="chips"
-                        className={styles.favListTv}
-                      />
-                    </Link>
-                    <button
-                      type="button"
-                      className={styles.favRemoveBtn}
-                      onClick={() => removeFavouriteMatch(matchId)}
-                    >
-                      Remove
-                    </button>
+                  <li key={matchId} style={{ listStyle: "none", marginBottom: 10 }}>
+                    <div style={{
+                      background: "#fff",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: 12,
+                      overflow: "hidden",
+                    }}>
+                      {/* Match teams row */}
+                      <div style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr auto 1fr",
+                        alignItems: "center",
+                        padding: "14px 16px 10px",
+                        gap: 8,
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-end" }}>
+                          {home ? <TeamFlag teamId={home.id} size={28} /> : null}
+                          <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{home?.name ?? "Home"}</span>
+                        </div>
+                        <div style={{ textAlign: "center", minWidth: 60 }}>
+                          <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>vs</div>
+                          <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
+                            {formatVisitorKickoff(wc26Fixture.kickoffUtc)}
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-start" }}>
+                          <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{away?.name ?? "Away"}</span>
+                          {away ? <TeamFlag teamId={away.id} size={28} /> : null}
+                        </div>
+                      </div>
+                      {/* TV broadcast */}
+                      <div style={{ padding: "0 16px 4px", fontSize: 12, color: "#64748b" }}>
+                        <MatchTvBroadcast
+                          tvRegion={tvRegion}
+                          matchNumber={wc26Fixture.matchNumber}
+                          variant="chips"
+                          className={styles.favListTv}
+                        />
+                      </div>
+                      {/* Actions */}
+                      <div style={{
+                        display: "flex",
+                        gap: 8,
+                        padding: "10px 16px 12px",
+                        borderTop: "1px solid #f1f5f9",
+                      }}>
+                        <Link href={matchHref(matchId)} style={{
+                          flex: 1,
+                          padding: "8px 12px",
+                          background: "#7B0D1E",
+                          color: "#fff",
+                          borderRadius: 8,
+                          textDecoration: "none",
+                          fontWeight: 700,
+                          fontSize: 13,
+                          textAlign: "center",
+                        }}>
+                          ⚽ Match Details & Live Score
+                        </Link>
+                        <button
+                          type="button"
+                          style={{
+                            padding: "8px 12px",
+                            background: "transparent",
+                            border: "1px solid #e2e8f0",
+                            borderRadius: 8,
+                            fontSize: 12,
+                            color: "#64748b",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => removeFavouriteMatch(matchId)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
                   </li>
                 );
               }
