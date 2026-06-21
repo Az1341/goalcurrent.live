@@ -158,25 +158,19 @@ function mapStatistics(
   awayTeamName: string,
 ): MatchStatisticPair[] {
   const byTeam = new Map<string, Record<string, string | number | null>>();
+
   for (const row of rows) {
     const data: Record<string, string | number | null> = {};
     for (const item of row.statistics ?? []) {
       data[statKey(item.type)] = item.value;
     }
     byTeam.set(row.team.name, data);
-    console.log("[wc26-stats] API team name:", row.team.name, "keys:", Object.keys(data).length);
   }
-  console.log("[wc26-stats] byTeam keys:", Array.from(byTeam.keys()), "home:", homeTeamName, "away:", awayTeamName);
-
-  // Resolve team stats using fuzzy name matching via resolveTeamId
-  // Handles cases like API returning "Iran" when our data has "IR Iran"
-  const byTeamEntries = Array.from(byTeam.entries());
-  console.log("[wc26-stats] rows received:", byTeamEntries.length, "names:", byTeamEntries.map(([n]) => n));
 
   function findStats(officialName: string): Record<string, string | number | null> {
     // 1. Exact match
     if (byTeam.has(officialName)) return byTeam.get(officialName)!;
-    // 2. Resolve via teamIdentity aliases (handles "Iran" -> "irn" -> "IR Iran")
+    // 2. Resolve via teamIdentity aliases (e.g. "Iran" -> "irn" -> "IR Iran")
     const ourId = resolveTeamId(officialName);
     if (ourId) {
       for (const [apiName, data] of byTeam.entries()) {
@@ -184,49 +178,32 @@ function mapStatistics(
         if (apiId === ourId) return data;
       }
     }
-    // 3. Case-insensitive partial match
+    // 3. Strip punctuation and partial match
     const lower = officialName.toLowerCase().replace(/[^a-z]/g, "");
     for (const [apiName, data] of byTeam.entries()) {
       const apiLower = apiName.toLowerCase().replace(/[^a-z]/g, "");
-      if (apiLower.includes(lower) || lower.includes(apiLower)) {
-        return data;
-      }
+      if (apiLower.includes(lower) || lower.includes(apiLower)) return data;
     }
     return {};
   }
 
-  // When API returns exactly 2 rows, use positional fallback if name resolution fails
-  const homeStatsByName = findStats(homeTeamName);
-  const awayStatsByName = findStats(awayTeamName);
+  // Positional fallback: if 2 rows returned and name resolution fails, assign by position
+  const entries = Array.from(byTeam.entries());
+  let homeStats = findStats(homeTeamName);
+  let awayStats = findStats(awayTeamName);
 
-  let homeStats = homeStatsByName;
-  let awayStats = awayStatsByName;
-
-  if (byTeamEntries.length === 2) {
-    const [firstEntry, secondEntry] = byTeamEntries;
-    const firstId = resolveTeamId(firstEntry![0]);
+  if (entries.length === 2 && (Object.keys(homeStats).length === 0 || Object.keys(awayStats).length === 0)) {
     const homeId = resolveTeamId(homeTeamName);
-    if (Object.keys(homeStatsByName).length === 0 || Object.keys(awayStatsByName).length === 0) {
-      // Assign by which entry matches home team id
-      if (firstId === homeId) {
-        homeStats = firstEntry![1];
-        awayStats = secondEntry![1];
-      } else {
-        homeStats = secondEntry![1];
-        awayStats = firstEntry![1];
-      }
+    const firstId = resolveTeamId(entries[0]![0]);
+    if (firstId === homeId) {
+      homeStats = entries[0]![1];
+      awayStats = entries[1]![1];
+    } else {
+      homeStats = entries[1]![1];
+      awayStats = entries[0]![1];
     }
   }
 
-  return STAT_KEYS.filter((key) => homeStats[key] != null || awayStats[key] != null).map(
-    (key) => ({
-      key,
-      label: MATCH_STAT_LABELS[key] ?? key,
-      home: homeStats[key] ?? null,
-      away: awayStats[key] ?? null,
-    }),
-  );
-}
 
 function resolveLineupSides(
   rows: ApiLineupRow[],
