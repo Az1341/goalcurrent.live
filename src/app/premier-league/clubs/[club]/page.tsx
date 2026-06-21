@@ -62,7 +62,7 @@ export default async function ClubPage({ params }: PageProps) {
         gap: 12, marginBottom: 28
       }}>
         {[
-          { label: "2025/26 Position", value: `${data.position}${["st","nd","rd"][data.position-1]||"th"}` },
+          { label: "2025/26 Position", value: `${data.position}${(["st","nd","rd"] as const)[data.position-1] ?? "th"}` },
           { label: "PL Titles", value: String(data.plTitles) },
           { label: "Founded", value: String(data.founded) },
           { label: "Capacity", value: data.capacity },
