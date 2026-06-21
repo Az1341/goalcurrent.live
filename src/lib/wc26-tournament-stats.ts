@@ -36,3 +36,17 @@ export function getGamesLeftToPlay(
 ): number {
   return Math.max(WC26_TOURNAMENT.fixtureCount - getGamesPlayed(fixtures), 0);
 }
+
+/** Sum of all goals from fixtures that have home+away scores in the overlay.
+ *  Works without API_FOOTBALL_KEY — uses live score overlay data. */
+export function getTotalGoalsFromOverlay(
+  fixtures: readonly (FixtureWithStatus & { homeScore?: number; awayScore?: number })[] = getEffectiveFixtures() as never,
+): number {
+  let total = 0;
+  for (const f of fixtures) {
+    if (typeof f.homeScore === "number" && typeof f.awayScore === "number") {
+      total += f.homeScore + f.awayScore;
+    }
+  }
+  return total;
+}
