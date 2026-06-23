@@ -71,9 +71,9 @@ export default function EditorialArticleView({ article }: EditorialArticleViewPr
       </article>
 
       <p className={styles.hubBack}>
-        <Link href="/news">← Latest News</Link>
+        <Link href="/articles">← All Articles</Link>
         {" · "}
-        <Link href="/news/world-cup">World Cup news</Link>
+        <Link href="/news">Latest News</Link>
       </p>
     </main>
   );

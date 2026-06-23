@@ -2,7 +2,7 @@ import type { EditorialArticle } from "@/types/editorial";
 
 export const BEIRANVAND_FEATURE: EditorialArticle = {
   slug: "alireza-beiranvand-iran-world-cup-hero",
-  path: "/news/alireza-beiranvand-iran-world-cup-hero",
+  path: "/articles/alireza-beiranvand-iran-world-cup-hero",
   title: "Who Is Alireza Beiranvand? The Story Behind Iran's World Cup Hero",
   description:
     "Alireza Beiranvand's rise from Iran's borderlands to World Cup goalkeeper — and his man-of-the-match display in Iran's 0–0 draw with Belgium at World Cup 2026.",
