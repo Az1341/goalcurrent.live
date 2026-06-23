@@ -255,6 +255,29 @@ export function selectHomepageFixtures(
   return views;
 }
 
+/** Homepage upcoming rows — today + future kickoffs (excludes featured). */
+export function selectUpcomingHomepageFixtures(
+  fixtures: readonly EffectiveFixture[],
+  excludeFixtureId?: string,
+  limit = 6,
+): readonly HomepageMatchView[] {
+  const buckets = partitionFixturesForLiveCentre(fixtures);
+  const ordered = [...buckets.today, ...buckets.upcoming];
+  const views: HomepageMatchView[] = [];
+
+  for (const fixture of ordered) {
+    if (fixture.id === excludeFixtureId) {
+      continue;
+    }
+    views.push(buildHomepageMatchView(fixture));
+    if (views.length >= limit) {
+      break;
+    }
+  }
+
+  return views;
+}
+
 /** Header ribbon ticker — live + recent results + next kickoffs. */
 export function selectRibbonFixtures(
   fixtures: readonly EffectiveFixture[],

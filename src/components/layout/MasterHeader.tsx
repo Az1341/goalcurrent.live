@@ -3,7 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DESKTOP_PRIMARY_NAV, isMainNavActive } from "@/lib/nav";
+import {
+  DESKTOP_PL_DROPDOWN,
+  DESKTOP_PRIMARY_NAV,
+  DESKTOP_WC26_DROPDOWN,
+  isDesktopPlActive,
+  isDesktopWc26Active,
+  isMainNavActive,
+} from "@/lib/nav";
+import HeaderNavDropdown from "./HeaderNavDropdown";
 import LiveRibbon from "./LiveRibbon";
 import styles from "./master-chrome.module.css";
 
@@ -41,12 +49,19 @@ export default function MasterHeader() {
                 </Link>
               );
             })}
+            <HeaderNavDropdown
+              label="PL 26/27"
+              links={DESKTOP_PL_DROPDOWN}
+              isActive={isDesktopPlActive(pathname)}
+            />
+            <HeaderNavDropdown
+              label="WC26"
+              links={DESKTOP_WC26_DROPDOWN}
+              isActive={isDesktopWc26Active(pathname)}
+            />
           </nav>
 
           <div className={styles.headerActions}>
-            <Link href="/contact" className={styles.headerLogin}>
-              Contact
-            </Link>
             <button
               type="button"
               className={styles.headerSubscribe}

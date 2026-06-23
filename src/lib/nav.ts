@@ -228,11 +228,26 @@ export const MORE_SHEET_SUBMENU_TITLES: Record<MoreSheetSubmenuId, string> = {
   transfers: "Transfers",
 };
 
-/** Desktop PL 26/27 dropdown */
-export const DESKTOP_PL_DROPDOWN: NavLinkItem[] = MORE_SHEET_SUBMENUS.pl;
+/** Desktop PL 26/27 header dropdown — existing routes only */
+export const DESKTOP_PL_DROPDOWN: NavLinkItem[] = [
+  { href: "/premier-league", label: "PL Home" },
+  { href: "/premier-league/fixtures", label: "Fixtures" },
+  { href: "/premier-league/table", label: "Table" },
+  { href: "/premier-league/clubs", label: "Clubs" },
+  { href: "/premier-league/statistics", label: "Statistics" },
+];
 
-/** Desktop WC26 dropdown */
-export const DESKTOP_WC26_DROPDOWN: NavLinkItem[] = MORE_SHEET_SUBMENUS.wc26;
+/** Desktop WC26 header dropdown — existing routes only */
+export const DESKTOP_WC26_DROPDOWN: NavLinkItem[] = [
+  { href: "/worldcup2026", label: "WC26 Home" },
+  { href: "/worldcup2026/fixtures", label: "Fixtures" },
+  { href: "/worldcup2026/groups", label: "Groups" },
+  { href: "/worldcup2026/standings", label: "Standings" },
+  { href: "/worldcup2026/teams", label: "Teams" },
+  { href: "/worldcup2026/venues", label: "Venues" },
+  { href: "/worldcup2026/bracket", label: "Bracket" },
+  { href: FAVOURITES_HREF, label: "Favourites" },
+];
 
 /** About and contact */
 export const SITE_NAV: NavItem[] = [

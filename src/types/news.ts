@@ -5,7 +5,8 @@ export type NewsTag =
   | "RESULT"
   | "BREAKING"
   | "TRANSFER"
-  | "NEWS";
+  | "NEWS"
+  | "FEATURE";
 
 export type NewsArticle = {
   title: string;
