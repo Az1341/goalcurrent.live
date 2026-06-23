@@ -26,16 +26,25 @@ function formatScore(match: HomepageMatchView): string | null {
   return `${match.score.home}–${match.score.away}`;
 }
 
+function tickerStatusClass(matchClass: HomepageMatchView["matchClass"]) {
+  if (matchClass === "live") return styles.liveMatchStatusLive;
+  if (matchClass === "ft") return styles.liveMatchStatusFt;
+  return styles.liveMatchStatusUpcoming;
+}
+
 function renderMatchItem(match: HomepageMatchView, keySuffix = "") {
   const score = formatScore(match);
   const homeName = formatTickerTeamName(match.homeTeamId, match.homeName);
   const awayName = formatTickerTeamName(match.awayTeamId, match.awayName);
-  const statusSuffix =
-    match.matchClass === "live"
-      ? ""
-      : match.matchClass === "ft"
-        ? " FT"
-        : ` · ${match.statusLabel}`;
+  const isLive = match.matchClass === "live";
+  const isFt = match.matchClass === "ft";
+  const statusLabel = isLive
+    ? match.elapsed != null
+      ? `LIVE ${match.elapsed}'`
+      : "LIVE"
+    : isFt
+      ? "FT"
+      : match.statusLabel;
   const matchTitle = formatTickerMatchTitle(
     match.homeName,
     match.awayName,
@@ -53,21 +62,29 @@ function renderMatchItem(match: HomepageMatchView, keySuffix = "") {
         title={matchTitle}
       >
         <TeamFlag teamId={match.homeTeamId} size={16} />
-        <span className={styles.liveMatchTeams}>
-          {homeName}
-          {score ? ` ${score} ` : " vs "}
-          {awayName}
+        <span className={styles.liveMatchTeams}>{homeName}</span>
+        <span
+          className={`${styles.liveMatchScore} ${tickerStatusClass(match.matchClass)}`}
+        >
+          {score ?? (isLive ? "LIVE" : "vs")}
         </span>
+        <span className={styles.liveMatchTeams}>{awayName}</span>
         <TeamFlag teamId={match.awayTeamId} size={16} />
-        {statusSuffix ? (
-          <span className={styles.liveMatchStatus}>{statusSuffix}</span>
-        ) : null}
+        <span
+          className={`${styles.liveMatchStatus} ${tickerStatusClass(match.matchClass)}`}
+        >
+          {statusLabel}
+        </span>
       </Link>
     </li>
   );
 }
 
-export default function LiveRibbon() {
+type LiveRibbonProps = {
+  embedded?: boolean;
+};
+
+export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
   const fixtures = useEffectiveFixtures();
   const allMatches = selectRibbonFixtures(fixtures);
   const [isMobile, setIsMobile] = useState(false);
@@ -87,7 +104,11 @@ export default function LiveRibbon() {
 
   if (allMatches.length === 0) {
     return (
-      <div className={styles.liveRibbon} role="region" aria-label="Live scores ticker">
+      <div
+        className={`${styles.liveRibbon} ${embedded ? styles.liveRibbonEmbedded : ""}`}
+        role="region"
+        aria-label="Live scores ticker"
+      >
         <span className={styles.liveRibbonLabel}>WORLD CUP 2026</span>
         <span className={styles.liveRibbonMessage}>
           Fixtures from local schedule — scores when API sync is active
@@ -102,7 +123,11 @@ export default function LiveRibbon() {
   const hiddenCount = Math.max(0, allMatches.length - visibleLimit);
 
   return (
-    <div className={styles.liveRibbon} role="region" aria-label="Live scores ticker">
+    <div
+      className={`${styles.liveRibbon} ${embedded ? styles.liveRibbonEmbedded : ""}`}
+      role="region"
+      aria-label="Live scores ticker"
+    >
       <span className={styles.liveRibbonLabel}>
         {hasLive ? <span className={styles.liveDot} aria-hidden="true" /> : null}
         {hasLive ? "LIVE NOW" : "LATEST RESULTS"}
@@ -124,7 +149,7 @@ export default function LiveRibbon() {
                 className={styles.liveRibbonMore}
                 aria-label={`View ${hiddenCount} more matches`}
               >
-                +{hiddenCount} MORE MATCHES
+                +{hiddenCount} More Matches
               </Link>
             </li>
           ) : null}

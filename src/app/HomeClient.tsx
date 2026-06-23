@@ -20,6 +20,7 @@ import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
 import { SITE_NAME } from "@/lib/site-url";
 import AdSenseUnit from "@/components/AdSenseUnit";
+import LiveRibbon from "@/components/layout/LiveRibbon";
 import HomeArticlesSection from "@/components/home/HomeArticlesSection";
 import HomeFavouritesStrip from "@/components/home/HomeFavouritesStrip";
 import HomeNewsSection from "@/components/home/HomeNewsSection";
@@ -257,6 +258,10 @@ export default function Home() {
         </section>
 
         <HomeFavouritesStrip />
+
+        <div className={styles.homeTickerWrap}>
+          <LiveRibbon embedded />
+        </div>
 
         <div className={styles.threeCol}>
           <ColumnCard

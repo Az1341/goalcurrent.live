@@ -755,6 +755,10 @@
   white-space: nowrap;
 }
 
+.homeTickerWrap {
+  margin-bottom: 24px;
+}
+
 .threeCol {
   display: grid;
   grid-template-columns: 1fr;
@@ -884,21 +888,6 @@
   border: 1px solid var(--hp-border);
   border-radius: 10px;
   overflow: hidden;
-}
-
-.wcGroupMiniTitle {
-  display: block;
-  padding: 10px 12px;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: var(--hp-burgundy);
-  text-decoration: none;
-  background: #fafafa;
-  border-bottom: 1px solid var(--hp-border);
-}
-
-.wcGroupMiniTitle:hover {
-  text-decoration: underline;
 }
 
 .wcGroupMiniTable {
