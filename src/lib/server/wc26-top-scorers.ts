@@ -11,7 +11,9 @@ import {
   countVerifiedTournamentGoals,
   extractScoringGoalsFromEvents,
   extractVerifiedScoringGoals,
+  sumTopScorerGoals,
 } from "@/lib/wc26-top-scorers";
+import { getWc26FallbackTopScorerRows } from "@/data/wc26-fallback-scorers";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
 import type { MatchEventItem } from "@/types/match-detail";
 import type { ScorerGoalEvent } from "@/lib/wc26-top-scorers";
@@ -22,20 +24,6 @@ const RETRY_DELAY_MS = 450;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function emptyResponse(): Wc26TopScorersResponse {
-  return {
-    scorers: [],
-    totalGoals: 0,
-    configured: isWc26ApiConfigured(),
-    apiAvailable: false,
-    matchesProcessed: 0,
-    matchesWithVerifiedEvents: 0,
-    matchesExcluded: 0,
-    partialData: false,
-    fetchedAt: new Date().toISOString(),
-  };
 }
 
 async function mapWithConcurrency<T, R>(
@@ -148,19 +136,44 @@ function buildTopScorersResponse(
   };
 }
 
+/** Tier 3: curated static scorers when API + match events produce no rows. */
+function buildStaticFallbackResponse(
+  finishedMatches: readonly Wc26ApiMatch[],
+): Wc26TopScorersResponse {
+  const scorers = getWc26FallbackTopScorerRows();
+
+  return {
+    scorers,
+    totalGoals: sumTopScorerGoals(scorers),
+    configured: isWc26ApiConfigured(),
+    apiAvailable: true,
+    matchesProcessed: finishedMatches.length,
+    matchesWithVerifiedEvents: 0,
+    matchesExcluded: finishedMatches.length,
+    partialData: true,
+    fetchedAt: new Date().toISOString(),
+  };
+}
+
+function withStaticFallbackIfEmpty(
+  response: Wc26TopScorersResponse,
+  finishedMatches: readonly Wc26ApiMatch[],
+): Wc26TopScorersResponse {
+  if (response.scorers.length > 0) {
+    return response;
+  }
+  return buildStaticFallbackResponse(finishedMatches);
+}
+
 export async function fetchWc26TopScorers(): Promise<Wc26TopScorersResponse> {
   if (!isWc26ApiConfigured()) {
-    return emptyResponse();
+    return buildStaticFallbackResponse([]);
   }
 
   try {
     const finishedMatches = await fetchFinishedWc26Matches();
     if (finishedMatches.length === 0) {
-      return {
-        ...emptyResponse(),
-        configured: true,
-        apiAvailable: true,
-      };
+      return buildStaticFallbackResponse([]);
     }
 
     const eventResults = await mapWithConcurrency(
@@ -169,6 +182,7 @@ export async function fetchWc26TopScorers(): Promise<Wc26TopScorersResponse> {
       FETCH_CONCURRENCY,
     );
 
+    // Tier 1: verified goal events from API-Football match feeds
     const verified = collectGoalsFromEvents(
       finishedMatches,
       eventResults,
@@ -176,41 +190,41 @@ export async function fetchWc26TopScorers(): Promise<Wc26TopScorersResponse> {
     );
 
     if (verified.goals.length > 0) {
-      return buildTopScorersResponse(
+      return withStaticFallbackIfEmpty(
+        buildTopScorersResponse(
+          finishedMatches,
+          verified.goals,
+          verified.matchesWithEvents,
+          verified.matchesWithEvents < finishedMatches.length,
+          true,
+        ),
         finishedMatches,
-        verified.goals,
-        verified.matchesWithEvents,
-        verified.matchesWithEvents < finishedMatches.length,
-        true,
       );
     }
 
-    // Fallback: aggregate from match events when verified totals are empty
-    // (same finished-match set as GET /api/wc26/scores?results=wc).
-    const fallback = collectGoalsFromEvents(
+    // Tier 2: unverified event aggregation (same finished-match set as scores API)
+    const eventFallback = collectGoalsFromEvents(
       finishedMatches,
       eventResults,
       false,
     );
 
-    if (fallback.goals.length > 0) {
-      return buildTopScorersResponse(
+    if (eventFallback.goals.length > 0) {
+      return withStaticFallbackIfEmpty(
+        buildTopScorersResponse(
+          finishedMatches,
+          eventFallback.goals,
+          eventFallback.matchesWithEvents,
+          true,
+          true,
+        ),
         finishedMatches,
-        fallback.goals,
-        fallback.matchesWithEvents,
-        true,
-        true,
       );
     }
 
-    return buildTopScorersResponse(
-      finishedMatches,
-      [],
-      0,
-      finishedMatches.length > 0,
-      finishedMatches.length > 0,
-    );
+    // Tier 3: static curated dataset
+    return buildStaticFallbackResponse(finishedMatches);
   } catch {
-    return emptyResponse();
+    return buildStaticFallbackResponse([]);
   }
 }
