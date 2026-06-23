@@ -10,6 +10,42 @@ const LIVE_URL = "/api/wc26/scores?live=true";
 const RESULTS_INTERVAL_MS = 300_000;
 const LIVE_INTERVAL_MS = 30_000;
 
+export const WC26_SYNC_STATUS_EVENT = "wc26:sync-status";
+
+export type Wc26SyncStatus = "pending" | "synced" | "unconfigured";
+
+let syncStatus: Wc26SyncStatus = "pending";
+
+function notifySyncStatus(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.dispatchEvent(new CustomEvent(WC26_SYNC_STATUS_EVENT));
+}
+
+function setSyncStatus(next: Wc26SyncStatus): void {
+  if (syncStatus === next) {
+    return;
+  }
+  syncStatus = next;
+  notifySyncStatus();
+}
+
+/** Current WC26 overlay sync state for UI indicators. */
+export function getWc26SyncStatus(): Wc26SyncStatus {
+  return syncStatus;
+}
+
+/** Subscribe to WC26 overlay sync state changes (client only). */
+export function subscribeWc26SyncStatus(onChange: () => void): () => void {
+  if (typeof window === "undefined") {
+    return () => undefined;
+  }
+  const handler = () => onChange();
+  window.addEventListener(WC26_SYNC_STATUS_EVENT, handler);
+  return () => window.removeEventListener(WC26_SYNC_STATUS_EVENT, handler);
+}
+
 const LIVE_OVERLAY_STATUSES = new Set([
   "live",
   "1h",
@@ -98,6 +134,8 @@ function applyScoresOutcome(outcome: FetchScoresOutcome): boolean {
     return false;
   }
 
+  setSyncStatus("synced");
+
   if (outcome.data.matches.length === 0) {
     return true;
   }
@@ -110,6 +148,7 @@ function applyScoresOutcome(outcome: FetchScoresOutcome): boolean {
 export async function syncWc26Results(): Promise<boolean> {
   const outcome = await fetchScores(RESULTS_URL);
   if (outcome.status === "unconfigured") {
+    setSyncStatus("unconfigured");
     return false;
   }
   return applyScoresOutcome(outcome);
@@ -119,6 +158,7 @@ export async function syncWc26Results(): Promise<boolean> {
 export async function syncWc26Live(): Promise<boolean> {
   const outcome = await fetchScores(LIVE_URL);
   if (outcome.status === "unconfigured") {
+    setSyncStatus("unconfigured");
     return false;
   }
   return applyScoresOutcome(outcome);
@@ -133,6 +173,8 @@ export function startWc26ResultsSync(): Wc26SyncController {
   if (typeof window === "undefined") {
     return { stop: () => undefined };
   }
+
+  setSyncStatus("pending");
 
   let resultsTimer: ReturnType<typeof setInterval> | undefined;
   let liveTimer: ReturnType<typeof setInterval> | undefined;
@@ -160,6 +202,7 @@ export function startWc26ResultsSync(): Wc26SyncController {
 
     const outcome = await fetchScores(url);
     if (outcome.status === "unconfigured") {
+      setSyncStatus("unconfigured");
       stopPolling();
       return false;
     }

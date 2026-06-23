@@ -1,52 +1,47 @@
-/** Visitor-local timezone abbreviation for a given instant. */
-export function formatVisitorTimezone(date: Date = new Date()): string {
-  try {
-    const parts = new Intl.DateTimeFormat(undefined, {
-      timeZoneName: "short",
-    }).formatToParts(date);
-    return parts.find((p) => p.type === "timeZoneName")?.value ?? "Local";
-  } catch {
-    return "Local";
-  }
+const kickoffDateFormatter = new Intl.DateTimeFormat("en-GB", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
+
+const kickoffTimeFormatter = new Intl.DateTimeFormat("en-GB", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "UTC",
+});
+
+function formatUtcKickoffDate(date: Date): string {
+  const parts = kickoffDateFormatter.formatToParts(date);
+  const weekday = parts.find((part) => part.type === "weekday")?.value ?? "";
+  const day = parts.find((part) => part.type === "day")?.value ?? "";
+  const month = parts.find((part) => part.type === "month")?.value ?? "";
+
+  return `${weekday} ${day} ${month}`.trim();
 }
 
-/** Local kickoff time only (HH:MM) — compact labels e.g. live ribbon. */
+/** Deterministic timezone abbreviation for hydration-safe rendering. */
+export function formatVisitorTimezone(): string {
+  return "UTC";
+}
+
+/** Hydration-safe kickoff time only (HH:MM) — compact labels e.g. live ribbon. */
 export function formatVisitorKickoffTime(iso: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(new Date(iso));
+  return kickoffTimeFormatter.format(new Date(iso));
 }
 
 /**
- * Full kickoff in the visitor's browser timezone:
- * local date, local time, and timezone abbreviation.
+ * Hydration-safe kickoff label.
+ * Uses fixed locale and UTC so server and browser render identical text.
  */
 export function formatVisitorKickoff(iso: string): string {
   const date = new Date(iso);
-  const formatted = new Intl.DateTimeFormat(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
-  return `${formatted} ${formatVisitorTimezone(date)}`;
+
+  return `${formatUtcKickoffDate(date)} · ${kickoffTimeFormatter.format(date)} UTC`;
 }
 
-/** @deprecated Visitor-facing UI should use formatVisitorKickoff — UTC display only. */
+/** UTC display only. */
 export function formatKickoffUtc(iso: string): string {
-  return new Intl.DateTimeFormat("en-GB", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "UTC",
-  }).format(new Date(iso));
+  return formatVisitorKickoff(iso);
 }

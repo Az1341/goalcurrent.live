@@ -32,3 +32,39 @@ export function buildPageMetadata({
     },
   };
 }
+
+type ArticleMetadataInput = PageMetadataInput & {
+  keywords?: string[];
+  publishedTime?: string;
+  authors?: string[];
+};
+
+/** Long-form editorial article metadata. */
+export function buildArticleMetadata({
+  title,
+  description,
+  path,
+  keywords = [],
+  publishedTime,
+  authors = ["GoalCurrent Editorial"],
+  absoluteTitle = true,
+}: ArticleMetadataInput): Metadata {
+  const url = absoluteUrl(path);
+
+  return {
+    title: absoluteTitle ? { absolute: title } : title,
+    description,
+    keywords,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "article",
+      publishedTime,
+      authors,
+    },
+  };
+}

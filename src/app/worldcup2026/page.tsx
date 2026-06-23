@@ -27,7 +27,9 @@ export default function WorldCupHubPage() {
       </h1>
       <p className={styles.pageIntro}>
         {hosts} · 11 June – 19 July 2026. Explore tournament sections below —
-        powered by local typed data, no external APIs.
+        base fixtures, groups, teams, and venues come from local typed data;
+        live scores, results, standings overlays, and top scorers update from
+        API data when available.
       </p>
 
       <Wc26HeroStats variant="hub" />

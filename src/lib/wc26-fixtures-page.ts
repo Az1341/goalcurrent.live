@@ -178,13 +178,23 @@ export function formatVisitorTimezone(): string {
   return formatVisitorTimezoneFromFormat();
 }
 
+const calendarDateFormatter = new Intl.DateTimeFormat("en-GB", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+const calendarDowFormatter = new Intl.DateTimeFormat("en-GB", {
+  weekday: "short",
+});
+
+const calendarMonthFormatter = new Intl.DateTimeFormat("en-GB", {
+  month: "short",
+});
+
 export function formatLongLocalDate(dateKey: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(`${dateKey}T12:00:00`));
+  return calendarDateFormatter.format(new Date(`${dateKey}T12:00:00`));
 }
 
 export function shortDayParts(dateKey: string): {
@@ -194,9 +204,9 @@ export function shortDayParts(dateKey: string): {
 } {
   const d = new Date(`${dateKey}T12:00:00`);
   return {
-    dow: new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(d),
+    dow: calendarDowFormatter.format(d),
     dayNum: d.getDate(),
-    month: new Intl.DateTimeFormat(undefined, { month: "short" }).format(d),
+    month: calendarMonthFormatter.format(d),
   };
 }
 

@@ -3,15 +3,15 @@
   align-items: center;
   gap: 12px;
   overflow: hidden;
-  padding: 12px clamp(14px, 2.5vw, 24px);
+  padding: 10px clamp(14px, 2.5vw, 24px);
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  background: #1a0a0e;
-  color: #f8f4f5;
+  background: #111111;
+  color: #ffffff;
   font-size: 0.8125rem;
   font-weight: 600;
-  border-bottom: 2px solid var(--gc-brand-to);
+  border-bottom: 1px solid #222222;
   box-sizing: border-box;
 }
 
@@ -21,10 +21,12 @@
   align-items: center;
   gap: 6px;
   color: #fbbf24;
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  padding-right: 12px;
+  border-right: 1px solid #333333;
 }
 
 .liveRibbonMessage {
@@ -35,11 +37,12 @@
 }
 
 .liveDot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #e30613;
+  background: #22c55e;
   flex-shrink: 0;
+  animation: gcPulse 1.4s infinite;
 }
 
 .tickerScroll {
@@ -51,13 +54,13 @@
 .tickerTrack {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 0;
   margin: 0;
   padding: 0;
   list-style: none;
   width: max-content;
   white-space: nowrap;
-  animation: tickerMarquee 36s linear infinite;
+  animation: tickerMarquee 42s linear infinite;
 }
 
 @keyframes tickerMarquee {
@@ -82,25 +85,64 @@
 .liveMatch {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   color: inherit;
   text-decoration: none;
   white-space: nowrap;
-  padding: 3px 0;
+  padding: 6px 16px;
+  border-right: 1px solid #222222;
+  transition: background 0.15s ease;
 }
 
 .liveMatch:hover {
-  text-decoration: underline;
+  background: rgba(255, 255, 255, 0.05);
+  text-decoration: none;
 }
 
 .liveMatchTeams {
   white-space: nowrap;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.liveMatchScore {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
 }
 
 .liveMatchStatus {
   flex-shrink: 0;
-  opacity: 0.85;
-  font-size: 0.75rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.liveMatchStatusLive {
+  color: #22c55e;
+}
+
+.liveMatchStatusLive.liveMatchScore {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.liveMatchStatusFt {
+  color: #9ca3af;
+}
+
+.liveMatchStatusFt.liveMatchScore {
+  color: #9ca3af;
+}
+
+.liveMatchStatusUpcoming {
+  color: #3b82f6;
+}
+
+.liveMatchStatusUpcoming.liveMatchScore {
+  color: #ffffff;
 }
 
 .liveRibbonMore {
@@ -122,6 +164,12 @@
 .liveRibbonMore:hover {
   background: rgba(251, 191, 36, 0.16);
   text-decoration: none;
+}
+
+.liveRibbonEmbedded {
+  border-radius: 12px;
+  border: 1px solid #222222;
+  margin-bottom: 0;
 }
 
 @media (max-width: 767px) {

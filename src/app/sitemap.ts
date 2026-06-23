@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { EDITORIAL_ARTICLES } from "@/data/editorial";
 import {
   WC26_FIXTURES,
   WC26_GROUP_IDS,
@@ -14,6 +15,7 @@ const STATIC_PATHS = [
   "/live",
   "/favourites",
   "/news",
+  "/news/world-cup",
   "/about",
   "/contact",
   "/terms",
@@ -60,5 +62,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...groupEntries, ...teamEntries, ...matchEntries];
+  const editorialEntries: MetadataRoute.Sitemap = EDITORIAL_ARTICLES.map(
+    (article) => ({
+      url: absoluteUrl(article.path),
+      lastModified: new Date(article.publishedAt),
+      changeFrequency: "weekly",
+      priority: 0.85,
+    }),
+  );
+
+  return [
+    ...staticEntries,
+    ...editorialEntries,
+    ...groupEntries,
+    ...teamEntries,
+    ...matchEntries,
+  ];
 }

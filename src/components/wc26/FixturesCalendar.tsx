@@ -26,6 +26,7 @@ import {
   buildCalendarDays,
   filterFixturesForPage,
   formatLongLocalDate,
+  shortDayParts,
   formatStageLabel,
   formatVisitorTimezone,
   getDistinctStages,
@@ -45,6 +46,11 @@ import type { Wc26GroupId } from "@/types/group";
 import { WC26_GROUP_IDS } from "@/types/group";
 import Wc26GamesProgress from "./Wc26GamesProgress";
 import styles from "./wc26.module.css";
+import {
+  getWc26SyncStatus,
+  subscribeWc26SyncStatus,
+  type Wc26SyncStatus,
+} from "@/lib/wc26-results-sync";
 
 function topStatusLabel(fixture: EffectiveFixture, matchClass: FixtureMatchClass): string {
   if (matchClass === "live") {
@@ -203,6 +209,9 @@ export default function FixturesCalendar() {
   const { tvRegion, setTvRegion, ready: tvReady } = useWc26TvRegion();
   const [selectedDate, setSelectedDate] = useState("");
   const [clientReady, setClientReady] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<Wc26SyncStatus>(() =>
+    getWc26SyncStatus(),
+  );
 
   const refreshFixtures = useCallback(() => {
     setFixtures(getEffectiveFixtures());
@@ -218,6 +227,11 @@ export default function FixturesCalendar() {
     return () =>
       window.removeEventListener(WC26_FIXTURES_UPDATED_EVENT, refreshFixtures);
   }, [refreshFixtures]);
+
+  useEffect(() => {
+    setSyncStatus(getWc26SyncStatus());
+    return subscribeWc26SyncStatus(() => setSyncStatus(getWc26SyncStatus()));
+  }, []);
 
   const calendarDays = useMemo(
     () => buildCalendarDays(fixtures),
@@ -257,6 +271,15 @@ export default function FixturesCalendar() {
       <h2 id="fixtures-calendar-heading" className={styles.visuallyHidden}>
         World Cup 2026 fixture calendar
       </h2>
+
+      <div className={styles.syncStatusSlot} aria-hidden={syncStatus !== "pending"}>
+        {syncStatus === "pending" ? (
+          <p className={styles.syncStatus} role="status" aria-live="polite">
+            <span className={styles.syncStatusDot} aria-hidden="true" />
+            Syncing live data…
+          </p>
+        ) : null}
+      </div>
 
       <div className={styles.fixMetrics} aria-label="Tournament facts">
         <div className={`${styles.fixMetric} ${styles.fixMetricTeams}`}>
@@ -384,8 +407,8 @@ export default function FixturesCalendar() {
           <div className={styles.fixDayHead}>
             <div className={styles.fixDayLeft}>
               <div className={styles.fixDateBadge} aria-hidden="true">
-                <b>{shortDayFromKey(activeDateKey).dayNum}</b>
-                <span>{shortDayFromKey(activeDateKey).month}</span>
+                <b>{shortDayParts(activeDateKey).dayNum}</b>
+                <span>{shortDayParts(activeDateKey).month}</span>
               </div>
               <div>
                 <div id="fix-day-head" className={styles.fixDayName}>
@@ -423,12 +446,4 @@ export default function FixturesCalendar() {
       )}
     </section>
   );
-}
-
-function shortDayFromKey(dateKey: string): { dayNum: number; month: string } {
-  const d = new Date(`${dateKey}T12:00:00`);
-  return {
-    dayNum: d.getDate(),
-    month: new Intl.DateTimeFormat(undefined, { month: "short" }).format(d),
-  };
 }

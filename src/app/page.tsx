@@ -4,8 +4,8 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${SITE_NAME} — FIFA World Cup 2026 | Live Scores, News & Teams`,
-  description: `${SITE_NAME} — live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.`,
+  title: `${SITE_NAME} — Live Football Scores, Fixtures & News`,
+  description: `${SITE_NAME} — live football scores, fixtures, results, standings and news from leagues and tournaments worldwide.`,
   path: "/",
   absoluteTitle: true,
 });

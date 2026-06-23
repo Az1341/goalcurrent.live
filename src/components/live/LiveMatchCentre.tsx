@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import TeamFlag from "@/components/TeamFlag";
@@ -20,6 +20,11 @@ import {
   partitionFixturesForLiveCentre,
 } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
+import {
+  getWc26SyncStatus,
+  subscribeWc26SyncStatus,
+  type Wc26SyncStatus,
+} from "@/lib/wc26-results-sync";
 import type { Wc26TvRegionCode } from "@/lib/wc26-fixtures-page";
 import styles from "./live.module.css";
 
@@ -136,11 +141,19 @@ function LiveSection({
 
 export default function LiveMatchCentre() {
   const fixtures = useEffectiveFixtures();
+  const [syncStatus, setSyncStatus] = useState<Wc26SyncStatus>(() =>
+    getWc26SyncStatus(),
+  );
   const buckets = useMemo(
     () => partitionFixturesForLiveCentre(fixtures),
     [fixtures],
   );
   const { tvRegion } = useWc26TvRegion();
+
+  useEffect(() => {
+    setSyncStatus(getWc26SyncStatus());
+    return subscribeWc26SyncStatus(() => setSyncStatus(getWc26SyncStatus()));
+  }, []);
 
   return (
     <main className={styles.content}>
@@ -152,6 +165,15 @@ export default function LiveMatchCentre() {
         when server API sync is active; otherwise fixtures show as scheduled with
         honest empty states — no hardcoded results.
       </p>
+
+      <div className={styles.syncStatusSlot} aria-hidden={syncStatus !== "pending"}>
+        {syncStatus === "pending" ? (
+          <p className={styles.syncStatus} role="status" aria-live="polite">
+            <span className={styles.syncStatusDot} aria-hidden="true" />
+            Syncing live data…
+          </p>
+        ) : null}
+      </div>
 
       <LiveSection
         id="live-now-heading"

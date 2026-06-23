@@ -11,42 +11,50 @@
   position: relative;
   z-index: 400;
   overflow: visible;
-  background: linear-gradient(180deg, var(--gc-brand-from) 0%, var(--gc-brand-to) 100%);
+  background: #7b0d1e;
   color: #ffffff;
-  border-bottom: 2px solid var(--gc-brand-border);
+  border-bottom: none;
 }
 
 .bar {
-  max-width: 98vw;
+  max-width: 1360px;
   margin: 0 auto;
   width: 100%;
-  padding: 9px 16px 6px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: flex-start;
+  gap: 20px;
+  min-height: 56px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   min-width: 0;
+  flex-shrink: 0;
+  text-decoration: none;
+  color: inherit;
+  margin-right: 4px;
 }
 
 .brandLogoWrap {
-  border-radius: 10px;
-  border: 2px solid #fbbf24;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
   padding: 2px;
   line-height: 0;
   flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .brandName {
-  font-size: 1.625rem;
+  font-size: 1.25rem;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.03em;
+  color: #ffffff;
+  white-space: nowrap;
 }
 
 .brandName span {
@@ -54,44 +62,43 @@
 }
 
 .brandSub {
-  font-size: 0.9375rem;
-  opacity: 0.88;
-  margin-top: 5px;
-  font-weight: 500;
+  display: none;
 }
 
 .desktopNav {
-  max-width: 98vw;
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 12px;
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-wrap: nowrap;
-  gap: 0;
-  align-items: stretch;
-  background: var(--gc-nav-bg, #ffffff);
-  border-bottom: 0.5px solid #E5E7EB;
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-start;
   overflow: visible;
   position: relative;
   z-index: 320;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border-bottom: none;
 }
 
 .navLink,
 .navBtn {
-  padding: 10px 14px;
-  border-radius: 0;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 0 12px;
+  height: 40px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--gc-nav-text, #374151);
-  transition: color 0.15s ease, border-color 0.15s ease;
+  color: rgba(255, 255, 255, 0.9);
+  transition: color 0.15s ease, background 0.15s ease;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   white-space: nowrap;
   flex-shrink: 0;
-  line-height: 1.2;
+  line-height: 1;
   font-family: inherit;
   cursor: pointer;
   text-decoration: none;
@@ -99,22 +106,63 @@
 
 .navLink:hover,
 .navBtn:hover {
-  background: transparent;
-  color: var(--gc-nav-text-hover, #111827);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .navLinkActive,
 .navBtnOpen {
-  background: transparent;
-  border-bottom: 2px solid var(--gc-brand-accent, #c8102e);
-  color: var(--gc-brand-accent, #c8102e);
+  background: #ffffff;
+  color: #7b0d1e;
   font-weight: 700;
+}
+
+.headerActions {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.headerLogin {
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+}
+
+.headerLogin:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.headerSubscribe {
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: #16a34a;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.headerSubscribe:hover {
+  background: #15803d;
 }
 
 .dropdownWrap {
   position: relative;
   flex-shrink: 0;
   overflow: visible;
+  display: flex;
+  align-items: center;
 }
 
 .dropdownPanel {
@@ -372,6 +420,25 @@
 @media (min-width: 769px) {
   .desktopNav {
     display: flex;
+  }
+
+  .headerActions {
+    display: flex;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1439px) {
+  .navLink {
+    padding: 0 9px;
+    font-size: 0.75rem;
+  }
+
+  .brandName {
+    font-size: 1.125rem;
+  }
+
+  .bar {
+    gap: 12px;
   }
 }
 

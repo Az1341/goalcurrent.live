@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { NEWS_FALLBACK_ARTICLES } from "@/components/news/news-fallback";
 import type { NewsArticle, NewsApiResponse, NewsTag } from "@/types/news";
+import { mergeEditorialFirst } from "@/lib/editorial-news";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./news.module.css";
 
@@ -138,7 +139,7 @@ export default function NewsHub() {
         throw new Error("No articles");
       }
 
-      setArticles(data.articles);
+      setArticles(mergeEditorialFirst(data.articles));
       setSources(data.sources);
       setUsingFallback(false);
       setUpdatedLabel(
@@ -148,7 +149,7 @@ export default function NewsHub() {
         })} · ${data.sources.join(" + ") || "BBC Sport + ESPN"}`,
       );
     } catch {
-      setArticles([...NEWS_FALLBACK_ARTICLES]);
+      setArticles(mergeEditorialFirst([...NEWS_FALLBACK_ARTICLES]));
       setSources([SITE_NAME]);
       setUsingFallback(true);
       setUpdatedLabel("Showing fallback news · Live feed updating…");

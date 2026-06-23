@@ -21,6 +21,12 @@ export default function SubscribePopup() {
     }
   }, []);
 
+  useEffect(() => {
+    const onOpen = () => setOpen(true);
+    window.addEventListener("gc:subscribe-open", onOpen);
+    return () => window.removeEventListener("gc:subscribe-open", onOpen);
+  }, []);
+
   function dismiss() {
     try {
       localStorage.setItem(SUBSCRIBE_POPUP_KEY, SUBSCRIBE_POPUP_DISMISSED);

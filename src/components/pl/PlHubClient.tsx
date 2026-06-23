@@ -32,10 +32,7 @@ import {
 
 type ViewState = "loading" | "error" | "ready";
 
-const HUB_LINKS = [
-  ...PL_SECTION_NAV,
-  { href: "/premier-league/live", label: "Live" },
-];
+const HUB_LINKS = PL_SECTION_NAV;
 
 function withVisitorBroadcasters(
   body: PlFixturesApiResponse,
