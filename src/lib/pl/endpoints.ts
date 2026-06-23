@@ -491,6 +491,11 @@ export async function fetchPlStatistics(): Promise<PlStatisticsApiResponse> {
     return plBaseEnvelope(hasAny ? "api-football" : "fallback", {
       configured: true,
       statistics,
+      error: hasAny
+        ? undefined
+        : topScorers.error ??
+          topAssists.error ??
+          "Season statistics are not available yet from the live data source.",
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

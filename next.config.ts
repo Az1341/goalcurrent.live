@@ -80,6 +80,11 @@ const SITE_REDIRECTS: RouteRedirect[] = [
     permanent: true,
   },
   {
+    source: "/worldcup2026/match/:fixtureId",
+    destination: "/match/:fixtureId",
+    permanent: true,
+  },
+  {
     source: "/:path*",
     has: [{ type: "host", value: "goalcurrent.live" }],
     destination: "https://www.goalcurrent.live/:path*",

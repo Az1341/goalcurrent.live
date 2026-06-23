@@ -124,7 +124,8 @@ export default function PlStatisticsClient() {
           />
           {!hasLeaders ? (
             <p className={styles.meta}>
-              Season statistics will populate here once matches are played.
+              {data.error ??
+                "Season statistics will populate here once matches are played and API-Football publishes leader data for this season."}
             </p>
           ) : null}
           <p className={styles.meta}>

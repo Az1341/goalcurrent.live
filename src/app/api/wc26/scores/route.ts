@@ -43,10 +43,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const live = searchParams.get("live");
   const results = searchParams.get("results");
 
-  // Default (no query params): finished World Cup results — same as ?results=wc
+  // Default (no query params): finished World Cup results — same as ?results=wc.
+  // Explicit ?live=true or ?results=wc still behave as before.
   const wantsLive = live === "true";
-  const wantsResults =
-    results === "wc" || (live === null && results === null);
+  const hasNoFilters =
+    (live === null || live === "") && (results === null || results === "");
+  const wantsResults = results === "wc" || hasNoFilters;
 
   if (!isWc26ApiConfigured()) {
     return NextResponse.json(unconfiguredResponse(), {

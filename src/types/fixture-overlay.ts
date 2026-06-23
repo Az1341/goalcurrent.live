@@ -26,3 +26,15 @@ export type Wc26ScoresApiResponse = {
   readonly configured: boolean;
   readonly phase?: string;
 };
+
+/** Live fixture row returned by GET /api/wc26/fixtures?status=LIVE */
+export type Wc26LiveFixturePayload = {
+  readonly fixtureId: string;
+  readonly homeTeamId: string;
+  readonly awayTeamId: string;
+  readonly home: { readonly name: string; readonly goals: number };
+  readonly away: { readonly name: string; readonly goals: number };
+  readonly fixture: {
+    readonly status: { readonly elapsed: number | null };
+  };
+};

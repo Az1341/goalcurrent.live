@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import {
@@ -11,6 +11,26 @@ import { useWc26TopScorers } from "@/lib/use-wc26-top-scorers";
 import styles from "./wc26.module.css";
 
 const TOP_SCORERS_VISIBLE = 6;
+
+function formatFreshnessLabel(fetchedAtIso: string, nowMs: number): string {
+  const fetchedMs = Date.parse(fetchedAtIso);
+  if (Number.isNaN(fetchedMs)) {
+    return "Updated just now";
+  }
+
+  const ageSeconds = Math.max(0, Math.floor((nowMs - fetchedMs) / 1000));
+
+  if (ageSeconds < 5) {
+    return "Updated just now";
+  }
+
+  if (ageSeconds >= 60) {
+    const minutes = Math.floor(ageSeconds / 60);
+    return `Updated ${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+  }
+
+  return `Updated ${ageSeconds} seconds ago`;
+}
 
 type Wc26TopScorersProps = {
   /** When true, omit outer section title (parent supplies heading). */
@@ -54,11 +74,18 @@ export default function Wc26TopScorers({
   scorers: scorersProp,
   loading: loadingProp,
 }: Wc26TopScorersProps) {
-  const { loading: hookLoading, scorers: hookScorers } = useWc26TopScorers();
+  const { data, loading: hookLoading, scorers: hookScorers } = useWc26TopScorers();
   const [expanded, setExpanded] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const loading = loadingProp ?? hookLoading;
   const scorers = scorersProp ?? hookScorers;
+  const freshnessLabel = formatFreshnessLabel(data.fetchedAt, now);
   const hasScorers = scorers.length > 0;
   const hasMoreScorers = scorers.length > TOP_SCORERS_VISIBLE;
   const visibleScorers = expanded
@@ -85,6 +112,20 @@ export default function Wc26TopScorers({
           </p>
         ) : (
           <>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+              <span
+                style={{
+                  background: "#555",
+                  color: "#fff",
+                  padding: "4px 8px",
+                  borderRadius: 9999,
+                  fontSize: 12,
+                  lineHeight: 1.2,
+                }}
+              >
+                {freshnessLabel}
+              </span>
+            </div>
             <table className={styles.topScorersTable}>
               <thead className={styles.topScorersThead}>
                 <tr>

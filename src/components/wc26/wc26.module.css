@@ -2378,3 +2378,79 @@ a.standingsHead:hover {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ── Live scoreboard (WC26 hub) ─────────────────────────────────────────── */
+
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.scoreboardMatch {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 14px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.scoreboardTeam {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.scoreboardTeamAway {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.scoreboardTeamName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #f5f5f5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scoreboardCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.scoreboardScore {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+.scoreboardMinute {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ff3b3b;
+  text-transform: uppercase;
+}
+
+.scoreboardLiveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff3b3b;
+  box-shadow: 0 0 0 2px rgba(255, 59, 59, 0.25);
+  flex-shrink: 0;
+}

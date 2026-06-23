@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import Wc26HeroStats from "@/components/wc26/Wc26HeroStats";
+import Wc26Scoreboard from "@/components/wc26/Wc26Scoreboard";
 import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
 import { WC26_TOURNAMENT } from "@/data/wc26";
 import { WC26_SECTIONS } from "@/lib/wc26-sections";
@@ -32,6 +33,7 @@ export default function WorldCupHubPage() {
         API data when available.
       </p>
 
+      <Wc26Scoreboard />
       <Wc26HeroStats variant="hub" />
       <Wc26TopScorers />
       <h2 className={styles.sectionTitle}>Sections</h2>

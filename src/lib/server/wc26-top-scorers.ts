@@ -19,11 +19,16 @@ function emptyResponse(): Wc26TopScorersResponse {
 }
 
 export async function fetchWc26TopScorers(): Promise<Wc26TopScorersResponse> {
+  const startedAt = Date.now();
+  console.info(
+    `WC26 top scorers pipeline: start ${new Date(startedAt).toISOString()}`,
+  );
+
   try {
     // Tier 1: API-Football (topscorers endpoint + fixture events)
     const apiFootball = await fetchApiFootballWc26TopScorers();
     if (apiFootball.scorers.length > 0) {
-      return {
+      const response: Wc26TopScorersResponse = {
         scorers: apiFootball.scorers,
         totalGoals: apiFootball.totalGoals,
         configured: isWc26ApiConfigured(),
@@ -33,12 +38,18 @@ export async function fetchWc26TopScorers(): Promise<Wc26TopScorersResponse> {
         matchesExcluded: apiFootball.matchesExcluded,
         fetchedAt: new Date().toISOString(),
       };
+      console.info(`FINAL MERGED: ${response.scorers.length} scorers`);
+      const endedAt = Date.now();
+      console.info(
+        `WC26 top scorers pipeline: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+      );
+      return response;
     }
 
     // Tier 2: ScoreBat + ESPN + LiveScore (merged, deduplicated)
     const multiSource = await fetchMultiSourceWc26TopScorers();
     if (multiSource.scorers.length > 0) {
-      return {
+      const response: Wc26TopScorersResponse = {
         scorers: multiSource.scorers,
         totalGoals: multiSource.totalGoals,
         configured: isWc26ApiConfigured(),
@@ -48,10 +59,29 @@ export async function fetchWc26TopScorers(): Promise<Wc26TopScorersResponse> {
         matchesExcluded: 0,
         fetchedAt: new Date().toISOString(),
       };
+      console.info(`FINAL MERGED: ${response.scorers.length} scorers`);
+      const endedAt = Date.now();
+      console.info(
+        `WC26 top scorers pipeline: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+      );
+      return response;
     }
 
-    return emptyResponse();
-  } catch {
-    return emptyResponse();
+    const response = emptyResponse();
+    console.info(`FINAL MERGED: ${response.scorers.length} scorers`);
+    const endedAt = Date.now();
+    console.info(
+      `WC26 top scorers pipeline: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+    );
+    return response;
+  } catch (err) {
+    console.error("WC26 top scorers pipeline ERROR", err);
+    const response = emptyResponse();
+    console.info(`FINAL MERGED: ${response.scorers.length} scorers`);
+    const endedAt = Date.now();
+    console.info(
+      `WC26 top scorers pipeline: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+    );
+    return response;
   }
 }

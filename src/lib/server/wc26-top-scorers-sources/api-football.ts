@@ -1,12 +1,10 @@
+import { getFixtureById } from "@/data/wc26";
 import { getTeamDisplayName } from "@/lib/teamIdentity";
 import {
-  fetchWc26EventsForApiFixture,
-  fetchWc26MatchEvents,
-} from "@/lib/server/wc26-match-detail";
-import {
-  fetchFinishedWc26Matches,
-  isWc26ApiConfigured,
-} from "@/lib/server/wc26-api-football";
+  findFixtureIdByTeamNames,
+  mapApiStatusShort,
+} from "@/lib/wc26-fixture-match";
+import { isWc26ApiConfigured } from "@/lib/server/wc26-api-football";
 import {
   aggregateTopScorers,
   countVerifiedTournamentGoals,
@@ -20,10 +18,10 @@ import type { MatchEventItem } from "@/types/match-detail";
 import type { ApiFootballTopScorersResult } from "./types";
 
 const BASE_URL = "https://v3.football.api-sports.io";
+/** FIFA World Cup — API-Football league id */
 const WC_LEAGUE = 1;
+/** World Cup 2026 season year */
 const WC_SEASON = 2026;
-const FETCH_CONCURRENCY = 2;
-const RETRY_DELAY_MS = 450;
 
 type ApiPlayerLeaderItem = {
   player: { name: string };
@@ -33,74 +31,199 @@ type ApiPlayerLeaderItem = {
   }>;
 };
 
+type ApiFootballFixture = {
+  fixture: {
+    id: number;
+    date: string;
+    status: { short: string; elapsed: number | null };
+  };
+  teams: {
+    home: { name: string };
+    away: { name: string };
+  };
+  goals: {
+    home: number | null;
+    away: number | null;
+  };
+};
+
+type ApiEventRow = {
+  time: { elapsed: number | null; extra: number | null };
+  team: { name: string };
+  player: { name: string };
+  assist: { name: string | null } | null;
+  type: string;
+  detail: string;
+};
+
+type ApiFixtureEventsGroup = {
+  fixture?: { id?: number };
+  events?: ApiEventRow[];
+};
+
 function getApiKey(): string | undefined {
   return process.env.API_FOOTBALL_KEY?.trim() || undefined;
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function mapWithConcurrency<T, R>(
-  items: readonly T[],
-  mapper: (item: T) => Promise<R>,
-  concurrency: number,
-): Promise<R[]> {
-  const results: R[] = new Array(items.length);
-  let nextIndex = 0;
-
-  async function worker(): Promise<void> {
-    while (nextIndex < items.length) {
-      const index = nextIndex;
-      nextIndex += 1;
-      results[index] = await mapper(items[index]!);
+/** Query string with required WC26 league + season for every API-Football call in this module. */
+function wcLeagueSeasonQuery(extra?: Record<string, string>): string {
+  const params = new URLSearchParams({
+    league: String(WC_LEAGUE),
+    season: String(WC_SEASON),
+  });
+  if (extra) {
+    for (const [key, value] of Object.entries(extra)) {
+      params.set(key, value);
     }
   }
+  return params.toString();
+}
 
-  const workers = Array.from(
-    { length: Math.min(concurrency, items.length) },
-    () => worker(),
+async function apiFootballFetch<T>(path: string): Promise<T[]> {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return [];
+  }
+
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: { "x-apisports-key": apiKey },
+    next: { revalidate: 0 },
+  });
+
+  if (!res.ok) {
+    return [];
+  }
+
+  const json = (await res.json()) as {
+    errors?: Record<string, string>;
+    response?: T[];
+  };
+
+  if (json.errors && Object.keys(json.errors).length > 0) {
+    return [];
+  }
+
+  return json.response ?? [];
+}
+
+function mapEvents(rows: readonly ApiEventRow[]): MatchEventItem[] {
+  return rows.map((event) => ({
+    minute: event.time.elapsed,
+    extra: event.time.extra,
+    teamName: event.team.name,
+    playerName: event.player.name,
+    assistName: event.assist?.name ?? null,
+    type: event.type,
+    detail: event.detail,
+  }));
+}
+
+function normalizeApiFixture(raw: ApiFootballFixture): Wc26ApiMatch | null {
+  const homeName = raw.teams.home.name;
+  const awayName = raw.teams.away.name;
+  const fixtureId = findFixtureIdByTeamNames(homeName, awayName);
+  if (!fixtureId) {
+    return null;
+  }
+
+  const fixture = getFixtureById(fixtureId);
+  if (!fixture) {
+    return null;
+  }
+
+  const statusShort = raw.fixture.status.short;
+  const status = mapApiStatusShort(statusShort);
+  if (!status) {
+    return null;
+  }
+
+  const isFinished = status === "ft" || status === "aet" || status === "pen";
+  if (
+    isFinished &&
+    (raw.goals.home === null || raw.goals.away === null)
+  ) {
+    return null;
+  }
+
+  return {
+    fixtureId,
+    matchNumber: fixture.matchNumber,
+    status,
+    statusShort,
+    elapsed: raw.fixture.status.elapsed,
+    homeScore: raw.goals.home,
+    awayScore: raw.goals.away,
+    kickoffUtc: raw.fixture.date,
+    apiFixtureId: raw.fixture.id,
+  };
+}
+
+async function fetchFinishedWc26Fixtures(): Promise<Wc26ApiMatch[]> {
+  const raw = await apiFootballFetch<ApiFootballFixture>(
+    `/fixtures?${wcLeagueSeasonQuery({ status: "FT-AET-PEN" })}`,
   );
-  await Promise.all(workers);
-  return results;
+
+  return raw
+    .map(normalizeApiFixture)
+    .filter((match): match is Wc26ApiMatch => match !== null)
+    .filter((match) => ["ft", "aet", "pen"].includes(match.status));
 }
 
-async function fetchMatchEvents(
-  match: Wc26ApiMatch,
-): Promise<{ events: MatchEventItem[]; apiAvailable: boolean }> {
-  if (match.apiFixtureId != null) {
-    return fetchWc26EventsForApiFixture(match.apiFixtureId);
+function buildEventsByFixtureId(
+  rows: readonly ApiFixtureEventsGroup[],
+): Map<number, MatchEventItem[]> {
+  const eventsByFixtureId = new Map<number, MatchEventItem[]>();
+
+  for (const row of rows) {
+    const fixtureId = row.fixture?.id;
+    if (fixtureId == null) {
+      continue;
+    }
+
+    const eventRows = row.events ?? [];
+    if (eventRows.length === 0) {
+      continue;
+    }
+
+    eventsByFixtureId.set(fixtureId, mapEvents(eventRows));
   }
-  return fetchWc26MatchEvents(match.fixtureId);
+
+  return eventsByFixtureId;
 }
 
-async function fetchMatchEventsReliable(
-  match: Wc26ApiMatch,
-): Promise<{ events: MatchEventItem[]; apiAvailable: boolean }> {
-  let result = await fetchMatchEvents(match);
-  const expectedGoals = (match.homeScore ?? 0) + (match.awayScore ?? 0);
+async function fetchWc26FixtureEventsByLeagueSeason(): Promise<{
+  eventsByFixtureId: Map<number, MatchEventItem[]>;
+  apiAvailable: boolean;
+}> {
+  const rows = await apiFootballFetch<ApiFixtureEventsGroup>(
+    `/fixtures/events?${wcLeagueSeasonQuery()}`,
+  );
 
-  if (expectedGoals > 0 && !result.apiAvailable) {
-    await sleep(RETRY_DELAY_MS);
-    result = await fetchMatchEvents(match);
+  if (rows.length === 0) {
+    return { eventsByFixtureId: new Map(), apiAvailable: false };
   }
 
-  return result;
+  return {
+    eventsByFixtureId: buildEventsByFixtureId(rows),
+    apiAvailable: true,
+  };
 }
 
-function collectGoalsFromEvents(
+function collectGoalsFromFixtureEvents(
   finishedMatches: readonly Wc26ApiMatch[],
-  eventResults: readonly { events: MatchEventItem[]; apiAvailable: boolean }[],
+  eventsByFixtureId: ReadonlyMap<number, MatchEventItem[]>,
   verifiedOnly: boolean,
 ): { goals: ScorerGoalEvent[]; matchesWithEvents: number } {
   const goals: ScorerGoalEvent[] = [];
   let matchesWithEvents = 0;
 
-  for (let index = 0; index < finishedMatches.length; index += 1) {
-    const match = finishedMatches[index]!;
-    const { events, apiAvailable } = eventResults[index]!;
+  for (const match of finishedMatches) {
+    if (match.apiFixtureId == null) {
+      continue;
+    }
 
-    if (!apiAvailable) {
+    const events = eventsByFixtureId.get(match.apiFixtureId);
+    if (!events || events.length === 0) {
       continue;
     }
 
@@ -166,32 +289,11 @@ function normalizeTopScorersLeaderboard(
 }
 
 async function fetchTopScorersLeaderboard(): Promise<TopScorerRow[]> {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    return [];
-  }
+  const items = await apiFootballFetch<ApiPlayerLeaderItem>(
+    `/players/topscorers?${wcLeagueSeasonQuery()}`,
+  );
 
-  try {
-    const res = await fetch(
-      `${BASE_URL}/players/topscorers?league=${WC_LEAGUE}&season=${WC_SEASON}`,
-      {
-        headers: { "x-apisports-key": apiKey },
-        next: { revalidate: 0 },
-      },
-    );
-
-    if (!res.ok) {
-      return [];
-    }
-
-    const json = (await res.json()) as {
-      response?: ApiPlayerLeaderItem[];
-    };
-
-    return normalizeTopScorersLeaderboard(json.response ?? []);
-  } catch {
-    return [];
-  }
+  return normalizeTopScorersLeaderboard(items);
 }
 
 function buildResultFromGoals(
@@ -227,7 +329,17 @@ function emptyApiFootballResult(
 
 /** Tier 1: API-Football topscorers endpoint, then verified/unverified fixture events. */
 export async function fetchApiFootballWc26TopScorers(): Promise<ApiFootballTopScorersResult> {
+  const startedAt = Date.now();
+  console.info(
+    `API-FOOTBALL top scorers: start ${new Date(startedAt).toISOString()}`,
+  );
+
   if (!isWc26ApiConfigured()) {
+    console.info("API-FOOTBALL: 0 scorers returned");
+    const endedAt = Date.now();
+    console.info(
+      `API-FOOTBALL top scorers: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+    );
     return {
       scorers: [],
       totalGoals: 0,
@@ -241,6 +353,11 @@ export async function fetchApiFootballWc26TopScorers(): Promise<ApiFootballTopSc
   try {
     const leaderboard = await fetchTopScorersLeaderboard();
     if (leaderboard.length > 0) {
+      console.info(`API-FOOTBALL: ${leaderboard.length} scorers returned`);
+      const endedAt = Date.now();
+      console.info(
+        `API-FOOTBALL top scorers: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+      );
       return {
         scorers: leaderboard,
         totalGoals: leaderboard.reduce((sum, row) => sum + row.goals, 0),
@@ -251,47 +368,77 @@ export async function fetchApiFootballWc26TopScorers(): Promise<ApiFootballTopSc
       };
     }
 
-    const finishedMatches = await fetchFinishedWc26Matches();
+    const [finishedMatches, fixtureEvents] = await Promise.all([
+      fetchFinishedWc26Fixtures(),
+      fetchWc26FixtureEventsByLeagueSeason(),
+    ]);
+
     if (finishedMatches.length === 0) {
-      return emptyApiFootballResult([]);
+      const empty = emptyApiFootballResult([]);
+      console.info(`API-FOOTBALL: ${empty.scorers.length} scorers returned`);
+      const endedAt = Date.now();
+      console.info(
+        `API-FOOTBALL top scorers: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+      );
+      return empty;
     }
 
-    const eventResults = await mapWithConcurrency(
-      finishedMatches,
-      fetchMatchEventsReliable,
-      FETCH_CONCURRENCY,
-    );
+    const { eventsByFixtureId, apiAvailable } = fixtureEvents;
 
-    const verified = collectGoalsFromEvents(
+    const verified = collectGoalsFromFixtureEvents(
       finishedMatches,
-      eventResults,
+      eventsByFixtureId,
       true,
     );
     if (verified.goals.length > 0) {
-      return buildResultFromGoals(
+      const result = buildResultFromGoals(
         finishedMatches,
         verified.goals,
         verified.matchesWithEvents,
-        true,
+        apiAvailable,
       );
+      console.info(`API-FOOTBALL: ${result.scorers.length} scorers returned`);
+      const endedAt = Date.now();
+      console.info(
+        `API-FOOTBALL top scorers: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+      );
+      return result;
     }
 
-    const unverified = collectGoalsFromEvents(
+    const unverified = collectGoalsFromFixtureEvents(
       finishedMatches,
-      eventResults,
+      eventsByFixtureId,
       false,
     );
     if (unverified.goals.length > 0) {
-      return buildResultFromGoals(
+      const result = buildResultFromGoals(
         finishedMatches,
         unverified.goals,
         unverified.matchesWithEvents,
-        true,
+        apiAvailable,
       );
+      console.info(`API-FOOTBALL: ${result.scorers.length} scorers returned`);
+      const endedAt = Date.now();
+      console.info(
+        `API-FOOTBALL top scorers: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+      );
+      return result;
     }
 
-    return emptyApiFootballResult(finishedMatches);
-  } catch {
+    const empty = emptyApiFootballResult(finishedMatches);
+    console.info(`API-FOOTBALL: ${empty.scorers.length} scorers returned`);
+    const endedAt = Date.now();
+    console.info(
+      `API-FOOTBALL top scorers: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+    );
+    return empty;
+  } catch (err) {
+    console.error("API-FOOTBALL ERROR", err);
+    console.info("API-FOOTBALL: 0 scorers returned");
+    const endedAt = Date.now();
+    console.info(
+      `API-FOOTBALL top scorers: end ${new Date(endedAt).toISOString()} duration ${endedAt - startedAt}ms`,
+    );
     return {
       scorers: [],
       totalGoals: 0,
@@ -301,4 +448,36 @@ export async function fetchApiFootballWc26TopScorers(): Promise<ApiFootballTopSc
       matchesExcluded: 0,
     };
   }
+}
+
+/** Raw API-Football JSON payload (unmodified upstream response). */
+export async function fetchApiFootballRawJson(path: string): Promise<unknown> {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return {
+      errors: { apiKey: "API_FOOTBALL_KEY is not configured" },
+      response: [],
+    };
+  }
+
+  try {
+    const res = await fetch(`${BASE_URL}${path}`, {
+      headers: { "x-apisports-key": apiKey },
+      cache: "no-store",
+    });
+
+    return await res.json();
+  } catch (err) {
+    return {
+      errors: {
+        request: err instanceof Error ? err.message : "Unknown error",
+      },
+      response: [],
+    };
+  }
+}
+
+/** Raw topscorers endpoint response for WC26 (league=1, season=2026). */
+export async function fetchWc26TopScorersRaw(): Promise<unknown> {
+  return fetchApiFootballRawJson(`/players/topscorers?${wcLeagueSeasonQuery()}`);
 }
