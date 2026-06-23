@@ -42,10 +42,7 @@ export type DesktopDropdownSection = {
 /** Global favourites — saved items across all competitions. */
 export const FAVOURITES_HREF = "/favourites";
 
-/** GoalCurrent editorial features hub. */
-export const ARTICLES_HREF = "/articles";
-
-/** Desktop primary links — flat top bar, no More dropdown. */
+/** Desktop primary links (before dropdowns). */
 export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/", label: "Home", exact: true },
   { href: "/live", label: "Live" },
@@ -53,8 +50,6 @@ export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/news", label: "News" },
   { href: "/news/articles", label: "Articles" },
   { href: "/videos", label: "Videos" },
-  { href: "/premier-league", label: "PL 26/27", exact: true },
-  { href: "/worldcup2026", label: "WC26", exact: true },
 ];
 
 /** Legacy / footer — full primary list for other consumers. */
@@ -71,50 +66,33 @@ export const PL_NAV: NavItem[] = [
   { href: "/premier-league/fixtures", label: "Fixtures" },
 ];
 
-/** World Cup 2026 section links (tournament pages only) */
+/** Premier League hub — extended section links */
+export const PL_SECTION_NAV: NavItem[] = [
+  { href: "/premier-league/table", label: "Table 26/27" },
+  { href: "/premier-league/fixtures", label: "Fixtures 26/27" },
+  { href: "/premier-league/clubs", label: "Clubs" },
+  { href: "/premier-league/players", label: "Players" },
+  { href: "/premier-league/statistics", label: "Statistics" },
+  { href: "/premier-league/transfers", label: "Transfers" },
+  // TODO: restore when page is live
+  // { href: "/premier-league/2025-26/table", label: "Table 25/26" },
+];
+
+/** World Cup 2026 section links */
 export const WC26_NAV: NavItem[] = [
+  { href: "/worldcup2026/groups", label: "Groups" },
   { href: "/worldcup2026/fixtures", label: "Fixtures" },
   { href: "/worldcup2026/standings", label: "Standings" },
-  { href: "/worldcup2026/groups", label: "Groups" },
   { href: "/worldcup2026/teams", label: "Teams" },
   { href: "/worldcup2026/venues", label: "Venues" },
   { href: "/worldcup2026/bracket", label: "Bracket" },
 ];
 
-/**
- * Shared WC26 menu — desktop dropdown + mobile More sheet (identical items).
- */
-export const WC26_MENU: NavLinkItem[] = [
-  { href: "/worldcup2026", label: "Home" },
-  { href: "/live", label: "Live" },
-  ...WC26_NAV,
-  { href: "/news/world-cup", label: "News" },
-  { href: "/videos/world-cup", label: "WC Videos" },
-];
-
-/**
- * Shared PL menu — desktop dropdown + mobile More sheet (identical items).
- */
-export const PL_MENU: NavLinkItem[] = [
-  { href: "/premier-league", label: "Home" },
-  { href: "/premier-league/fixtures", label: "Fixtures" },
-  { href: "/premier-league/live", label: "Live" },
-  { href: "/premier-league/table", label: "Table" },
-  { href: "/premier-league/clubs", label: "Clubs" },
-  { href: "/premier-league/players", label: "Players" },
-  { href: "/premier-league/statistics", label: "Statistics" },
-  { href: "/premier-league/transfers", label: "Transfers" },
-  { href: "/news/premier-league", label: "News" },
-  { href: "/videos/premier-league", label: "PL Videos" },
-];
-
-/** Premier League hub quick links — mirrors PL_MENU (excludes hub Home). */
-export const PL_SECTION_NAV: NavItem[] = PL_MENU.filter(
-  (item) => item.href !== "/premier-league",
-).map(({ href, label }) => ({ href, label }));
-
 /** More dropdown — WC26 hub + section links (legacy) */
-export const MORE_NAV: NavLinkItem[] = WC26_MENU;
+export const MORE_NAV: NavLinkItem[] = [
+  { href: "/worldcup2026", label: "Overview" },
+  ...WC26_NAV,
+];
 
 /** Mobile bottom tab bar — primary tabs only (<769px) */
 export const MOBILE_BOTTOM_TABS: MobileBottomTab[] = [
@@ -125,7 +103,7 @@ export const MOBILE_BOTTOM_TABS: MobileBottomTab[] = [
   { id: "wc26", href: "/worldcup2026", label: "WC26" },
 ];
 
-/** More bottom sheet — level 1 categories (football sections only). */
+/** More bottom sheet — level 1 categories + site footer links */
 export const MORE_SHEET_LEVEL1: MoreSheetLevel1Item[] = [
   { type: "link", href: "/news/articles", label: "✍️ Articles & Editorial" },
   { type: "submenu", id: "wc26", label: "WC26" },
@@ -139,12 +117,43 @@ export const MORE_SHEET_LEVEL1: MoreSheetLevel1Item[] = [
   { type: "submenu", id: "video", label: "Video & Audio" },
   // TODO: restore when page is live
   // { type: "submenu", id: "transfers", label: "Transfers" },
+  { type: "divider" },
+  { type: "link", href: "/about", label: "About" },
+  { type: "link", href: "/contact", label: "Contact" },
+  { type: "link", href: "/terms", label: "Terms" },
+  { type: "link", href: "/privacy", label: "Privacy" },
+  { type: "link", href: "/cookies", label: "Cookies" },
+  { type: "link", href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
 ];
 
 /** More bottom sheet — level 2 drill-down links */
 export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
-  wc26: WC26_MENU,
-  pl: PL_MENU,
+  wc26: [
+    { href: "/worldcup2026", label: "Overview" },
+    { href: "/live", label: "Live Results" },
+    { href: "/worldcup2026/fixtures", label: "Fixtures" },
+    { href: "/worldcup2026/standings", label: "Standings" },
+    { href: "/worldcup2026/groups", label: "Groups" },
+    { href: "/worldcup2026/teams", label: "Teams" },
+    // TODO: restore when page is live
+    // { href: "/worldcup2026/players", label: "Players" },
+    { href: "/worldcup2026/venues", label: "Venues" },
+    { href: "/worldcup2026/bracket", label: "Bracket" },
+    { href: "/news/world-cup", label: "News" },
+    { href: "/videos/world-cup", label: "📺 WC Videos" },
+  ],
+  pl: [
+    { href: "/premier-league", label: "Home" },
+    { href: "/premier-league/fixtures", label: "Fixtures" },
+    { href: "/premier-league/live", label: "Live Matches" },
+    { href: "/premier-league/table", label: "Table" },
+    { href: "/premier-league/clubs", label: "Clubs" },
+    { href: "/premier-league/players", label: "Players" },
+    { href: "/premier-league/statistics", label: "Statistics" },
+    { href: "/premier-league/transfers", label: "Transfers" },
+    { href: "/news/premier-league", label: "News" },
+    { href: "/videos/premier-league", label: "📺 PL Videos" },
+  ],
   clubs: [
     // TODO: restore when page is live
     // { href: "/favourites/clubs", label: "Favourite Clubs" },
@@ -285,12 +294,6 @@ export function isDesktopPlActive(pathname: string): boolean {
 
 export function isDesktopWc26Active(pathname: string): boolean {
   return pathname === "/worldcup2026" || pathname.startsWith("/worldcup2026/");
-}
-
-export function isDesktopMoreActive(pathname: string): boolean {
-  return DESKTOP_MORE_DROPDOWN.some((link) =>
-    isMoreSheetLinkActive(pathname, link.href),
-  );
 }
 
 export function isMobileBottomTabActive(

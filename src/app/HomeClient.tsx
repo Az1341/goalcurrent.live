@@ -60,89 +60,73 @@ function statusPillClass(status: HomepageMatchClass) {
   return styles.statusUpcoming;
 }
 
-function formatHalfIndicator(fixture: EffectiveFixture): string | null {
-  if (!isLiveMatchStatus(fixture.status)) return null;
-  const status = normalizeStatus(String(fixture.status));
-  if (status === "ht" || status === "halftime" || status === "half-time") {
-    return "HT";
-  }
-  if (status === "2h") return "2nd H";
-  if (status === "1h") return "1st H";
-  if (fixture.elapsed != null) {
-    return fixture.elapsed > 45 ? "2nd H" : "1st H";
-  }
-  return "1st H";
+function FeaturedStatusBadge({ match }: { match: HomepageMatchView }) {
+  const isLive = match.matchClass === "live";
+  return (
+    <span className={`${styles.statusPill} ${statusPillClass(match.matchClass)}`}>
+      {isLive ? <span className={styles.liveDot} aria-hidden="true" /> : null}
+      {match.statusLabel}
+    </span>
+  );
 }
 
-function FeaturedMatchHero({
-  match,
-  fixture,
-}: {
-  match: HomepageMatchView;
-  fixture: EffectiveFixture;
-}) {
+function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
   const score = formatScore(match);
   const isLive = match.matchClass === "live";
-  const halfLabel = formatHalfIndicator(fixture);
-  const detailHref = matchHref(match.fixtureId);
 
   return (
     <article className={styles.featuredHero}>
       <div className={styles.featuredHeroTop}>
-        <span className={styles.featuredComp}>
-          FIFA World Cup 2026 · {match.roundLabel}
-        </span>
-        <FavouriteMatchButton
-          matchId={match.fixtureId}
-          label={`${match.homeName} vs ${match.awayName}`}
-          className={styles.favBtnInline}
-        />
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <span className={styles.featuredHeroLabel}>Featured match</span>
+          <FeaturedStatusBadge match={match} />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span className={styles.featuredHeroRound}>{match.roundLabel}</span>
+          <FavouriteMatchButton
+            matchId={match.fixtureId}
+            label={`${match.homeName} vs ${match.awayName}`}
+            className={styles.favBtnOnDark}
+          />
+        </div>
       </div>
 
       <div className={styles.featuredHeroBody}>
-        <div className={styles.featuredMainRow}>
+        <div className={styles.featuredRow}>
           <div className={`${styles.featuredSide} ${styles.featuredSideHome}`}>
             <TeamFlag teamId={match.homeTeamId} size={FEATURED_FLAG} />
             <span className={styles.featuredTeamName}>{match.homeName}</span>
           </div>
 
           <div className={styles.featuredScorebox}>
-            {isLive && halfLabel ? (
-              <span className={styles.featuredHalf}>{halfLabel}</span>
-            ) : null}
-            {score ? (
-              <div
-                className={`${styles.featuredScore} ${isLive ? styles.featuredScoreLive : ""}`}
-              >
-                <span>{match.score!.home}</span>
-                <span className={styles.featuredScoreSep}>–</span>
-                <span>{match.score!.away}</span>
-              </div>
-            ) : (
-              <span className={styles.featuredVs}>vs</span>
+            <div className={styles.featuredScore}>
+              {score ?? <span className={styles.featuredVs}>vs</span>}
+            </div>
+            {isLive && match.elapsed != null && (
+              <div className={styles.minLive}>{match.elapsed}&apos;</div>
             )}
-            {isLive && match.elapsed != null ? (
-              <span className={styles.featuredMinute}>{match.elapsed}&apos;</span>
-            ) : !isLive && !score ? (
-              <span className={styles.featuredKickoffPill}>{match.statusLabel}</span>
-            ) : null}
           </div>
 
           <div className={`${styles.featuredSide} ${styles.featuredSideAway}`}>
-            <TeamFlag teamId={match.awayTeamId} size={FEATURED_FLAG} />
             <span className={styles.featuredTeamName}>{match.awayName}</span>
+            <TeamFlag teamId={match.awayTeamId} size={FEATURED_FLAG} />
           </div>
+        </div>
 
-          <Link href={detailHref} className={styles.featuredMatchCentre}>
-            Match Centre →
+        <p className={styles.featuredMeta}>
+          {match.kickoffLabel}
+          {match.venueLabel ? ` · ${match.venueLabel}` : ""}
+        </p>
+
+        <div className={styles.featuredActions}>
+          <Link href={matchHref(match.fixtureId)} className={styles.btnPrimary}>
+            Match details →
+          </Link>
+          <Link href="/worldcup2026/fixtures" className={styles.btnSecondary}>
+            All fixtures
           </Link>
         </div>
       </div>
-
-      <p className={styles.featuredMeta}>
-        {match.kickoffLabel}
-        {match.venueLabel ? ` · ${match.venueLabel}` : ""}
-      </p>
     </article>
   );
 }
@@ -262,12 +246,14 @@ export default function Home() {
           </div>
         </header>
 
-      <main className={styles.homeMain}>
-        <section className={styles.featuredSection} aria-label="Featured match">
-          {featured && featuredFixture ? (
-            <FeaturedMatchHero match={featured} fixture={featuredFixture} />
+        <section className={styles.sectionBlock} aria-labelledby="featured-match-heading">
+          <h2 id="featured-match-heading" className={styles.sectionTitle}>
+            Featured match
+          </h2>
+          {featured ? (
+            <FeaturedMatchHero match={featured} />
           ) : (
-            <p className={styles.columnEmpty}>No World Cup fixtures loaded.</p>
+            <p className={styles.sectionNote}>No World Cup fixtures loaded.</p>
           )}
         </section>
 
