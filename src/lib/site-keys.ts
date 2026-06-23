@@ -10,4 +10,4 @@ export const SUBSCRIBE_POPUP_DISMISSED = "1";
 export const TV_REGION_KEY = "gc_tv_region_v1";
 
 /** NordVPN affiliate placeholder — replace when live link is confirmed */
-export const NORDVPN_HREF = "https://go.nordvpn.net/aff_c?offer_id=15&aff_id=placeholder";
+export const NORDVPN_HREF = "https://go.nordvpn.net/aff_c?offer_id=15&aff_id=148347";

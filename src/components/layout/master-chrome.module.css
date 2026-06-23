@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 20px;
+  gap: 12px;
   min-height: 56px;
 }
 
@@ -36,7 +36,6 @@
   flex-shrink: 0;
   text-decoration: none;
   color: inherit;
-  margin-right: 4px;
 }
 
 .brandLogoWrap {
@@ -68,31 +67,30 @@
 .desktopNav {
   flex: 1 1 auto;
   min-width: 0;
+  padding: 0;
   display: flex;
   flex-wrap: nowrap;
   gap: 2px;
   align-items: center;
-  justify-content: flex-start;
+  background: transparent;
+  border-bottom: none;
   overflow: visible;
   position: relative;
   z-index: 320;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border-bottom: none;
+  justify-content: flex-start;
 }
 
 .navLink,
 .navBtn {
-  padding: 0 12px;
-  height: 40px;
-  border-radius: 6px;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  padding: 10px 12px;
+  border-radius: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
   background: transparent;
   border: none;
+  border-bottom: 2px solid transparent;
   color: rgba(255, 255, 255, 0.9);
-  transition: color 0.15s ease, background 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -106,55 +104,41 @@
 
 .navLink:hover,
 .navBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   color: #ffffff;
 }
 
 .navLinkActive,
 .navBtnOpen {
-  background: #ffffff;
-  color: #7b0d1e;
+  background: transparent;
+  border-bottom: 2px solid #fbbf24;
+  color: #ffffff;
   font-weight: 700;
 }
 
 .headerActions {
-  display: none;
-  align-items: center;
-  gap: 8px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
   margin-left: auto;
 }
 
-.headerLogin {
-  padding: 7px 14px;
-  border-radius: 6px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #ffffff;
-  text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  white-space: nowrap;
-}
-
-.headerLogin:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
 .headerSubscribe {
-  padding: 7px 14px;
-  border-radius: 6px;
-  font-size: 0.8125rem;
-  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
-  background: #16a34a;
-  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
-  font-family: inherit;
 }
 
 .headerSubscribe:hover {
-  background: #15803d;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.75);
 }
 
 .dropdownWrap {
@@ -424,21 +408,6 @@
 
   .headerActions {
     display: flex;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1439px) {
-  .navLink {
-    padding: 0 9px;
-    font-size: 0.75rem;
-  }
-
-  .brandName {
-    font-size: 1.125rem;
-  }
-
-  .bar {
-    gap: 12px;
   }
 }
 

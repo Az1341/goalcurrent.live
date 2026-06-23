@@ -51,7 +51,7 @@ export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/live", label: "Live" },
   { href: FAVOURITES_HREF, label: "Favourites" },
   { href: "/news", label: "News" },
-  { href: ARTICLES_HREF, label: "Articles" },
+  { href: "/news/articles", label: "Articles" },
   { href: "/videos", label: "Videos" },
   { href: "/premier-league", label: "PL 26/27", exact: true },
   { href: "/worldcup2026", label: "WC26", exact: true },
@@ -127,6 +127,7 @@ export const MOBILE_BOTTOM_TABS: MobileBottomTab[] = [
 
 /** More bottom sheet — level 1 categories (football sections only). */
 export const MORE_SHEET_LEVEL1: MoreSheetLevel1Item[] = [
+  { type: "link", href: "/news/articles", label: "✍️ Articles & Editorial" },
   { type: "submenu", id: "wc26", label: "WC26" },
   { type: "submenu", id: "pl", label: "PL 26/27" },
   { type: "submenu", id: "clubs", label: "Clubs" },
@@ -180,8 +181,11 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
   ],
   news: [
     { href: "/news", label: "Latest News" },
-    { href: "/news/premier-league", label: "Premier League News" },
+    { href: "/news/articles", label: "✍️ Editorial & Articles" },
+    { href: "/news/articles/world-cup-2026-complete-guide", label: "World Cup 2026 Guide" },
+    { href: "/news/articles/premier-league-2025-26-season-review", label: "PL Season Review" },
     { href: "/news/world-cup", label: "World Cup News" },
+    { href: "/news/premier-league", label: "Premier League News" },
     // TODO: restore when page is live
     // { href: "/news/transfers", label: "Transfer News" },
   ],
@@ -215,20 +219,25 @@ export const MORE_SHEET_SUBMENU_TITLES: Record<MoreSheetSubmenuId, string> = {
   transfers: "Transfers",
 };
 
-/** Desktop PL 26/27 dropdown */
-export const DESKTOP_PL_DROPDOWN: NavLinkItem[] = PL_MENU;
+/** Desktop PL 26/27 header dropdown — existing routes only */
+export const DESKTOP_PL_DROPDOWN: NavLinkItem[] = [
+  { href: "/premier-league", label: "PL Home" },
+  { href: "/premier-league/fixtures", label: "Fixtures" },
+  { href: "/premier-league/table", label: "Table" },
+  { href: "/premier-league/clubs", label: "Clubs" },
+  { href: "/premier-league/statistics", label: "Statistics" },
+];
 
-/** Desktop WC26 dropdown */
-export const DESKTOP_WC26_DROPDOWN: NavLinkItem[] = WC26_MENU;
-
-/** Desktop More dropdown — football overflow links only. */
-export const DESKTOP_MORE_DROPDOWN: NavLinkItem[] = [
-  { href: "/premier-league/clubs", label: "PL Clubs" },
-  { href: "/worldcup2026/teams", label: "WC Teams" },
-  { href: "/premier-league/players", label: "PL Players" },
-  { href: "/premier-league/table", label: "PL Table" },
-  { href: "/worldcup2026/groups", label: "WC Group Tables" },
-  { href: "/worldcup2026/bracket", label: "WC Bracket" },
+/** Desktop WC26 header dropdown — existing routes only */
+export const DESKTOP_WC26_DROPDOWN: NavLinkItem[] = [
+  { href: "/worldcup2026", label: "WC26 Home" },
+  { href: "/worldcup2026/fixtures", label: "Fixtures" },
+  { href: "/worldcup2026/groups", label: "Groups" },
+  { href: "/worldcup2026/standings", label: "Standings" },
+  { href: "/worldcup2026/teams", label: "Teams" },
+  { href: "/worldcup2026/venues", label: "Venues" },
+  { href: "/worldcup2026/bracket", label: "Bracket" },
+  { href: FAVOURITES_HREF, label: "Favourites" },
 ];
 
 /** About and contact */

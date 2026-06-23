@@ -11,6 +11,7 @@ import {
   selectFeaturedFixture,
   selectHomepageFixtures,
   selectUpcomingHomepageFixtures,
+  type HomepageMatchClass,
   type HomepageMatchView,
 } from "@/lib/wc26-live";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
@@ -27,7 +28,7 @@ import HomePlSection from "@/components/home/HomePlSection";
 import HomeWc26StandingsPreview from "@/components/home/HomeWc26StandingsPreview";
 import styles from "@/app/page.module.css";
 
-const FEATURED_FLAG = 72;
+const FEATURED_FLAG = 64;
 const LIST_FLAG = 22;
 
 function formatScore(match: HomepageMatchView) {
@@ -37,6 +38,26 @@ function formatScore(match: HomepageMatchView) {
 
 function normalizeStatus(status: string) {
   return status.trim().toLowerCase();
+}
+
+function formatHalfIndicator(fixture: EffectiveFixture): string | null {
+  if (!isLiveMatchStatus(fixture.status)) return null;
+  const status = normalizeStatus(String(fixture.status));
+  if (status === "ht" || status === "halftime" || status === "half-time") {
+    return "HT";
+  }
+  if (status === "2h") return "2nd H";
+  if (status === "1h") return "1st H";
+  if (fixture.elapsed != null) {
+    return fixture.elapsed > 45 ? "2nd H" : "1st H";
+  }
+  return "1st H";
+}
+
+function statusPillClass(status: HomepageMatchClass) {
+  if (status === "live") return styles.statusLive;
+  if (status === "ft") return styles.statusFinished;
+  return styles.statusUpcoming;
 }
 
 function formatHalfIndicator(fixture: EffectiveFixture): string | null {
@@ -213,7 +234,10 @@ export default function Home() {
     : undefined;
 
   const pool = selectHomepageFixtures(fixtures, featured?.fixtureId, 16);
-  const liveMatches = pool.filter((m) => m.matchClass === "live").slice(0, 4);
+  const liveMatches = fixtures
+    .filter((f) => isLiveMatchStatus(f.status))
+    .map(buildHomepageMatchView)
+    .slice(0, 4);
   const latestResults = pool.filter((m) => m.matchClass === "ft").slice(0, 4);
   const upcomingMatches = selectUpcomingHomepageFixtures(
     fixtures,
@@ -225,23 +249,18 @@ export default function Home() {
 
   return (
     <div className={styles.homeRoot}>
-      <section className={styles.homeHeroWrap} aria-labelledby="home-hero-heading">
-        <div className={styles.homeHero}>
-          <div className={styles.homeHeroInner}>
-            <div className={styles.homeHeroCopy}>
-              <h1 id="home-hero-heading">Football live scores &amp; match centre</h1>
-              <p>
-                Live football scores, fixtures, results, standings, transfer news and
-                match coverage from around the world — updated throughout the day on{" "}
-                {SITE_NAME}.
-              </p>
-              <Link href="/live" className={styles.homeHeroCta}>
-                Live Scores &amp; Fixtures
-              </Link>
-            </div>
+      <main className={styles.homeMain}>
+        <header className={styles.homeHero}>
+          <div className={styles.homeHeroBg} aria-hidden="true" />
+          <div className={styles.homeHeroContent}>
+            <h1>Football live scores &amp; match centre</h1>
+            <p>
+              Live results, fixtures and news from {SITE_NAME} — World Cup 2026
+              is the lead competition.
+            </p>
+            <span className={styles.homeBadge}>World Cup 2026 · lead competition</span>
           </div>
-        </div>
-      </section>
+        </header>
 
       <main className={styles.homeMain}>
         <section className={styles.featuredSection} aria-label="Featured match">

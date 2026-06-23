@@ -2,7 +2,6 @@
 
 import { WC26_TOURNAMENT } from "@/data/wc26";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
-import { useWc26TopScorers } from "@/lib/use-wc26-top-scorers";
 import styles from "./wc26.module.css";
 
 export type HubStatTone =
@@ -38,23 +37,15 @@ const TONE_CLASS: Record<HubStatTone, string> = {
 };
 
 export default function Wc26HeroStats({ variant = "hub" }: Wc26HeroStatsProps) {
-  const { gamesPlayed, gamesLeft } = useTournamentStats();
-  const { data: topScorers, loading: goalsLoading } = useWc26TopScorers();
+  const { gamesPlayed, gamesLeft, totalGoals } = useTournamentStats();
 
   const fourthStat: StatItem =
     variant === "home"
       ? { value: WC26_TOURNAMENT.hosts.length, label: "Hosts", tone: "hosts" }
       : { value: WC26_TOURNAMENT.groupCount, label: "Groups", tone: "groups" };
 
-  const goalsHasTotal =
-    topScorers.totalGoals > 0 || topScorers.matchesWithVerifiedEvents > 0;
-
-  const goalsStillLoading =
-    goalsLoading && !goalsHasTotal && !topScorers.partialData;
-
-  const goalsValue: number | string = goalsStillLoading
-    ? ""
-    : topScorers.totalGoals;
+  const goalsValue: number | string = totalGoals;
+  const goalsStillLoading = false;
 
   const stats: StatItem[] = [
     { value: WC26_TOURNAMENT.teamCount, label: "Teams", tone: "teams" },

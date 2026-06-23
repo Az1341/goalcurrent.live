@@ -6,6 +6,7 @@ import TeamFlag from "@/components/TeamFlag";
 import { useWc26Standings } from "@/lib/use-wc26-standings";
 import { groupHref } from "@/lib/wc26-groups";
 import type { Wc26GroupId } from "@/types/group";
+import wc26Styles from "@/components/wc26/wc26.module.css";
 import styles from "@/app/page.module.css";
 
 const PREVIEW_GROUPS: readonly Wc26GroupId[] = ["a", "b", "c", "d"];
@@ -34,7 +35,7 @@ export default function HomeWc26StandingsPreview() {
 
           return (
             <div key={groupId} className={styles.wcGroupMini}>
-              <Link href={groupHref(groupId)} className={styles.wcGroupMiniTitle}>
+              <Link href={groupHref(groupId)} className={wc26Styles.standingsHead}>
                 Group {groupId.toUpperCase()}
               </Link>
               <table className={styles.wcGroupMiniTable}>

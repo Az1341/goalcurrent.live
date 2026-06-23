@@ -95,6 +95,24 @@ export function partitionFixturesForLiveCentre(
   return { live, today, upcoming, completed };
 }
 
+/** Human-readable period label — e.g. "2nd Half", "Half Time", "Full Time". */
+export function formatPeriodLabel(status: FixtureStatus | string): string {
+  const normalized = normalizeStatus(String(status));
+  switch (normalized) {
+    case "1h": return "1st Half";
+    case "2h": return "2nd Half";
+    case "ht": case "halftime": case "half-time": return "Half Time";
+    case "et": case "extra time": return "Extra Time";
+    case "penalties": return "Penalties";
+    case "ft": case "finished": case "full-time": case "completed": return "Full Time";
+    case "aet": return "After Extra Time";
+    case "pen": return "Penalties";
+    case "live": return "Live";
+    case "scheduled": return "Scheduled";
+    default: return String(status).toUpperCase();
+  }
+}
+
 /** Human-readable status label — no scores. */
 export function formatFixtureStatusLabel(status: FixtureStatus | string): string {
   const normalized = normalizeStatus(String(status));
@@ -111,25 +129,25 @@ export function formatFixtureStatusLabel(status: FixtureStatus | string): string
     case "ht":
     case "halftime":
     case "half-time":
-      return "HT";
+      return "Half Time";
     case "1h":
-      return "1H";
+      return "1st Half";
     case "2h":
-      return "2H";
+      return "2nd Half";
     case "ft":
     case "finished":
     case "full-time":
     case "completed":
-      return "FT";
+      return "Full Time";
     case "aet":
       return "AET";
     case "pen":
-      return "Pens";
+      return "Penalties";
     case "et":
     case "extra time":
-      return "ET";
+      return "Extra Time";
     case "penalties":
-      return "Pens";
+      return "Penalties";
     default:
       return String(status).toUpperCase();
   }
@@ -164,11 +182,8 @@ function classifyHomepageMatch(fixture: EffectiveFixture): HomepageMatchClass {
 
 function homepageStatusLabel(fixture: EffectiveFixture, matchClass: HomepageMatchClass): string {
   if (matchClass === "live") {
-    const base = formatFixtureStatusLabel(fixture.status);
-    if (fixture.elapsed != null) {
-      return `${base} ${fixture.elapsed}'`;
-    }
-    return base;
+    // Return human label only — elapsed shown separately in each UI component
+    return formatFixtureStatusLabel(fixture.status);
   }
   if (matchClass === "ft") {
     return formatFixtureStatusLabel(fixture.status);
@@ -240,7 +255,7 @@ export function selectHomepageFixtures(
   return views;
 }
 
-/** Next kickoffs for homepage — today + upcoming, excluding featured. */
+/** Homepage upcoming rows — today + future kickoffs (excludes featured). */
 export function selectUpcomingHomepageFixtures(
   fixtures: readonly EffectiveFixture[],
   excludeFixtureId?: string,

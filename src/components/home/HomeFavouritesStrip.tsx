@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import { getFixtureById, getTeamById, groupLabel } from "@/data/wc26";
 import { FAVOURITES_HREF } from "@/lib/nav";
@@ -15,7 +15,12 @@ const MAX_MATCHES = 4;
 const MAX_TEAMS = 4;
 
 export default function HomeFavouritesStrip() {
+  const [mounted, setMounted] = useState(false);
   const { teams, matches } = useFavourites();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const favouriteMatches = useMemo(
     () =>
@@ -49,6 +54,7 @@ export default function HomeFavouritesStrip() {
   );
 
   const hasAny = favouriteMatches.length > 0 || favouriteTeams.length > 0;
+  const showFavourites = mounted && hasAny;
 
   return (
     <section className={styles.favouritesStrip} aria-labelledby="home-favourites-heading">
@@ -61,7 +67,7 @@ export default function HomeFavouritesStrip() {
         </Link>
       </div>
 
-      {!hasAny ? (
+      {!showFavourites ? (
         <p className={styles.favouritesEmpty}>
           Star a match or team to see them here. Browse{" "}
           <Link href="/live">live scores</Link> or{" "}

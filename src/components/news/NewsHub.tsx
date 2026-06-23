@@ -190,6 +190,33 @@ export default function NewsHub() {
         <span className={styles.sourceUpdated}>{updatedLabel}</span>
       </div>
 
+      {/* GoalCurrent Editorial Articles Banner */}
+      <Link href="/news/articles" style={{
+        display: "block",
+        background: "linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(16,185,129,0.06) 100%)",
+        border: "1px solid rgba(37,99,235,0.18)",
+        borderRadius: 12,
+        padding: "14px 18px",
+        marginBottom: 20,
+        textDecoration: "none",
+        color: "inherit",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>
+              ✍️ GoalCurrent Editorial
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}>
+              Original articles, analysis & World Cup 2026 guides
+            </div>
+            <div style={{ fontSize: 12, color: "#64748b", marginTop: 3 }}>
+              10 exclusive articles — World Cup groups, Premier League review, UCL Final & more
+            </div>
+          </div>
+          <div style={{ fontSize: 20, flexShrink: 0 }}>→</div>
+        </div>
+      </Link>
+
       {loading ? <LoadingSkeleton /> : null}
 
       {!loading && featured ? <FeaturedArticle article={featured} /> : null}

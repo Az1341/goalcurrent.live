@@ -158,6 +158,7 @@ function mapStatistics(
   awayTeamName: string,
 ): MatchStatisticPair[] {
   const byTeam = new Map<string, Record<string, string | number | null>>();
+
   for (const row of rows) {
     const data: Record<string, string | number | null> = {};
     for (const item of row.statistics ?? []) {
@@ -166,8 +167,42 @@ function mapStatistics(
     byTeam.set(row.team.name, data);
   }
 
-  const homeStats = byTeam.get(homeTeamName) ?? {};
-  const awayStats = byTeam.get(awayTeamName) ?? {};
+  function findStats(officialName: string): Record<string, string | number | null> {
+    // 1. Exact match
+    if (byTeam.has(officialName)) return byTeam.get(officialName)!;
+    // 2. Resolve via teamIdentity aliases (e.g. "Iran" -> "irn" -> "IR Iran")
+    const ourId = resolveTeamId(officialName);
+    if (ourId) {
+      for (const [apiName, data] of byTeam.entries()) {
+        const apiId = resolveTeamId(apiName);
+        if (apiId === ourId) return data;
+      }
+    }
+    // 3. Strip punctuation and partial match
+    const lower = officialName.toLowerCase().replace(/[^a-z]/g, "");
+    for (const [apiName, data] of byTeam.entries()) {
+      const apiLower = apiName.toLowerCase().replace(/[^a-z]/g, "");
+      if (apiLower.includes(lower) || lower.includes(apiLower)) return data;
+    }
+    return {};
+  }
+
+  // Positional fallback: if 2 rows returned and name resolution fails, assign by position
+  const entries = Array.from(byTeam.entries());
+  let homeStats = findStats(homeTeamName);
+  let awayStats = findStats(awayTeamName);
+
+  if (entries.length === 2 && (Object.keys(homeStats).length === 0 || Object.keys(awayStats).length === 0)) {
+    const homeId = resolveTeamId(homeTeamName);
+    const firstId = resolveTeamId(entries[0]![0]);
+    if (firstId === homeId) {
+      homeStats = entries[0]![1];
+      awayStats = entries[1]![1];
+    } else {
+      homeStats = entries[1]![1];
+      awayStats = entries[0]![1];
+    }
+  }
 
   return STAT_KEYS.filter((key) => homeStats[key] != null || awayStats[key] != null).map(
     (key) => ({

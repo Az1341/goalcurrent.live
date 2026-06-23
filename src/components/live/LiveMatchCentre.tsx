@@ -57,7 +57,8 @@ function LiveFixtureRow({
   const score = getFixtureScore(fixture);
 
   return (
-    <li className={styles.fixtureRow}>
+    <li className={`${styles.fixtureRow} ${isLive ? styles.fixtureRowLive : ""}`}>
+      {/* Top meta row */}
       <div className={styles.fixtureMeta}>
         {groupText ? (
           <span className={styles.fixtureGroup}>{groupText}</span>
@@ -79,17 +80,18 @@ function LiveFixtureRow({
         <FavouriteMatchButton matchId={fixture.id} label={label} />
         <MatchDetailLink fixtureId={fixture.id} />
       </div>
+      {/* Teams + score row — balanced grid */}
       <div className={styles.fixtureMatchup}>
-        <span className={styles.fixtureTeam}>
-          {home ? <TeamFlag teamId={home.id} size={24} /> : null}
-          {home?.name ?? fixture.homeTeamId}
+        <span className={`${styles.fixtureTeam} ${styles.fixtureTeamHome}`}>
+          {home ? <TeamFlag teamId={home.id} size={26} /> : null}
+          <span>{home?.name ?? fixture.homeTeamId}</span>
         </span>
-        <span className={styles.fixtureVs}>
+        <span className={`${styles.fixtureVs} ${isLive ? styles.fixtureVsLive : ""}`}>
           {score ? `${score.home}–${score.away}` : "vs"}
         </span>
-        <span className={styles.fixtureTeam}>
-          {away ? <TeamFlag teamId={away.id} size={24} /> : null}
-          {away?.name ?? fixture.awayTeamId}
+        <span className={`${styles.fixtureTeam} ${styles.fixtureTeamAway}`}>
+          {away ? <TeamFlag teamId={away.id} size={26} /> : null}
+          <span>{away?.name ?? fixture.awayTeamId}</span>
         </span>
       </div>
       {venue ? (
