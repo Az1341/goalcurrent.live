@@ -3,154 +3,62 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  DESKTOP_PL_DROPDOWN,
-  DESKTOP_PRIMARY_NAV,
-  DESKTOP_WC26_DROPDOWN,
-  isDesktopPlActive,
-  isDesktopWc26Active,
-  isMainNavActive,
-} from "@/lib/nav";
+import { DESKTOP_PRIMARY_NAV, isMainNavActive } from "@/lib/nav";
 import LiveRibbon from "./LiveRibbon";
 import styles from "./master-chrome.module.css";
 
-type OpenDropdown = "pl" | "wc26" | null;
+function openSubscribeDialog() {
+  window.dispatchEvent(new CustomEvent("gc:subscribe-open"));
+}
 
 export default function MasterHeader() {
   const pathname = usePathname();
-  const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
-  const headerRef = useRef<HTMLElement | null>(null);
-
-  const closeDropdowns = useCallback(() => setOpenDropdown(null), []);
-
-  useEffect(() => {
-    closeDropdowns();
-  }, [pathname, closeDropdowns]);
-
-  useEffect(() => {
-    if (!openDropdown) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeDropdowns();
-    };
-
-    const onPointerDown = (event: MouseEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) {
-        closeDropdowns();
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    document.addEventListener("mousedown", onPointerDown);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("mousedown", onPointerDown);
-    };
-  }, [openDropdown, closeDropdowns]);
-
-  const openDropdownById = (id: Exclude<OpenDropdown, null>) => {
-    setOpenDropdown((current) => (current === id ? null : id));
-  };
-
-  const plActive = isDesktopPlActive(pathname);
-  const wc26Active = isDesktopWc26Active(pathname);
+  const isHome = pathname === "/";
 
   return (
     <div className={styles.chromeWrap} data-gc-chrome="site-header">
-      <header
-        ref={headerRef}
-        className={styles.masterHeader}
-        role="banner"
-      >
+      <header className={styles.masterHeader} role="banner">
         <div className={styles.bar}>
-          <Link href="/" className={styles.brand} onClick={closeDropdowns}>
+          <Link href="/" className={styles.brand}>
             <div className={styles.brandLogoWrap}>
-              <Image src="/logo.svg" alt="" width={54} height={54} priority />
+              <Image src="/logo.svg" alt="" width={48} height={48} priority />
             </div>
-            <div>
-              <div className={styles.brandName}>
-                Goal<span>Current</span>.live
-              </div>
-              <div className={styles.brandSub}>
-                Independent football media · live scores &amp; news
-              </div>
+            <div className={styles.brandName}>
+              Goal<span>Current</span>.live
             </div>
           </Link>
+
+          <nav className={styles.desktopNav} aria-label="Main navigation">
+            {DESKTOP_PRIMARY_NAV.map((item) => {
+              const active = isMainNavActive(pathname, item.href, item.exact);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className={styles.headerActions}>
+            <Link href="/contact" className={styles.headerLogin}>
+              Contact
+            </Link>
+            <button
+              type="button"
+              className={styles.headerSubscribe}
+              onClick={openSubscribeDialog}
+            >
+              Subscribe
+            </button>
+          </div>
         </div>
-
-        <nav className={styles.desktopNav} aria-label="Main navigation">
-          {DESKTOP_PRIMARY_NAV.map((item) => {
-            const active = isMainNavActive(pathname, item.href, item.exact);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}
-                onClick={closeDropdowns}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-
-          <div className={styles.dropdownWrap}>
-            <button
-              type="button"
-              className={`${styles.navBtn} ${plActive ? styles.navLinkActive : ""} ${openDropdown === "pl" ? styles.navBtnOpen : ""}`}
-              aria-expanded={openDropdown === "pl"}
-              aria-haspopup="true"
-              onClick={() => openDropdownById("pl")}
-            >
-              PL 26/27 ▾
-            </button>
-            {openDropdown === "pl" ? (
-              <div className={styles.dropdownPanel} role="menu">
-                {DESKTOP_PL_DROPDOWN.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className={styles.dropdownLink}
-                    role="menuitem"
-                    onClick={closeDropdowns}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            ) : null}
-          </div>
-
-          <div className={styles.dropdownWrap}>
-            <button
-              type="button"
-              className={`${styles.navBtn} ${wc26Active ? styles.navLinkActive : ""} ${openDropdown === "wc26" ? styles.navBtnOpen : ""}`}
-              aria-expanded={openDropdown === "wc26"}
-              aria-haspopup="true"
-              onClick={() => openDropdownById("wc26")}
-            >
-              WC26 ▾
-            </button>
-            {openDropdown === "wc26" ? (
-              <div className={styles.dropdownPanel} role="menu">
-                {DESKTOP_WC26_DROPDOWN.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className={styles.dropdownLink}
-                    role="menuitem"
-                    onClick={closeDropdowns}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </nav>
       </header>
 
-      <LiveRibbon />
+      {!isHome ? <LiveRibbon /> : null}
     </div>
   );
 }
