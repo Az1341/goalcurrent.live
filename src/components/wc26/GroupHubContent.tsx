@@ -15,6 +15,7 @@ import {
   groupLabel,
   type Wc26GroupId,
 } from "@/data/wc26";
+import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
 import {
   buildGroupTeamNamesList,
   buildHomepageMatchView,
@@ -22,19 +23,16 @@ import {
   computeGroupMatchStats,
   computeTeamFormMap,
   filterNewsForGroup,
-  filterTopScorersForGroup,
   partitionGroupFixtures,
   selectNextGroupMatch,
 } from "@/lib/wc26-group-hub";
 import { GROUPS_HUB_HREF, WC26_HUB_HREF, WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
-import { formatTopScorerPlayerName } from "@/lib/wc26-top-scorers";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useNewsFeed } from "@/lib/use-news-feed";
 import { useWc26TopScorers } from "@/lib/use-wc26-top-scorers";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
-import { resolveTeamId } from "@/lib/teamIdentity";
 import { formatKickoffUtc, formatVisitorKickoff } from "@/lib/wc26-format";
 import { useIsClient } from "@/lib/use-is-client";
 import styles from "./wc26.module.css";
@@ -112,7 +110,11 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
   const title = groupLabel(groupId);
   const teams = getTeamsByGroup(groupId);
   const fixtures = useEffectiveFixtures();
-  const { data: topScorersData, loading: topScorersLoading } = useWc26TopScorers();
+  const {
+    data: topScorersData,
+    scorers,
+    loading: topScorersLoading,
+  } = useWc26TopScorers();
   const { articles, loading: newsLoading, usingFallback } = useNewsFeed();
   const { tvRegion } = useWc26TvRegion();
 
@@ -135,10 +137,6 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
   const matchStats = useMemo(
     () => computeGroupMatchStats(groupId, fixtures),
     [groupId, fixtures],
-  );
-  const groupScorers = useMemo(
-    () => filterTopScorersForGroup(topScorersData.scorers, groupId, 5),
-    [topScorersData.scorers, groupId],
   );
   const groupNews = useMemo(
     () => filterNewsForGroup(articles, groupId, 6),
@@ -273,51 +271,16 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
 
       <section aria-labelledby="group-scorers-heading">
         <h2 id="group-scorers-heading" className={styles.sectionTitle}>
-          Top scorers in {title}
+          Top scorers
         </h2>
-        <div className={styles.topScorersShell}>
-          {topScorersLoading ? (
-            <p className={styles.topScorersEmpty}>Loading top scorers…</p>
-          ) : groupScorers.length === 0 ? (
-            <p className={styles.topScorersEmpty}>
-              Group scorers will appear once verified goal events are available for
-              completed matches in {title}.
-            </p>
-          ) : (
-            <table className={styles.topScorersTable}>
-              <thead className={styles.topScorersThead}>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col" className={styles.colPlayer}>
-                    Player
-                  </th>
-                  <th scope="col" className={styles.colTeam}>
-                    Team
-                  </th>
-                  <th scope="col">Goals</th>
-                </tr>
-              </thead>
-              <tbody>
-                {groupScorers.map((row) => {
-                  const teamId = resolveTeamId(row.teamName);
-                  return (
-                    <tr key={`${row.playerName}-${row.teamName}`}>
-                      <td>{row.rank}</td>
-                      <td className={styles.colPlayer}>{formatTopScorerPlayerName(row)}</td>
-                      <td className={styles.colTeam}>
-                        <span className={styles.topScorerTeamCell}>
-                          {teamId ? <TeamFlag teamId={teamId} size={20} /> : null}
-                          <span className={styles.topScorerTeamName}>{row.teamName}</span>
-                        </span>
-                      </td>
-                      <td>{row.goals}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <Wc26TopScorers
+          embedded
+          scorers={scorers}
+          loading={topScorersLoading}
+          configured={topScorersData.configured}
+          matchesProcessed={topScorersData.matchesProcessed}
+          matchesWithVerifiedEvents={topScorersData.matchesWithVerifiedEvents}
+        />
       </section>
 
       <section aria-labelledby="group-news-heading">

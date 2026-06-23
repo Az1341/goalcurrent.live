@@ -93,6 +93,19 @@
   --gc-content-surface-alt: #f1f5f9;
   --gc-content-border: #e5e7eb;
   --gc-content-highlight: #16A34A;
+
+  /* Match stats comparison bars (home vs away) */
+  --gc-match-stat-home: #c8102e;
+  --gc-match-stat-away: #0a3470;
+  --gc-match-stat-track: #cbd5e1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gc-match-stat-home: #f87171;
+    --gc-match-stat-away: #60a5fa;
+    --gc-match-stat-track: #334155;
+  }
 }
 
 @keyframes gcPulse {

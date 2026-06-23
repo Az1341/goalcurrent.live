@@ -8,6 +8,5 @@ export type Wc26TopScorersResponse = {
   readonly matchesProcessed: number;
   readonly matchesWithVerifiedEvents: number;
   readonly matchesExcluded: number;
-  readonly partialData: boolean;
   readonly fetchedAt: string;
 };

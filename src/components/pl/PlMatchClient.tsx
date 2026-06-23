@@ -14,6 +14,10 @@ import {
 } from "@/lib/calendar";
 import type { PlMatchApiResponse, PlFixtureStatus } from "@/lib/pl/types";
 import { absoluteUrl, SITE_NAME } from "@/lib/site-url";
+import {
+  MatchMovement,
+  MatchPlayerStats,
+} from "@/components/match/MatchDetailSections";
 import styles from "./PlMatch.module.css";
 import tableStyles from "./PlTable.module.css";
 import { PlErrorPanel, PlLoadingPanel, PlTeamBadge } from "./PlShared";
@@ -545,26 +549,29 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
         </div>
       </section>
 
-      <section className={styles.section} aria-labelledby="pl-stats">
-        <h2 id="pl-stats" className={styles.sectionTitle}>
-          Statistics
-        </h2>
-        <div className={styles.panel}>
-          {data.statistics.length === 0 ? (
-            <p className={styles.emptyState}>
-              Team statistics appear when the match is in progress or completed.
-            </p>
-          ) : (
-            data.statistics.map((stat) => (
-              <div key={stat.key} className={styles.statRow}>
-                <span className={styles.statHome}>{stat.home ?? "–"}</span>
-                <span className={styles.statLabel}>{stat.label}</span>
-                <span className={styles.statAway}>{stat.away ?? "–"}</span>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
+      <MatchMovement
+        detail={{
+          configured: data.configured,
+          apiAvailable: data.apiAvailable,
+          events: data.events,
+          lineups: data.lineups,
+          statistics: data.statistics,
+        }}
+        loading={false}
+      />
+
+      <MatchPlayerStats
+        detail={{
+          configured: data.configured,
+          apiAvailable: data.apiAvailable,
+          events: data.events,
+          lineups: data.lineups,
+          statistics: data.statistics,
+        }}
+        loading={false}
+        homeTeamName={fixture.homeTeamName}
+        awayTeamName={fixture.awayTeamName}
+      />
 
       <section className={styles.section} aria-labelledby="pl-h2h">
         <h2 id="pl-h2h" className={styles.sectionTitle}>

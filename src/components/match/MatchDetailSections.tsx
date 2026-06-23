@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import TeamLink from "@/components/wc26/TeamLink";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
@@ -14,6 +15,17 @@ import {
   type TimelineEventSide,
 } from "./timeline-event-badge";
 import styles from "./match.module.css";
+import {
+  aggregateMatchPlayerStats,
+  formatOptionalStat,
+  formatPlayerCards,
+  formatPlayerSubstitution,
+} from "@/lib/match-player-stats";
+import {
+  MATCH_MOVEMENT_LABELS,
+  MATCH_MOVEMENT_STAT_KEYS,
+  type MatchStatsViewModel,
+} from "@/lib/match-stats-shared";
 
 import type { HomepageMatchView } from "@/lib/wc26-live";
 
@@ -21,7 +33,7 @@ const API_UNAVAILABLE_MESSAGE =
   "Unable to load match details from the API. Try refreshing the page.";
 
 function detailEmptyMessage(
-  detail: MatchDetailPayload,
+  detail: Pick<MatchDetailPayload, "configured" | "apiAvailable">,
   emptyConfigured: string,
   emptyUnconfigured: string,
 ): string {
@@ -332,12 +344,17 @@ export function MatchTimeline({
   );
 }
 
-type MatchStatisticsProps = {
-  detail: MatchDetailPayload;
+type MatchMovementProps = {
+  detail: MatchStatsViewModel;
   loading: boolean;
 };
 
-export function MatchStatistics({ detail, loading }: MatchStatisticsProps) {
+/** Comparison bars for key team statistics (single stats view — no numeric table). */
+export function MatchMovement({ detail, loading }: MatchMovementProps) {
+  const rows = detail.statistics.filter((stat) =>
+    (MATCH_MOVEMENT_STAT_KEYS as readonly string[]).includes(stat.key),
+  );
+
   return (
     <section className={styles.section} aria-labelledby="match-stats-heading">
       <h2 id="match-stats-heading" className={styles.sectionTitle}>
@@ -346,7 +363,7 @@ export function MatchStatistics({ detail, loading }: MatchStatisticsProps) {
       <div className={styles.panel}>
         {loading ? (
           <p className={styles.emptyState}>Loading statistics…</p>
-        ) : detail.statistics.length === 0 ? (
+        ) : rows.length === 0 ? (
           <p className={styles.emptyState}>
             {detailEmptyMessage(
               detail,
@@ -355,76 +372,22 @@ export function MatchStatistics({ detail, loading }: MatchStatisticsProps) {
             )}
           </p>
         ) : (
-          detail.statistics.map((stat) => (
-            <div key={stat.key} className={styles.statRow}>
-              <span className={styles.statHome}>{stat.home ?? "–"}</span>
-              <span className={styles.statLabel}>{stat.label}</span>
-              <span className={styles.statAway}>{stat.away ?? "–"}</span>
-            </div>
-          ))
-        )}
-      </div>
-    </section>
-  );
-}
-
-type MatchMovementProps = {
-  detail: MatchDetailPayload;
-  loading: boolean;
-};
-
-/** Movement-style comparison bars for key match statistics */
-export function MatchMovement({ detail, loading }: MatchMovementProps) {
-  const MOVEMENT_KEYS = [
-    "ball_possession",
-    "total_shots",
-    "shots_on_goal",
-    "corner_kicks",
-    "fouls",
-    "yellow_cards",
-  ] as const;
-
-  const MOVEMENT_LABELS: Record<string, string> = {
-    ball_possession: "Possession",
-    total_shots: "Shots",
-    shots_on_goal: "Shots on Target",
-    corner_kicks: "Corners",
-    fouls: "Fouls",
-    yellow_cards: "Yellow Cards",
-  };
-
-  const rows = detail.statistics.filter((s) =>
-    MOVEMENT_KEYS.includes(s.key as never),
-  );
-
-  return (
-    <section className={styles.section} aria-labelledby="match-movement-heading">
-      <h2 id="match-movement-heading" className={styles.sectionTitle}>
-        Match Movement
-      </h2>
-      <div className={styles.panel}>
-        {loading ? (
-          <p className={styles.emptyState}>Loading match movement…</p>
-        ) : rows.length === 0 ? (
-          <p className={styles.emptyState}>
-            Match movement statistics are not currently supplied by the data provider.
-          </p>
-        ) : (
           rows.map((stat) => {
             const homeVal = stat.home;
             const awayVal = stat.away;
-            const isPct = typeof homeVal === "string" && homeVal.includes("%");
 
-            const homeNum = homeVal == null
-              ? null
-              : typeof homeVal === "string"
-              ? parseFloat(homeVal)
-              : homeVal;
-            const awayNum = awayVal == null
-              ? null
-              : typeof awayVal === "string"
-              ? parseFloat(awayVal)
-              : awayVal;
+            const homeNum =
+              homeVal == null
+                ? null
+                : typeof homeVal === "string"
+                  ? parseFloat(homeVal)
+                  : homeVal;
+            const awayNum =
+              awayVal == null
+                ? null
+                : typeof awayVal === "string"
+                  ? parseFloat(awayVal)
+                  : awayVal;
 
             const total = (homeNum ?? 0) + (awayNum ?? 0);
             const homePct = total > 0 ? ((homeNum ?? 0) / total) * 100 : 50;
@@ -432,15 +395,10 @@ export function MatchMovement({ detail, loading }: MatchMovementProps) {
 
             return (
               <div key={stat.key} className={styles.movementRow}>
-                <span className={styles.movementHome}>
-                  {homeVal ?? "–"}
-                </span>
+                <span className={styles.movementHome}>{homeVal ?? "–"}</span>
                 <div className={styles.movementBar}>
-                  <div
-                    className={styles.movementBarLabel}
-                    style={{ textAlign: "center", fontSize: 11, color: "#64748b", marginBottom: 4 }}
-                  >
-                    {MOVEMENT_LABELS[stat.key] ?? stat.label}
+                  <div className={styles.movementBarLabel}>
+                    {MATCH_MOVEMENT_LABELS[stat.key] ?? stat.label}
                   </div>
                   <div className={styles.movementBarTrack}>
                     <div
@@ -453,12 +411,109 @@ export function MatchMovement({ detail, loading }: MatchMovementProps) {
                     />
                   </div>
                 </div>
-                <span className={styles.movementAway}>
-                  {awayVal ?? "–"}
-                </span>
+                <span className={styles.movementAway}>{awayVal ?? "–"}</span>
               </div>
             );
           })
+        )}
+      </div>
+    </section>
+  );
+}
+
+type MatchPlayerStatsProps = {
+  detail: MatchStatsViewModel;
+  loading: boolean;
+  homeTeamName: string;
+  awayTeamName: string;
+};
+
+export function MatchPlayerStats({
+  detail,
+  loading,
+  homeTeamName,
+  awayTeamName,
+}: MatchPlayerStatsProps) {
+  const rows = useMemo(
+    () =>
+      loading
+        ? []
+        : aggregateMatchPlayerStats(
+            {
+              events: detail.events,
+              lineups: detail.lineups,
+            },
+            homeTeamName,
+            awayTeamName,
+          ),
+    [loading, detail.events, detail.lineups, homeTeamName, awayTeamName],
+  );
+
+  return (
+    <section className={styles.section} aria-labelledby="match-player-stats-heading">
+      <h2 id="match-player-stats-heading" className={styles.sectionTitle}>
+        Player stats
+      </h2>
+      <div className={styles.panel}>
+        {loading ? (
+          <p className={styles.emptyState}>Loading player statistics…</p>
+        ) : rows.length === 0 ? (
+          <p className={styles.emptyState}>
+            {detailEmptyMessage(
+              detail,
+              "Player goals, assists, cards and substitutions will appear when the live feed records match events.",
+              "Player statistics will appear when server API sync is configured and the match is underway or finished.",
+            )}
+          </p>
+        ) : (
+          <>
+            <p className={styles.playerStatsNote}>
+              From match events. Shots, pass accuracy and ratings appear when the
+              provider supplies player-level data.
+            </p>
+            <div className={styles.playerStatsTableWrap}>
+              <table className={styles.playerStatsTable}>
+                <thead>
+                  <tr>
+                    <th scope="col">Player</th>
+                    <th scope="col">G</th>
+                    <th scope="col">A</th>
+                    <th scope="col">Sh</th>
+                    <th scope="col">SOT</th>
+                    <th scope="col">Pass%</th>
+                    <th scope="col">F</th>
+                    <th scope="col">C</th>
+                    <th scope="col">Sub</th>
+                    <th scope="col">Rat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row) => (
+                    <tr key={`${row.teamName}-${row.playerName}`}>
+                      <td className={styles.playerStatsNameCell}>
+                        <span className={styles.playerStatsName}>
+                          {row.number != null ? (
+                            <span className={styles.playerStatsNum}>{row.number}</span>
+                          ) : null}
+                          {row.playerName}
+                        </span>
+                        <span className={styles.playerStatsTeam}>{row.teamName}</span>
+                      </td>
+                      <td>{row.goals > 0 ? row.goals : "—"}</td>
+                      <td>{row.assists > 0 ? row.assists : "—"}</td>
+                      <td>{formatOptionalStat(row.shots)}</td>
+                      <td>{formatOptionalStat(row.shotsOnTarget)}</td>
+                      <td>{formatOptionalStat(row.passAccuracy)}</td>
+                      <td>{formatOptionalStat(row.fouls)}</td>
+                      <td>{formatPlayerCards(row)}</td>
+                      <td>{formatPlayerSubstitution(row)}</td>
+                      <td>{formatOptionalStat(row.rating)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </section>

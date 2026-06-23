@@ -15,6 +15,12 @@ const TOP_SCORERS_VISIBLE = 6;
 type Wc26TopScorersProps = {
   /** When true, omit outer section title (parent supplies heading). */
   embedded?: boolean;
+  /** When set, use unified top scorers data from parent (e.g. group hub). */
+  scorers?: readonly TopScorerRow[];
+  loading?: boolean;
+  configured?: boolean;
+  matchesProcessed?: number;
+  matchesWithVerifiedEvents?: number;
 };
 
 function ScorerTableRow({
@@ -43,10 +49,16 @@ function ScorerTableRow({
   );
 }
 
-export default function Wc26TopScorers({ embedded = false }: Wc26TopScorersProps) {
-  const { data, loading } = useWc26TopScorers();
+export default function Wc26TopScorers({
+  embedded = false,
+  scorers: scorersProp,
+  loading: loadingProp,
+}: Wc26TopScorersProps) {
+  const { loading: hookLoading, scorers: hookScorers } = useWc26TopScorers();
   const [expanded, setExpanded] = useState(false);
-  const scorers = data.scorers;
+
+  const loading = loadingProp ?? hookLoading;
+  const scorers = scorersProp ?? hookScorers;
   const hasScorers = scorers.length > 0;
   const hasMoreScorers = scorers.length > TOP_SCORERS_VISIBLE;
   const visibleScorers = expanded
@@ -69,20 +81,10 @@ export default function Wc26TopScorers({ embedded = false }: Wc26TopScorersProps
           <p className={styles.topScorersEmpty}>Loading top scorers…</p>
         ) : !hasScorers ? (
           <p className={styles.topScorersEmpty}>
-            {data.configured
-              ? "Top scorers will appear once goal events are available from completed matches."
-              : "Top scorers will appear once goal events are available."}
+            Top scorers will appear when live data is available.
           </p>
         ) : (
           <>
-            {data.partialData ? (
-              <p className={styles.topScorersNote}>
-                Based on available match event data
-                {data.matchesWithVerifiedEvents > 0
-                  ? ` (${data.matchesWithVerifiedEvents} of ${data.matchesProcessed} completed matches with verified goal events).`
-                  : "."}
-              </p>
-            ) : null}
             <table className={styles.topScorersTable}>
               <thead className={styles.topScorersThead}>
                 <tr>

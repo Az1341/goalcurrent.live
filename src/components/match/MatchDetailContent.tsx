@@ -14,7 +14,7 @@ import {
   MatchDetailHeader,
   MatchLineups,
   MatchMovement,
-  MatchStatistics,
+  MatchPlayerStats,
   MatchTimeline,
 } from "@/components/match/MatchDetailSections";
 import styles from "@/components/match/match.module.css";
@@ -69,8 +69,13 @@ export default function MatchDetailContent({ fixtureId }: MatchDetailContentProp
         homeTeamName={header.homeName}
         awayTeamName={header.awayName}
       />
-      <MatchStatistics detail={detail} loading={loading} />
       <MatchMovement detail={detail} loading={loading} />
+      <MatchPlayerStats
+        detail={detail}
+        loading={loading}
+        homeTeamName={header.homeName}
+        awayTeamName={header.awayName}
+      />
       <MatchLineups
         detail={detail}
         homeTeamId={fixture.homeTeamId}

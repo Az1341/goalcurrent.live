@@ -20,39 +20,8 @@ function emptyResponse(): Wc26TopScorersResponse {
     matchesProcessed: 0,
     matchesWithVerifiedEvents: 0,
     matchesExcluded: 0,
-    partialData: false,
     fetchedAt: new Date().toISOString(),
   };
-}
-
-function mergeTopScorersResponse(
-  prev: Wc26TopScorersResponse,
-  next: Wc26TopScorersResponse,
-): Wc26TopScorersResponse {
-  const prevVerified = prev.matchesWithVerifiedEvents;
-  const nextVerified = next.matchesWithVerifiedEvents;
-
-  if (prevVerified > 0 && nextVerified < prevVerified) {
-    return {
-      ...prev,
-      fetchedAt: next.fetchedAt,
-      partialData: true,
-    };
-  }
-
-  if (
-    prev.totalGoals > 0 &&
-    next.totalGoals < prev.totalGoals &&
-    nextVerified <= prevVerified
-  ) {
-    return {
-      ...prev,
-      fetchedAt: next.fetchedAt,
-      partialData: true,
-    };
-  }
-
-  return next;
 }
 
 const serverSnapshot: TopScorersSnapshot = {
@@ -116,7 +85,7 @@ function refreshTopScorers(options?: { showLoading?: boolean }): void {
         return;
       }
       setSnapshot({
-        data: mergeTopScorersResponse(clientSnapshot.data, payload),
+        data: payload,
         loading: false,
       });
     })
@@ -188,6 +157,7 @@ export function useWc26TopScorers(): {
   data: Wc26TopScorersResponse;
   loading: boolean;
   refresh: () => void;
+  scorers: Wc26TopScorersResponse["scorers"];
 } {
   const snapshot = useSyncExternalStore(
     subscribe,
@@ -203,5 +173,6 @@ export function useWc26TopScorers(): {
     data: snapshot.data,
     loading: snapshot.loading,
     refresh,
+    scorers: snapshot.data.scorers,
   };
 }
