@@ -159,7 +159,7 @@ export default function NewsHub() {
   }, []);
 
   useEffect(() => {
-    void loadNews();
+    Promise.resolve().then(() => void loadNews());
     const timer = window.setInterval(() => {
       void loadNews();
     }, REFRESH_MS);
@@ -191,7 +191,7 @@ export default function NewsHub() {
       </div>
 
       {/* GoalCurrent Editorial Articles Banner */}
-      <Link href="/news/articles" style={{
+      <Link href="/articles" style={{
         display: "block",
         background: "linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(16,185,129,0.06) 100%)",
         border: "1px solid rgba(37,99,235,0.18)",

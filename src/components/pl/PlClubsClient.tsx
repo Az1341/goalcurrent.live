@@ -51,7 +51,7 @@ export default function PlClubsClient() {
     const q = query.trim().toLowerCase();
     if (!q) return data.teams;
     return data.teams.filter((team) => team.name.toLowerCase().includes(q));
-  }, [data?.teams, query]);
+  }, [data, query]);
 
   const emptyMessage =
     data?.error ??

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
 import TeamLink from "@/components/wc26/TeamLink";
@@ -36,16 +36,12 @@ import { useWc26TopScorers } from "@/lib/use-wc26-top-scorers";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import { formatKickoffUtc, formatVisitorKickoff } from "@/lib/wc26-format";
+import { useIsClient } from "@/lib/use-is-client";
 import styles from "./wc26.module.css";
 
 /** SSR-stable UTC label; switches to visitor-local after mount to avoid hydration mismatch. */
 function VisitorKickoffLabel({ iso }: { iso: string }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  const mounted = useIsClient();
   const label = mounted ? formatVisitorKickoff(iso) : formatKickoffUtc(iso);
 
   return <span>{label}</span>;

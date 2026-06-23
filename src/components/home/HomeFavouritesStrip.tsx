@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import { getFixtureById, getTeamById, groupLabel } from "@/data/wc26";
 import { FAVOURITES_HREF } from "@/lib/nav";
 import { useFavourites } from "@/lib/use-favourites";
+import { useIsClient } from "@/lib/use-is-client";
 import { formatVisitorKickoff } from "@/lib/wc26-format";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
@@ -15,12 +16,8 @@ const MAX_MATCHES = 4;
 const MAX_TEAMS = 4;
 
 export default function HomeFavouritesStrip() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const { teams, matches } = useFavourites();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const favouriteMatches = useMemo(
     () =>

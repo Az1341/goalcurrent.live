@@ -72,7 +72,7 @@ export function useMatchDetail(
   }, [fixtureId]);
 
   useEffect(() => {
-    refresh({ showLoading: true });
+    void Promise.resolve().then(() => refresh({ showLoading: true }));
     return () => {
       abortRef.current?.abort();
     };

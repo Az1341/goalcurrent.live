@@ -43,6 +43,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const live = searchParams.get("live");
   const results = searchParams.get("results");
 
+  // Default (no query params): finished World Cup results — same as ?results=wc
+  const wantsLive = live === "true";
+  const wantsResults =
+    results === "wc" || (live === null && results === null);
+
   if (!isWc26ApiConfigured()) {
     return NextResponse.json(unconfiguredResponse(), {
       status: 200,
@@ -51,7 +56,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    if (live === "true") {
+    if (wantsLive) {
       if (!isTournamentLive()) {
         return NextResponse.json(emptyResponse("pre-tournament"), {
           headers: {
@@ -75,7 +80,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       });
     }
 
-    if (results === "wc") {
+    if (wantsResults) {
       const matches = await fetchFinishedWc26Matches();
       const body: Wc26ScoresApiResponse = {
         matches,

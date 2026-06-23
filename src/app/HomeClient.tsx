@@ -20,6 +20,7 @@ import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
 import { SITE_NAME } from "@/lib/site-url";
 import AdSenseUnit from "@/components/AdSenseUnit";
+import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import LiveRibbon from "@/components/layout/LiveRibbon";
 import HomeArticlesSection from "@/components/home/HomeArticlesSection";
 import HomeFavouritesStrip from "@/components/home/HomeFavouritesStrip";
@@ -312,7 +313,7 @@ export default function Home() {
         <HomePlSection />
 
         <div className={styles.sectionBlock}>
-          <AdSenseUnit slot="1234567890" className={styles.adUnit} />
+          <AdSenseUnit slot={ADSENSE_SLOTS.homeMid} className={styles.adUnit} />
         </div>
 
         <section className={styles.sectionBlock} aria-labelledby="wc26-heading">
@@ -339,7 +340,7 @@ export default function Home() {
         <HomeArticlesSection />
 
         <div className={styles.sectionBlock}>
-          <AdSenseUnit slot="2345678901" className={styles.adUnit} />
+          <AdSenseUnit slot={ADSENSE_SLOTS.homeLower} className={styles.adUnit} />
         </div>
       </main>
     </div>

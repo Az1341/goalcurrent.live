@@ -206,7 +206,7 @@ export default function PlTableClient() {
 
   const displayStandings = useMemo(
     () => (data?.standings ? resolveDisplayStandings(data.standings) : []),
-    [data?.standings],
+    [data],
   );
 
   const preseasonTable =

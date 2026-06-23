@@ -9,10 +9,12 @@ import {
 import {
   aggregateTopScorers,
   countVerifiedTournamentGoals,
+  extractScoringGoalsFromEvents,
   extractVerifiedScoringGoals,
 } from "@/lib/wc26-top-scorers";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
 import type { MatchEventItem } from "@/types/match-detail";
+import type { ScorerGoalEvent } from "@/lib/wc26-top-scorers";
 import type { Wc26TopScorersResponse } from "@/types/wc26-top-scorers";
 
 const FETCH_CONCURRENCY = 2;
@@ -83,6 +85,69 @@ async function fetchMatchEventsReliable(
   return result;
 }
 
+function collectGoalsFromEvents(
+  finishedMatches: readonly Wc26ApiMatch[],
+  eventResults: readonly { events: MatchEventItem[]; apiAvailable: boolean }[],
+  verifiedOnly: boolean,
+): { goals: ScorerGoalEvent[]; matchesWithEvents: number } {
+  const goals: ScorerGoalEvent[] = [];
+  let matchesWithEvents = 0;
+
+  for (let index = 0; index < finishedMatches.length; index += 1) {
+    const match = finishedMatches[index]!;
+    const { events, apiAvailable } = eventResults[index]!;
+
+    if (!apiAvailable) {
+      continue;
+    }
+
+    const matchGoals = verifiedOnly
+      ? extractVerifiedScoringGoals(events, match.homeScore, match.awayScore)
+      : extractScoringGoalsFromEvents(events);
+
+    if (
+      verifiedOnly &&
+      matchGoals.length === 0 &&
+      (match.homeScore ?? 0) + (match.awayScore ?? 0) > 0
+    ) {
+      continue;
+    }
+
+    if (
+      matchGoals.length > 0 ||
+      (match.homeScore ?? 0) + (match.awayScore ?? 0) === 0
+    ) {
+      matchesWithEvents += 1;
+      goals.push(...matchGoals);
+    }
+  }
+
+  return { goals, matchesWithEvents };
+}
+
+function buildTopScorersResponse(
+  finishedMatches: readonly Wc26ApiMatch[],
+  goalEvents: readonly ScorerGoalEvent[],
+  matchesWithEvents: number,
+  partialData: boolean,
+  apiAvailable: boolean,
+): Wc26TopScorersResponse {
+  const scorers = aggregateTopScorers(goalEvents, Number.POSITIVE_INFINITY);
+  const matchesExcluded = finishedMatches.length - matchesWithEvents;
+
+  return {
+    scorers,
+    totalGoals: countVerifiedTournamentGoals(goalEvents),
+    configured: true,
+    apiAvailable,
+    matchesProcessed: finishedMatches.length,
+    matchesWithVerifiedEvents: matchesWithEvents,
+    matchesExcluded,
+    partialData,
+    fetchedAt: new Date().toISOString(),
+  };
+}
+
 export async function fetchWc26TopScorers(): Promise<Wc26TopScorersResponse> {
   if (!isWc26ApiConfigured()) {
     return emptyResponse();
@@ -104,48 +169,47 @@ export async function fetchWc26TopScorers(): Promise<Wc26TopScorersResponse> {
       FETCH_CONCURRENCY,
     );
 
-    const verifiedGoals = [];
-    let matchesWithVerifiedEvents = 0;
+    const verified = collectGoalsFromEvents(
+      finishedMatches,
+      eventResults,
+      true,
+    );
 
-    for (let index = 0; index < finishedMatches.length; index += 1) {
-      const match = finishedMatches[index]!;
-      const { events, apiAvailable } = eventResults[index]!;
-
-      if (!apiAvailable) {
-        continue;
-      }
-
-      const goals = extractVerifiedScoringGoals(
-        events,
-        match.homeScore,
-        match.awayScore,
+    if (verified.goals.length > 0) {
+      return buildTopScorersResponse(
+        finishedMatches,
+        verified.goals,
+        verified.matchesWithEvents,
+        verified.matchesWithEvents < finishedMatches.length,
+        true,
       );
-
-      if (goals.length === 0 && (match.homeScore ?? 0) + (match.awayScore ?? 0) > 0) {
-        continue;
-      }
-
-      if (goals.length > 0 || (match.homeScore ?? 0) + (match.awayScore ?? 0) === 0) {
-        matchesWithVerifiedEvents += 1;
-        verifiedGoals.push(...goals);
-      }
     }
 
-    const matchesExcluded = finishedMatches.length - matchesWithVerifiedEvents;
-    const scorers = aggregateTopScorers(verifiedGoals, Number.POSITIVE_INFINITY);
-    const totalGoals = countVerifiedTournamentGoals(verifiedGoals);
+    // Fallback: aggregate from match events when verified totals are empty
+    // (same finished-match set as GET /api/wc26/scores?results=wc).
+    const fallback = collectGoalsFromEvents(
+      finishedMatches,
+      eventResults,
+      false,
+    );
 
-    return {
-      scorers,
-      totalGoals,
-      configured: true,
-      apiAvailable: matchesWithVerifiedEvents > 0,
-      matchesProcessed: finishedMatches.length,
-      matchesWithVerifiedEvents,
-      matchesExcluded,
-      partialData: matchesExcluded > 0,
-      fetchedAt: new Date().toISOString(),
-    };
+    if (fallback.goals.length > 0) {
+      return buildTopScorersResponse(
+        finishedMatches,
+        fallback.goals,
+        fallback.matchesWithEvents,
+        true,
+        true,
+      );
+    }
+
+    return buildTopScorersResponse(
+      finishedMatches,
+      [],
+      0,
+      finishedMatches.length > 0,
+      finishedMatches.length > 0,
+    );
   } catch {
     return emptyResponse();
   }

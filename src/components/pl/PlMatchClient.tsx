@@ -106,6 +106,8 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
       return;
     }
 
+    setLoading(true);
+
     try {
       const res = await fetch(`/api/pl/match/${fixtureId}`, {
         cache: "no-store",
@@ -131,8 +133,7 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
   }, [fixtureId, invalidId]);
 
   useEffect(() => {
-    setLoading(true);
-    void load();
+    Promise.resolve().then(() => void load());
   }, [load]);
 
   useEffect(() => {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   MORE_SHEET_LEVEL1,
   MORE_SHEET_SUBMENU_TITLES,
@@ -20,12 +20,7 @@ type MoreBottomSheetProps = {
 export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps) {
   const pathname = usePathname();
   const [submenu, setSubmenu] = useState<MoreSheetSubmenuId | null>(null);
-
-  useEffect(() => {
-    if (!open) {
-      setSubmenu(null);
-    }
-  }, [open]);
+  const activeSubmenu = open ? submenu : null;
 
   const handleClose = () => {
     setSubmenu(null);
@@ -37,7 +32,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
     onClose();
   };
 
-  const submenuTitle = submenu ? MORE_SHEET_SUBMENU_TITLES[submenu] : "More";
+  const submenuTitle = activeSubmenu ? MORE_SHEET_SUBMENU_TITLES[activeSubmenu] : "More";
 
   return (
     <>
@@ -55,7 +50,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
         aria-hidden={!open}
       >
         <div className={styles.sheetHeader}>
-          {submenu ? (
+          {activeSubmenu ? (
             <button
               type="button"
               className={styles.backBtn}
@@ -82,8 +77,8 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
 
         <div className={styles.panelStack}>
           <div
-            className={`${styles.panel} ${submenu ? styles.panelHidden : styles.panelActive}`}
-            aria-hidden={Boolean(submenu)}
+            className={`${styles.panel} ${activeSubmenu ? styles.panelHidden : styles.panelActive}`}
+            aria-hidden={Boolean(activeSubmenu)}
           >
             <nav className={styles.sheetList} aria-label="More menu">
               {MORE_SHEET_LEVEL1.map((item, index) => {
@@ -140,13 +135,13 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
           </div>
 
           <div
-            className={`${styles.panel} ${submenu ? styles.panelActive : styles.panelHidden}`}
-            aria-hidden={!submenu}
+            className={`${styles.panel} ${activeSubmenu ? styles.panelActive : styles.panelHidden}`}
+            aria-hidden={!activeSubmenu}
           >
-            {submenu && (
+            {activeSubmenu && (
               <nav className={styles.sheetList} aria-label={`${submenuTitle} links`}>
-                {MORE_SHEET_SUBMENUS[submenu].map((link, index) => {
-                  const key = `${submenu}-${link.label}-${index}`;
+                {MORE_SHEET_SUBMENUS[activeSubmenu].map((link, index) => {
+                  const key = `${activeSubmenu}-${link.label}-${index}`;
                   const active = !link.external && isMoreSheetLinkActive(pathname, link.href);
 
                   if (link.external) {

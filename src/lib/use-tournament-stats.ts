@@ -35,7 +35,6 @@ export function useTournamentStats(): TournamentStats {
   }, []);
 
   useEffect(() => {
-    refresh();
     window.addEventListener(WC26_FIXTURES_UPDATED_EVENT, refresh);
     return () => window.removeEventListener(WC26_FIXTURES_UPDATED_EVENT, refresh);
   }, [refresh]);

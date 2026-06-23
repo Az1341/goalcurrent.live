@@ -42,15 +42,12 @@ import { formatVisitorKickoffTime } from "@/lib/wc26-format";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import TvRegionSelect from "@/components/wc26/TvRegionSelect";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
+import { useIsClient } from "@/lib/use-is-client";
+import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import type { Wc26GroupId } from "@/types/group";
 import { WC26_GROUP_IDS } from "@/types/group";
 import Wc26GamesProgress from "./Wc26GamesProgress";
 import styles from "./wc26.module.css";
-import {
-  getWc26SyncStatus,
-  subscribeWc26SyncStatus,
-  type Wc26SyncStatus,
-} from "@/lib/wc26-results-sync";
 
 function topStatusLabel(fixture: EffectiveFixture, matchClass: FixtureMatchClass): string {
   if (matchClass === "live") {
@@ -208,30 +205,18 @@ export default function FixturesCalendar() {
   const [status, setStatus] = useState<FixturePageFilters["status"]>("");
   const { tvRegion, setTvRegion, ready: tvReady } = useWc26TvRegion();
   const [selectedDate, setSelectedDate] = useState("");
-  const [clientReady, setClientReady] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<Wc26SyncStatus>(() =>
-    getWc26SyncStatus(),
-  );
+  const clientReady = useIsClient();
+  const syncStatus = useWc26SyncStatus();
 
   const refreshFixtures = useCallback(() => {
     setFixtures(getEffectiveFixtures());
   }, []);
 
   useEffect(() => {
-    setClientReady(true);
-  }, []);
-
-  useEffect(() => {
-    refreshFixtures();
     window.addEventListener(WC26_FIXTURES_UPDATED_EVENT, refreshFixtures);
     return () =>
       window.removeEventListener(WC26_FIXTURES_UPDATED_EVENT, refreshFixtures);
   }, [refreshFixtures]);
-
-  useEffect(() => {
-    setSyncStatus(getWc26SyncStatus());
-    return subscribeWc26SyncStatus(() => setSyncStatus(getWc26SyncStatus()));
-  }, []);
 
   const calendarDays = useMemo(
     () => buildCalendarDays(fixtures),

@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import {
   ADSENSE_PUBLISHER_ID,
   GA_MEASUREMENT_ID,
@@ -25,16 +25,14 @@ declare global {
 }
 
 export default function StagingIntegrations() {
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
-  const [adsenseEnabled, setAdSenseEnabled] = useState(false);
-  const [oneSignalEnabled, setOneSignalEnabled] = useState(false);
-
-  useEffect(() => {
-    const hostname = window.location.hostname;
-    setAnalyticsEnabled(isAnalyticsHost(hostname));
-    setAdSenseEnabled(isAdSenseHost(hostname));
-    setOneSignalEnabled(isOneSignalHost(hostname));
-  }, []);
+  const hostname = useSyncExternalStore(
+    () => () => {},
+    () => window.location.hostname,
+    () => "",
+  );
+  const analyticsEnabled = isAnalyticsHost(hostname);
+  const adsenseEnabled = isAdSenseHost(hostname);
+  const oneSignalEnabled = isOneSignalHost(hostname);
 
   useEffect(() => {
     if (!analyticsEnabled || window.__gc_sw_registered) return;

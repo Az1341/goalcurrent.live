@@ -112,7 +112,7 @@ export default function PlHubClient() {
           throw new Error("Could not load Premier League hub data.");
         }
 
-        let fixturesBody = withVisitorBroadcasters(
+        const fixturesBody = withVisitorBroadcasters(
           (await fixturesRes.json()) as PlFixturesApiResponse,
         );
         let standingsBody = (await standingsRes.json()) as PlStandingsApiResponse;
@@ -185,7 +185,7 @@ export default function PlHubClient() {
       fixturesData?.fixtures.length
         ? findNextFixture(fixturesData.fixtures)
         : null,
-    [fixturesData?.fixtures],
+    [fixturesData],
   );
 
   const latestResult = useMemo(
@@ -193,13 +193,22 @@ export default function PlHubClient() {
       fixturesData?.fixtures.length
         ? findLatestResult(fixturesData.fixtures)
         : null,
-    [fixturesData?.fixtures],
+    [fixturesData],
   );
 
   const tableSnapshot = useMemo(() => {
     if (!standingsData?.standings.length) return [];
     return resolveDisplayStandings(standingsData.standings).slice(0, 6);
-  }, [standingsData?.standings]);
+  }, [standingsData]);
+
+  const updatedAtLabel = useMemo(() => {
+    const iso = fixturesData?.fetchedAt ?? standingsData?.fetchedAt;
+    if (!iso) return "—";
+    return new Date(iso).toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+  }, [fixturesData?.fetchedAt, standingsData?.fetchedAt]);
 
   const preseasonTable =
     tableSnapshot.length > 0 && isPreseasonStandings(tableSnapshot);
@@ -323,13 +332,7 @@ export default function PlHubClient() {
           </div>
 
           <p className={styles.meta}>
-            Data from API-Football · Updated{" "}
-            {new Date(
-              fixturesData?.fetchedAt ?? standingsData?.fetchedAt ?? Date.now(),
-            ).toLocaleString(undefined, {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}
+            Data from API-Football · Updated {updatedAtLabel}
           </p>
         </>
       ) : null}

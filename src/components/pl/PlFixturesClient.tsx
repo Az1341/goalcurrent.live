@@ -104,19 +104,23 @@ export default function PlFixturesClient() {
       }
     }, FETCH_TIMEOUT_MS);
 
-    void loadFixtures(controller.signal).catch((error) => {
-      if (cancelled) return;
+    const run = () => {
+      void loadFixtures(controller.signal).catch((error) => {
+        if (cancelled) return;
 
-      setData(null);
-      setErrorMessage(
-        timedOut
-          ? "Fixtures request timed out. Check your connection and try again."
-          : error instanceof Error
-            ? error.message
-            : "Unknown error",
-      );
-      setView("error");
-    });
+        setData(null);
+        setErrorMessage(
+          timedOut
+            ? "Fixtures request timed out. Check your connection and try again."
+            : error instanceof Error
+              ? error.message
+              : "Unknown error",
+        );
+        setView("error");
+      });
+    };
+
+    Promise.resolve().then(run);
 
     return () => {
       cancelled = true;
@@ -124,10 +128,6 @@ export default function PlFixturesClient() {
       controller.abort();
     };
   }, [loadFixtures, reloadKey]);
-
-  useEffect(() => {
-    setAllTabVisible(ALL_TAB_BATCH);
-  }, [selectedWeek]);
 
   const availableWeeks = useMemo(() => {
     if (!data?.fixtures.length) return [] as number[];
@@ -138,7 +138,7 @@ export default function PlFixturesClient() {
       }
     }
     return [...weeks].sort((a, b) => a - b);
-  }, [data?.fixtures]);
+  }, [data]);
 
   const filteredFixtures = useMemo(() => {
     if (!data?.fixtures.length) return [] as PlFixtureRow[];
@@ -149,7 +149,7 @@ export default function PlFixturesClient() {
         : data.fixtures.filter((fixture) => fixture.matchweek === selectedWeek);
 
     return sortByKickoff(fixtures);
-  }, [data?.fixtures, selectedWeek]);
+  }, [data, selectedWeek]);
 
   const deferredFixtures = useDeferredValue(filteredFixtures);
   const fixturesToRender =
@@ -216,7 +216,10 @@ export default function PlFixturesClient() {
               role="tab"
               aria-selected={selectedWeek === "all"}
               className={`${styles.weekChip} ${selectedWeek === "all" ? styles.weekChipActive : ""}`}
-              onClick={() => setSelectedWeek("all")}
+              onClick={() => {
+                setSelectedWeek("all");
+                setAllTabVisible(ALL_TAB_BATCH);
+              }}
             >
               ALL
             </button>
@@ -229,7 +232,10 @@ export default function PlFixturesClient() {
                   role="tab"
                   aria-selected={selectedWeek === week}
                   className={`${styles.weekChip} ${selectedWeek === week ? styles.weekChipActive : ""} ${!hasFixtures ? styles.weekChipMuted : ""}`}
-                  onClick={() => setSelectedWeek(week)}
+                  onClick={() => {
+                    setSelectedWeek(week);
+                    setAllTabVisible(ALL_TAB_BATCH);
+                  }}
                 >
                   W{week}
                 </button>

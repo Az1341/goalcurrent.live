@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import {
   COOKIE_CONSENT_ACCEPTED,
   COOKIE_CONSENT_DECLINED,
@@ -9,23 +9,28 @@ import {
 } from "@/lib/site-keys";
 import styles from "./master-chrome.module.css";
 
-function hasStoredConsentChoice(): boolean {
-  const value = localStorage.getItem(COOKIE_CONSENT_KEY);
-  return value === COOKIE_CONSENT_ACCEPTED || value === COOKIE_CONSENT_DECLINED;
+const CONSENT_EVENT = "gc:cookie-consent-change";
+
+function subscribeConsent(onStoreChange: () => void) {
+  window.addEventListener(CONSENT_EVENT, onStoreChange);
+  return () => window.removeEventListener(CONSENT_EVENT, onStoreChange);
+}
+
+function shouldShowConsentBanner(): boolean {
+  try {
+    const value = localStorage.getItem(COOKIE_CONSENT_KEY);
+    return value !== COOKIE_CONSENT_ACCEPTED && value !== COOKIE_CONSENT_DECLINED;
+  } catch {
+    return false;
+  }
 }
 
 export default function CookieConsent() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    try {
-      if (!hasStoredConsentChoice()) {
-        setOpen(true);
-      }
-    } catch {
-      /* private mode */
-    }
-  }, []);
+  const open = useSyncExternalStore(
+    subscribeConsent,
+    shouldShowConsentBanner,
+    () => false,
+  );
 
   function persistChoice(value: string) {
     try {
@@ -33,7 +38,7 @@ export default function CookieConsent() {
     } catch {
       /* ignore */
     }
-    setOpen(false);
+    window.dispatchEvent(new Event(CONSENT_EVENT));
   }
 
   function accept() {

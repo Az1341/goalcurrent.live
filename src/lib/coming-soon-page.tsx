@@ -16,13 +16,16 @@ export type ComingSoonConfig = {
 };
 
 export function buildComingSoonMetadata(config: ComingSoonConfig): Metadata {
-  return buildPageMetadata({
-    title: config.title,
-    description:
-      config.description ??
-      `${config.title} on ${SITE_NAME} — coming soon.`,
-    path: config.path,
-  });
+  return {
+    ...buildPageMetadata({
+      title: config.title,
+      description:
+        config.description ??
+        `${config.title} on ${SITE_NAME} — coming soon.`,
+      path: config.path,
+    }),
+    robots: { index: false, follow: true },
+  };
 }
 
 export function ComingSoonPage(config: ComingSoonConfig) {

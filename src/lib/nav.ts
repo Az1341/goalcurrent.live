@@ -48,7 +48,7 @@ export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/live", label: "Live" },
   { href: FAVOURITES_HREF, label: "Favourites" },
   { href: "/news", label: "News" },
-  { href: "/news/articles", label: "Articles" },
+  { href: "/articles", label: "Articles" },
   { href: "/videos", label: "Videos" },
 ];
 
@@ -105,7 +105,7 @@ export const MOBILE_BOTTOM_TABS: MobileBottomTab[] = [
 
 /** More bottom sheet — level 1 categories + site footer links */
 export const MORE_SHEET_LEVEL1: MoreSheetLevel1Item[] = [
-  { type: "link", href: "/news/articles", label: "✍️ Articles & Editorial" },
+  { type: "link", href: "/articles", label: "✍️ Articles & Editorial" },
   { type: "submenu", id: "wc26", label: "WC26" },
   { type: "submenu", id: "pl", label: "PL 26/27" },
   { type: "submenu", id: "clubs", label: "Clubs" },
@@ -190,9 +190,9 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
   ],
   news: [
     { href: "/news", label: "Latest News" },
-    { href: "/news/articles", label: "✍️ Editorial & Articles" },
-    { href: "/news/articles/world-cup-2026-complete-guide", label: "World Cup 2026 Guide" },
-    { href: "/news/articles/premier-league-2025-26-season-review", label: "PL Season Review" },
+    { href: "/articles", label: "✍️ Editorial & Articles" },
+    { href: "/articles/world-cup-2026-complete-guide", label: "World Cup 2026 Guide" },
+    { href: "/articles/premier-league-2025-26-season-review", label: "PL Season Review" },
     { href: "/news/world-cup", label: "World Cup News" },
     { href: "/news/premier-league", label: "Premier League News" },
     // TODO: restore when page is live

@@ -79,7 +79,7 @@ export default function PlPlayersClient() {
         player.name.toLowerCase().includes(q) ||
         (player.teamName?.toLowerCase().includes(q) ?? false),
     );
-  }, [data?.players, query]);
+  }, [data, query]);
 
   return (
     <main className={styles.plPage}>

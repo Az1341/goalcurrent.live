@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ARTICLE_INDEX, articleHref } from "@/data/articles-index";
+import { ARTICLE_INDEX, articleHref } from "@/data/articles";
 import styles from "@/app/page.module.css";
 
 const HOME_ARTICLE_LIMIT = 3;

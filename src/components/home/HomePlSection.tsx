@@ -129,7 +129,6 @@ export default function HomePlSection() {
     let cancelled = false;
 
     async function load() {
-      setView("loading");
       try {
         const [fixturesRes, standingsRes] = await Promise.all([
           fetch("/api/pl/fixtures", { cache: "no-store" }),
@@ -140,7 +139,7 @@ export default function HomePlSection() {
           throw new Error("Could not load Premier League data.");
         }
 
-        let fixturesBody = (await fixturesRes.json()) as PlFixturesApiResponse;
+        const fixturesBody = (await fixturesRes.json()) as PlFixturesApiResponse;
         let standingsBody = (await standingsRes.json()) as PlStandingsApiResponse;
 
         if (!standingsBody.standings.length) {
@@ -183,7 +182,7 @@ export default function HomePlSection() {
       fixturesData?.fixtures.length
         ? findNextFixture(fixturesData.fixtures)
         : null,
-    [fixturesData?.fixtures],
+    [fixturesData],
   );
 
   const latestResult = useMemo(
@@ -191,13 +190,13 @@ export default function HomePlSection() {
       fixturesData?.fixtures.length
         ? findLatestResult(fixturesData.fixtures)
         : null,
-    [fixturesData?.fixtures],
+    [fixturesData],
   );
 
   const topFive = useMemo(() => {
     if (!standingsData?.standings.length) return [];
     return resolveDisplayStandings(standingsData.standings).slice(0, 5);
-  }, [standingsData?.standings]);
+  }, [standingsData]);
 
   return (
     <section className={styles.sectionBlock} aria-labelledby="home-pl-heading">

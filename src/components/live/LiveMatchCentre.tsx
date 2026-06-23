@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import TeamFlag from "@/components/TeamFlag";
@@ -20,11 +20,7 @@ import {
   partitionFixturesForLiveCentre,
 } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import {
-  getWc26SyncStatus,
-  subscribeWc26SyncStatus,
-  type Wc26SyncStatus,
-} from "@/lib/wc26-results-sync";
+import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import type { Wc26TvRegionCode } from "@/lib/wc26-fixtures-page";
 import styles from "./live.module.css";
 
@@ -143,19 +139,12 @@ function LiveSection({
 
 export default function LiveMatchCentre() {
   const fixtures = useEffectiveFixtures();
-  const [syncStatus, setSyncStatus] = useState<Wc26SyncStatus>(() =>
-    getWc26SyncStatus(),
-  );
+  const syncStatus = useWc26SyncStatus();
   const buckets = useMemo(
     () => partitionFixturesForLiveCentre(fixtures),
     [fixtures],
   );
   const { tvRegion } = useWc26TvRegion();
-
-  useEffect(() => {
-    setSyncStatus(getWc26SyncStatus());
-    return subscribeWc26SyncStatus(() => setSyncStatus(getWc26SyncStatus()));
-  }, []);
 
   return (
     <main className={styles.content}>

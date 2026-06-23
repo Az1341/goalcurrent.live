@@ -15,7 +15,6 @@ export function useFavourites(): FavouritesState {
   }, []);
 
   useEffect(() => {
-    refresh();
     window.addEventListener(FAVOURITES_CHANGE_EVENT, refresh);
     return () => window.removeEventListener(FAVOURITES_CHANGE_EVENT, refresh);
   }, [refresh]);
