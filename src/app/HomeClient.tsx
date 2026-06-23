@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { getTeamById } from "@/data/wc26";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useLiveScores } from "@/lib/use-live-scores";
@@ -15,15 +14,17 @@ import {
   type HomepageMatchView,
 } from "@/lib/wc26-live";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
-import { useWc26GroupStandings } from "@/lib/use-wc26-standings";
 import TeamFlag from "@/components/TeamFlag";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
 import { SITE_NAME } from "@/lib/site-url";
 import AdSenseUnit from "@/components/AdSenseUnit";
 import LiveRibbon from "@/components/layout/LiveRibbon";
+import HomeArticlesSection from "@/components/home/HomeArticlesSection";
 import HomeFavouritesStrip from "@/components/home/HomeFavouritesStrip";
 import HomeNewsSection from "@/components/home/HomeNewsSection";
+import HomePlSection from "@/components/home/HomePlSection";
+import HomeWc26StandingsPreview from "@/components/home/HomeWc26StandingsPreview";
 import styles from "@/app/page.module.css";
 
 const FEATURED_FLAG = 72;
@@ -202,55 +203,6 @@ function ColumnCard({
   );
 }
 
-function HomeGroupHStandings() {
-  const standings = useWc26GroupStandings("h");
-
-  return (
-    <div className={styles.homeStandingsWrap}>
-      <table className={styles.homeStandingsTable}>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Team</th>
-            <th>P</th>
-            <th>W</th>
-            <th>D</th>
-            <th>L</th>
-            <th>GD</th>
-            <th>Pts</th>
-          </tr>
-        </thead>
-        <tbody>
-          {standings.rows.map((row, index) => {
-            const team = getTeamById(row.teamId);
-            const gd =
-              row.goalDifference > 0
-                ? `+${row.goalDifference}`
-                : String(row.goalDifference);
-            return (
-              <tr key={row.teamId}>
-                <td>{index + 1}</td>
-                <td>
-                  <span className={styles.standingsTeam}>
-                    {team ? <TeamFlag teamId={team.id} size={18} /> : null}
-                    <span>{team?.name ?? row.teamId}</span>
-                  </span>
-                </td>
-                <td>{row.played}</td>
-                <td>{row.won}</td>
-                <td>{row.drawn}</td>
-                <td>{row.lost}</td>
-                <td>{gd}</td>
-                <td className={styles.standingsPts}>{row.points}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 export default function Home() {
   useLiveScores();
   const fixtures = useEffectiveFixtures();
@@ -348,17 +300,11 @@ export default function Home() {
               fixtureById={fixtureById}
             />
           </ColumnCard>
-
-          <ColumnCard
-            title="Group H Standings"
-            footerHref="/worldcup2026/groups/h"
-            footerLabel="View Group H"
-            emptyMessage=""
-            isEmpty={false}
-          >
-            <HomeGroupHStandings />
-          </ColumnCard>
         </div>
+
+        <HomeWc26StandingsPreview />
+
+        <HomePlSection />
 
         <div className={styles.sectionBlock}>
           <AdSenseUnit slot="1234567890" className={styles.adUnit} />
@@ -384,6 +330,8 @@ export default function Home() {
         </section>
 
         <HomeNewsSection />
+
+        <HomeArticlesSection />
 
         <div className={styles.sectionBlock}>
           <AdSenseUnit slot="2345678901" className={styles.adUnit} />
