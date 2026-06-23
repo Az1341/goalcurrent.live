@@ -45,7 +45,7 @@ export default function MasterHeader() {
 
           <div className={styles.headerActions}>
             <Link href="/contact" className={styles.headerLogin}>
-              Login
+              Contact
             </Link>
             <button
               type="button"
