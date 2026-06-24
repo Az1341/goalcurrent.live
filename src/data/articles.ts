@@ -66,6 +66,14 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
       "36 teams, eight league phase games, knockout play-offs, merit-based home advantage. UEFA's biggest format overhaul in 21 years, fully explained.",
     date: "23 June 2026",
   },
+  {
+    slug: "world-cup-2026-june-23-recap",
+    category: "Match Recap",
+    title: "Norway Edge Senegal, Portugal Fire Five — World Cup 2026 Matchday Recap, 23 June",
+    excerpt:
+      "Norway beat Senegal 3–2, Algeria down Jordan 2–1, Portugal rout Uzbekistan 5–0, Colombia beat Congo DR, Croatia defeat Panama, and England draw with Ghana.",
+    date: "24 June 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {
