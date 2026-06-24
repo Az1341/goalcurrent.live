@@ -1,364 +1,71 @@
-# GoalCurrent.live — Audit Findings (prioritised)
+# GoalCurrent.live — Audit Findings (all issues)
 
-**Audit date:** 2026-06-23  
-**Repo:** `Az1341/goalcurrent-live-nextjs` · **Branch:** `main`  
-**Vercel:** `goalcurrent-live-nextjs` · **URL:** https://www.goalcurrent.live
+**Date:** 24 June 2026 · **Commit:** `bdae9c1` · **Tag:** `v1.0.0`
 
 ---
 
-## Summary counts
+## Critical (0)
 
-| Priority | Count |
-|----------|------:|
-| Critical | 3 |
-| High | 9 |
-| Medium | 14 |
-| Low | 11 |
-| **Total** | **37** |
-
-| Category | Issues |
-|----------|-------:|
-| SEO / sitemap | 4 |
-| APIs / data | 4 |
-| Code quality / lint | 6 |
-| Content / UX stubs | 5 |
-| Monetisation | 2 |
-| Security | 2 |
-| Performance | 3 |
-| Routing / redirects | 4 |
-| Assets / media | 3 |
-| Documentation / ops | 3 |
-| Accessibility | 2 |
-| Architecture / duplication | 3 |
+*None — build passes, production core routes healthy, no hardcoded AdSense IDs, no ESLint errors.*
 
 ---
 
-## Critical
+## High (5)
 
-### C-01 — Sitemap omits major site sections
-- **Priority:** Critical  
-- **Files:** `src/app/sitemap.ts` (lines 14–34 `STATIC_PATHS`)  
-- **Evidence:** Production sitemap has **157** URLs. Build generates **234** static paths. Missing: `/premier-league`, `/videos`, all `/statistics/*`, all `/transfers/*`, `/news/transfers`, `/news/premier-league`, `/favourites/clubs`, `/favourites/players`, `/premier-league/clubs/*`, `/worldcup2026/players`, etc.  
-- **Impact:** Search engines under-crawl ~45+ live pages.  
-- **Fix:** Extend `STATIC_PATHS` and add generators for PL clubs, news sub-hubs, videos, statistics, transfers. Or programmatically derive from route manifest.
-
-### C-02 — AdSense uses placeholder slot IDs on homepage
-- **Priority:** Critical  
-- **Files:** `src/app/HomeClient.tsx` (lines 315, 342)  
-- **Evidence:** `slot="1234567890"` and `slot="2345678901"`.  
-- **Impact:** No ad revenue; invalid AdSense units in production.  
-- **Fix:** Replace with real slot IDs from Google AdSense dashboard. Verify `ca-pub-8697460993506171` units in `src/components/AdSenseUnit.tsx`.
-
-### C-03 — ESLint fails with 34 errors (CI risk)
-- **Priority:** Critical  
-- **Files:** See `reports/lint-audit.txt` — primary files:  
-  - `src/components/AdSenseUnit.tsx:23`  
-  - `src/components/home/HomeFavouritesStrip.tsx:22`  
-  - `src/components/home/HomePlSection.tsx:143,182,190`  
-  - `src/lib/use-tournament-stats.ts:38`  
-  - `src/lib/use-wc26-standings.ts:30`  
-  - `src/lib/use-match-detail.ts:75`  
-  - `src/lib/use-wc26-tv-region.ts:25`  
-  - (+ 20 more in lint log)  
-- **Impact:** `npm run lint` exits non-zero; blocks strict CI. React Compiler memo warnings.  
-- **Fix:** Refactor `setState`-in-effect patterns (use `useSyncExternalStore`, lazy init, or event-only updates). Fix `prefer-const` in `HomePlSection.tsx`.
+| ID | Issue | File(s) | Fix |
+|----|-------|---------|-----|
+| H-01 | Sitemap has **200 URLs** but build emits **306** static paths — ~106 routes missing (statistics, transfers, favourites sub-pages, `/news/*` hubs, legacy `/video/*` pages still in build) | `src/app/sitemap.ts:18-120` | Add `STATIC_PATHS` for statistics, transfers, favourites; audit `generateStaticParams` orphans |
+| H-02 | AdSense revenue depends on Vercel env — slots blank locally skip render; production RPM unverified | `src/lib/adsense-slots.ts`, `.env.example:28-38` | Set all `NEXT_PUBLIC_ADSENSE_SLOT_*` on Vercel Production |
+| H-03 | ScoreBat highlights absent on production match page (no embed HTML) — token unset or no feed match | `src/lib/scorebat/getScoreBatEmbed.ts`, Vercel env | Set `SCOREBAT_API_TOKEN`; verify title matching for WC26 fixtures |
+| H-04 | Production monitoring not configured | External | UptimeRobot 1-min ping; Sentry alerts on `/api/*`; Vercel Analytics thresholds |
+| H-05 | Duplicate page trees still built despite 308 redirects — crawl budget + bundle waste | `src/app/video/*/page.tsx`, `src/app/worldcup2026/match/[fixtureId]/page.tsx`, `src/app/news/articles/[slug]/page.tsx` | Remove legacy `page.tsx` where redirect is canonical, or `noindex` + thin stubs |
 
 ---
 
-## High
+## Medium (12)
 
-### H-01 — WC26 top scorers API returns empty data
-- **Priority:** High  
-- **Files:** `src/app/api/wc26/top-scorers/route.ts`, `src/lib/server/wc26-top-scorers.ts`  
-- **Evidence:** Production `GET /api/wc26/top-scorers` → `scorers: []`, `apiAvailable: false`, `configured: true`.  
-- **Impact:** Top scorers widgets show “Loading…” on `/worldcup2026`, group pages.  
-- **Fix:** Add overlay-based fallback (aggregate goals from finished matches in overlay) when API events unavailable; or document API-football plan limits.
-
-### H-02 — Duplicate article URL systems (SEO duplicate content)
-- **Priority:** High  
-- **Files:**  
-  - `src/data/articles-index.ts` → `/articles/{slug}`  
-  - `src/data/articles.ts` + `src/app/news/articles/[slug]/page.tsx` → `/news/articles/{slug}`  
-  - `src/app/news/alireza-beiranvand-iran-world-cup-hero/page.tsx` → redirects to `/articles/...`  
-- **Evidence:** Nav links to `/news/articles/*` while homepage articles link to `/articles/*`.  
-- **Impact:** Split PageRank; confusing canonical URLs.  
-- **Fix:** Pick one canonical prefix. Add `rel=canonical` + 301 redirects from deprecated paths.
-
-### H-03 — `/api/scores` returns 400 without query string
-- **Priority:** High  
-- **Files:** `src/app/api/scores/route.ts` (re-exports `wc26/scores`)  
-- **Evidence:** `GET /api/scores` → 400 Bad Request on production.  
-- **Impact:** Legacy consumers break; undocumented contract.  
-- **Fix:** Document required `?live=true` or `?results=wc`, or default to `results=wc`.
-
-### H-04 — Documentation still references GoalCurrent.online
-- **Priority:** High  
-- **Files:** `docs/ENVIRONMENT.md` (lines 1, 5)  
-- **Impact:** Operator confusion after `.live` unification.  
-- **Fix:** Rename to GoalCurrent.live; cross-link `docs/DEPLOY.md`.
-
-### H-05 — `MAIN_NAV` contains duplicate News entry
-- **Priority:** High  
-- **Files:** `src/lib/nav.ts` (lines 56–60)  
-- **Evidence:** `DESKTOP_PRIMARY_NAV` already includes News; `MAIN_NAV` spreads it then adds News again.  
-- **Impact:** Duplicate nav items in footer/legacy consumers.  
-- **Fix:** Remove duplicate `{ href: "/news", label: "News" }` from `MAIN_NAV`.
-
-### H-06 — Many indexable routes are “Coming soon” stubs
-- **Priority:** High  
-- **Files:**  
-  - `src/app/statistics/*/page.tsx` (7 routes)  
-  - `src/app/video/highlights/page.tsx`, `video/podcasts/page.tsx`, `video/press-conferences/page.tsx`, `video/youtube/page.tsx`  
-  - `src/lib/coming-soon-page.tsx`  
-- **Impact:** Thin content indexed if linked; poor UX if discovered via direct URL.  
-- **Fix:** `noindex` on stubs until built, or remove from sitemap/internal links.
-
-### H-07 — Bracket section uses placeholder copy
-- **Priority:** High  
-- **Files:** `src/components/wc26/BracketSection.tsx` (line 37)  
-- **Evidence:** “Bracket pairings are placeholders only — no match data connected yet.”  
-- **Impact:** Misleading on `/worldcup2026/bracket`.  
-- **Fix:** Wire knockout data or hide section until knockout phase.
-
-### H-08 — Subscribe popup is non-functional placeholder
-- **Priority:** High  
-- **Files:** `src/components/layout/SubscribePopup.tsx` (lines 52–57)  
-- **Evidence:** Email field `readonly`; button labelled “Subscribe (placeholder)”.  
-- **Impact:** Users cannot subscribe; trust issue.  
-- **Fix:** Integrate mailing provider or hide until ready.
-
-### H-09 — Next.js middleware deprecation warning
-- **Priority:** High  
-- **Files:** `src/middleware.ts`, build output  
-- **Evidence:** “middleware file convention is deprecated. Please use proxy instead.”  
-- **Fix:** Migrate legacy group redirect to Next.js 16 `proxy` convention per `node_modules/next/dist/docs/`.
+| ID | Issue | File(s) | Fix |
+|----|-------|---------|-----|
+| M-01 | ESLint **11 warnings** (unused vars, hook deps) | `src/app/api/pl/fixtures/route.ts:43`, `src/components/favourites/FavouritesPageContent.tsx:105`, `src/components/wc26/GroupsHubContent.tsx:5`, `src/data/wc26/groups.ts:3`, `src/lib/client/useLiveTopScorers.ts:23`, `src/lib/pl/api-core.ts:2,69`, `src/lib/use-news-feed.ts:3`, `src/lib/use-wc26-tv-region.ts:48`, `src/lib/wc26-group-hub.ts:9`, `src/lib/youtube-videos.ts:70` | Remove dead imports; fix hook deps |
+| M-02 | **21** coming-soon / under-construction routes (noindex ✅) | `src/lib/coming-soon-page.tsx:27`, `src/app/statistics/*/page.tsx`, `src/app/transfers/*/page.tsx`, `src/app/video/youtube/page.tsx` | Ship content or keep noindex until ready |
+| M-03 | Reserved hero asset unused in code | `public/images/hero-home.png` | **Do not delete** — Ahmad-approved alternate; locked hero is `football-hero-bg.jpg` |
+| M-04 | `Footer.tsx` re-export unused | `src/components/layout/Footer.tsx` | Import in `Layout.tsx` or delete shim |
+| M-05 | `SubscribePopup.tsx` dead file (returns null, not imported) | `src/components/layout/SubscribePopup.tsx` | Delete or wire mailing provider |
+| M-06 | `AdSenseUnit.tsx` deprecated but still used by PL strip | `src/components/AdSenseUnit.tsx`, `src/components/pl/PlCommercialStrip.tsx` | Migrate PL to `AdSlot` / `ContentAdSlot` |
+| M-07 | CSP `script-src 'unsafe-inline'` required for GA/AdSense/JSON-LD | `src/lib/security/csp.ts` | Document; tighten when nonce strategy available |
+| M-08 | PL standings pre-season all zeros | `src/app/api/pl/standings/route.ts` | Season-start empty-state copy (partially done in hub) |
+| M-09 | Contact form submission backend unverified | `src/components/info/ContactForm.tsx` | E2E test with Netlify Forms or provider |
+| M-10 | Match SSR shows “Loading…” for timeline/stats until client fetch | `src/components/match/MatchDetailSections.tsx`, `src/lib/use-match-detail.ts` | Optional server seed for static fixtures |
+| M-11 | npm `devdir` warning on every build | Local npm config | Remove unknown `devdir` from user `.npmrc` |
+| M-12 | `API_FOOTBALL_SIMULATE` dev-only — not documented in README | `src/lib/api-football/client.ts:33-52`, `.env.example` | Add to `docs/ENVIRONMENT.md` |
 
 ---
 
-## Medium
+## Low (9)
 
-### M-01 — Reserved asset `hero-home.png` (not orphan-delete)
-- **Files:** `public/images/hero-home.png` (exists, no code references yet)  
-- **Classification:** **Reserved asset** — Ahmad-marked important; **do not delete**.  
-- **Active hero:** `football-hero-bg.jpg` per `.cursor/rules/homepage-hero-locked.mdc`.  
-- **Fix:** Keep on disk. Wire into UI only with explicit Ahmad approval; document in asset inventory.
-
-### M-02 — Duplicate redirect config (vercel.json + next.config.ts)
-- **Files:** `vercel.json`, `next.config.ts` (redirects blocks)  
-- **Fix:** Consolidate into one file (prefer `next.config.ts`).
-
-### M-03 — Legacy `/video/*` routes (308 → `/videos/*`)
-- **Files:** `src/app/video/page.tsx`, `src/app/video/*/page.tsx`  
-- **Impact:** Extra redirect hop; OK functionally.  
-- **Fix:** Update internal links to `/videos` only; keep redirects for bookmarks.
-
-### M-04 — `worldcup2026/favourites` redirects to `/favourites`
-- **Files:** `src/app/worldcup2026/favourites/page.tsx`  
-- **Fix:** Remove stale links to WC26 favourites path.
-
-### M-05 — PL standings show `played: 0` for all teams
-- **Files:** `src/app/api/pl/standings/route.ts`, API-football mapping  
-- **Evidence:** Pre-season data from API — expected but confusing on homepage PL section (“No results yet”).  
-- **Fix:** Season label / empty state copy when `played === 0`.
-
-### M-06 — React `img` instead of `next/image` for flags
-- **Files:** `src/components/TeamFlag.tsx:47`  
-- **Fix:** Use optimised images or document SVG flag exception.
-
-### M-07 — CSP allows `unsafe-inline` and `unsafe-eval`
-- **Files:** `next.config.ts` (lines 4–16 `INTEGRATION_CSP`)  
-- **Fix:** Tighten after AdSense/OneSignal audit; use nonces where possible.
-
-### M-08 — Unused import / variables (21 ESLint warnings)
-- **Files:** `src/lib/use-news-feed.ts`, `src/lib/use-wc26-top-scorers.ts`, `src/components/favourites/FavouritesPageContent.tsx`, etc.  
-- **Fix:** Remove dead code.
-
-### M-09 — `data/articles.ts` vs `data/articles-index.ts` parallel systems
-- **Files:** Both under `src/data/`  
-- **Fix:** Merge into single article registry with canonical paths.
-
-### M-10 — Sitemap missing `/articles` index page
-- **Files:** `src/app/sitemap.ts` — includes article slugs but not `/articles` hub  
-- **Fix:** Add `/articles` to `STATIC_PATHS`.
-
-### M-11 — Homepage WC26 summary may show stale counts before overlay sync
-- **Files:** `src/lib/use-tournament-stats.ts`, `src/app/HomeClient.tsx`  
-- **Evidence:** Initial SSR may differ from client after overlay; live site shows 45 played (correct after sync).  
-- **Fix:** Optional server-side seed from overlay for SSR parity.
-
-### M-12 — Contact form has no backend handler visible
-- **Files:** `src/components/info/ContactForm.tsx`  
-- **Fix:** Verify Netlify Forms / API route; test submission end-to-end.
-
-### M-13 — YouTube API key optional — videos limited to 4
-- **Files:** `src/app/api/videos/route.ts`, `src/lib/youtube-videos.ts`  
-- **Evidence:** Production returns 4 videos.  
-- **Fix:** Confirm `YOUTUBE_API_KEY` in Vercel if more needed.
-
-### M-14 — `npm warn Unknown env config "devdir"`
-- **Files:** npm environment (not repo)  
-- **Fix:** Clean local `.npmrc` / env on dev machines.
+| ID | Issue | File(s) | Fix |
+|----|-------|---------|-----|
+| L-01 | Unused scaffold SVGs | `public/next.svg`, `public/vercel.svg`, `public/globe.svg`, `public/window.svg`, `public/file.svg` | Delete |
+| L-02 | WIP CSS file | `src/components/layout/master-chrome.module.css.colour-wip` | Delete or merge |
+| L-03 | Untracked build/lint reports in repo root | `build-report-task*.txt`, `reports/build-audit-full.txt` | Add to `.gitignore` |
+| L-04 | Duplicate ticker marquee items (cosmetic) | `src/components/layout/LiveRibbon.tsx` | Review animation duplication |
+| L-05 | `TeamFlag` uses `<img>` not `next/image` | `src/components/TeamFlag.tsx` | Document exception (SVG flags) or migrate |
+| L-06 | Statistics nav commented in More sheet | `src/lib/nav.ts` | Restore or document |
+| L-07 | NordVPN affiliate tracking unverified | `src/lib/site-keys.ts` | Confirm `NORDVPN_HREF` params |
+| L-08 | Empty `vercel.json` | `vercel.json` | Keep `{}` or add project settings |
+| L-09 | Manual Web Vitals / Lighthouse not in CI | — | Add Lighthouse CI on `/`, `/live`, `/match/fixture-001` |
 
 ---
 
-## Low
+## Verified healthy (no issue)
 
-### L-01 — Default Next/Vercel SVG assets unused
-- **Files:** `public/next.svg`, `public/vercel.svg`, `public/globe.svg`, `public/window.svg`, `public/file.svg`  
-- **Fix:** Remove scaffold files.
-
-### L-02 — `build-report.txt` untracked in repo root
-- **Fix:** Add to `.gitignore` or delete.
-
-### L-03 — `README.md` title updated but ENVIRONMENT.md lags
-- **Fix:** Align all docs to `.live`.
-
-### L-04 — Statistics nav links commented out in mobile More sheet
-- **Files:** `src/lib/nav.ts` (lines 183–189)  
-- **Fix:** Intentional — document or restore when pages ship.
-
-### L-05 — `FOOTBALL_DATA_KEY` on legacy Vercel project only
-- **Ops:** Legacy `goalcurrent.live` project disconnected from Git; env vars may diverge.  
-- **Fix:** Ensure all keys live on `goalcurrent-live-nextjs` project only.
-
-### L-06 — Match detail client loading states in HTML
-- **Files:** `src/lib/use-match-detail.ts`  
-- **Impact:** SEO sees “Loading…” until JS runs.  
-- **Fix:** Server-render match summary where possible.
-
-### L-07 — Favicon multi-format references
-- **Files:** `src/app/layout.tsx` (icons block)  
-- **Fix:** Verify all icon sizes exist in `public/icons/`.
-
-### L-08 — Affiliate NordVPN link uses generic offer_id
-- **Files:** `src/lib/site-keys.ts`  
-- **Fix:** Confirm tracking with affiliate dashboard.
-
-### L-09 — Duplicate homepage ticker match entries (visual)
-- **Files:** `src/components/layout/LiveRibbon.tsx`  
-- **Evidence:** Snapshot shows duplicate ticker items (wrap animation).  
-- **Fix:** Cosmetic — verify intentional marquee duplication.
-
-### L-10 — `statistics/player-rankings` and similar stubs indexed if crawled
-- **Fix:** `robots` noindex on coming-soon template.
-
-### L-11 — Git branch `live-promotion-prep` still exists
-- **Ops:** Merged to `main`; branch may confuse contributors.  
-- **Fix:** Archive/delete remote branch after team confirmation.
-
----
-
-## Broken links report
-
-**Internal routes (nav/sitemap sample):** No HTTP 404 on 27 production URLs tested (homepage, PL, WC26, news, APIs, redirects).
-
-| URL | Status | Notes |
-|-----|--------|-------|
-| `/video` | 308 | Redirects to `/videos/` — not broken |
-| `/worldcup2026/favourites` | 308 | Redirects to `/favourites` |
-| `/news/alireza-beiranvand-iran-world-cup-hero` | 308 | Redirects to `/articles/...` |
-| All other sampled routes | 200 | OK |
-
-**Broken internal links:** None confirmed via HTTP probe.  
-**Risk links:** Stub pages that resolve 200 but show “coming soon” (not broken, thin content).
-
----
-
-## Broken / missing media report
-
-| Asset | Referenced in | Local | Production | Issue |
-|-------|---------------|-------|------------|-------|
-| `/images/football-hero-bg.jpg` | `src/app/page.module.css:50` | ✅ | ✅ 200 | OK (locked hero) |
-| `/images/hero-home.png` | — (reserved) | ✅ | ✅ | **Reserved asset — do not delete** |
-| `/icons/icon-192.png` | `manifest.json`, `layout.tsx` | ✅ | ✅ 200 | OK |
-| `/icons/apple-touch-icon.png` | `layout.tsx:47` | ⚠️ verify | not tested | May 404 if missing |
-| Canada article JPGs (9) | `news/articles/football-inspiring-canadas-next-generation/page.tsx` | ✅ | not all tested | OK locally |
-| WC26 flags `/flags/4x3/*.svg` | `TeamFlag.tsx` | ✅ 48 files | ✅ | Synced by prebuild |
-| PWA screenshots | `manifest.json` | ⚠️ verify | not tested | Check `public/icons/screenshot-*.png` |
-
-**Videos:** YouTube embeds via `/api/videos` — 4 items returned; no broken video IDs detected in API response.
-
----
-
-## API health (production)
-
-| Endpoint | Status | configured | Notes |
-|----------|--------|------------|-------|
-| `/api/wc26/scores?live=true` | 200 | true | 1 live match |
-| `/api/wc26/scores?results=wc` | 200 | true | 45 FT results |
-| `/api/wc26/top-scorers` | 200 | true | **Empty scorers** |
-| `/api/wc26/match/[id]` | 200 | — | Match detail (sample fixture-001) |
-| `/api/pl/standings` | 200 | true | Pre-season zeros |
-| `/api/pl/fixtures` | 200 | true | Large payload |
-| `/api/pl/live` | 200 | true | Empty fixtures |
-| `/api/news` | 200 | — | 20 RSS articles |
-| `/api/videos` | 200 | — | 4 videos |
-| `/api/scores` (no query) | **400** | — | Needs query params |
-
----
-
-## Lighthouse-style metrics (homepage, production probe)
-
-| Metric | Value | Rating |
-|--------|------:|--------|
-| TTFB | ~92 ms | Good |
-| DOMContentLoaded | ~231 ms | Good |
-| Load event | ~841 ms | Good |
-| Console errors (homepage) | 0 | Good |
-| Cache | `X-Vercel-Cache: HIT` on repeat | Good |
-
-*Full Lighthouse lab run not executed in this audit; values from Performance API + manual probe.*
-
----
-
-## Accessibility notes (homepage snapshot)
-
-| Check | Result |
-|-------|--------|
-| Single H1 | ✅ “Football live scores & match centre” |
-| Landmarks | ✅ `main`, `nav`, `region` labels |
-| Featured match region | ✅ `aria-label` |
-| Live ticker | ✅ `aria-label="Live scores ticker"` |
-| Subscribe email | ⚠️ `readonly` — not submittable |
-| Cookie banner | ✅ Decline / Accept buttons |
-| Colour contrast | Not lab-tested |
-
----
-
-## Mobile responsiveness
-
-| Check | Result |
-|-------|--------|
-| Mobile bottom tab bar defined | ✅ `MOBILE_BOTTOM_TABS` in `src/lib/nav.ts:98–104` |
-| Viewport meta | ✅ via Next.js `viewport` export |
-| Hero locked compact layout | ✅ `.homeHero` in `page.module.css` |
-| Desktop audit viewport | Browser test at desktop width; mobile CSS uses `@media` in `page.module.css`, `master-chrome.module.css` |
-
-**Recommendation:** Run dedicated 375px viewport pass for tab bar overlap and touch targets.
-
----
-
-## Security notes
-
-| Item | Status |
-|------|--------|
-| API keys server-only | ✅ `src/lib/server/*` |
-| `.env*` gitignored | ✅ |
-| CSP headers | ⚠️ Permissive (`unsafe-inline`, `unsafe-eval`) |
-| `X-Frame-Options: SAMEORIGIN` | ✅ |
-| `robots.txt` blocks `/api/` | ✅ |
-| `ads.txt` present | ✅ |
-
----
-
-## Build report
-
-```
-Next.js 16.2.9 — 234 static pages generated
-TypeScript: pass
-Middleware deprecation warning: present
-Exit code: 0
-```
-
-Full log: `reports/build-audit.txt`  
-Lint log: `reports/lint-audit.txt` (55 problems)
+- Homepage hero **LOCKED** — `public/images/football-hero-bg.jpg`, `src/app/HomeClient.tsx`
+- Flags on teams — `TeamFlag` used across 20+ components
+- Mobile bottom tab bar — `src/components/layout/BottomTabBar.tsx`, `src/lib/nav.ts`
+- Custom 404 — `src/app/not-found.tsx`
+- Error boundary — `src/app/error.tsx`, `src/app/global-error.tsx`
+- Share buttons — `src/components/ui/ShareButtons.tsx` on articles + match
+- API-Football error banners — `src/components/system/ApiFootballStatusBanner.tsx`
+- Debug APIs blocked in production — `src/app/api/debug/*/route.ts` → **403**
+- `robots.txt` — Allow `/`, Disallow `/api/`
+- Redirects — `next.config.ts:10-51` (video, articles, wc26 match, apex hosts)

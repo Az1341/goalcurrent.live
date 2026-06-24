@@ -1,12 +1,12 @@
 # GoalCurrent.live — Full Technical Audit
 
-**Date:** 23 June 2026 · **Branch:** `main` @ `89baa65` · **Score:** **68 / 100**
+**Date:** 24 June 2026 · **Branch:** `main` @ `bdae9c1` · **Tag:** `v1.0.0` · **Score:** **88 / 100**
 
 Full reports saved to:
-- `reports/audit-report.md` — master report
+- `reports/audit-report.md` — master report (this file)
 - `reports/findings.md` — every issue with file paths and fixes
-- `reports/readiness-score.md` — scorecard
-- `reports/build-audit.txt` / `reports/lint-audit.txt` — raw logs
+- `reports/readiness-score.md` — weighted scorecard
+- `reports/build-audit-v1.txt` / `reports/lint-audit-v1.txt` — raw logs
 
 ---
 
@@ -19,251 +19,316 @@ Full reports saved to:
 | **Branch** | `main` |
 | **Vercel** | `goalcurrent-live-nextjs` |
 | **Live site** | https://www.goalcurrent.live |
-| **Deploy** | `git push origin main` → auto production build |
+| **Deploy** | `git push origin main` → Vercel auto production build |
 
 ---
 
 ## 1. Summary of all problems
 
-**What works**
-- Production build passes (**234 routes**)
-- Homepage, live scores, WC26 core, news RSS, PL hub all return **HTTP 200**
-- WC26 live API returns real data (live + 45 FT results at audit time)
-- Locked hero, ticker, favourites, standings preview verified on production
-- No console errors on homepage probe
-- Performance: TTFB ~92ms, full load ~841ms
-- `sitemap.xml`, `robots.txt`, `manifest.json` return **200** on production
-- PWA icons and hero image return **200**
+### What works
 
-**Top blockers (37 issues total)**
+- Production build passes — **306** static paths (`npm run build`)
+- ESLint **0 errors**, 11 warnings (`npm run lint`)
+- All 6 launch focus pages return **HTTP 200** on production
+- Legal/trust pages live: `/privacy`, `/terms`, `/contact`, custom **404**
+- WC26 live API healthy — `/api/wc26/scores?live=true` **200**
+- Top scorers API returns **20 scorers**, `apiAvailable: true`
+- `/api/scores` returns **200** with default payload (no query required)
+- Locked homepage hero, ticker, favourites, standings preview verified
+- **No hydration warnings** on production match page probe
+- AdSense unit detected on production match page (`ins.adsbygoogle` × 1)
+- Share buttons on match + article pages
+- Sentry, CSP (`src/proxy.ts`), API-Football safeguards shipped (Phase 4)
+- ScoreBat wiring in code + CSP allows `scorebat.com` iframes
+- `sitemap.xml` (**200 URLs**), `robots.txt`, `manifest.json` all **200**
+- 48 WC26 flag SVGs synced via `prebuild` script
+- Redirects: `/video/*` → `/videos/*`, `/news/articles/*` → `/articles/*`, `/worldcup2026/match/*` → `/match/*` (all **308**)
+- Debug routes return **403** in production
+
+### Top blockers
 
 | Priority | Count | Top items |
 |----------|------:|-----------|
-| **Critical** | 3 | Incomplete sitemap; placeholder AdSense slots; 34 ESLint errors |
-| **High** | 9 | Empty WC26 top scorers; duplicate article URLs; many “coming soon” stubs; broken subscribe popup; middleware deprecation |
-| **Medium** | 14 | Orphan images; duplicate redirects; CSP too permissive; thin PL pre-season UX |
-| **Low** | 11 | Scaffold SVGs; doc naming `.online`; legacy branch noise |
+| **Critical** | 0 | — |
+| **High** | 5 | Sitemap ~106 URLs short of build paths; AdSense env on Vercel; ScoreBat token; monitoring not set; legacy duplicate page trees |
+| **Medium** | 12 | 11 ESLint warnings; 21 coming-soon stubs; dead Footer/SubscribePopup; contact form unverified |
+| **Low** | 9 | Scaffold SVGs; untracked reports; Lighthouse CI missing |
 
-**Broken links:** **0 confirmed 404s** on 27+ tested URLs (redirects on `/video`, `/worldcup2026/favourites` are intentional).
+### Broken links summary
 
-**Broken media:** No broken hero or flag assets. Reserved (do not delete): `public/images/hero-home.png` — approved alternate hero asset, not wired while locked hero is active.
+**0 confirmed 404s** on 21 tested production URLs (including intentional `/nope-audit-404` → custom 404).
+
+| URL tested | Status |
+|------------|--------|
+| `/`, `/live`, `/worldcup2026`, `/premier-league` | 200 |
+| `/match/fixture-001` | 200 |
+| `/articles/alireza-beiranvand-iran-world-cup-hero` | 200 |
+| `/statistics/live`, `/transfers`, `/favourites/clubs` | 200 (coming-soon, noindex) |
+| `/video/highlights` | 308 → `/videos/highlights` |
+| `/worldcup2026/match/fixture-001` | 308 → `/match/fixture-001` |
+| `/news/articles` | 308 → `/articles` |
+| `/api/debug/wc26` | 403 (expected) |
+
+### Broken media summary
+
+| Asset | Status |
+|-------|--------|
+| `public/images/football-hero-bg.jpg` | ✅ Locked homepage hero |
+| `public/images/hero-home.png` | ✅ Reserved (not wired — do not delete) |
+| `public/flags/4x3/*.svg` (48) | ✅ Synced prebuild |
+| `public/icons/*` PWA + OG | ✅ 200 on production |
+| ScoreBat embed on match | ⚠️ Absent — token or feed match missing |
+| YouTube `/api/videos` | ✅ 200 |
 
 ---
 
 ## 2. Detailed issue list (with file paths)
 
-### Critical
+See `reports/findings.md` for full tables. Summary:
 
-| ID | Issue | File(s) | Fix |
-|----|-------|---------|-----|
-| C-01 | Sitemap has **157 URLs** but build generates **234** paths — PL, videos, statistics, transfers, many sub-pages **missing** | `src/app/sitemap.ts:14-34` | Add all indexable routes to sitemap generators |
-| C-02 | AdSense slots `1234567890` / `2345678901` on homepage | `src/app/HomeClient.tsx:315,342` | Replace with real AdSense slot IDs |
-| C-03 | ESLint **55 problems** (34 errors) — fails `npm run lint` | `reports/lint-audit.txt` | Refactor `setState`-in-effect patterns; fix memo deps |
+### Critical issues
 
-**ESLint error hotspots:**
-- `src/components/AdSenseUnit.tsx:23`
-- `src/components/home/HomeFavouritesStrip.tsx:22`
-- `src/components/home/HomePlSection.tsx:143,182,190,197`
-- `src/components/pl/PlHubClient.tsx:184,192,199,328`
-- `src/components/pl/PlFixturesClient.tsx:107,129,132,143`
-- `src/lib/use-tournament-stats.ts:38`
-- `src/lib/use-wc26-standings.ts:30`
-- `src/lib/use-match-detail.ts:75`
-- `src/lib/use-wc26-tv-region.ts:25`
-- (+ 15 more files in lint log)
+*None.*
 
-### High
+### High issues
 
-| ID | Issue | File(s) | Fix |
-|----|-------|---------|-----|
-| H-01 | `/api/wc26/top-scorers` → `scorers: []`, `apiAvailable: false` | `src/app/api/wc26/top-scorers/route.ts`, `src/lib/server/wc26-top-scorers.ts` | Overlay fallback from finished match scores |
-| H-02 | Two article systems: `/articles/*` vs `/news/articles/*` | `src/data/articles-index.ts`, `src/data/articles.ts`, `src/app/news/articles/[slug]/page.tsx` | One canonical URL + 301 redirects |
-| H-03 | `GET /api/scores` → **400** without query params | `src/app/api/scores/route.ts` | Default query or document contract |
-| H-04 | Docs still say “GoalCurrent.online” | `docs/ENVIRONMENT.md:1,5` | Rename to `.live` |
-| H-05 | Duplicate “News” in `MAIN_NAV` | `src/lib/nav.ts:58` | Remove duplicate entry |
-| H-06 | 12+ routes are “Coming soon” stubs (statistics, video sub-pages) | `src/app/statistics/*/page.tsx`, `src/app/video/*/page.tsx` | `noindex` until built |
-| H-07 | Bracket shows placeholder copy | `src/components/wc26/BracketSection.tsx:37` | Wire data or hide |
-| H-08 | Subscribe popup non-functional (`readonly` email) | `src/components/layout/SubscribePopup.tsx:52-57` | Wire provider or remove |
-| H-09 | Middleware deprecated in Next.js 16 | `src/middleware.ts` | Migrate to `proxy` |
+| ID | Issue | File(s) |
+|----|-------|---------|
+| H-01 | Sitemap 200 vs build 306 paths | `src/app/sitemap.ts` |
+| H-02 | AdSense env vars on Vercel | `src/lib/adsense-slots.ts` |
+| H-03 | ScoreBat highlights not on prod | `src/lib/scorebat/getScoreBatEmbed.ts` |
+| H-04 | Monitoring not configured | External |
+| H-05 | Legacy duplicate routes in build | `src/app/video/*`, `src/app/worldcup2026/match/*`, `src/app/news/articles/*` |
 
-### Medium
+### Medium issues
 
-| ID | Issue | File(s) | Fix |
-|----|-------|---------|-----|
-| M-01 | Reserved asset `hero-home.png` (not referenced in code) | `public/images/hero-home.png` | **Do not delete.** Keep on disk; wire only with Ahmad approval (locked hero is `football-hero-bg.jpg`) |
-| M-02 | Duplicate redirect config | `vercel.json`, `next.config.ts` | Consolidate into `next.config.ts` |
-| M-03 | Legacy `/video/*` → `/videos/*` (308) | `src/app/video/*/page.tsx` | Update internal links |
-| M-04 | `worldcup2026/favourites` redirects | `src/app/worldcup2026/favourites/page.tsx` | Remove stale links |
-| M-05 | PL standings all `played: 0` | `src/app/api/pl/standings/route.ts` | Pre-season empty-state copy |
-| M-06 | `TeamFlag` uses `<img>` not `next/image` | `src/components/TeamFlag.tsx:47` | Optimise or document exception |
-| M-07 | CSP `unsafe-inline` / `unsafe-eval` | `next.config.ts:4-16` | Tighten after integration audit |
-| M-08 | 21 ESLint warnings (unused vars) | Multiple — see lint log | Remove dead code |
-| M-09 | Parallel article data files | `src/data/articles.ts`, `src/data/articles-index.ts` | Merge registry |
-| M-10 | `/articles` hub missing from sitemap | `src/app/sitemap.ts` | Add to `STATIC_PATHS` |
-| M-11 | SSR/client tournament stats timing | `src/lib/use-tournament-stats.ts` | Optional SSR seed |
-| M-12 | Contact form backend unverified | `src/components/info/ContactForm.tsx` | End-to-end test |
-| M-13 | YouTube limited to 4 videos | `src/app/api/videos/route.ts` | Confirm `YOUTUBE_API_KEY` |
-| M-14 | npm `devdir` warning on build | Environment | Clean local npm config |
+| ID | Issue | File(s) |
+|----|-------|---------|
+| M-01 | 11 ESLint warnings | See `reports/lint-audit-v1.txt` |
+| M-02 | 21 coming-soon pages | `src/lib/coming-soon-page.tsx` |
+| M-03 | Reserved `hero-home.png` | `public/images/hero-home.png` |
+| M-04 | Unused `Footer.tsx` | `src/components/layout/Footer.tsx` |
+| M-05 | Dead `SubscribePopup.tsx` | `src/components/layout/SubscribePopup.tsx` |
+| M-06 | Deprecated `AdSenseUnit` | `src/components/AdSenseUnit.tsx` |
+| M-07 | CSP `unsafe-inline` | `src/lib/security/csp.ts` |
+| M-08 | PL pre-season zeros | `src/app/api/pl/standings/route.ts` |
+| M-09 | Contact form unverified | `src/components/info/ContactForm.tsx` |
+| M-10 | Match “Loading…” client-only | `src/lib/use-match-detail.ts` |
+| M-11 | npm `devdir` warning | Local env |
+| M-12 | API simulate hook undocumented | `src/lib/api-football/client.ts` |
 
-### Low
+### Low issues
 
-| ID | Issue | File(s) | Fix |
-|----|-------|---------|-----|
-| L-01 | Unused scaffold SVGs | `public/next.svg`, `vercel.svg`, `globe.svg`, `window.svg`, `file.svg` | Delete |
-| L-02 | Untracked `build-report.txt` | repo root | Gitignore or delete |
-| L-03 | `README.md` vs `ENVIRONMENT.md` naming drift | `docs/ENVIRONMENT.md` | Align to `.live` |
-| L-04 | Statistics nav commented out in More sheet | `src/lib/nav.ts:183-189` | Document or restore |
-| L-05 | Legacy Vercel `goalcurrent.live` project | Vercel dashboard | Archive project |
-| L-06 | Match detail “Loading…” in SSR HTML | `src/lib/use-match-detail.ts` | Server-render summary |
-| L-07 | `apple-touch-icon.png` reference | `src/app/layout.tsx:47` | Verify file exists |
-| L-08 | NordVPN affiliate generic offer | `src/lib/site-keys.ts:13` | Confirm tracking |
-| L-09 | Duplicate ticker marquee items | `src/components/layout/LiveRibbon.tsx` | Cosmetic review |
-| L-10 | Coming-soon pages may index | `src/lib/coming-soon-page.tsx` | Add `noindex` |
-| L-11 | Remote branch `live-promotion-prep` still exists | Git | Archive after sign-off |
+| ID | Issue | File(s) |
+|----|-------|---------|
+| L-01–L-09 | Scaffold SVGs, WIP CSS, reports gitignore, Lighthouse CI, etc. | See `reports/findings.md` |
 
 ---
 
 ## 3. Section-by-section audit
 
 ### Pages
-- **71** `page.tsx` files; **234** static build paths
-- Sections: Core (5), WC26 (11+), PL (11+), News/Articles (8+), Video (10), Statistics (8 stubs), Transfers (4), Legal (6)
-- All sampled production pages return **200**
+
+- **73** `page.tsx` files under `src/app/`
+- **306** paths in production build output
+- Core: `/`, `/live`, `/favourites` (+ clubs/players)
+- WC26: hub, groups, teams, fixtures, standings, venues, bracket, players, match
+- PL: hub, table, fixtures, live, clubs, players, statistics, transfers, match
+- Articles: `/articles` + 17 slugs (+ 7 legacy static duplicates)
+- News: `/news` + category hubs
+- Videos: `/videos` (+ legacy `/video/*` redirect)
+- Statistics: 8 stub routes (noindex)
+- Transfers: 4 stub routes (noindex)
+- Legal: about, contact, privacy, terms, cookies, affiliate-disclosure
 
 ### Links
-- Nav in `src/lib/nav.ts` — all resolve
-- Mobile bottom tabs at `nav.ts:98-104`
-- **0 broken 404s** on 27 tested URLs
-- Intentional redirects: `/video` → `/videos` (307/308), `/worldcup2026/favourites` → `/favourites`
+
+- Primary nav: `src/lib/nav.ts` — `MAIN_NAV`, `MOBILE_BOTTOM_TABS`, `FOOTER_LINKS`
+- No `/video/` links in `src/` (grep clean) — redirects handle bookmarks
+- Footer: Privacy · Terms · Contact · Cookies · Affiliate Disclosure
+- Internal match links use `matchHref()` → `/match/[fixtureId]`
 
 ### Images & video
-| Asset | Status |
-|-------|--------|
-| `football-hero-bg.jpg` | ✅ Used (locked hero) |
-| `hero-home.png` | ✅ Reserved asset (do not delete) |
-| WC26 flags (48 SVG) | ✅ |
-| Canada article photos (10) | ✅ |
-| PWA icons | ✅ 200 on production |
-| YouTube `/api/videos` | ✅ 4 videos |
+
+| Asset | Path | Status |
+|-------|------|--------|
+| Hero (locked) | `public/images/football-hero-bg.jpg` | ✅ |
+| Hero (reserved) | `public/images/hero-home.png` | ✅ unused |
+| Flags | `public/flags/4x3/` (48 SVG) | ✅ |
+| Article photos | `public/images/news/...` | ✅ |
+| PWA icons | `public/icons/` | ✅ |
+| Remote images | `src/lib/images.ts` → `next/image` patterns | ✅ |
+| ScoreBat | `src/components/scorebat/ScoreBatEmbed.tsx` | ⚠️ needs token |
+| YouTube API | `src/app/api/videos/route.ts` | ✅ 200 |
 
 ### APIs
-| Endpoint | Status | Notes |
-|----------|--------|-------|
-| `/api/wc26/scores?live=true` | 200 | Working |
-| `/api/wc26/scores?results=wc` | 200 | 45 results |
-| `/api/wc26/top-scorers` | 200 | **Empty scorers** |
-| `/api/pl/standings` | 200 | Pre-season zeros |
-| `/api/pl/fixtures` | 200 | Large payload |
-| `/api/pl/live` | 200 | Empty |
-| `/api/news` | 200 | 20 articles |
-| `/api/videos` | 200 | 4 videos |
-| `/api/scores` (no query) | 400 | Needs params |
 
-**18 API route files** under `src/app/api/`
+**21 route handlers** under `src/app/api/`
+
+| Endpoint | Prod status | Notes |
+|----------|-------------|-------|
+| `/api/wc26/scores?live=true` | 200 | Live phase |
+| `/api/wc26/scores?results=wc` | 200 | FT results |
+| `/api/wc26/top-scorers` | 200 | 20 scorers |
+| `/api/pl/standings` | 200 | Pre-season |
+| `/api/scores` | 200 | Default matches payload |
+| `/api/news` | 200 | RSS feed |
+| `/api/videos` | 200 | YouTube |
+| `/api/debug/*` | 403 | Prod blocked |
+
+Rate-limit / stale handling: `src/lib/api-football/route-errors.ts`, `src/lib/api-football/cache.ts`
 
 ### Performance
-- Homepage TTFB ~92ms, load ~841ms — **good**
-- PL fixtures API large (~179KB) — consider pagination
-- Static WC26 pages pre-rendered — **good**
-- Vercel CDN cache HIT on repeat visits
+
+| Page | TTFB (probe) | Size |
+|------|-------------:|-----:|
+| `/` | 387 ms | 58 KB |
+| `/live` | 150 ms | 81 KB |
+| `/match/fixture-001` | 117 ms | 44 KB |
+| `/articles/...` | 154 ms | 73 KB |
+
+- Static WC26 match pages SSG (`generateStaticParams` × 72)
+- Hero preload in `src/app/page.tsx`
+- Nav prefetch via `src/components/nav/NavLink.tsx`
+- AdSense lazyOnload + IntersectionObserver ad push
+- **Not run:** Lighthouse mobile, 4× CPU Web Vitals
 
 ### SEO
-- ✅ `metadataBase` in `src/app/layout.tsx`
-- ✅ Per-page metadata on most routes
-- ✅ `robots.txt`, `sitemap.xml` live
-- ❌ Sitemap missing ~77 routes (PL, videos, statistics, transfers, `/articles` hub)
-- ❌ Duplicate article URL namespaces
-- ⚠️ Thin “coming soon” pages may index
+
+- ✅ `metadataBase` — `src/app/layout.tsx:30`
+- ✅ Per-route `generateMetadata` on match, articles, hubs
+- ✅ `robots.ts` — disallow `/api/`
+- ✅ `sitemap.ts` — 200 URLs live
+- ⚠️ ~106 build paths not in sitemap
+- ✅ Coming-soon `noindex` — `src/lib/coming-soon-page.tsx:27`
+- ✅ JSON-LD on match (`SportsEvent`), articles (`NewsArticle`)
+- ✅ Canonical on match pages
+- ☐ Manual: Rich Results Test, Facebook Debugger, Search Console
 
 ### Mobile
-- Bottom tab bar in `MOBILE_BOTTOM_TABS` (`src/lib/nav.ts`)
-- Locked hero responsive CSS (`src/app/page.module.css`)
-- Dedicated 375px QA **recommended**
+
+- Bottom tab bar: `src/components/layout/BottomTabBar.tsx`
+- `MOBILE_BOTTOM_TABS` in `src/lib/nav.ts`
+- Responsive CSS modules on homepage (`src/app/page.module.css`)
+- Locked hero rules in `.cursor/rules/homepage-hero-locked.mdc`
 
 ### Console / network
-- **0 console errors** on homepage production probe
-- Third-party: GA, AdSense, OneSignal (CSP-allowed)
+
+Production match page (browser CDP):
+- Hydration errors: **false**
+- `ins.adsbygoogle`: **1**
+- AdSense script requests: **2**
+- Console errors: **0** on sampled probe
+
+Third-party (CSP-allowed): GA, AdSense, OneSignal, Sentry ingest, ScoreBat
 
 ### Build
-- ✅ `npm run build` — pass, 234 pages
-- ❌ `npm run lint` — 55 problems (34 errors, 21 warnings)
-- ⚠️ Middleware deprecation warning
+
+```
+Next.js 16.2.9 (Turbopack)
+✓ Compiled successfully
+✓ 306 static pages generated
+ƒ Proxy (Middleware) — src/proxy.ts
+```
+
+- `npm run lint` — 11 warnings, 0 errors
+- `prebuild` — `scripts/sync-wc26-flags.mjs`
+- Sentry source maps via `withSentryConfig` in `next.config.ts`
 
 ### Routing
-- `src/middleware.ts` — legacy group path 307
-- `src/app/video/*` — redirect to `/videos/*`
-- `next.config.ts` + `vercel.json` — host redirects to `www.goalcurrent.live`
+
+| Source | Destination | File |
+|--------|-------------|------|
+| `/video/*` | `/videos/*` | `next.config.ts:11-12` |
+| `/news/articles/*` | `/articles/*` | `next.config.ts:18-22` |
+| `/worldcup2026/match/:id` | `/match/:id` | `next.config.ts:29-32` |
+| `goalcurrent.live` | `www.goalcurrent.live` | `next.config.ts:34-39` |
+| Legacy group paths | `/worldcup2026/groups/x` | `src/proxy.ts` |
+| 404 | Custom not-found | `src/app/not-found.tsx` |
+| 500 | `error.tsx` + `global-error.tsx` | Sentry capture |
+
+No `src/middleware.ts` — migrated to `proxy.ts` ✅
 
 ### Security
-- ✅ API keys server-only (`src/lib/server/*`)
-- ✅ Security headers (CSP, X-Frame-Options, nosniff)
-- ⚠️ CSP permissive (`unsafe-inline`, `unsafe-eval`)
-- ✅ `robots.txt` blocks `/api/`
-- ✅ `ads.txt` present
+
+| Control | Location | Status |
+|---------|----------|--------|
+| CSP per-request | `src/proxy.ts`, `src/lib/security/csp.ts` | ✅ |
+| X-Frame-Options, nosniff | `next.config.ts:68+` | ✅ |
+| API keys server-only | `API_FOOTBALL_KEY`, `SCOREBAT_API_TOKEN` | ✅ |
+| Debug routes prod-gated | `src/app/api/debug/*/route.ts` | ✅ 403 |
+| `robots.txt` blocks `/api/` | `src/app/robots.ts` | ✅ |
+| `ads.txt` | `public/ads.txt` | ✅ |
+| Sentry | `sentry.*.config.ts`, `src/instrumentation.ts` | ✅ |
 
 ### Accessibility
-- ✅ H1, landmarks, ARIA regions on homepage
-- ❌ Subscribe email field `readonly`
-- Colour contrast not lab-tested
 
-### Lighthouse-style metrics (homepage)
+- Semantic landmarks: header, main, footer, nav regions on homepage
+- ARIA on ad slots, status banners, share buttons
+- Team flags have alt via `TeamFlag`
+- Subscribe popup disabled (no broken readonly field)
+- Full axe/Lighthouse a11y audit **not run**
 
-| Metric | Value |
-|--------|------:|
-| TTFB | ~92 ms |
-| DOMContentLoaded | ~231 ms |
-| Load | ~841 ms |
+### Lighthouse-style metrics (production probe, not full Lighthouse)
+
+| Metric | Homepage probe |
+|--------|---------------:|
+| TTFB | ~387 ms |
+| HTML size | ~58 KB |
 | Console errors | 0 |
+| Hydration mismatch | 0 |
+| CLS | Not measured (manual DevTools required) |
 
 ---
 
 ## 4. Priority ranking summary
 
-1. **Critical** — Sitemap gaps, AdSense placeholders, ESLint failures
-2. **High** — Top scorers API, article URL duplication, stubs indexed, subscribe popup, middleware
-3. **Medium** — Orphan assets, CSP, PL empty states, contact form
-4. **Low** — Scaffold files, doc cleanup, branch hygiene
+1. **High** — Expand sitemap; verify AdSense + ScoreBat env on Vercel; configure monitoring; prune legacy duplicate routes
+2. **Medium** — Clear ESLint warnings; verify contact form; document API simulate hook
+3. **Low** — Delete scaffold SVGs; gitignore local reports; add Lighthouse CI
 
 ---
 
 ## 5. Action plan (repair entire project)
 
-### Phase 1 — Week 1 (Critical)
-1. Expand `src/app/sitemap.ts` for PL, videos, news sub-hubs, transfers, `/articles`
-2. Replace AdSense slot IDs in `src/app/HomeClient.tsx`
-3. Fix ESLint errors (hooks + PL components)
-4. Canonicalise articles — one URL scheme + redirects
+### Phase 1 — High (pre-tournament launch)
 
-### Phase 2 — Week 2 (High)
-5. WC26 top scorers overlay fallback
-6. `noindex` on `src/lib/coming-soon-page.tsx`
-7. Fix or remove `SubscribePopup.tsx`
-8. Update `docs/ENVIRONMENT.md`
-9. Remove duplicate News in `src/lib/nav.ts`
-10. Migrate `src/middleware.ts` → proxy
+1. Set Vercel env: all `NEXT_PUBLIC_ADSENSE_SLOT_*`, `SCOREBAT_API_TOKEN`, Sentry DSNs
+2. Expand `src/app/sitemap.ts` — add statistics, transfers, favourites, `/news` sub-hubs
+3. Configure UptimeRobot + Sentry API alerts + Vercel Analytics thresholds
+4. Verify ScoreBat embed on a completed match with real feed data
+5. Remove or noindex legacy `src/app/video/*` and duplicate match/article pages
 
-### Phase 3 — Weeks 3–4 (Medium)
-11. Delete scaffold SVGs only — **keep** `public/images/hero-home.png` (reserved asset)
-12. Consolidate redirects into `next.config.ts` only
-13. Bracket real data or hide
-14. PL pre-season empty-state copy
-15. Verify contact form backend
-16. Tighten CSP where possible
+### Phase 2 — Medium (week 2)
 
-### Phase 4 — Ongoing (Low)
-17. Delete `live-promotion-prep` remote branch
-18. Full mobile + Lighthouse CI on key pages
-19. Archive legacy Vercel `goalcurrent.live` project
+6. Fix 11 ESLint warnings (`reports/lint-audit-v1.txt`)
+7. Migrate `PlCommercialStrip` from `AdSenseUnit` → `AdSlot`
+8. Delete dead `SubscribePopup.tsx`, unused `Footer.tsx` shim
+9. E2E test `ContactForm.tsx`
+10. Document `API_FOOTBALL_SIMULATE` in `docs/ENVIRONMENT.md`
+
+### Phase 3 — Low (ongoing)
+
+11. Delete scaffold SVGs in `public/`
+12. Add Lighthouse CI on `/`, `/live`, `/match/fixture-001`
+13. Gitignore `build-report-*.txt`
+14. Ship statistics/transfers content or keep noindex until ready
+
+### Phase 4 — Content (parallel)
+
+15. PL season-start real data UX when API returns fixtures
+16. Bracket page real data (`src/app/worldcup2026/bracket/page.tsx`)
+17. Video hub expansion beyond 4 YouTube items
 
 ---
 
 ## Final TASK summary block
 
 ```
-TASK: Full website technical audit — GoalCurrent.live
+TASK: Full website technical audit — GoalCurrent.live v1.0.0
 STATUS: COMPLETE
-FILES: reports/audit-report.md, reports/findings.md, reports/readiness-score.md, reports/build-audit.txt, reports/lint-audit.txt
-RESULT: 68/100 readiness; 37 issues (3 Critical, 9 High, 14 Medium, 11 Low); build pass; production core OK
-BLOCKERS: Incomplete sitemap; placeholder AdSense slots; 34 ESLint errors
-NEXT STEP: Phase 1 — sitemap expansion, real AdSense IDs, lint fixes, article canonical URLs
+FILES: reports/audit-report.md, reports/findings.md, reports/readiness-score.md, reports/build-audit-v1.txt, reports/lint-audit-v1.txt
+RESULT: 88/100 readiness; 26 issues (0 Critical, 5 High, 12 Medium, 9 Low); build pass (306 routes); production core OK
+BLOCKERS: Sitemap gap (~106 URLs); AdSense/ScoreBat Vercel env verify; monitoring not configured
+NEXT STEP: Phase 1 — Vercel env + sitemap expansion + UptimeRobot/Sentry alerts
 ```

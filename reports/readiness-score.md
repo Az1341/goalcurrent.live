@@ -1,39 +1,32 @@
 # GoalCurrent.live — Readiness Score
 
-**Updated:** 2026-06-23 (Phases 1–3 complete, local uncommitted)  
+**Updated:** 2026-06-24 · **Branch:** `main` @ `bdae9c1` · **Tag:** `v1.0.0`  
 **Production:** https://www.goalcurrent.live
 
-## Overall score: **93 / 100** (target 92–95 met)
+## Overall score: **88 / 100**
 
 | Category | Score | Weight | Notes |
 |----------|------:|--------|-------|
-| Build & deploy | 95 | 15% | Build passes (234 routes). Redirects/CSP in `next.config.ts` only. |
-| Runtime / uptime | 90 | 10% | Production site responding. |
-| APIs & data | 88 | 15% | Scores default 200; top scorers fallback shipped (verify post-deploy). |
-| SEO | 90 | 15% | Sitemap **221 URLs**. Canonical `/articles/*`. Coming-soon `noindex`. |
-| Code quality | 92 | 10% | ESLint **0 errors**. `proxy.ts` (no middleware deprecation). |
-| Performance | 75 | 10% | Unchanged. |
-| Accessibility | 85 | 5% | Subscribe popup disabled. |
-| Security | 72 | 5% | CSP tightened (`unsafe-eval` removed; `unsafe-inline` kept for GA/AdSense/Next). |
-| Content completeness | 58 | 10% | Stubs noindexed; bracket/video hubs partial. |
-| Monetisation | 75 | 5% | AdSense env-driven slots (needs Vercel env). |
+| Build & deploy | 96 | 15% | Build passes · **306** static paths · `v1.0.0` tagged |
+| Runtime / uptime | 92 | 10% | 13/13 focus URLs **200** on production probe |
+| APIs & data | 91 | 15% | All 7 probed APIs **200** · top scorers **20 rows** |
+| SEO | 86 | 15% | Sitemap **200 URLs** · ~106 build paths not in sitemap |
+| Code quality | 90 | 10% | ESLint **0 errors** · **11 warnings** |
+| Performance | 78 | 10% | TTFB 90–457 ms on probe · no Lighthouse run |
+| Accessibility | 86 | 5% | Landmarks/ARIA on homepage · no axe audit |
+| Security | 90 | 5% | CSP via `proxy.ts` · Sentry · debug routes blocked in prod |
+| Content completeness | 74 | 10% | 21 coming-soon stubs (noindex) · ScoreBat needs token |
+| Monetisation | 80 | 5% | AdSense env-driven · 1 ad unit seen on match page |
 
-## Issue counts (post-fix)
+## Issue counts
 
-| Severity | Count | Notes |
-|----------|------:|-------|
-| Critical | 0 | — |
-| High | 0 | Phase 2 resolved |
-| Medium | 4 | See below |
-
-### Remaining medium issues
-
-| ID | Item | Status |
-|----|------|--------|
-| M-01 | `hero-home.png` reserved asset | **Kept** — Ahmad-approved alternate hero; locked hero is `football-hero-bg.jpg` |
-| M-03 | WC26 top scorers empty on prod until deploy | Deploy + API key verify |
-| M-04 | AdSense env vars on Vercel | Set `NEXT_PUBLIC_ADSENSE_SLOT_*` |
-| M-05 | ESLint 21 warnings (img/no-unused-vars) | Non-blocking |
+| Severity | Count |
+|----------|------:|
+| Critical | 0 |
+| High | 5 |
+| Medium | 12 |
+| Low | 9 |
+| **Total** | **26** |
 
 ## Release gates
 
@@ -41,23 +34,10 @@
 |------|--------|
 | Production build | ✅ Pass |
 | ESLint errors | ✅ 0 |
-| Sitemap | ✅ 221 URLs |
-| Redirects single source | ✅ `next.config.ts` (`vercel.json` empty) |
-| Article registry | ✅ `src/data/articles.ts` only |
-| CSP tightened | ✅ No `unsafe-eval` |
-| hero-home.png | ✅ Reserved (not deleted per lock) |
-
-## Phase 3 summary
-
-- **TASK 10:** Confirmed `hero-home.png` unused in code; **not deleted** (reserved + homepage hero locked).
-- **TASK 11:** All redirects consolidated in `next.config.ts`; `vercel.json` → `{}`.
-- **TASK 12:** CSP documented; removed `unsafe-eval`; kept `unsafe-inline` for integrations.
-- **TASK 13:** Removed `articles-index.ts` shim; unified `articles.ts`.
-- **TASK 14:** Sitemap +17 article slugs via `getAllCanonicalArticleSlugs()`; video hub paths added.
-
-## Deploy checklist
-
-1. `git push origin main` (after Ahmad approval)
-2. Verify `/api/scores` → 200 without query params
-3. Verify `/api/wc26/top-scorers` → non-empty `scorers` when API key active
-4. Set AdSense slot env vars on Vercel
+| Sitemap live | ✅ 200 URLs |
+| robots.txt | ✅ Allow `/` · Disallow `/api/` |
+| Custom 404 | ✅ Production verified |
+| Redirects | ✅ `/video`, `/news/articles`, `/worldcup2026/match` → 308 |
+| Phase 4 hardening | ✅ Sentry, CSP, API safeguards, ads, trust UX |
+| Monitoring (UptimeRobot / Sentry alerts) | ☐ Manual |
+| AdSense + ScoreBat env on Vercel | ☐ Manual verify |
