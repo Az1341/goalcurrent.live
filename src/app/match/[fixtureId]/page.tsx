@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import MatchDetailContent from "@/components/match/MatchDetailContent";
+import MatchPageClient from "@/app/match/[fixtureId]/MatchPageClient";
 import { WC26_FIXTURES, getFixtureById, getTeamById } from "@/data/wc26";
 import { isKnownFixtureId, matchHref } from "@/lib/wc26-match";
 import { buildPageMetadata } from "@/lib/page-metadata";
@@ -44,5 +44,5 @@ export default async function MatchPage({ params }: MatchPageProps) {
     notFound();
   }
 
-  return <MatchDetailContent fixtureId={fixtureId} />;
+  return <MatchPageClient fixtureId={fixtureId} />;
 }

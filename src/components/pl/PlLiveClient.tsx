@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
-import type { PlLiveApiResponse } from "@/lib/pl/types";
+import { useLiveFixtures } from "@/lib/client/useLiveFixtures";
+import type { PlFixturesApiResponse } from "@/lib/pl/types";
 import {
   PL_BROADCASTER_UNAVAILABLE,
   resolvePlBroadcasterForVisitor,
@@ -16,51 +17,39 @@ import {
   PlLoadingPanel,
 } from "./PlShared";
 
-type ViewState = "loading" | "error" | "empty" | "ready";
+function withVisitorBroadcasters(
+  body: PlFixturesApiResponse,
+): PlFixturesApiResponse {
+  const visitorBroadcaster = resolvePlBroadcasterForVisitor();
+  if (visitorBroadcaster === PL_BROADCASTER_UNAVAILABLE) {
+    return body;
+  }
+
+  return {
+    ...body,
+    fixtures: body.fixtures.map((fixture) => ({
+      ...fixture,
+      broadcaster: visitorBroadcaster,
+    })),
+  };
+}
 
 export default function PlLiveClient() {
-  const [view, setView] = useState<ViewState>("loading");
-  const [data, setData] = useState<PlLiveApiResponse | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { data: rawData, error, isLoading } = useLiveFixtures();
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      setView("loading");
-      try {
-        const res = await fetch("/api/pl/live", { cache: "no-store" });
-        if (!res.ok) throw new Error(`Request failed (${res.status})`);
-        let body = (await res.json()) as PlLiveApiResponse;
-        const visitorBroadcaster = resolvePlBroadcasterForVisitor();
-        if (visitorBroadcaster !== PL_BROADCASTER_UNAVAILABLE) {
-          body = {
-            ...body,
-            fixtures: body.fixtures.map((fixture) => ({
-              ...fixture,
-              broadcaster: visitorBroadcaster,
-            })),
-          };
-        }
-        if (cancelled) return;
-        setData(body);
-        setView(body.fixtures.length ? "ready" : "empty");
-      } catch (error) {
-        if (cancelled) return;
-        setErrorMessage(
-          error instanceof Error ? error.message : "Unknown error",
-        );
-        setView("error");
-      }
+  const data = useMemo(() => {
+    if (!rawData) {
+      return null;
     }
 
-    void load();
-    const timer = window.setInterval(load, 30_000);
-    return () => {
-      cancelled = true;
-      window.clearInterval(timer);
+    const withBroadcasters = withVisitorBroadcasters(rawData);
+    return {
+      ...withBroadcasters,
+      fixtures: withBroadcasters.fixtures.filter(
+        (fixture) => fixture.status === "LIVE",
+      ),
     };
-  }, []);
+  }, [rawData]);
 
   const emptyMessage =
     data?.error ??
@@ -77,16 +66,18 @@ export default function PlLiveClient() {
         </p>
       </header>
 
-      {view === "loading" ? (
+      {isLoading && !data ? (
         <PlLoadingPanel title="Loading live matches" text="Checking for live PL games…" />
       ) : null}
-      {view === "error" ? (
+
+      {error && !data ? (
         <PlErrorPanel
           title="Could not load live matches"
-          text={errorMessage ?? "The live API is temporarily unavailable."}
+          text="The live API is temporarily unavailable."
         />
       ) : null}
-      {view === "empty" ? (
+
+      {data && !error && data.fixtures.length === 0 ? (
         <>
           <PlEmptyPanel
             title="No Premier League live matches right now"
@@ -100,7 +91,7 @@ export default function PlLiveClient() {
         </>
       ) : null}
 
-      {view === "ready" && data ? (
+      {data && data.fixtures.length > 0 ? (
         <>
           <section className={styles.list} aria-label="Live Premier League matches">
             {data.fixtures.map((fixture) => (

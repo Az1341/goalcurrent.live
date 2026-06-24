@@ -1,22 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import TeamFlag from "@/components/TeamFlag";
-import type { Wc26LiveFixturePayload } from "@/types/fixture-overlay";
+import { getFixtureById, getTeamById } from "@/data/wc26";
+import { useLiveScores } from "@/lib/client/useLiveScores";
+import { isLiveOverlayStatus } from "@/lib/wc26-results-sync";
+import type { Wc26ApiMatch, Wc26LiveFixturePayload } from "@/types/fixture-overlay";
 import styles from "./wc26.module.css";
-
-const POLL_INTERVAL_MS = 30000;
-const LIVE_FIXTURES_URL = "/api/wc26/fixtures?status=LIVE";
-
-async function fetchLiveFixtures(): Promise<Wc26LiveFixturePayload[]> {
-  const res = await fetch(LIVE_FIXTURES_URL, { cache: "no-store" });
-  if (!res.ok) {
-    return [];
-  }
-
-  const data: unknown = await res.json();
-  return Array.isArray(data) ? (data as Wc26LiveFixturePayload[]) : [];
-}
 
 function formatMinute(elapsed: number | null): string {
   if (elapsed == null || elapsed < 0) {
@@ -25,35 +15,50 @@ function formatMinute(elapsed: number | null): string {
   return `${elapsed}'`;
 }
 
+function mapLiveMatch(match: Wc26ApiMatch): Wc26LiveFixturePayload | null {
+  if (!isLiveOverlayStatus(match.status)) {
+    return null;
+  }
+
+  const fixture = getFixtureById(match.fixtureId);
+  if (!fixture) {
+    return null;
+  }
+
+  const home = getTeamById(fixture.homeTeamId);
+  const away = getTeamById(fixture.awayTeamId);
+
+  return {
+    fixtureId: match.fixtureId,
+    homeTeamId: fixture.homeTeamId,
+    awayTeamId: fixture.awayTeamId,
+    home: {
+      name: home?.name ?? fixture.homeTeamId,
+      goals: match.homeScore ?? 0,
+    },
+    away: {
+      name: away?.name ?? fixture.awayTeamId,
+      goals: match.awayScore ?? 0,
+    },
+    fixture: {
+      status: { elapsed: match.elapsed },
+    },
+  };
+}
+
 export default function Wc26Scoreboard() {
-  const [fixtures, setFixtures] = useState<Wc26LiveFixturePayload[]>([]);
+  const { data, isLoading } = useLiveScores();
 
-  useEffect(() => {
-    let cancelled = false;
+  const fixtures = useMemo(() => {
+    const matches = data?.matches ?? [];
+    return matches
+      .map(mapLiveMatch)
+      .filter((row): row is Wc26LiveFixturePayload => row != null);
+  }, [data]);
 
-    async function load(): Promise<void> {
-      try {
-        const liveFixtures = await fetchLiveFixtures();
-        if (!cancelled) {
-          setFixtures(liveFixtures);
-        }
-      } catch {
-        if (!cancelled) {
-          setFixtures([]);
-        }
-      }
-    }
-
-    void load();
-    const intervalId = window.setInterval(() => {
-      void load();
-    }, POLL_INTERVAL_MS);
-
-    return () => {
-      cancelled = true;
-      window.clearInterval(intervalId);
-    };
-  }, []);
+  if (isLoading && fixtures.length === 0) {
+    return null;
+  }
 
   if (fixtures.length === 0) {
     return null;

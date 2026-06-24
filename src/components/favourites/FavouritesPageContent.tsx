@@ -8,7 +8,6 @@ import {
   removeFavouriteTeam,
 } from "@/lib/favourites";
 import { useFavourites } from "@/lib/use-favourites";
-import { useLiveScores } from "@/lib/use-live-scores";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { formatVisitorKickoff } from "@/lib/wc26-format";
 import { matchHref } from "@/lib/wc26-match";
@@ -31,8 +30,7 @@ const COMPETITION_LABELS: Record<string, string> = {
 export default function FavouritesPageContent() {
   const { teams, matches, competitions } = useFavourites();
   const { tvRegion } = useWc26TvRegion();
-  useLiveScores(); // polls live scores and updates fixture overlay
-  const effectiveFixtures = useEffectiveFixtures(); // reactive — updates when scores change
+  const effectiveFixtures = useEffectiveFixtures();
   const hasAny =
     teams.length > 0 || matches.length > 0 || competitions.length > 0;
 

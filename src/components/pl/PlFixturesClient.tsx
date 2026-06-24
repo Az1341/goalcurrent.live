@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useCallback,
   useDeferredValue,
   useEffect,
   useMemo,
@@ -9,6 +8,7 @@ import {
 } from "react";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
 import { PlMobileAdSlot } from "@/components/pl/PlCommercialStrip";
+import { useLiveFixtures } from "@/lib/client/useLiveFixtures";
 import type { PlFixtureRow, PlFixturesApiResponse } from "@/lib/pl/types";
 import {
   PL_BROADCASTER_UNAVAILABLE,
@@ -17,12 +17,10 @@ import {
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlFixtures.module.css";
 
-type ViewState = "loading" | "error" | "empty" | "ready";
 type WeekFilter = "all" | number;
 
 const MATCHWEEKS = Array.from({ length: 38 }, (_, index) => index + 1);
 const ALL_TAB_BATCH = 40;
-const FETCH_TIMEOUT_MS = 45_000;
 
 function withVisitorBroadcasters(
   body: PlFixturesApiResponse,
@@ -49,13 +47,16 @@ function sortByKickoff(fixtures: PlFixtureRow[]): PlFixtureRow[] {
 }
 
 export default function PlFixturesClient() {
-  const [view, setView] = useState<ViewState>("loading");
-  const [data, setData] = useState<PlFixturesApiResponse | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { data: rawData, error, isLoading, mutate } = useLiveFixtures();
+
+  const data = useMemo(
+    () => (rawData ? withVisitorBroadcasters(rawData) : null),
+    [rawData],
+  );
+
   /** Default to matchweek 1 — rendering all 380 cards blocks the main thread. */
   const [selectedWeek, setSelectedWeek] = useState<WeekFilter>(1);
   const [allTabVisible, setAllTabVisible] = useState(ALL_TAB_BATCH);
-  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     const raw = new URLSearchParams(window.location.search).get("fixture");
@@ -65,69 +66,6 @@ export default function PlFixturesClient() {
       window.location.replace(`/premier-league/match/${id}`);
     }
   }, []);
-
-  const loadFixtures = useCallback(async (signal: AbortSignal) => {
-    setView("loading");
-    setErrorMessage(null);
-
-    const res = await fetch("/api/pl/fixtures", {
-      cache: "no-store",
-      signal,
-    });
-    if (!res.ok) {
-      throw new Error(`Request failed (${res.status})`);
-    }
-
-    const raw = (await res.json()) as PlFixturesApiResponse;
-    const fixtures = Array.isArray(raw.fixtures) ? raw.fixtures : [];
-    const body = withVisitorBroadcasters({ ...raw, fixtures });
-
-    setData(body);
-    setAllTabVisible(ALL_TAB_BATCH);
-
-    if (!body.fixtures.length) {
-      setView("empty");
-      return;
-    }
-
-    setView("ready");
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    let cancelled = false;
-    let timedOut = false;
-    const timeoutId = window.setTimeout(() => {
-      if (!cancelled) {
-        timedOut = true;
-        controller.abort();
-      }
-    }, FETCH_TIMEOUT_MS);
-
-    const run = () => {
-      void loadFixtures(controller.signal).catch((error) => {
-        if (cancelled) return;
-
-        setData(null);
-        setErrorMessage(
-          timedOut
-            ? "Fixtures request timed out. Check your connection and try again."
-            : error instanceof Error
-              ? error.message
-              : "Unknown error",
-        );
-        setView("error");
-      });
-    };
-
-    Promise.resolve().then(run);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timeoutId);
-      controller.abort();
-    };
-  }, [loadFixtures, reloadKey]);
 
   const availableWeeks = useMemo(() => {
     if (!data?.fixtures.length) return [] as number[];
@@ -166,6 +104,11 @@ export default function PlFixturesClient() {
       ? "Fixtures will appear when the API key is configured on the server."
       : "The 2026/27 Premier League fixtures are not available yet. Check back when the season starts.");
 
+  const showLoading = isLoading && !data;
+  const showError = Boolean(error) && !data;
+  const showEmpty = data != null && data.fixtures.length === 0;
+  const showReady = data != null && data.fixtures.length > 0;
+
   return (
     <main className={styles.plPage}>
       <header className={styles.hero}>
@@ -176,7 +119,7 @@ export default function PlFixturesClient() {
         </p>
       </header>
 
-      {view === "loading" ? (
+      {showLoading ? (
         <div className={styles.panel} role="status" aria-live="polite">
           <div className={styles.spinner} aria-hidden="true" />
           <p className={styles.panelTitle}>Loading fixtures</p>
@@ -184,31 +127,30 @@ export default function PlFixturesClient() {
         </div>
       ) : null}
 
-      {view === "error" ? (
+      {showError ? (
         <div className={styles.panel} role="alert">
           <p className={styles.panelTitle}>Could not load fixtures</p>
           <p className={styles.panelText}>
-            {errorMessage ??
-              "The fixtures API is temporarily unavailable. Please try again shortly."}
+            The fixtures API is temporarily unavailable. Please try again shortly.
           </p>
           <button
             type="button"
             className={styles.retryBtn}
-            onClick={() => setReloadKey((key) => key + 1)}
+            onClick={() => void mutate()}
           >
             Try again
           </button>
         </div>
       ) : null}
 
-      {view === "empty" ? (
+      {showEmpty ? (
         <div className={styles.panel} role="status">
           <p className={styles.panelTitle}>Fixtures not available yet</p>
           <p className={styles.panelText}>{emptyMessage}</p>
         </div>
       ) : null}
 
-      {view === "ready" && data ? (
+      {showReady && data ? (
         <>
           <div className={styles.weekFilter} role="tablist" aria-label="Matchweek filter">
             <button

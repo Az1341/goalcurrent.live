@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { useLiveScores } from "@/lib/use-live-scores";
 import {
   buildHomepageMatchView,
   isLiveMatchStatus,
@@ -210,7 +209,6 @@ function ColumnCard({
 }
 
 export default function Home() {
-  useLiveScores();
   const fixtures = useEffectiveFixtures();
   const fixtureById = new Map(fixtures.map((f) => [f.id, f]));
   const featuredFixture = selectFeaturedFixture(fixtures);

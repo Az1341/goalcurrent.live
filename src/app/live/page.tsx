@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import LiveMatchCentre from "@/components/live/LiveMatchCentre";
+import LivePageClient from "@/app/live/LivePageClient";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 
@@ -11,6 +11,6 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function LivePage() {
-  return <LiveMatchCentre />;
+  return <LivePageClient />;
 }
 

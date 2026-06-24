@@ -31,7 +31,7 @@ import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useNewsFeed } from "@/lib/use-news-feed";
-import { useWc26TopScorers } from "@/lib/use-wc26-top-scorers";
+import { useLiveTopScorers } from "@/lib/client/useLiveTopScorers";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import { formatKickoffUtc, formatVisitorKickoff } from "@/lib/wc26-format";
 import { useIsClient } from "@/lib/use-is-client";
@@ -110,11 +110,9 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
   const title = groupLabel(groupId);
   const teams = getTeamsByGroup(groupId);
   const fixtures = useEffectiveFixtures();
-  const {
-    data: topScorersData,
-    scorers,
-    loading: topScorersLoading,
-  } = useWc26TopScorers();
+  const { data: topScorersData, isLoading: topScorersLoading } =
+    useLiveTopScorers();
+  const scorers = topScorersData?.scorers ?? [];
   const { articles, loading: newsLoading, usingFallback } = useNewsFeed();
   const { tvRegion } = useWc26TvRegion();
 
@@ -277,9 +275,10 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
           embedded
           scorers={scorers}
           loading={topScorersLoading}
-          configured={topScorersData.configured}
-          matchesProcessed={topScorersData.matchesProcessed}
-          matchesWithVerifiedEvents={topScorersData.matchesWithVerifiedEvents}
+          configured={topScorersData?.configured}
+          matchesProcessed={topScorersData?.matchesProcessed}
+          matchesWithVerifiedEvents={topScorersData?.matchesWithVerifiedEvents}
+          fetchedAt={topScorersData?.fetchedAt}
         />
       </section>
 

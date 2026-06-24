@@ -5,11 +5,6 @@ import type {
   Wc26ScoresApiResponse,
 } from "@/types/fixture-overlay";
 
-const RESULTS_URL = "/api/wc26/scores?results=wc";
-const LIVE_URL = "/api/wc26/scores?live=true";
-const RESULTS_INTERVAL_MS = 300_000;
-const LIVE_INTERVAL_MS = 30_000;
-
 export const WC26_SYNC_STATUS_EVENT = "wc26:sync-status";
 
 export type Wc26SyncStatus = "pending" | "synced" | "unconfigured";
@@ -86,47 +81,8 @@ function overlayFromMatches(
   return partial;
 }
 
-function isMissingKeyPayload(body: unknown): boolean {
-  if (!body || typeof body !== "object") {
-    return false;
-  }
-  const text = JSON.stringify(body).toLowerCase();
-  return (
-    text.includes("missing application key") ||
-    text.includes("application key missing")
-  );
-}
-
 function isUnconfiguredScoresResponse(data: Wc26ScoresApiResponse): boolean {
   return data.configured === false || data.phase === "unconfigured";
-}
-
-async function fetchScores(url: string): Promise<FetchScoresOutcome> {
-  try {
-    const res = await fetch(url, { cache: "no-store" });
-    let body: unknown = null;
-    try {
-      body = await res.json();
-    } catch {
-      body = null;
-    }
-
-    if (!res.ok) {
-      if (isMissingKeyPayload(body)) {
-        return { status: "unconfigured" };
-      }
-      return { status: "unconfigured" };
-    }
-
-    const data = body as Wc26ScoresApiResponse;
-    if (isUnconfiguredScoresResponse(data)) {
-      return { status: "unconfigured" };
-    }
-
-    return { status: "ok", data };
-  } catch {
-    return { status: "unconfigured" };
-  }
 }
 
 function applyScoresOutcome(outcome: FetchScoresOutcome): boolean {
@@ -144,97 +100,14 @@ function applyScoresOutcome(outcome: FetchScoresOutcome): boolean {
   return true;
 }
 
-/** Merge finished WC26 results into the client overlay. */
-export async function syncWc26Results(): Promise<boolean> {
-  const outcome = await fetchScores(RESULTS_URL);
-  if (outcome.status === "unconfigured") {
+/** Merge a WC26 scores API payload into the client fixture overlay (SWR-driven). */
+export function applyWc26ScoresToOverlay(data: Wc26ScoresApiResponse): void {
+  if (isUnconfiguredScoresResponse(data)) {
     setSyncStatus("unconfigured");
-    return false;
-  }
-  return applyScoresOutcome(outcome);
-}
-
-/** Merge in-progress WC26 matches into the client overlay. */
-export async function syncWc26Live(): Promise<boolean> {
-  const outcome = await fetchScores(LIVE_URL);
-  if (outcome.status === "unconfigured") {
-    setSyncStatus("unconfigured");
-    return false;
-  }
-  return applyScoresOutcome(outcome);
-}
-
-export type Wc26SyncController = {
-  stop: () => void;
-};
-
-/** Start polling WC26 results + live endpoints into the overlay. */
-export function startWc26ResultsSync(): Wc26SyncController {
-  if (typeof window === "undefined") {
-    return { stop: () => undefined };
+    return;
   }
 
-  setSyncStatus("pending");
-
-  let resultsTimer: ReturnType<typeof setInterval> | undefined;
-  let liveTimer: ReturnType<typeof setInterval> | undefined;
-  let stopped = false;
-
-  const stopPolling = () => {
-    if (stopped) {
-      return;
-    }
-    stopped = true;
-    if (resultsTimer) {
-      clearInterval(resultsTimer);
-      resultsTimer = undefined;
-    }
-    if (liveTimer) {
-      clearInterval(liveTimer);
-      liveTimer = undefined;
-    }
-  };
-
-  const pollScores = async (url: string): Promise<boolean> => {
-    if (stopped) {
-      return false;
-    }
-
-    const outcome = await fetchScores(url);
-    if (outcome.status === "unconfigured") {
-      setSyncStatus("unconfigured");
-      stopPolling();
-      return false;
-    }
-
-    applyScoresOutcome(outcome);
-    return true;
-  };
-
-  const tickResults = () => {
-    void pollScores(RESULTS_URL);
-  };
-
-  const tickLive = () => {
-    void pollScores(LIVE_URL);
-  };
-
-  void (async () => {
-    if (!(await pollScores(RESULTS_URL))) {
-      return;
-    }
-    if (!(await pollScores(LIVE_URL))) {
-      return;
-    }
-    if (!stopped) {
-      resultsTimer = setInterval(tickResults, RESULTS_INTERVAL_MS);
-      liveTimer = setInterval(tickLive, LIVE_INTERVAL_MS);
-    }
-  })();
-
-  return {
-    stop: stopPolling,
-  };
+  applyScoresOutcome({ status: "ok", data });
 }
 
 export function isLiveOverlayStatus(status: string): boolean {
