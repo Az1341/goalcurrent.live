@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
 import TeamFlag from "@/components/TeamFlag";
 import TeamLink from "@/components/wc26/TeamLink";
@@ -211,6 +211,27 @@ export default function FixturesCalendar() {
   );
   const [selectedDate, setSelectedDate] = useState("");
   const syncStatus = useWc26SyncStatus();
+  const calRowRef = useRef<HTMLDivElement>(null);
+  const dayButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const initialScrollDone = useRef(false);
+
+  const scrollActiveDayIntoView = useCallback(
+    (dateKey: string, behavior: ScrollBehavior = "smooth") => {
+      const container = calRowRef.current;
+      const day = dayButtonRefs.current.get(dateKey);
+      if (!container || !day) {
+        return;
+      }
+      const containerWidth = container.offsetWidth;
+      const dayOffset = day.offsetLeft + day.offsetWidth / 2;
+      const scrollPosition = dayOffset - containerWidth / 2;
+      container.scrollTo({
+        left: Math.max(0, scrollPosition),
+        behavior,
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     if (clientReady && todayKey) {
@@ -258,6 +279,18 @@ export default function FixturesCalendar() {
       ),
     [fixtures, search, groupId, stage, status, activeDateKey],
   );
+
+  useEffect(() => {
+    if (!activeDateKey || !clientReady) {
+      return;
+    }
+    const behavior: ScrollBehavior = initialScrollDone.current ? "smooth" : "instant";
+    const frame = requestAnimationFrame(() => {
+      scrollActiveDayIntoView(activeDateKey, behavior);
+      initialScrollDone.current = true;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [activeDateKey, clientReady, calendarDays.length, scrollActiveDayIntoView]);
 
   return (
     <section aria-labelledby="fixtures-calendar-heading" className={styles.fixturesCalendar}>
@@ -364,7 +397,12 @@ export default function FixturesCalendar() {
             {fixtures.length} loaded · {WC26_TOURNAMENT.fixtureCount} total
           </div>
         </div>
-        <div className={styles.fixCalRow} role="tablist" aria-label="Match days">
+        <div
+          ref={calRowRef}
+          className={styles.fixCalRow}
+          role="tablist"
+          aria-label="Match days"
+        >
           {calendarDays.map((day) => {
             const isSelected = day.dateKey === activeDateKey;
             const isToday = todayKey !== "" && day.dateKey === todayKey;
@@ -373,6 +411,13 @@ export default function FixturesCalendar() {
                 key={day.dateKey}
                 type="button"
                 role="tab"
+                ref={(node) => {
+                  if (node) {
+                    dayButtonRefs.current.set(day.dateKey, node);
+                  } else {
+                    dayButtonRefs.current.delete(day.dateKey);
+                  }
+                }}
                 aria-selected={isSelected}
                 aria-current={isToday ? "date" : undefined}
                 className={`${styles.fixCalDay} ${isSelected ? styles.fixCalDayActive : ""} ${isToday ? styles.fixCalDayToday : ""}`}

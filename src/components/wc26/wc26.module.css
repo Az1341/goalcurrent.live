@@ -389,22 +389,33 @@ a.standingsHead:hover {
   background: #2a3a52;
 }
 
+.tableGroup,
 .standingsTable {
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8125rem;
+}
+
+.tableGroup th,
+.tableGroup td,
+.standingsTable th,
+.standingsTable td {
+  padding: 4px 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .standingsTable th {
-  padding: 9px 10px;
   text-align: center;
   font-weight: 600;
   color: var(--gc-content-accent-hover);
   border-bottom: 1px solid var(--gc-content-border);
   background: var(--gc-content-surface);
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .standingsTable th:first-child {
@@ -412,11 +423,9 @@ a.standingsHead:hover {
 }
 
 .standingsTable td {
-  padding: 9px 10px;
   text-align: center;
   border-bottom: 1px solid var(--gc-border);
   color: var(--gc-text-secondary);
-  font-size: 0.8125rem;
 }
 
 .standingsTable tr:last-child td {
@@ -428,26 +437,30 @@ a.standingsHead:hover {
 }
 
 .colTeam {
+  width: 32%;
   text-align: left !important;
   font-weight: 500;
   color: var(--gc-text-primary);
 }
 
-.standingsRowQualified td {
-  background: rgba(21, 128, 61, 0.08);
-}
-
-.standingsRowQualified td:first-child {
-  border-left: 3px solid var(--gc-success);
-}
-
-.standingsQualLabel {
-  margin-left: 6px;
-  font-size: 0.6875rem;
+.colPts {
+  width: 8%;
   font-weight: 700;
-  color: var(--gc-success);
-  white-space: nowrap;
-  flex-shrink: 0;
+}
+
+.colQual {
+  width: 6%;
+  text-align: center;
+}
+
+.badgeQ {
+  background: #22c55e;
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
 }
 
 .standingsEmpty {
@@ -1735,6 +1748,8 @@ a.standingsHead:hover {
   margin-bottom: 14px;
   color: var(--gc-text-primary);
   box-shadow: var(--gc-shadow);
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .fixCalHead {
@@ -1767,14 +1782,19 @@ a.standingsHead:hover {
 
 .fixCalRow {
   display: flex;
-  gap: 8px;
+  gap: 0;
   overflow-x: auto;
-  padding-bottom: 4px;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 0 20px 4px;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 
 .fixCalDay {
-  min-width: 54px;
+  min-width: 48px;
+  margin: 0 6px;
   border: 1px solid var(--gc-border);
   border-radius: var(--gc-radius);
   padding: 9px 6px;
@@ -1783,6 +1803,7 @@ a.standingsHead:hover {
   background: var(--gc-content-surface-alt);
   color: var(--gc-text-primary);
   font: inherit;
+  font-size: 14px;
   flex-shrink: 0;
 }
 
@@ -1798,15 +1819,17 @@ a.standingsHead:hover {
 }
 
 .fixCalDayToday:not(.fixCalDayActive) {
-  background-color: #5a0f0f;
-  color: #fff;
-  font-weight: 600;
-  border-color: #5a0f0f;
+  font-weight: 700;
+  color: #ffffff;
+  background: #2563eb;
+  border-radius: 6px;
+  padding: 4px 8px;
+  border-color: #2563eb;
 }
 
 .fixCalDayToday:not(.fixCalDayActive) .fixCalDow,
 .fixCalDayToday:not(.fixCalDayActive) .fixCalCnt {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .fixCalDow {

@@ -24,12 +24,16 @@
   font-size: 0.9375rem;
   color: var(--gc-text-secondary);
   line-height: var(--gc-line-height);
-  margin-bottom: 22px;
+  margin-bottom: 16px;
   max-width: 640px;
 }
 
 .section {
   margin-bottom: 28px;
+}
+
+.section:first-of-type {
+  margin-top: 0;
 }
 
 .sectionToday {
@@ -183,8 +187,14 @@
 }
 
 .syncStatusSlot {
-  min-height: 28px;
-  margin: -10px 0 14px;
+  margin: 0 0 16px;
+}
+
+.liveAdWrap [data-gc-content-ad] {
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 28px 0 0;
 }
 
 .syncStatus {
@@ -234,5 +244,17 @@
 @media (max-width: 640px) {
   .content {
     padding: 16px 16px 0;
+  }
+
+  .pageIntro {
+    margin-bottom: 12px;
+  }
+
+  .syncStatusSlot {
+    margin-bottom: 12px;
+  }
+
+  .liveAdWrap [data-gc-content-ad] {
+    margin-top: 20px;
   }
 }

@@ -16,7 +16,7 @@ const STANDINGS_COLUMNS = [
   { key: "goalsFor", label: "GF" },
   { key: "goalsAgainst", label: "GA" },
   { key: "goalDifference", label: "GD" },
-  { key: "points", label: "Pts" },
+  { key: "points", label: "PTS" },
 ] as const;
 
 type StandingsTableProps = {
@@ -61,18 +61,27 @@ export default function StandingsTable({
   return (
     <div className={styles.standingsShell}>
       {title ? <div className={styles.standingsHead}>{title}</div> : null}
-      <table className={styles.standingsTable}>
+      <table className={`${styles.tableGroup} ${styles.standingsTable}`}>
         <thead>
           <tr>
             {STANDINGS_COLUMNS.map((col) => (
               <th
                 key={col.key}
                 scope="col"
-                className={col.key === "team" ? styles.colTeam : undefined}
+                className={
+                  col.key === "team"
+                    ? styles.colTeam
+                    : col.key === "points"
+                      ? styles.colPts
+                      : undefined
+                }
               >
                 {col.label}
               </th>
             ))}
+            <th scope="col" className={styles.colQual}>
+              Q
+            </th>
             {showForm ? (
               <th scope="col" className={styles.colForm}>
                 Form
@@ -90,7 +99,6 @@ export default function StandingsTable({
             return (
               <tr
                 key={row.teamId}
-                className={qualified ? styles.standingsRowQualified : undefined}
                 aria-label={
                   qualified && team
                     ? `${team.name} — qualification zone`
@@ -105,9 +113,6 @@ export default function StandingsTable({
                     ) : (
                       <span>{row.teamId}</span>
                     )}
-                    {qualified ? (
-                      <span className={styles.standingsQualLabel}>(Qualified)</span>
-                    ) : null}
                   </span>
                 </td>
                 <td>{row.played}</td>
@@ -117,7 +122,10 @@ export default function StandingsTable({
                 <td>{row.goalsFor}</td>
                 <td>{row.goalsAgainst}</td>
                 <td>{row.goalDifference}</td>
-                <td>{row.points}</td>
+                <td className={styles.colPts}>{row.points}</td>
+                <td className={styles.colQual}>
+                  {qualified ? <span className={styles.badgeQ}>Q</span> : null}
+                </td>
                 {showForm ? (
                   <td className={styles.colForm}>
                     <FormBadges form={formByTeamId?.get(row.teamId) ?? []} />

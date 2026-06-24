@@ -122,21 +122,21 @@ export default function LiveMatchCentre() {
         honest empty states — no hardcoded results.
       </p>
 
-      <div className={styles.syncStatusSlot} aria-hidden={syncStatus === "pending"}>
-        {syncStatus === "pending" ? (
-          <p className={styles.syncStatus} role="status" aria-live="polite">
-            <span className={styles.syncStatusDot} aria-hidden="true" />
-            Syncing live data…
-          </p>
-        ) : null}
-        {syncStatus === "degraded" ? (
-          <p className={styles.syncStatusDegraded} role="status" aria-live="polite">
-            Showing last known scores — live provider is temporarily limited.
-          </p>
-        ) : null}
-      </div>
-
-      <ContentAdSlot slot={ADSENSE_SLOTS.liveMid} minHeight={120} />
+      {syncStatus === "pending" || syncStatus === "degraded" ? (
+        <div className={styles.syncStatusSlot}>
+          {syncStatus === "pending" ? (
+            <p className={styles.syncStatus} role="status" aria-live="polite">
+              <span className={styles.syncStatusDot} aria-hidden="true" />
+              Syncing live data…
+            </p>
+          ) : null}
+          {syncStatus === "degraded" ? (
+            <p className={styles.syncStatusDegraded} role="status" aria-live="polite">
+              Showing last known scores — live provider is temporarily limited.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       <LiveSection
         id="live-now-heading"
@@ -146,6 +146,10 @@ export default function LiveMatchCentre() {
         showLiveIndicator
         tone="live"
       />
+
+      <div className={styles.liveAdWrap}>
+        <ContentAdSlot slot={ADSENSE_SLOTS.liveMid} minHeight={120} />
+      </div>
 
       <LiveSection
         id="today-heading"
