@@ -1,12 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
-import LiveMatchCentre from "@/components/live/LiveMatchCentre";
 import JsonLdScript from "@/components/seo/JsonLdScript";
 import { getTeamById } from "@/data/wc26";
 import { useLiveScores } from "@/lib/client/useLiveScores";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
+
+const LiveMatchCentre = dynamic(
+  () => import("@/components/live/LiveMatchCentre"),
+  { ssr: true, loading: () => null },
+);
 
 /** Client shell for /live — subscribes to unified WC26 live-scores SWR cache. */
 export default function LivePageClient() {

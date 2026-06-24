@@ -63,7 +63,7 @@
   max-width: var(--gc-content-max);
   width: calc(100% - 32px);
   margin: 12px auto 0;
-  min-height: 50px;
+  min-height: 120px;
 }
 
 .adWrapDesktopOnly {
@@ -75,7 +75,7 @@
   max-width: var(--gc-content-max);
   width: 100%;
   margin: 0 0 12px;
-  min-height: 50px;
+  min-height: 120px;
 }
 
 @media (max-width: 767px) {

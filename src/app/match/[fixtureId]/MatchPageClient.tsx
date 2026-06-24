@@ -1,13 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo } from "react";
-import MatchDetailContent from "@/components/match/MatchDetailContent";
 import JsonLdScript from "@/components/seo/JsonLdScript";
 import { getFixtureById, getTeamById, getVenueById } from "@/data/wc26";
 import { useLiveScores } from "@/lib/client/useLiveScores";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
+
+const MatchDetailContent = dynamic(
+  () => import("@/components/match/MatchDetailContent"),
+  { ssr: true, loading: () => null },
+);
 
 type MatchPageClientProps = {
   fixtureId: string;

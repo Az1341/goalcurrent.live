@@ -1,7 +1,9 @@
 ﻿import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { AdSenseScript } from "@/components/ads/AdSenseScript";
+import { GA } from "@/components/analytics/GA";
 import Layout from "@/components/layout/Layout";
-import StagingIntegrations from "@/components/layout/StagingIntegrations";
+import { OneSignalInit } from "@/components/push/OneSignalInit";
 import { BRAND_THEME_COLOR } from "@/lib/site-integrations";
 import { SITE_URL, SITE_NAME } from "@/lib/site-url";
 import "./globals.css";
@@ -73,7 +75,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.variable}>
         <Layout>{children}</Layout>
-        <StagingIntegrations />
+        <GA />
+        <OneSignalInit />
+        <AdSenseScript />
       </body>
     </html>
   );
