@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ARTICLE_INDEX, ARTICLES, articleHref } from "@/data/articles";
+import { getArticleCardImage } from "@/lib/article-hub";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import styles from "./article.module.css";
 
@@ -35,18 +37,33 @@ export default function ArticlesIndexPage() {
         </div>
 
         <div className={styles.articlesGrid}>
-          {ARTICLE_INDEX.map((a) => (
+          {ARTICLE_INDEX.map((a) => {
+            const image = getArticleCardImage(a.slug);
+            return (
             <Link
               key={a.slug}
               href={articleHref(a.slug)}
               className={styles.articleIndexCard}
             >
+              {image ? (
+                <div className={styles.articleIndexImageWrap}>
+                  <Image
+                    src={image}
+                    alt=""
+                    width={640}
+                    height={280}
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    className={styles.articleIndexImage}
+                  />
+                </div>
+              ) : null}
               <span className={styles.pill}>{a.category}</span>
               <h2>{a.title}</h2>
               <p>{a.excerpt}</p>
               <span className={styles.readMore}>Read article →</span>
             </Link>
-          ))}
+            );
+          })}
           {sortedArticles.map((a) => (
             <Link
               key={a.slug}

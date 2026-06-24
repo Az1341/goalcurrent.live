@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
@@ -12,6 +13,17 @@ export default function ArticleJune23Recap() {
     <StaticArticleSeo slug={SLUG}>
       <main className={styles.articlePage}>
         <div className={styles.stack}>
+          <div className={styles.articleBanner}>
+            <Image
+              src="/images/football-hero-bg.jpg"
+              alt=""
+              width={1280}
+              height={360}
+              priority
+              sizes="(max-width: 768px) 100vw, 896px"
+              className={styles.articleBannerImage}
+            />
+          </div>
           <div className={styles.heroCard}>
             <div className={styles.categoryPill}>Match Recap · World Cup 2026</div>
             <h1>
@@ -44,9 +56,11 @@ export default function ArticleJune23Recap() {
               <span className={styles.scoreTeam}>Senegal</span>
             </div>
             <p>
-              Norway and Senegal traded blows in one of the most entertaining games of the matchday. The
-              Scandinavians held on for a 3–2 win in New Jersey — a result that keeps Norway firmly in the
-              Group I picture alongside France and keeps Senegal&apos;s knockout hopes alive but under
+              Norway and Senegal traded blows in one of the most entertaining games of the matchday.
+              Erling Haaland scored twice (48&apos;, 58&apos;) and Martin Pedersen opened the scoring
+              (43&apos;); Ismaïla Sarr replied with a brace (53&apos;, 90&apos;) for Senegal. The
+              Scandinavians held on for a 3–2 win in New Jersey — a result that keeps Norway firmly in
+              the Group I picture alongside France and keeps Senegal&apos;s knockout hopes alive but under
               pressure heading into the final group game.
             </p>
             <p>
@@ -62,10 +76,11 @@ export default function ArticleJune23Recap() {
               <span className={styles.scoreTeam}>Algeria</span>
             </div>
             <p>
-              Algeria recovered from going behind to beat Jordan 2–1 in Santa Clara. The Desert Warriors
-              showed the character that has defined their recent World Cup campaigns, turning a deficit
-              into three points in Group J. Jordan, beaten at home in the US, face a must-win feel on the
-              final matchday if they are to stay in the tournament conversation.
+              Algeria recovered from N. Al Rashdan&apos;s first-half strike (36&apos;) to beat Jordan
+              2–1 in Santa Clara. Nadir Benbouali (69&apos;) and Amine Gouiri (82&apos;) turned it around
+              for the Desert Warriors — the character that has defined their recent World Cup campaigns.
+              Jordan, beaten at home in the US, face a must-win feel on the final matchday if they are to
+              stay in the tournament conversation.
             </p>
             <p>
               <Link href="/match/fixture-044">Full match centre</Link> ·{" "}
@@ -80,10 +95,12 @@ export default function ArticleJune23Recap() {
               <span className={styles.scoreTeam}>Uzbekistan</span>
             </div>
             <p>
-              Portugal were utterly ruthless in Texas. A five-goal margin against Uzbekistan underlines the
-              gap in quality in Group K and puts Portugal in pole position alongside Colombia after two
-              Colombia after two matchdays. Uzbekistan, beaten heavily here, face a steep climb to reach
-              the knockout round as one of the best third-placed teams.
+              Portugal were utterly ruthless in Texas. Cristiano Ronaldo struck twice (6&apos;,
+              39&apos;), Nuno Mendes added another (17&apos;), an Abduvokhid Nematov own goal (60&apos;)
+              and a Rafael Leão finish (87&apos;) completed a 5–0 rout. The margin underlines the gap in
+              quality in Group K and puts Portugal in pole position alongside Colombia after two
+              matchdays. Uzbekistan, beaten heavily here, face a steep climb to reach the knockout round
+              as one of the best third-placed teams.
             </p>
             <p>
               <Link href="/match/fixture-045">Full match centre</Link> ·{" "}
@@ -99,10 +116,11 @@ export default function ArticleJune23Recap() {
             </div>
             <p>
               England expected to take control in Massachusetts but found Ghana organised, physical and
-              unwilling to yield. A clean sheet for the Black Stars is a valuable point on the road in
-              Group L; for England, the draw leaves the group wide open heading into the final round of
-              fixtures. Croatia&apos;s win later in the evening means the Three Lions cannot afford another
-              flat performance.
+              unwilling to yield. A goalless stalemate — neither side finding a breakthrough across 90
+              minutes — leaves the Black Stars with a valuable point on the road in Group L; for England,
+              the draw leaves the group wide open heading into the final round of fixtures.
+              Croatia&apos;s win later in the evening means the Three Lions cannot afford another flat
+              performance.
             </p>
             <p>
               <Link href="/match/fixture-046">Full match centre</Link> ·{" "}
@@ -117,10 +135,11 @@ export default function ArticleJune23Recap() {
               <span className={styles.scoreTeam}>Croatia</span>
             </div>
             <p>
-              Croatia did enough in Toronto to claim three points against Panama. A single-goal victory keeps
-              the 2018 finalists in the hunt at the top of Group L and piles pressure on England after the
-              stalemate with Ghana. Panama, beaten here, must regroup quickly if they are to stay alive in
-              the race for the round of 32.
+              Croatia did enough in Toronto to claim three points against Panama. Ante Budimir&apos;s
+              54th-minute goal was enough for the 2018 finalists — a single-goal victory that keeps them in
+              the hunt at the top of Group L and piles pressure on England after the stalemate with Ghana.
+              Panama, beaten here, must regroup quickly if they are to stay alive in the race for the
+              round of 32.
             </p>
             <p>
               <Link href="/match/fixture-047">Full match centre</Link> ·{" "}
@@ -135,10 +154,11 @@ export default function ArticleJune23Recap() {
               <span className={styles.scoreTeam}>Congo DR</span>
             </div>
             <p>
-              Colombia closed the matchday in Mexico with a narrow but precious 1–0 win over Congo DR. The
-              result keeps Colombia in the conversation at the summit of Group K alongside Portugal after
-              the Selecao&apos;s five-goal haul earlier in the day. Congo DR, beaten by the odd goal, remain
-              in the mix but likely need a result on the final matchday to extend their tournament.
+              Colombia closed the matchday in Mexico with a narrow but precious 1–0 win over Congo DR.
+              Daniel Muñoz struck the winner on 76 minutes. The result keeps Colombia in the conversation at
+              the summit of Group K alongside Portugal after the Selecao&apos;s five-goal haul earlier in
+              the day. Congo DR, beaten by the odd goal, remain in the mix but likely need a result on the
+              final matchday to extend their tournament.
             </p>
             <p>
               <Link href="/match/fixture-048">Full match centre</Link> ·{" "}
