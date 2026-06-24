@@ -463,6 +463,116 @@ a.standingsHead:hover {
   display: inline-block;
 }
 
+.standingsRowQualified {
+  background: #f0fdf4;
+}
+
+.standingsRowEliminated {
+  opacity: 0.72;
+}
+
+.standingsQualAfter {
+  margin-left: 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #15803d;
+  white-space: nowrap;
+}
+
+.standingsEliminated {
+  margin-left: 6px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--gc-text-muted);
+  white-space: nowrap;
+}
+
+.groupCompleteBanner {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--gc-radius);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.groupCompleteBannerTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #15803d;
+  margin: 0 0 6px;
+}
+
+.groupCompleteBannerText {
+  font-size: 0.875rem;
+  color: var(--gc-text-secondary);
+  margin: 0;
+  line-height: var(--gc-line-height);
+}
+
+.groupCompleteQualifiers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.groupCompleteQualifier {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gc-text-primary);
+}
+
+.bracketMatchCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--gc-radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.bracketMatchMeta {
+  font-size: 0.6875rem;
+  color: var(--gc-text-muted);
+  margin-bottom: 6px;
+}
+
+.bracketMatchTeams {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bracketMatchSide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--gc-text-primary);
+}
+
+.bracketMatchSidePending {
+  color: var(--gc-text-muted);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.bracketMatchVs {
+  font-size: 0.6875rem;
+  color: var(--gc-text-muted);
+  text-align: center;
+}
+
+.bracketGroupBNote {
+  font-size: 0.8125rem;
+  color: var(--gc-text-muted);
+  margin: 12px 0 0;
+  line-height: var(--gc-line-height);
+}
+
 .standingsEmpty {
   padding: 28px 16px;
   text-align: center;

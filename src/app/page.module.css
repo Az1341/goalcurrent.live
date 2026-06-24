@@ -1076,6 +1076,14 @@
   max-width: 120px;
 }
 
+.wcGroupMiniQualAfter {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  color: #15803d;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .wcGroupMiniQualBadge {
   background: #22c55e;
   color: #ffffff;

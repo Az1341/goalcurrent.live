@@ -24,6 +24,7 @@ type StandingsTableProps = {
   title?: string;
   qualifyingSpots?: number;
   formByTeamId?: ReadonlyMap<TeamId, readonly GroupFormResult[]>;
+  groupComplete?: boolean;
 };
 
 function FormBadges({ form }: { form: readonly GroupFormResult[] }) {
@@ -56,6 +57,7 @@ export default function StandingsTable({
   title,
   qualifyingSpots = 0,
   formByTeamId,
+  groupComplete = false,
 }: StandingsTableProps) {
   const showForm = Boolean(formByTeamId);
   return (
@@ -92,10 +94,21 @@ export default function StandingsTable({
             const qualified =
               qualifyingSpots > 0 &&
               isQualifyingStandingPosition(index, qualifyingSpots);
+            const eliminated =
+              groupComplete &&
+              qualifyingSpots > 0 &&
+              !qualified;
 
             return (
               <tr
                 key={row.teamId}
+                className={
+                  groupComplete && qualified
+                    ? styles.standingsRowQualified
+                    : groupComplete && eliminated
+                      ? styles.standingsRowEliminated
+                      : undefined
+                }
                 aria-label={
                   qualified && team
                     ? `${team.name} — qualification zone`
@@ -105,16 +118,17 @@ export default function StandingsTable({
                 <td className={styles.colTeam}>
                   <span className={styles.teamCell}>
                     {team ? <TeamFlag teamId={team.id} size={22} /> : null}
-                    {qualified ? (
-                      <span className={styles.badgeQ} aria-label="Qualified">
-                        Q
-                      </span>
-                    ) : null}
                     {team ? (
                       <TeamLink teamId={team.id}>{team.name}</TeamLink>
                     ) : (
                       <span>{row.teamId}</span>
                     )}
+                    {groupComplete && qualified ? (
+                      <span className={styles.standingsQualAfter}>[Qualified]</span>
+                    ) : null}
+                    {eliminated ? (
+                      <span className={styles.standingsEliminated}>[Eliminated]</span>
+                    ) : null}
                   </span>
                 </td>
                 <td>{row.played}</td>

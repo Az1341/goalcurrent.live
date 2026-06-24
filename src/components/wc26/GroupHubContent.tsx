@@ -29,6 +29,11 @@ import {
   selectNextGroupMatch,
 } from "@/lib/wc26-group-hub";
 import { GROUPS_HUB_HREF, WC26_HUB_HREF, WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
+import {
+  getGroupQualification,
+  isGroupComplete,
+  teamDisplayName,
+} from "@/lib/wc26-standings";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
@@ -151,6 +156,14 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
     () => filterNewsForGroup(articles, groupId, 6),
     [articles, groupId],
   );
+  const groupComplete = useMemo(
+    () => isGroupComplete(groupId, fixtures),
+    [groupId, fixtures],
+  );
+  const groupQualification = useMemo(
+    () => getGroupQualification(groupId, fixtures),
+    [groupId, fixtures],
+  );
 
   const nextMatchView = nextMatch ? buildHomepageMatchView(nextMatch) : null;
   const nextVenue = nextMatch ? getVenueById(nextMatch.venueId) : null;
@@ -204,6 +217,31 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
           </div>
         </div>
       </header>
+
+      {groupComplete ? (
+        <div className={styles.groupCompleteBanner} role="status">
+          <p className={styles.groupCompleteBannerTitle}>
+            {title} — group stage complete
+          </p>
+          <p className={styles.groupCompleteBannerText}>
+            Final standings are locked. Qualified teams advance to the Round of 32.
+          </p>
+          <div className={styles.groupCompleteQualifiers} aria-label="Qualified teams">
+            {groupQualification.winner ? (
+              <span className={styles.groupCompleteQualifier}>
+                <TeamFlag teamId={groupQualification.winner.teamId} size={22} />
+                {teamDisplayName(groupQualification.winner.teamId)} [Qualified]
+              </span>
+            ) : null}
+            {groupQualification.runnerUp ? (
+              <span className={styles.groupCompleteQualifier}>
+                <TeamFlag teamId={groupQualification.runnerUp.teamId} size={22} />
+                {teamDisplayName(groupQualification.runnerUp.teamId)} [Qualified]
+              </span>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       {nextMatchView ? (
         <section className={styles.groupNextMatch} aria-labelledby="group-next-match-heading">

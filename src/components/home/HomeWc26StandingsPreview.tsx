@@ -4,8 +4,9 @@ import Link from "next/link";
 import { getTeamById } from "@/data/wc26";
 import TeamFlag from "@/components/TeamFlag";
 import { useWc26Standings } from "@/lib/use-wc26-standings";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
+import { isGroupComplete, isQualifyingStandingPosition } from "@/lib/wc26-standings";
 import { groupHref, WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
-import { isQualifyingStandingPosition } from "@/lib/wc26-standings";
 import type { Wc26GroupId } from "@/types/group";
 import wc26Styles from "@/components/wc26/wc26.module.css";
 import styles from "@/app/page.module.css";
@@ -14,6 +15,7 @@ const PREVIEW_GROUPS: readonly Wc26GroupId[] = ["a", "b", "c", "d"];
 
 export default function HomeWc26StandingsPreview() {
   const allStandings = useWc26Standings();
+  const fixtures = useEffectiveFixtures();
 
   return (
     <section className={styles.sectionBlock} aria-labelledby="wc-standings-preview">
@@ -56,18 +58,19 @@ export default function HomeWc26StandingsPreview() {
                       index,
                       WC26_QUALIFYING_SPOTS,
                     );
+                    const groupComplete = isGroupComplete(groupId, fixtures);
                     return (
                       <tr key={row.teamId}>
                         <td>{index + 1}</td>
                         <td>
                           <span className={styles.wcGroupMiniTeam}>
                             {team ? <TeamFlag teamId={team.id} size={16} /> : null}
-                            {qualified ? (
-                              <span className={styles.wcGroupMiniQualBadge} aria-label="Qualified">
-                                Q
+                            <span>{team?.name ?? row.teamId}</span>
+                            {groupComplete && qualified ? (
+                              <span className={styles.wcGroupMiniQualAfter}>
+                                [Qualified]
                               </span>
                             ) : null}
-                            <span>{team?.name ?? row.teamId}</span>
                           </span>
                         </td>
                         <td className={styles.wcGroupMiniPts}>{row.points}</td>
