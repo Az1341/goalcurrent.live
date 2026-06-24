@@ -32,6 +32,32 @@
   margin-bottom: 28px;
 }
 
+.sectionToday {
+  background: #f7f7f8;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.sectionUpcoming {
+  background: #f2f4f7;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.sectionCompleted {
+  background: #f1f8f2;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.sectionLiveNow {
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: var(--gc-shadow);
+}
+
 .sectionHeader {
   display: flex;
   flex-wrap: wrap;
@@ -101,6 +127,10 @@
 .fixtureRow {
   padding: 12px 14px;
   border-bottom: 1px solid var(--gc-border);
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .fixtureRow:last-child {
@@ -158,10 +188,14 @@
   overflow: hidden;
 }
 
-.fixtureTeam span {
+.fixtureTeam span,
+.fixtureTeamName {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: center;
+  font-weight: 600;
+  min-width: 0;
 }
 
 .fixtureTeamHome {
@@ -170,8 +204,16 @@
   text-align: right;
 }
 
+.fixtureTeamHome .fixtureTeamName {
+  text-align: right;
+}
+
 .fixtureTeamAway {
   justify-content: flex-start;
+  text-align: left;
+}
+
+.fixtureTeamAway .fixtureTeamName {
   text-align: left;
 }
 
@@ -277,6 +319,7 @@
 .fixtureRow {
   padding: 0 !important;
   border-bottom: 1px solid var(--gc-border) !important;
+  min-height: 72px !important;
   transition: background 0.15s;
 }
 
@@ -319,10 +362,14 @@
   text-align: left !important;
 }
 
-.fixtureTeam span {
+.fixtureTeam span,
+.fixtureTeamName {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: center;
+  font-weight: 600;
+  min-width: 0;
 }
 
 .fixtureVs {

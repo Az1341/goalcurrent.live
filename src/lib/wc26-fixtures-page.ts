@@ -245,25 +245,62 @@ export function fixtureStatusBadgeLabel(fixture: Fixture): string {
   return `${formatLocalKickoff(fixture.kickoffUtc)} ${formatVisitorTimezone()}`;
 }
 
-export function buildCalendarDays(fixtures: readonly Fixture[]): CalendarDay[] {
+function compareDateKeys(a: string, b: string): number {
+  return a.localeCompare(b);
+}
+
+function minDateKey(a: string, b: string): string {
+  return compareDateKeys(a, b) <= 0 ? a : b;
+}
+
+function maxDateKey(a: string, b: string): string {
+  return compareDateKeys(a, b) >= 0 ? a : b;
+}
+
+function addDaysToDateKey(dateKey: string, days: number): string {
+  const cursor = new Date(`${dateKey}T12:00:00`);
+  cursor.setDate(cursor.getDate() + days);
+  return localDateKey(cursor.toISOString());
+}
+
+/** Build scrollable calendar days from first fixture through API max or today + 90 days. */
+export function buildCalendarDays(
+  fixtures: readonly Fixture[],
+  now: Date = new Date(),
+): CalendarDay[] {
   const counts = new Map<string, number>();
   for (const fixture of fixtures) {
     const key = localDateKey(fixture.kickoffUtc);
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 
-  return [...counts.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([dateKey, count]) => {
-      const parts = shortDayParts(dateKey);
-      return {
-        dateKey,
-        count,
-        dow: parts.dow,
-        dayNum: parts.dayNum,
-        month: parts.month,
-      };
+  const todayKey = localDateKey(now.toISOString());
+  const extendedMaxKey = addDaysToDateKey(todayKey, 90);
+
+  const fixtureKeys = [...counts.keys()].sort(compareDateKeys);
+  const apiMinKey = fixtureKeys[0] ?? todayKey;
+  const apiMaxKey = fixtureKeys[fixtureKeys.length - 1] ?? todayKey;
+  const minKey = minDateKey(apiMinKey, todayKey);
+  const maxKey = maxDateKey(apiMaxKey, extendedMaxKey);
+
+  const days: CalendarDay[] = [];
+  let cursor = new Date(`${minKey}T12:00:00`);
+  const end = new Date(`${maxKey}T12:00:00`);
+
+  while (cursor <= end) {
+    const dateKey = localDateKey(cursor.toISOString());
+    const parts = shortDayParts(dateKey);
+    days.push({
+      dateKey,
+      count: counts.get(dateKey) ?? 0,
+      dow: parts.dow,
+      dayNum: parts.dayNum,
+      month: parts.month,
     });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  return days;
 }
 
 export function pickDefaultDateKey(

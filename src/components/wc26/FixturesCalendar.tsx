@@ -204,9 +204,19 @@ export default function FixturesCalendar() {
   const [stage, setStage] = useState<FixturePageFilters["stage"]>("");
   const [status, setStatus] = useState<FixturePageFilters["status"]>("");
   const { tvRegion, setTvRegion, ready: tvReady } = useWc26TvRegion();
-  const [selectedDate, setSelectedDate] = useState("");
   const clientReady = useIsClient();
+  const todayKey = useMemo(
+    () => (clientReady ? localDateKey(new Date().toISOString()) : ""),
+    [clientReady],
+  );
+  const [selectedDate, setSelectedDate] = useState("");
   const syncStatus = useWc26SyncStatus();
+
+  useEffect(() => {
+    if (clientReady && todayKey) {
+      setSelectedDate((prev) => prev || todayKey);
+    }
+  }, [clientReady, todayKey]);
 
   const refreshFixtures = useCallback(() => {
     setFixtures(getEffectiveFixtures());
@@ -248,8 +258,6 @@ export default function FixturesCalendar() {
       ),
     [fixtures, search, groupId, stage, status, activeDateKey],
   );
-
-  const todayKey = clientReady ? localDateKey(new Date().toISOString()) : "";
 
   return (
     <section aria-labelledby="fixtures-calendar-heading" className={styles.fixturesCalendar}>
@@ -358,15 +366,16 @@ export default function FixturesCalendar() {
         </div>
         <div className={styles.fixCalRow} role="tablist" aria-label="Match days">
           {calendarDays.map((day) => {
-            const isActive = day.dateKey === activeDateKey;
-            const isToday = day.dateKey === todayKey;
+            const isSelected = day.dateKey === activeDateKey;
+            const isToday = todayKey !== "" && day.dateKey === todayKey;
             return (
               <button
                 key={day.dateKey}
                 type="button"
                 role="tab"
-                aria-selected={isActive}
-                className={`${styles.fixCalDay} ${isActive ? styles.fixCalDayActive : ""} ${isToday ? styles.fixCalDayToday : ""}`}
+                aria-selected={isSelected}
+                aria-current={isToday ? "date" : undefined}
+                className={`${styles.fixCalDay} ${isSelected ? styles.fixCalDayActive : ""} ${isToday ? styles.fixCalDayToday : ""}`}
                 onClick={() => setSelectedDate(day.dateKey)}
               >
                 <span className={styles.fixCalDow}>{day.dow}</span>

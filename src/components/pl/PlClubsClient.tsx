@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { PlTeamRow, PlTeamsApiResponse } from "@/lib/pl/types";
+import { clubHref, getClubSlugByName } from "@/lib/team-profile/club-slug";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlData.module.css";
 import {
@@ -91,19 +93,42 @@ export default function PlClubsClient() {
             </p>
           ) : (
             <div className={styles.grid}>
-              {filtered.map((team) => (
-                <div
-                  key={team.teamId}
-                  className={styles.card}
-                  aria-label={team.name}
-                >
-                  <PlTeamBadge name={team.name} logo={team.logo} />
-                  <span className={styles.cardName}>{team.name}</span>
-                  {team.venueName ? (
-                    <span className={styles.listSub}>{team.venueName}</span>
-                  ) : null}
-                </div>
-              ))}
+              {filtered.map((team) => {
+                const slug = getClubSlugByName(team.name);
+                const href = slug ? clubHref(slug) : null;
+
+                const cardInner = (
+                  <>
+                    <PlTeamBadge name={team.name} logo={team.logo} />
+                    <span className={styles.cardName}>{team.name}</span>
+                    {team.venueName ? (
+                      <span className={styles.listSub}>{team.venueName}</span>
+                    ) : null}
+                    {href ? (
+                      <span className={styles.listSub}>View club profile</span>
+                    ) : null}
+                  </>
+                );
+
+                return href ? (
+                  <Link
+                    key={team.teamId}
+                    href={href}
+                    className={styles.card}
+                    aria-label={`View ${team.name} club profile`}
+                  >
+                    {cardInner}
+                  </Link>
+                ) : (
+                  <div
+                    key={team.teamId}
+                    className={styles.card}
+                    aria-label={team.name}
+                  >
+                    {cardInner}
+                  </div>
+                );
+              })}
             </div>
           )}
           <p className={styles.meta}>

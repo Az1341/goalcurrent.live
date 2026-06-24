@@ -33,6 +33,7 @@ type LiveSectionProps = {
   tvRegion: Wc26TvRegionCode;
   emptyMessage?: string;
   showLiveIndicator?: boolean;
+  tone?: "live" | "today" | "upcoming" | "completed";
 };
 
 function LiveFixtureRow({
@@ -82,14 +83,14 @@ function LiveFixtureRow({
       <div className={styles.fixtureMatchup}>
         <span className={`${styles.fixtureTeam} ${styles.fixtureTeamHome}`}>
           {home ? <TeamFlag teamId={home.id} size={26} /> : null}
-          <span>{home?.name ?? fixture.homeTeamId}</span>
+          <span className={styles.fixtureTeamName}>{home?.name ?? fixture.homeTeamId}</span>
         </span>
         <span className={`${styles.fixtureVs} ${isLive ? styles.fixtureVsLive : ""}`}>
           {score ? `${score.home}–${score.away}` : "vs"}
         </span>
         <span className={`${styles.fixtureTeam} ${styles.fixtureTeamAway}`}>
           {away ? <TeamFlag teamId={away.id} size={26} /> : null}
-          <span>{away?.name ?? fixture.awayTeamId}</span>
+          <span className={styles.fixtureTeamName}>{away?.name ?? fixture.awayTeamId}</span>
         </span>
       </div>
       {venue ? (
@@ -104,6 +105,21 @@ function LiveFixtureRow({
   );
 }
 
+function sectionToneClass(tone: LiveSectionProps["tone"]): string {
+  switch (tone) {
+    case "today":
+      return styles.sectionToday;
+    case "upcoming":
+      return styles.sectionUpcoming;
+    case "completed":
+      return styles.sectionCompleted;
+    case "live":
+      return styles.sectionLiveNow;
+    default:
+      return "";
+  }
+}
+
 function LiveSection({
   id,
   title,
@@ -111,9 +127,13 @@ function LiveSection({
   tvRegion,
   emptyMessage,
   showLiveIndicator,
+  tone,
 }: LiveSectionProps) {
   return (
-    <section className={styles.section} aria-labelledby={id}>
+    <section
+      className={`${styles.section} ${sectionToneClass(tone)}`}
+      aria-labelledby={id}
+    >
       <div className={styles.sectionHeader}>
         {showLiveIndicator && fixtures.length > 0 ? (
           <span className={styles.liveDot} aria-hidden="true" />
@@ -182,6 +202,7 @@ export default function LiveMatchCentre() {
         tvRegion={tvRegion}
         emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
         showLiveIndicator
+        tone="live"
       />
 
       <LiveSection
@@ -190,6 +211,7 @@ export default function LiveMatchCentre() {
         fixtures={buckets.today}
         tvRegion={tvRegion}
         emptyMessage="No World Cup matches scheduled for today in the local schedule."
+        tone="today"
       />
 
       <LiveSection
@@ -197,6 +219,7 @@ export default function LiveMatchCentre() {
         title="Upcoming World Cup fixtures"
         fixtures={buckets.upcoming}
         tvRegion={tvRegion}
+        tone="upcoming"
       />
 
       <LiveSection
@@ -205,6 +228,7 @@ export default function LiveMatchCentre() {
         fixtures={buckets.completed}
         tvRegion={tvRegion}
         emptyMessage="No completed matches yet. Full-time results appear when API sync returns finished fixtures."
+        tone="completed"
       />
 
       <p className={styles.hubBack}>

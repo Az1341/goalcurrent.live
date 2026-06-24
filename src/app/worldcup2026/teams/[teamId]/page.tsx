@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import TeamPageContent from "@/components/wc26/TeamPageContent";
+import JsonLdScript from "@/components/seo/JsonLdScript";
+import Wc26TeamProfileClient from "@/components/team-profile/Wc26TeamProfileClient";
 import { getTeamById, WC26_TEAMS } from "@/data/wc26";
 import { isKnownTeamId, teamHref } from "@/lib/wc26-teams";
-import { buildPageMetadata } from "@/lib/page-metadata";
-import { SITE_NAME } from "@/lib/site-url";
+import { buildWc26TeamMetadata } from "@/lib/team-profile/metadata";
+import { absoluteUrl } from "@/lib/site-url";
 
 type TeamPageProps = {
   params: Promise<{ teamId: string }>;
@@ -25,11 +26,7 @@ export async function generateMetadata({ params }: TeamPageProps): Promise<Metad
     return { title: "Team — World Cup 2026" };
   }
 
-  return buildPageMetadata({
-    title: `${team.name} — World Cup 2026`,
-    description: `${team.name} at the FIFA World Cup 2026 — fixtures, group standings and match details on ${SITE_NAME}.`,
-    path: teamHref(teamId),
-  });
+  return buildWc26TeamMetadata(team);
 }
 
 export default async function TeamPage({ params }: TeamPageProps) {
@@ -40,5 +37,24 @@ export default async function TeamPage({ params }: TeamPageProps) {
     notFound();
   }
 
-  return <TeamPageContent teamId={teamId} />;
+  const team = getTeamById(teamId)!;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsTeam",
+    name: team.name,
+    sport: "Soccer",
+    memberOf: {
+      "@type": "SportsEvent",
+      name: "FIFA World Cup 2026",
+    },
+    url: absoluteUrl(teamHref(teamId)),
+  };
+
+  return (
+    <>
+      <JsonLdScript data={jsonLd} />
+      <Wc26TeamProfileClient teamId={teamId} />
+    </>
+  );
 }
