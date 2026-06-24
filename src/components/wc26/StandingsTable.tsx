@@ -99,17 +99,15 @@ export default function StandingsTable({
               >
                 <td className={styles.colTeam}>
                   <span className={styles.teamCell}>
-                    {qualified ? (
-                      <span className={styles.standingsQualBadge} aria-hidden="true">
-                        Q
-                      </span>
-                    ) : null}
                     {team ? <TeamFlag teamId={team.id} size={22} /> : null}
                     {team ? (
                       <TeamLink teamId={team.id}>{team.name}</TeamLink>
                     ) : (
                       <span>{row.teamId}</span>
                     )}
+                    {qualified ? (
+                      <span className={styles.standingsQualLabel}>(Qualified)</span>
+                    ) : null}
                   </span>
                 </td>
                 <td>{row.played}</td>

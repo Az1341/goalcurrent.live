@@ -4,7 +4,8 @@ import Link from "next/link";
 import { getTeamById } from "@/data/wc26";
 import TeamFlag from "@/components/TeamFlag";
 import { useWc26Standings } from "@/lib/use-wc26-standings";
-import { groupHref } from "@/lib/wc26-groups";
+import { groupHref, WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
+import { isQualifyingStandingPosition } from "@/lib/wc26-standings";
 import type { Wc26GroupId } from "@/types/group";
 import wc26Styles from "@/components/wc26/wc26.module.css";
 import styles from "@/app/page.module.css";
@@ -51,6 +52,10 @@ export default function HomeWc26StandingsPreview() {
                 <tbody>
                   {table.rows.map((row, index) => {
                     const team = getTeamById(row.teamId);
+                    const qualified = isQualifyingStandingPosition(
+                      index,
+                      WC26_QUALIFYING_SPOTS,
+                    );
                     return (
                       <tr key={row.teamId}>
                         <td>{index + 1}</td>
@@ -58,6 +63,9 @@ export default function HomeWc26StandingsPreview() {
                           <span className={styles.wcGroupMiniTeam}>
                             {team ? <TeamFlag teamId={team.id} size={16} /> : null}
                             <span>{team?.name ?? row.teamId}</span>
+                            {qualified ? (
+                              <span className={styles.wcGroupMiniQualified}>(Qualified)</span>
+                            ) : null}
                           </span>
                         </td>
                         <td className={styles.wcGroupMiniPts}>{row.points}</td>

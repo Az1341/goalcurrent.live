@@ -1,0 +1,95 @@
+.fixtureRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.homeCol,
+.awayCol {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.homeCol {
+  justify-content: flex-start;
+}
+
+.awayCol {
+  justify-content: flex-end;
+}
+
+.homeName,
+.awayName {
+  font-size: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.homeName {
+  text-align: left;
+}
+
+.awayName {
+  text-align: right;
+}
+
+.flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.centreCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+  min-width: 4.5rem;
+}
+
+.centrePrimary {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.centrePrimaryLive {
+  color: #16a34a;
+}
+
+.centreSecondary {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.rowLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (max-width: 480px) {
+  .fixtureRow {
+    grid-template-columns: minmax(0, 1fr) 3.25rem minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .centreCol {
+    min-width: 3.25rem;
+  }
+}

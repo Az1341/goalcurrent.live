@@ -5,7 +5,7 @@ import { WC26_FIXTURES } from "@/data/wc26";
 import { HOME_HERO_BG } from "@/lib/critical-assets";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
-import { selectFeaturedFixture } from "@/lib/wc26-live";
+import { selectFeaturedFixtures } from "@/lib/wc26-live";
 
 const HomeClient = dynamic(() => import("@/app/HomeClient"), {
   ssr: true,
@@ -19,7 +19,7 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function HomePage() {
-  const featuredFixture = selectFeaturedFixture(WC26_FIXTURES);
+  const featuredSelection = selectFeaturedFixtures(WC26_FIXTURES);
 
   return (
     <>
@@ -29,7 +29,9 @@ export default function HomePage() {
         as="image"
         fetchPriority="high"
       />
-      {featuredFixture ? <HomeFeaturedMatchJsonLd fixture={featuredFixture} /> : null}
+      {featuredSelection.fixtures.map((fixture) => (
+        <HomeFeaturedMatchJsonLd key={fixture.id} fixture={fixture} />
+      ))}
       <HomeClient />
     </>
   );

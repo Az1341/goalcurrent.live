@@ -7,14 +7,16 @@ import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import {
   buildHomepageMatchView,
   isLiveMatchStatus,
-  selectFeaturedFixture,
+  selectFeaturedFixtures,
   selectHomepageFixtures,
   selectUpcomingHomepageFixtures,
   type HomepageMatchClass,
   type HomepageMatchView,
 } from "@/lib/wc26-live";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
+import type { Wc26GroupId } from "@/types/group";
 import TeamFlag from "@/components/TeamFlag";
+import FixtureMatchRow from "@/components/match/FixtureMatchRow";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
 import { SITE_NAME } from "@/lib/site-url";
@@ -131,6 +133,69 @@ function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
   );
 }
 
+function FeaturedSimultaneousDecider({
+  groupId,
+  matches,
+}: {
+  groupId: Wc26GroupId;
+  matches: readonly HomepageMatchView[];
+}) {
+  return (
+    <article className={styles.featuredHero}>
+      <div className={styles.featuredHeroTop}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <span className={styles.featuredHeroLabel}>
+            Group {groupId.toUpperCase()} decider
+          </span>
+          <span className={`${styles.statusPill} ${styles.statusLive}`}>
+            <span className={styles.liveDot} aria-hidden="true" />
+            Simultaneous kickoff
+          </span>
+        </div>
+      </div>
+
+      <div className={styles.featuredDualBody}>
+        {matches.map((match) => {
+          const score = formatScore(match);
+          const isLive = match.matchClass === "live";
+          return (
+            <div key={match.fixtureId} className={styles.featuredDualMatch}>
+              <FixtureMatchRow
+                homeTeamId={match.homeTeamId}
+                awayTeamId={match.awayTeamId}
+                homeName={match.homeName}
+                awayName={match.awayName}
+                centrePrimary={score ?? match.statusLabel}
+                centreSecondary={
+                  isLive && match.elapsed != null
+                    ? `${match.statusLabel} · ${match.elapsed}'`
+                    : match.statusLabel
+                }
+                flagSize={LIST_FLAG}
+                isLive={isLive}
+                href={matchHref(match.fixtureId)}
+              />
+              <p className={styles.featuredDualMeta}>
+                {match.kickoffLabel}
+                {match.venueLabel ? ` · ${match.venueLabel}` : ""}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className={styles.featuredActions}>
+        <Link href={`/worldcup2026/groups/${groupId}`} className={styles.btnPrimary}>
+          Group {groupId.toUpperCase()} standings →
+        </Link>
+        <Link href="/worldcup2026/fixtures" className={styles.btnSecondary}>
+          All fixtures
+        </Link>
+      </div>
+    </article>
+  );
+}
+
 function CompactMatchList({
   matches,
   showHalf,
@@ -154,25 +219,28 @@ function CompactMatchList({
 
         return (
           <li key={match.fixtureId}>
-            <Link href={matchHref(match.fixtureId)} className={styles.compactRow}>
-              <TeamFlag teamId={match.homeTeamId} size={LIST_FLAG} />
-              <span className={styles.compactTeam}>{match.homeName}</span>
-              <span
-                className={`${styles.compactScore} ${isLive ? styles.compactScoreLive : ""}`}
-              >
-                {score ?? "–"}
-              </span>
-              <span className={styles.compactTeam}>{match.awayName}</span>
-              <TeamFlag teamId={match.awayTeamId} size={LIST_FLAG} />
-              <span className={styles.compactMeta}>
-                {showHalf && half
+            <FixtureMatchRow
+              className={styles.compactRowInner}
+              href={matchHref(match.fixtureId)}
+              homeTeamId={match.homeTeamId}
+              awayTeamId={match.awayTeamId}
+              homeName={match.homeName}
+              awayName={match.awayName}
+              centrePrimary={score ?? (match.matchClass === "upcoming" ? match.statusLabel : "–")}
+              centreSecondary={
+                showHalf && half
                   ? half
                   : match.matchClass === "ft"
                     ? "FT"
-                    : match.statusLabel}
-                {isLive && match.elapsed != null ? ` · ${match.elapsed}'` : ""}
-              </span>
-            </Link>
+                    : isLive && match.elapsed != null
+                      ? `${match.statusLabel} · ${match.elapsed}'`
+                      : match.matchClass === "upcoming"
+                        ? undefined
+                        : match.statusLabel
+              }
+              flagSize={LIST_FLAG}
+              isLive={isLive}
+            />
           </li>
         );
       })}
@@ -211,22 +279,18 @@ function ColumnCard({
 export default function Home() {
   const fixtures = useEffectiveFixtures();
   const fixtureById = new Map(fixtures.map((f) => [f.id, f]));
-  const featuredFixture = selectFeaturedFixture(fixtures);
-  const featured = featuredFixture
-    ? buildHomepageMatchView(featuredFixture)
-    : undefined;
+  const featuredSelection = selectFeaturedFixtures(fixtures);
+  const featuredIds = featuredSelection.fixtures.map((fixture) => fixture.id);
+  const featuredMatches = featuredSelection.fixtures.map(buildHomepageMatchView);
+  const featured = featuredMatches[0];
 
-  const pool = selectHomepageFixtures(fixtures, featured?.fixtureId, 16);
+  const pool = selectHomepageFixtures(fixtures, featuredIds, 16);
   const liveMatches = fixtures
     .filter((f) => isLiveMatchStatus(f.status))
     .map(buildHomepageMatchView)
     .slice(0, 4);
   const latestResults = pool.filter((m) => m.matchClass === "ft").slice(0, 4);
-  const upcomingMatches = selectUpcomingHomepageFixtures(
-    fixtures,
-    featured?.fixtureId,
-    6,
-  );
+  const upcomingMatches = selectUpcomingHomepageFixtures(fixtures, featuredIds, 6);
 
   const { gamesPlayed, gamesLeft } = useTournamentStats();
 
@@ -249,7 +313,14 @@ export default function Home() {
           <h2 id="featured-match-heading" className={styles.sectionTitle}>
             Featured match
           </h2>
-          {featured ? (
+          {featuredSelection.mode === "simultaneous-final" &&
+          featuredSelection.groupId &&
+          featuredMatches.length === 2 ? (
+            <FeaturedSimultaneousDecider
+              groupId={featuredSelection.groupId}
+              matches={featuredMatches}
+            />
+          ) : featured ? (
             <FeaturedMatchHero match={featured} />
           ) : (
             <p className={styles.sectionNote}>No World Cup fixtures loaded.</p>

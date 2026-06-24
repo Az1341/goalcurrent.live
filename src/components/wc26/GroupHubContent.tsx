@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
+import FixtureMatchRow from "@/components/match/FixtureMatchRow";
 import TeamLink from "@/components/wc26/TeamLink";
 import GroupStandingsSection from "@/components/wc26/GroupStandingsSection";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
@@ -74,20 +75,17 @@ function GroupFixtureRow({
 
   return (
     <li className={styles.groupFixtureRow}>
-      <div className={styles.groupFixtureTeams}>
-        <span className={styles.groupFixtureSide}>
-          <TeamFlag teamId={view.homeTeamId} size={22} />
-          <TeamLink teamId={view.homeTeamId}>{view.homeName}</TeamLink>
-        </span>
-        <span className={styles.groupFixtureScore}>
-          {score ?? "vs"}
-          <span className={styles.groupFixtureStatus}>{view.statusLabel}</span>
-        </span>
-        <span className={styles.groupFixtureSide}>
-          <TeamLink teamId={view.awayTeamId}>{view.awayName}</TeamLink>
-          <TeamFlag teamId={view.awayTeamId} size={22} />
-        </span>
-      </div>
+      <FixtureMatchRow
+        href={matchHref(fixture.id)}
+        homeTeamId={view.homeTeamId}
+        awayTeamId={view.awayTeamId}
+        homeName={view.homeName}
+        awayName={view.awayName}
+        centrePrimary={score ?? view.statusLabel}
+        centreSecondary={score ? view.statusLabel : undefined}
+        flagSize={22}
+        isLive={view.matchClass === "live"}
+      />
       <div className={styles.groupFixtureMeta}>
         <VisitorKickoffLabel iso={fixture.kickoffUtc} />
         {view.venueLabel ? <span>{view.venueLabel}</span> : null}

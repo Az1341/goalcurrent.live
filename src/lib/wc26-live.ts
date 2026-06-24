@@ -11,7 +11,9 @@ import {
   formatVisitorKickoffTime,
 } from "@/lib/wc26-format";
 import { localDateKey } from "@/lib/wc26-fixtures-page";
+import { findLiveSimultaneousFinalRoundGroup } from "@/lib/wc26-final-matchday";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
+import type { Wc26GroupId } from "@/types/group";
 const LIVE_STATUSES = new Set([
   "live",
   "in play",
@@ -216,6 +218,32 @@ export function buildHomepageMatchView(fixture: EffectiveFixture): HomepageMatch
   };
 }
 
+export type FeaturedFixtureSelection = {
+  readonly mode: "single" | "simultaneous-final";
+  readonly fixtures: readonly EffectiveFixture[];
+  readonly groupId?: Wc26GroupId;
+};
+
+/** Featured: simultaneous final-round live deciders, else first live/today/upcoming. */
+export function selectFeaturedFixtures(
+  fixtures: readonly EffectiveFixture[],
+): FeaturedFixtureSelection {
+  const simultaneous = findLiveSimultaneousFinalRoundGroup(fixtures);
+  if (simultaneous) {
+    return {
+      mode: "simultaneous-final",
+      fixtures: simultaneous.fixtures,
+      groupId: simultaneous.groupId,
+    };
+  }
+
+  const single = selectFeaturedFixture(fixtures);
+  return {
+    mode: "single",
+    fixtures: single ? [single] : [],
+  };
+}
+
 /** Featured: first live, else first today, else next upcoming. */
 export function selectFeaturedFixture(
   fixtures: readonly EffectiveFixture[],
@@ -227,9 +255,10 @@ export function selectFeaturedFixture(
 /** Homepage live football rows — live, recent FT, then upcoming (excludes featured). */
 export function selectHomepageFixtures(
   fixtures: readonly EffectiveFixture[],
-  excludeFixtureId?: string,
+  excludeFixtureIds: readonly string[] = [],
   limit = 6,
 ): readonly HomepageMatchView[] {
+  const exclude = new Set(excludeFixtureIds);
   const buckets = partitionFixturesForLiveCentre(fixtures);
   const ordered = [
     ...buckets.live,
@@ -242,7 +271,7 @@ export function selectHomepageFixtures(
   const views: HomepageMatchView[] = [];
 
   for (const fixture of ordered) {
-    if (fixture.id === excludeFixtureId || seen.has(fixture.id)) {
+    if (exclude.has(fixture.id) || seen.has(fixture.id)) {
       continue;
     }
     seen.add(fixture.id);
@@ -258,15 +287,16 @@ export function selectHomepageFixtures(
 /** Homepage upcoming rows — today + future kickoffs (excludes featured). */
 export function selectUpcomingHomepageFixtures(
   fixtures: readonly EffectiveFixture[],
-  excludeFixtureId?: string,
+  excludeFixtureIds: readonly string[] = [],
   limit = 6,
 ): readonly HomepageMatchView[] {
+  const exclude = new Set(excludeFixtureIds);
   const buckets = partitionFixturesForLiveCentre(fixtures);
   const ordered = [...buckets.today, ...buckets.upcoming];
   const views: HomepageMatchView[] = [];
 
   for (const fixture of ordered) {
-    if (fixture.id === excludeFixtureId) {
+    if (exclude.has(fixture.id)) {
       continue;
     }
     views.push(buildHomepageMatchView(fixture));

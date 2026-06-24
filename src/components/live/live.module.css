@@ -142,12 +142,8 @@
   margin: 0;
 }
 
-.matchRow {
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 28px;
-  align-items: center;
-  gap: 6px;
-  min-height: 52px;
+.matchRowLink {
+  display: block;
   padding: 10px 12px;
   text-decoration: none;
   color: inherit;
@@ -156,11 +152,11 @@
   transition: background 0.15s ease;
 }
 
-.matchRow:last-child {
+.matchRowLink:last-child {
   border-bottom: none;
 }
 
-.matchRow:hover {
+.matchRowLink:hover {
   background: rgba(92, 10, 26, 0.03);
 }
 
@@ -170,81 +166,6 @@
 
 .matchRowLive:hover {
   background: rgba(22, 163, 74, 0.07);
-}
-
-.matchRowStatus {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  color: var(--gc-text-muted);
-  text-align: center;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-}
-
-.matchRowStatusLive {
-  color: #16a34a;
-}
-
-.matchRowStatusFt {
-  color: #15803d;
-}
-
-.matchRowMain {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 26px auto 26px minmax(0, 1fr);
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.matchRowHomeName,
-.matchRowAwayName {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--gc-text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.25;
-}
-
-.matchRowHomeName {
-  text-align: right;
-}
-
-.matchRowAwayName {
-  text-align: left;
-}
-
-.matchRowFlag {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.matchRowScore {
-  font-size: 0.9375rem;
-  font-weight: 800;
-  color: var(--gc-text-primary);
-  text-align: center;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  padding: 0 2px;
-  white-space: nowrap;
-}
-
-.matchRowScoreLive {
-  color: #16a34a;
-}
-
-.matchRowMore {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--gc-text-muted);
-  text-align: center;
-  line-height: 1;
-  letter-spacing: 0.12em;
 }
 
 .hubBack {
@@ -313,25 +234,5 @@
 @media (max-width: 640px) {
   .content {
     padding: 16px 16px 0;
-  }
-
-  .matchRow {
-    grid-template-columns: 38px minmax(0, 1fr) 24px;
-    padding: 10px 10px;
-    gap: 4px;
-  }
-
-  .matchRowMain {
-    gap: 4px;
-    grid-template-columns: minmax(0, 1fr) 22px auto 22px minmax(0, 1fr);
-  }
-
-  .matchRowHomeName,
-  .matchRowAwayName {
-    font-size: 0.8125rem;
-  }
-
-  .matchRowScore {
-    font-size: 0.875rem;
   }
 }

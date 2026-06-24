@@ -441,18 +441,12 @@ a.standingsHead:hover {
   border-left: 3px solid var(--gc-success);
 }
 
-.standingsQualBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  background: rgba(21, 128, 61, 0.14);
-  color: var(--gc-success);
-  font-size: 0.5625rem;
+.standingsQualLabel {
+  margin-left: 6px;
+  font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  color: var(--gc-success);
+  white-space: nowrap;
   flex-shrink: 0;
 }
 

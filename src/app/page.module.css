@@ -455,28 +455,6 @@
   padding: 0;
 }
 
-.compactRow {
-  display: grid;
-  grid-template-columns: 22px 1fr auto 1fr 22px auto;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: var(--hp-text);
-}
-
-.compactScoreLive {
-  color: var(--hp-status-live);
-}
-
-.compactMeta {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--hp-muted);
-  white-space: nowrap;
-  text-align: right;
-}
-
 /* WC26 standings preview — Groups A–D */
 .wcStandingsGrid {
   display: grid;
@@ -963,23 +941,48 @@
 }
 
 .compactRow {
-  display: grid;
-  grid-template-columns: 22px 1fr auto 1fr 22px auto;
-  align-items: center;
-  gap: 6px;
+  display: block;
   padding: 10px 12px;
+  border-bottom: 1px solid #f3f4f6;
   text-decoration: none;
   color: inherit;
+}
+
+.compactRowInner {
+  padding: 10px 12px;
+}
+
+.compactList li {
   border-bottom: 1px solid #f3f4f6;
-  font-size: 0.8125rem;
 }
 
-.compactRow:hover {
-  background: #fafafa;
-}
-
-.compactRow:last-child {
+.compactList li:last-child {
   border-bottom: none;
+}
+
+.featuredDualBody {
+  display: grid;
+  gap: 0;
+}
+
+.featuredDualMatch {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--hp-border);
+}
+
+.featuredDualMatch:last-child {
+  border-bottom: none;
+}
+
+.featuredDualMeta {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--hp-muted);
+}
+
+.featuredDualBody + .featuredActions {
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--hp-border);
 }
 
 .compactTeam {
@@ -1060,6 +1063,15 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 120px;
+}
+
+.wcGroupMiniQualified {
+  margin-left: 4px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #15803d;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .wcGroupMiniPts {

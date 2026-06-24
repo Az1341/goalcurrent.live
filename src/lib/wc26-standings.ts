@@ -8,6 +8,7 @@ import {
   getFixtureScore,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
+import { isLiveMatchStatus } from "@/lib/wc26-live";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import { getTeamById } from "@/lib/teamIdentity";
 import type { GroupStandings, StandingRow } from "@/types/standing";
@@ -95,15 +96,24 @@ function buildEmptyRows(groupId: Wc26GroupId): Map<TeamId, MutableStandingRow> {
   return rows;
 }
 
+function shouldCountFixtureForStandings(fixture: EffectiveFixture): boolean {
+  if (fixture.stage !== "group" || !fixture.groupId) {
+    return false;
+  }
+  if (isCompletedMatchStatus(fixture.status)) {
+    return true;
+  }
+  if (isLiveMatchStatus(fixture.status) && getFixtureScore(fixture)) {
+    return true;
+  }
+  return false;
+}
+
 function processFixture(
   rows: Map<TeamId, MutableStandingRow>,
   fixture: EffectiveFixture,
 ): void {
-  if (fixture.stage !== "group" || !fixture.groupId) {
-    return;
-  }
-
-  if (!isCompletedMatchStatus(fixture.status)) {
+  if (!shouldCountFixtureForStandings(fixture)) {
     return;
   }
 

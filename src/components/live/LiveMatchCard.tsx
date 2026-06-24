@@ -1,36 +1,34 @@
-"use client";
-
 import Link from "next/link";
-import TeamFlag from "@/components/TeamFlag";
 import { getTeamById } from "@/data/wc26";
 import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
-import { formatVisitorKickoffTime } from "@/lib/wc26-format";
-import {
-  formatFixtureStatusLabel,
-  isLiveMatchStatus,
-} from "@/lib/wc26-live";
+import { formatFixtureStatusLabel, isLiveMatchStatus } from "@/lib/wc26-live";
 import { matchHref } from "@/lib/wc26-match";
+import FixtureMatchRow from "@/components/match/FixtureMatchRow";
 import styles from "./live.module.css";
 
 type LiveMatchCardProps = {
   fixture: EffectiveFixture;
 };
 
-function statusColumnLabel(fixture: EffectiveFixture, isLive: boolean, isCompleted: boolean): string {
+function statusColumnLabel(
+  fixture: EffectiveFixture,
+  isLive: boolean,
+  isCompleted: boolean,
+): string {
   if (isLive) {
     if (fixture.elapsed != null) {
       return `${fixture.elapsed}'`;
     }
-    return "LIVE";
+    return formatFixtureStatusLabel(fixture.status);
   }
   if (isCompleted) {
     return "FT";
   }
-  return formatVisitorKickoffTime(fixture.kickoffUtc);
+  return formatFixtureStatusLabel(fixture.status);
 }
 
 export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
@@ -41,53 +39,32 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
   const score = getFixtureScore(fixture);
   const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
 
-  const centreLabel =
+  const centrePrimary =
     isLive || isCompleted
       ? score
-        ? `${score.home} - ${score.away}`
-        : "-"
+        ? `${score.home}–${score.away}`
+        : "–"
       : "vs";
 
-  const statusLabel = isLive
-    ? formatFixtureStatusLabel(fixture.status)
-    : isCompleted
-      ? "Full Time"
-      : "Upcoming";
+  const centreSecondary = statusColumnLabel(fixture, isLive, isCompleted);
 
   return (
     <li className={styles.matchRowItem}>
       <Link
         href={matchHref(fixture.id)}
-        className={`${styles.matchRow} ${isLive ? styles.matchRowLive : ""}`}
-        aria-label={`${label} - ${statusLabel}`}
+        className={`${styles.matchRowLink} ${isLive ? styles.matchRowLive : ""}`}
+        aria-label={`${label} - ${centreSecondary}`}
       >
-        <span
-          className={`${styles.matchRowStatus} ${isLive ? styles.matchRowStatusLive : ""} ${isCompleted ? styles.matchRowStatusFt : ""}`}
-        >
-          {statusColumnLabel(fixture, isLive, isCompleted)}
-        </span>
-
-        <span className={styles.matchRowMain}>
-          <span className={styles.matchRowHomeName}>
-            {home?.name ?? fixture.homeTeamId}
-          </span>
-          <span className={styles.matchRowFlag}>
-            {home ? <TeamFlag teamId={home.id} size={22} /> : null}
-          </span>
-          <span className={`${styles.matchRowScore} ${isLive ? styles.matchRowScoreLive : ""}`}>
-            {centreLabel}
-          </span>
-          <span className={styles.matchRowFlag}>
-            {away ? <TeamFlag teamId={away.id} size={22} /> : null}
-          </span>
-          <span className={styles.matchRowAwayName}>
-            {away?.name ?? fixture.awayTeamId}
-          </span>
-        </span>
-
-        <span className={styles.matchRowMore} aria-hidden="true">
-          ...
-        </span>
+        <FixtureMatchRow
+          homeTeamId={fixture.homeTeamId}
+          awayTeamId={fixture.awayTeamId}
+          homeName={home?.name ?? fixture.homeTeamId}
+          awayName={away?.name ?? fixture.awayTeamId}
+          centrePrimary={centrePrimary}
+          centreSecondary={centreSecondary}
+          flagSize={22}
+          isLive={isLive}
+        />
       </Link>
     </li>
   );
