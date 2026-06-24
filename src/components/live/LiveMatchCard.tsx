@@ -1,146 +1,94 @@
 "use client";
 
-import MatchDetailLink from "@/components/match/MatchDetailLink";
-import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
+import Link from "next/link";
 import TeamFlag from "@/components/TeamFlag";
-import { FavouriteMatchButton } from "@/components/FavouriteButton";
-import { getTeamById, getVenueById, groupLabel } from "@/data/wc26";
+import { getTeamById } from "@/data/wc26";
 import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
-import type { Wc26TvRegionCode } from "@/lib/wc26-fixtures-page";
 import { formatVisitorKickoffTime } from "@/lib/wc26-format";
 import {
   formatFixtureStatusLabel,
   isLiveMatchStatus,
 } from "@/lib/wc26-live";
+import { matchHref } from "@/lib/wc26-match";
 import styles from "./live.module.css";
 
 type LiveMatchCardProps = {
   fixture: EffectiveFixture;
-  tvRegion: Wc26TvRegionCode;
 };
 
-function formatLiveCardDateTime(kickoffUtc: string): string {
-  const date = new Date(kickoffUtc);
-  const datePart = new Intl.DateTimeFormat("en-GB", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(date);
-  const timePart = formatVisitorKickoffTime(kickoffUtc);
-  return `${datePart} \u2022 ${timePart} UTC`;
-}
-
-function statusBadgeLabel(fixture: EffectiveFixture): string {
-  if (isLiveMatchStatus(fixture.status)) {
+function statusColumnLabel(fixture: EffectiveFixture, isLive: boolean, isCompleted: boolean): string {
+  if (isLive) {
     if (fixture.elapsed != null) {
-      return `Live ${fixture.elapsed}'`;
+      return `${fixture.elapsed}'`;
     }
-    return formatFixtureStatusLabel(fixture.status);
+    return "LIVE";
   }
-  if (isEffectiveFixtureCompleted(fixture)) {
-    return formatFixtureStatusLabel(
-      fixture.status === "scheduled" ? "ft" : fixture.status,
-    );
+  if (isCompleted) {
+    return "FT";
   }
-  return "Upcoming";
+  return formatVisitorKickoffTime(fixture.kickoffUtc);
 }
 
-export default function LiveMatchCard({ fixture, tvRegion }: LiveMatchCardProps) {
+export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
   const home = getTeamById(fixture.homeTeamId);
   const away = getTeamById(fixture.awayTeamId);
-  const venue = getVenueById(fixture.venueId);
-  const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
-  const groupText = fixture.groupId
-    ? groupLabel(fixture.groupId)
-    : fixture.stage.replace(/-/g, " ");
   const isLive = isLiveMatchStatus(fixture.status);
   const isCompleted = isEffectiveFixtureCompleted(fixture);
   const score = getFixtureScore(fixture);
-  const badge = statusBadgeLabel(fixture);
+  const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
 
   const centreLabel =
     isLive || isCompleted
       ? score
-        ? `${score.home}\u2013${score.away}`
-        : "\u2013"
+        ? `${score.home} - ${score.away}`
+        : "-"
       : "vs";
 
+  const statusLabel = isLive
+    ? formatFixtureStatusLabel(fixture.status)
+    : isCompleted
+      ? "Full Time"
+      : "Upcoming";
+
   return (
-    <li className={styles.matchCardItem}>
-      <article
-        className={`${styles.matchCard} ${isLive ? styles.matchCardLive : ""}`}
-        aria-label={`${label} - ${badge}`}
+    <li className={styles.matchRowItem}>
+      <Link
+        href={matchHref(fixture.id)}
+        className={`${styles.matchRow} ${isLive ? styles.matchRowLive : ""}`}
+        aria-label={`${label} - ${statusLabel}`}
       >
-        <header className={styles.matchCardHeader}>
-          <div className={styles.matchCardMeta}>
-            <span className={styles.matchCardGroup}>{groupText}</span>
-            <span className={styles.matchCardDateTime}>
-              {formatLiveCardDateTime(fixture.kickoffUtc)}
-            </span>
-          </div>
-          <div className={styles.matchCardHeaderActions}>
-            <span
-              className={`${styles.matchCardBadge} ${
-                isLive
-                  ? styles.matchCardBadgeLive
-                  : isCompleted
-                    ? styles.matchCardBadgeFt
-                    : styles.matchCardBadgeUpcoming
-              }`}
-            >
-              {isLive ? <span className={styles.matchCardLiveDot} aria-hidden="true" /> : null}
-              {badge}
-            </span>
-            <FavouriteMatchButton matchId={fixture.id} label={label} />
-          </div>
-        </header>
+        <span
+          className={`${styles.matchRowStatus} ${isLive ? styles.matchRowStatusLive : ""} ${isCompleted ? styles.matchRowStatusFt : ""}`}
+        >
+          {statusColumnLabel(fixture, isLive, isCompleted)}
+        </span>
 
-        <div className={styles.matchCardTeams}>
-          <div className={styles.matchCardTeam}>
-            {home ? <TeamFlag teamId={home.id} size={40} /> : null}
-            <span className={styles.matchCardTeamName}>
-              {home?.name ?? fixture.homeTeamId}
-            </span>
-          </div>
-          <div
-            className={`${styles.matchCardCentre} ${isLive ? styles.matchCardCentreLive : ""}`}
-          >
+        <span className={styles.matchRowMain}>
+          <span className={styles.matchRowHomeName}>
+            {home?.name ?? fixture.homeTeamId}
+          </span>
+          <span className={styles.matchRowFlag}>
+            {home ? <TeamFlag teamId={home.id} size={22} /> : null}
+          </span>
+          <span className={`${styles.matchRowScore} ${isLive ? styles.matchRowScoreLive : ""}`}>
             {centreLabel}
-          </div>
-          <div className={styles.matchCardTeam}>
-            {away ? <TeamFlag teamId={away.id} size={40} /> : null}
-            <span className={styles.matchCardTeamName}>
-              {away?.name ?? fixture.awayTeamId}
-            </span>
-          </div>
-        </div>
+          </span>
+          <span className={styles.matchRowFlag}>
+            {away ? <TeamFlag teamId={away.id} size={22} /> : null}
+          </span>
+          <span className={styles.matchRowAwayName}>
+            {away?.name ?? fixture.awayTeamId}
+          </span>
+        </span>
 
-        {venue ? (
-          <p className={styles.matchCardVenue}>
-            {venue.name}
-            {venue.city ? `, ${venue.city}` : ""}
-          </p>
-        ) : null}
-
-        <footer className={styles.matchCardFooter}>
-          <MatchTvBroadcast
-            tvRegion={tvRegion}
-            matchNumber={fixture.matchNumber}
-            variant="detail"
-            className={styles.matchCardBroadcast}
-          />
-          <MatchDetailLink
-            fixtureId={fixture.id}
-            label="Match details"
-            className={styles.matchCardDetailsLink}
-          />
-        </footer>
-      </article>
+        <span className={styles.matchRowMore} aria-hidden="true">
+          ...
+        </span>
+      </Link>
     </li>
   );
 }
