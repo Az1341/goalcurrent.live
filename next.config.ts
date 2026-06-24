@@ -1,4 +1,4 @@
-﻿import type { NextConfig } from "next";
+import type { NextConfig } from "next";
 
 type RouteRedirect = NonNullable<
   Awaited<ReturnType<NonNullable<NextConfig["redirects"]>>>
@@ -84,22 +84,24 @@ const SITE_REDIRECTS: RouteRedirect[] = [
     destination: "/match/:fixtureId",
     permanent: true,
   },
+  // ✅ FIXED: www → non-www (canonical is goalcurrent.live)
   {
     source: "/:path*",
-    has: [{ type: "host", value: "goalcurrent.live" }],
-    destination: "https://www.goalcurrent.live/:path*",
+    has: [{ type: "host", value: "www.goalcurrent.live" }],
+    destination: "https://goalcurrent.live/:path*",
     permanent: true,
   },
+  // ✅ Redirect all goalcurrent.online variants to canonical
   {
     source: "/:path*",
     has: [{ type: "host", value: "goalcurrent.online" }],
-    destination: "https://www.goalcurrent.live/:path*",
+    destination: "https://goalcurrent.live/:path*",
     permanent: true,
   },
   {
     source: "/:path*",
     has: [{ type: "host", value: "www.goalcurrent.online" }],
-    destination: "https://www.goalcurrent.live/:path*",
+    destination: "https://goalcurrent.live/:path*",
     permanent: true,
   },
 ];
