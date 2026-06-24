@@ -1,4 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  ApiFootballRateLimitError,
+  apiFootballErrorMessage,
+  classifyApiFootballError,
+} from "@/lib/api-football/errors";
+import { getStaleApiCache, setSuccessApiCache } from "@/lib/api-football/cache";
+import { respondApiFootballFailure } from "@/lib/api-football/route-errors";
+import { logInfo } from "@/lib/log";
 import { getCached, setCached } from "@/lib/server/cache";
 import {
   fetchFinishedWc26Matches,
@@ -32,15 +40,6 @@ function emptyResponse(phase?: string): Wc26ScoresApiResponse {
   };
 }
 
-function isUpstreamQuotaError(message: string): boolean {
-  const lower = message.toLowerCase();
-  return (
-    lower.includes("ratelimit") ||
-    lower.includes("too many requests") ||
-    lower.includes("request limit")
-  );
-}
-
 function scoresCacheControl(phase?: string): string {
   if (phase === "live") {
     return "s-maxage=30, stale-while-revalidate=30";
@@ -55,31 +54,54 @@ function jsonScores(
   body: Wc26ScoresApiResponse,
   cacheKey: string,
 ): NextResponse {
+  setSuccessApiCache(cacheKey, body);
   setCached(cacheKey, body);
   return NextResponse.json(body, {
     headers: { "Cache-Control": scoresCacheControl(body.phase) },
   });
 }
 
+function failureScoresBody(
+  code: ReturnType<typeof classifyApiFootballError>,
+  message: string,
+  stale: boolean,
+  staleBody?: Wc26ScoresApiResponse | null,
+): Wc26ScoresApiResponse {
+  if (stale && staleBody) {
+    return {
+      ...staleBody,
+      error: code,
+      message,
+      stale: true,
+      fetchedAt: staleBody.fetchedAt,
+    };
+  }
+
+  return {
+    ...emptyResponse("rate-limited"),
+    error: code,
+    message,
+    stale: false,
+  };
+}
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const cacheKey = request.url;
   const cached = getCached(cacheKey);
   if (cached) {
-    console.info(`CACHE HIT: ${ROUTE}`);
+    logInfo(ROUTE, "CACHE HIT");
     const body = cached as Wc26ScoresApiResponse;
     return NextResponse.json(body, {
       headers: { "Cache-Control": scoresCacheControl(body.phase) },
     });
   }
 
-  console.info(`CACHE MISS: ${ROUTE}`);
+  logInfo(ROUTE, "CACHE MISS");
 
   const { searchParams } = request.nextUrl;
   const live = searchParams.get("live");
   const results = searchParams.get("results");
 
-  // Default (no query params): finished World Cup results — same as ?results=wc.
-  // Explicit ?live=true or ?results=wc still behave as before.
   const wantsLive = live === "true";
   const hasNoFilters =
     (live === null || live === "") && (results === null || results === "");
@@ -132,15 +154,31 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return jsonScores(unconfiguredResponse(), cacheKey);
     }
 
-    console.error("[api/wc26/scores]", message);
-
-    if (isUpstreamQuotaError(message)) {
-      return jsonScores(emptyResponse("rate-limited"), cacheKey);
+    if (error instanceof ApiFootballRateLimitError) {
+      const staleBody = getStaleApiCache<Wc26ScoresApiResponse>(cacheKey);
+      return respondApiFootballFailure({
+        route: "api/wc26/scores",
+        error,
+        staleBody,
+        buildBody: (code, msg, stale) =>
+          failureScoresBody(code, msg, stale, staleBody),
+        cacheControl: scoresCacheControl("rate-limited"),
+      });
     }
 
-    return NextResponse.json(
-      { error: "Failed to fetch WC26 match data", detail: message },
-      { status: 500 },
-    );
+    const staleBody = getStaleApiCache<Wc26ScoresApiResponse>(cacheKey);
+    return respondApiFootballFailure({
+      route: "api/wc26/scores",
+      error,
+      staleBody,
+      buildBody: (code, msg, stale) =>
+        failureScoresBody(
+          code,
+          msg || apiFootballErrorMessage(code),
+          stale,
+          staleBody,
+        ),
+      cacheControl: "no-store",
+    });
   }
 }

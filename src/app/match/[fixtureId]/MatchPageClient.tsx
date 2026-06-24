@@ -3,8 +3,10 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import JsonLdScript from "@/components/seo/JsonLdScript";
+import ApiFootballStatusBanner from "@/components/system/ApiFootballStatusBanner";
 import { getFixtureById, getTeamById, getVenueById } from "@/data/wc26";
 import { useLiveScores } from "@/lib/client/useLiveScores";
+import { useMatchDetail } from "@/lib/use-match-detail";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
@@ -47,6 +49,10 @@ export default function MatchPageClient({ fixtureId }: MatchPageClientProps) {
   const fixtures = useEffectiveFixtures();
   const fixture =
     fixtures.find((entry) => entry.id === fixtureId) ?? getFixtureById(fixtureId);
+  const { detail } = useMatchDetail(
+    fixtureId,
+    fixture ? isLiveMatchStatus(fixture.status) : false,
+  );
 
   const jsonLd = useMemo(() => {
     if (!fixture) {
@@ -91,7 +97,16 @@ export default function MatchPageClient({ fixtureId }: MatchPageClientProps) {
   return (
     <>
       {jsonLd ? <JsonLdScript data={jsonLd} /> : null}
-      <MatchDetailContent fixtureId={fixtureId} />
+      <ApiFootballStatusBanner
+        errorCode={detail.error}
+        message={
+          detail.error
+            ? detail.message ?? "Detailed live data is temporarily unavailable."
+            : undefined
+        }
+        fetchedAt={detail.stale ? detail.fetchedAt : undefined}
+      />
+      <MatchDetailContent fixtureId={fixtureId} detailUnavailable={Boolean(detail.error)} />
     </>
   );
 }

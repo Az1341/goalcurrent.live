@@ -1,12 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getFixtureById } from "@/data/wc26";
+import { getStaleApiCache, setSuccessApiCache } from "@/lib/api-football/cache";
+import { apiFootballErrorMessage } from "@/lib/api-football/errors";
+import { respondApiFootballFailure } from "@/lib/api-football/route-errors";
 import { fetchWc26MatchDetail } from "@/lib/server/wc26-match-detail";
+import type { MatchDetailPayload } from "@/types/match-detail";
 
 export const dynamic = "force-dynamic";
 
 type RouteParams = {
   params: Promise<{ fixtureId: string }>;
 };
+
+function emptyPayload(fixtureId: string): MatchDetailPayload {
+  return {
+    fixtureId,
+    configured: Boolean(process.env.API_FOOTBALL_KEY?.trim()),
+    apiAvailable: false,
+    fetchedAt: new Date().toISOString(),
+    events: [],
+    lineups: { home: null, away: null },
+    statistics: [],
+  };
+}
 
 export async function GET(
   _request: NextRequest,
@@ -19,11 +35,32 @@ export async function GET(
     return NextResponse.json({ error: "Fixture not found" }, { status: 404 });
   }
 
-  const detail = await fetchWc26MatchDetail(fixtureId);
+  const cacheKey = `wc26-match:${fixtureId}`;
 
-  return NextResponse.json(detail, {
-    headers: {
-      "Cache-Control": "s-maxage=30, stale-while-revalidate=30",
-    },
-  });
+  try {
+    const detail = await fetchWc26MatchDetail(fixtureId);
+    setSuccessApiCache(cacheKey, detail, 30_000);
+
+    return NextResponse.json(detail, {
+      headers: {
+        "Cache-Control": "s-maxage=30, stale-while-revalidate=30",
+      },
+    });
+  } catch (error) {
+    const staleBody = getStaleApiCache<MatchDetailPayload>(cacheKey);
+
+    return respondApiFootballFailure({
+      route: "api/wc26/match",
+      error,
+      staleBody,
+      buildBody: (code, message, stale) => ({
+        ...(stale && staleBody ? staleBody : emptyPayload(fixtureId)),
+        error: code,
+        message: message || apiFootballErrorMessage(code),
+        stale,
+        apiAvailable: false,
+      }),
+      cacheControl: "no-store",
+    });
+  }
 }

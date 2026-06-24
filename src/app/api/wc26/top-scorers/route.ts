@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureRouteError, logInfo } from "@/lib/log";
 import { getCached, setCached } from "@/lib/server/cache";
 import { fetchWc26TopScorers } from "@/lib/server/wc26-top-scorers";
 
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const cacheKey = request.url;
   const cached = getCached(cacheKey);
   if (cached) {
-    console.info(`CACHE HIT: ${ROUTE}`);
+    logInfo(ROUTE, "CACHE HIT");
     return NextResponse.json(cached, {
       headers: {
         "Cache-Control": "s-maxage=300, stale-while-revalidate=60",
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   }
 
-  console.info(`CACHE MISS: ${ROUTE}`);
+  logInfo(ROUTE, "CACHE MISS");
 
   try {
     const body = await fetchWc26TopScorers();
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("[api/wc26/top-scorers]", message);
+    captureRouteError("api/wc26/top-scorers", error);
     return NextResponse.json(
       { error: "Failed to fetch WC26 top scorers", detail: message },
       { status: 500 },

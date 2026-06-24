@@ -4,6 +4,17 @@ import {
   PL_LEAGUE_NAME,
   PL_SEASON,
 } from "@/lib/pl/constants";
+import {
+  apiFootballFetch as fetchApiFootball,
+  apiFootballFetchAllPages as fetchAllApiFootballPages,
+  isApiFootballConfigured,
+} from "@/lib/api-football/client";
+import {
+  ApiFootballAuthError,
+  ApiFootballRateLimitError,
+  isAuthErrorMessage,
+  isQuotaErrorMessage,
+} from "@/lib/api-football/errors";
 import type { PlStandingsSource } from "@/lib/pl/types";
 
 export function getApiKey(): string | undefined {
@@ -11,28 +22,10 @@ export function getApiKey(): string | undefined {
 }
 
 export function isPlApiConfigured(): boolean {
-  return Boolean(getApiKey());
+  return isApiFootballConfigured();
 }
 
-export function isAuthError(message: string): boolean {
-  const lower = message.toLowerCase();
-  return (
-    lower.includes("token") ||
-    lower.includes("key") ||
-    lower.includes("missing application key") ||
-    lower.includes("application key missing")
-  );
-}
-
-export function isQuotaError(message: string): boolean {
-  const lower = message.toLowerCase();
-  return (
-    lower.includes("ratelimit") ||
-    lower.includes("too many requests") ||
-    lower.includes("request limit") ||
-    lower.includes("429")
-  );
-}
+export { isAuthErrorMessage as isAuthError, isQuotaErrorMessage as isQuotaError };
 
 export type PlApiEnvelope<TData> = {
   configured: boolean;
@@ -88,115 +81,51 @@ export type ApiFootballFetchResult<T> =
 export async function apiFootballFetch<T>(
   path: string,
 ): Promise<ApiFootballFetchResult<T>> {
-  const apiKey = getApiKey();
-  if (!apiKey) {
+  if (!isApiFootballConfigured()) {
     return { ok: false, kind: "unconfigured" };
   }
 
-  const res = await fetch(`${API_FOOTBALL_BASE_URL}${path}`, {
-    headers: { "x-apisports-key": apiKey },
-    next: { revalidate: 0 },
-  });
-
-  if (res.status === 429) {
-    return { ok: false, kind: "quota", message: "API rate limit reached." };
-  }
-
-  if (res.status === 401 || res.status === 403) {
-    return {
-      ok: false,
-      kind: "auth",
-      message: "API key rejected. Check API_FOOTBALL_KEY.",
-    };
-  }
-
-  if (!res.ok) {
-    const text = await res.text();
-    return {
-      ok: false,
-      kind: "api",
-      message: `api-sports ${res.status}: ${text.slice(0, 200)}`,
-    };
-  }
-
-  const payload = (await res.json()) as ApiFootballPayload<T>;
-
-  if (payload.errors && Object.keys(payload.errors).length > 0) {
-    const errorText = JSON.stringify(payload.errors);
-    if (isAuthError(errorText)) {
-      return {
-        ok: false,
-        kind: "auth",
-        message: "API key invalid or missing permissions.",
-      };
+  try {
+    const result = await fetchApiFootball<T>(path);
+    return { ok: true, data: result.data, results: result.results };
+  } catch (error) {
+    if (error instanceof ApiFootballRateLimitError) {
+      return { ok: false, kind: "quota", message: error.message };
     }
-    return { ok: false, kind: "api", message: errorText };
-  }
-
-  return {
-    ok: true,
-    data: (payload.response ?? []) as T,
-    results: payload.results ?? 0,
-  };
-}
-
-export async function apiFootballFetchAllPages<TItem>(
-  buildPath: (page: number) => string,
-): Promise<ApiFootballFetchResult<TItem[]>> {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    return { ok: false, kind: "unconfigured" };
-  }
-
-  const items: TItem[] = [];
-  let page = 1;
-  let totalPages = 1;
-
-  while (page <= totalPages) {
-    const res = await fetch(`${API_FOOTBALL_BASE_URL}${buildPath(page)}`, {
-      headers: { "x-apisports-key": apiKey },
-      next: { revalidate: 0 },
-    });
-
-    if (res.status === 429) {
-      return { ok: false, kind: "quota", message: "API rate limit reached." };
-    }
-
-    if (res.status === 401 || res.status === 403) {
+    if (error instanceof ApiFootballAuthError) {
       return {
         ok: false,
         kind: "auth",
         message: "API key rejected. Check API_FOOTBALL_KEY.",
       };
     }
+    const message = error instanceof Error ? error.message : "API error";
+    return { ok: false, kind: "api", message };
+  }
+}
 
-    if (!res.ok) {
-      const text = await res.text();
-      return {
-        ok: false,
-        kind: "api",
-        message: `api-sports ${res.status}: ${text.slice(0, 200)}`,
-      };
-    }
-
-    const payload = (await res.json()) as ApiFootballPayload<TItem[]>;
-
-    if (payload.errors && Object.keys(payload.errors).length > 0) {
-      const errorText = JSON.stringify(payload.errors);
-      if (isAuthError(errorText)) {
-        return {
-          ok: false,
-          kind: "auth",
-          message: "API key invalid or missing permissions.",
-        };
-      }
-      return { ok: false, kind: "api", message: errorText };
-    }
-
-    items.push(...(payload.response ?? []));
-    totalPages = payload.paging?.total ?? 1;
-    page += 1;
+export async function apiFootballFetchAllPages<TItem>(
+  buildPath: (page: number) => string,
+): Promise<ApiFootballFetchResult<TItem[]>> {
+  if (!isApiFootballConfigured()) {
+    return { ok: false, kind: "unconfigured" };
   }
 
-  return { ok: true, data: items, results: items.length };
+  try {
+    const result = await fetchAllApiFootballPages<TItem>(buildPath);
+    return { ok: true, data: result.data, results: result.results };
+  } catch (error) {
+    if (error instanceof ApiFootballRateLimitError) {
+      return { ok: false, kind: "quota", message: error.message };
+    }
+    if (error instanceof ApiFootballAuthError) {
+      return {
+        ok: false,
+        kind: "auth",
+        message: "API key rejected. Check API_FOOTBALL_KEY.",
+      };
+    }
+    const message = error instanceof Error ? error.message : "API error";
+    return { ok: false, kind: "api", message };
+  }
 }

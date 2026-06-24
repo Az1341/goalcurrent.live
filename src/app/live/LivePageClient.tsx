@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import JsonLdScript from "@/components/seo/JsonLdScript";
+import ApiFootballStatusBanner from "@/components/system/ApiFootballStatusBanner";
 import { getTeamById } from "@/data/wc26";
 import { useLiveScores } from "@/lib/client/useLiveScores";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
@@ -15,7 +16,7 @@ const LiveMatchCentre = dynamic(
 
 /** Client shell for /live — subscribes to unified WC26 live-scores SWR cache. */
 export default function LivePageClient() {
-  useLiveScores();
+  const { data: liveScores } = useLiveScores();
   const fixtures = useEffectiveFixtures();
   const [coverageStartTime] = useState(() => new Date().toISOString());
 
@@ -47,6 +48,11 @@ export default function LivePageClient() {
   return (
     <>
       <JsonLdScript data={jsonLd} />
+      <ApiFootballStatusBanner
+        errorCode={liveScores?.error}
+        message={liveScores?.message}
+        fetchedAt={liveScores?.stale ? liveScores.fetchedAt : undefined}
+      />
       <LiveMatchCentre />
     </>
   );

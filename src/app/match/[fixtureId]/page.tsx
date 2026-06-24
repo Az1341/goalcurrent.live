@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import MatchPageClient from "@/app/match/[fixtureId]/MatchPageClient";
+import ErrorBoundary from "@/components/system/ErrorBoundary";
 import { WC26_FIXTURES, getFixtureById, getTeamById } from "@/data/wc26";
 import { isKnownFixtureId, matchHref } from "@/lib/wc26-match";
 import { buildPageMetadata } from "@/lib/page-metadata";
@@ -44,5 +45,9 @@ export default async function MatchPage({ params }: MatchPageProps) {
     notFound();
   }
 
-  return <MatchPageClient fixtureId={fixtureId} />;
+  return (
+    <ErrorBoundary>
+      <MatchPageClient fixtureId={fixtureId} />
+    </ErrorBoundary>
+  );
 }

@@ -1,0 +1,20 @@
+.banner {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #fcd34d;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.meta {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}

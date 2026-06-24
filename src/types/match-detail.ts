@@ -1,5 +1,7 @@
 /** Normalised match detail payload from /api/wc26/match/[fixtureId]. */
 
+import type { ApiFootballErrorCode } from "@/lib/api-football/errors";
+
 export type MatchEventItem = {
   readonly minute: number | null;
   readonly extra: number | null;
@@ -42,4 +44,7 @@ export type MatchDetailPayload = {
     readonly away: MatchLineupSide | null;
   };
   readonly statistics: readonly MatchStatisticPair[];
+  readonly error?: ApiFootballErrorCode;
+  readonly message?: string;
+  readonly stale?: boolean;
 };

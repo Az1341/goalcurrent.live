@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import JsonLdScript from "@/components/seo/JsonLdScript";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import Wc26HeroStats from "@/components/wc26/Wc26HeroStats";
 import Wc26Scoreboard from "@/components/wc26/Wc26Scoreboard";
 import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
 import { WC26_TOURNAMENT } from "@/data/wc26";
+import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import { WC26_SECTIONS } from "@/lib/wc26-sections";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME, absoluteUrl } from "@/lib/site-url";
@@ -56,6 +58,7 @@ export default function WorldCupHubPage() {
       </p>
 
       <Wc26Scoreboard />
+      <ContentAdSlot slot={ADSENSE_SLOTS.wc26Mid} minHeight={120} />
       <Wc26HeroStats variant="hub" />
       <Wc26TopScorers />
       <h2 className={styles.sectionTitle}>Sections</h2>

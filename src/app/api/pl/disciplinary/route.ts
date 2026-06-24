@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { captureRouteError } from "@/lib/log";
 import {
   fetchPlDisciplinary,
   plLeaderboardCacheControl,
@@ -13,7 +14,7 @@ export async function GET(): Promise<NextResponse> {
       headers: { "Cache-Control": plLeaderboardCacheControl(body) },
     });
   } catch (error) {
-    console.error("[api/pl/disciplinary]", error);
+    captureRouteError("api/pl/disciplinary", error);
     return NextResponse.json(
       {
         configured: Boolean(process.env.API_FOOTBALL_KEY?.trim()),

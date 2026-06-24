@@ -1,65 +1,12 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 import { REMOTE_IMAGE_HOSTNAMES } from "./src/lib/images";
 
 type RouteRedirect = NonNullable<
   Awaited<ReturnType<NonNullable<NextConfig["redirects"]>>>
 >[number];
 
-/**
- * Content-Security-Policy for GoalCurrent.live integrations.
- *
- * script-src 'unsafe-inline' — required for Next.js inline bootstrap, Google tag/AdSense
- *   loader snippets, and OneSignal SDK injection (no nonce pipeline on Netlify/Vercel static).
- * unsafe-eval omitted — not required for GA, AdSense, or OneSignal in production.
- */
-const INTEGRATION_CSP = [
-  "default-src 'self'",
-  [
-    "script-src 'self' 'unsafe-inline'",
-    "https://www.googletagmanager.com", // Google Analytics / Tag Manager
-    "https://www.google-analytics.com", // gtag.js
-    "https://cdn.onesignal.com", // OneSignal Web SDK
-    "https://*.onesignal.com",
-    "https://onesignal.com",
-    "https://api.onesignal.com",
-    "https://pagead2.googlesyndication.com", // Google AdSense
-    "https://googleads.g.doubleclick.net", // AdSense / Google Ads frames
-    "https://fundingchoicesmessages.google.com", // AdSense consent / FC messages
-  ].join(" "),
-  [
-    "style-src 'self' 'unsafe-inline'",
-    "https://cdn.onesignal.com",
-    "https://*.onesignal.com",
-    "https://onesignal.com",
-  ].join(" "),
-  "font-src 'self' data:",
-  "img-src 'self' data: https:", // flags, team logos, article images, ad creatives
-  [
-    "connect-src 'self'",
-    "https://www.google-analytics.com",
-    "https://region1.google-analytics.com",
-    "https://analytics.google.com",
-    "https://onesignal.com",
-    "https://*.onesignal.com",
-    "https://api.onesignal.com",
-    "https://cdn.onesignal.com",
-    "https://fundingchoicesmessages.google.com",
-    "https://*.google.com", // AdSense / GA beacons
-  ].join(" "),
-  [
-    "frame-src",
-    "https://www.youtube.com", // embedded highlights
-    "https://googleads.g.doubleclick.net",
-    "https://td.doubleclick.net",
-    "https://fundingchoicesmessages.google.com",
-  ].join(" "),
-  "worker-src 'self' blob: https://cdn.onesignal.com",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "frame-ancestors 'self'",
-].join("; ");
-
-/** All site redirects — single source of truth (vercel.json redirects removed). */
+/** CSP is applied per-request in src/proxy.ts (Next.js 16 middleware). */
 const SITE_REDIRECTS: RouteRedirect[] = [
   { source: "/video", destination: "/videos", permanent: true },
   { source: "/video/:path*", destination: "/videos/:path*", permanent: true },
@@ -166,7 +113,6 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: [
-          { key: "Content-Security-Policy", value: INTEGRATION_CSP },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           {
@@ -183,4 +129,12 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: !process.env.CI,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+});

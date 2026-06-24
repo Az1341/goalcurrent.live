@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { captureRouteError } from "@/lib/log";
 import {
   fetchPlStatistics,
   plStatisticsCacheControl,
@@ -13,7 +14,7 @@ export async function GET(): Promise<NextResponse> {
       headers: { "Cache-Control": plStatisticsCacheControl(body) },
     });
   } catch (error) {
-    console.error("[api/pl/statistics]", error);
+    captureRouteError("api/pl/statistics", error);
     return NextResponse.json(
       {
         configured: Boolean(process.env.API_FOOTBALL_KEY?.trim()),

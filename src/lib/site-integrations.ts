@@ -1,7 +1,8 @@
 ﻿/** Shared integration IDs for GoalCurrent.live. */
 export const ONESIGNAL_APP_ID = "27dd2cba-29fc-4c6a-9183-54db03eef92d";
 export const GA_MEASUREMENT_ID = "G-X84HCE5KGT";
-export const ADSENSE_PUBLISHER_ID = "ca-pub-8697460993506171";
+export const ADSENSE_PUBLISHER_ID =
+  process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || "ca-pub-8697460993506171";
 
 /** PWA theme-color (burgundy .live brand - not header gradient) */
 export const BRAND_THEME_COLOR = "#5c0a1a";

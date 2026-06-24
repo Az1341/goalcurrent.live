@@ -1,11 +1,14 @@
 import { getFixtureById } from "@/data/wc26";
+import { apiFootballFetch } from "@/lib/api-football/client";
+import {
+  ApiFootballAuthError,
+} from "@/lib/api-football/errors";
 import {
   findFixtureIdByTeamNames,
   mapApiStatusShort,
 } from "@/lib/wc26-fixture-match";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
 
-const BASE_URL = "https://v3.football.api-sports.io";
 const WC_LEAGUE = 1;
 const WC_SEASON = 2026;
 const TOURNAMENT_START = new Date("2026-06-11T19:00:00.000Z");
@@ -26,7 +29,7 @@ type ApiFootballFixture = {
   };
 };
 
-export class MissingApiKeyError extends Error {
+export class MissingApiKeyError extends ApiFootballAuthError {
   constructor() {
     super("MISSING_API_KEY");
     this.name = "MissingApiKeyError";
@@ -54,34 +57,15 @@ export function isTournamentLive(now: Date = new Date()): boolean {
 }
 
 async function apiFetch(path: string): Promise<ApiFootballFixture[]> {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    return [];
-  }
-
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { "x-apisports-key": apiKey },
-    next: { revalidate: 0 },
-  });
-
-  if (!res.ok) {
-    throw new Error(`api-sports ${res.status} — ${path}`);
-  }
-
-  const json = (await res.json()) as {
-    errors?: Record<string, string>;
-    response?: ApiFootballFixture[];
-  };
-
-  if (json.errors && Object.keys(json.errors).length > 0) {
-    const errorText = JSON.stringify(json.errors);
-    if (isMissingApiKeyError(errorText)) {
+  try {
+    const { data } = await apiFootballFetch<ApiFootballFixture[]>(path);
+    return data;
+  } catch (error) {
+    if (error instanceof ApiFootballAuthError) {
       throw new MissingApiKeyError();
     }
-    throw new Error(errorText);
+    throw error;
   }
-
-  return json.response ?? [];
 }
 
 function normalizeApiFixture(raw: ApiFootballFixture): Wc26ApiMatch | null {

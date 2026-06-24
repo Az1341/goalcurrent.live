@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureRouteError, logInfo } from "@/lib/log";
 import { fetchPlFixtures, plFixturesCacheControl } from "@/lib/pl/api";
 import { getCached, setCached } from "@/lib/server/cache";
 
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const cacheKey = `${request.url}|lang:${locale}`;
   const cached = getCached(cacheKey);
   if (cached) {
-    console.info(`CACHE HIT: ${ROUTE}`);
+    logInfo(ROUTE, "CACHE HIT");
     return NextResponse.json(cached, {
       headers: {
         "Cache-Control": plFixturesCacheControl(
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   }
 
-  console.info(`CACHE MISS: ${ROUTE}`);
+  logInfo(ROUTE, "CACHE MISS");
 
   try {
     const body = await fetchPlFixtures(locale);
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("[api/pl/fixtures]", message);
+    captureRouteError("api/pl/fixtures", error);
 
     return NextResponse.json(
       {

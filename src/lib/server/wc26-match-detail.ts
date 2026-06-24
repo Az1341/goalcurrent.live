@@ -1,7 +1,7 @@
 import { getFixtureById, getTeamById } from "@/data/wc26";
+import { apiFootballFetch } from "@/lib/api-football/client";
 import { findFixtureIdByTeamNames } from "@/lib/wc26-fixture-match";
 import { resolveTeamId } from "@/lib/teamIdentity";
-import { isWc26ApiConfigured } from "@/lib/server/wc26-api-football";
 import type {
   MatchDetailPayload,
   MatchEventItem,
@@ -9,9 +9,10 @@ import type {
   MatchLineupSide,
   MatchStatisticPair,
 } from "@/types/match-detail";
+import { isWc26ApiConfigured } from "@/lib/server/wc26-api-football";
+
 import { MATCH_STAT_LABELS } from "@/lib/wc26-match";
 
-const BASE_URL = "https://v3.football.api-sports.io";
 const WC_LEAGUE = 1;
 const WC_SEASON = 2026;
 
@@ -25,35 +26,9 @@ const STAT_KEYS = [
   "red_cards",
 ] as const;
 
-function getApiKey(): string | undefined {
-  return process.env.API_FOOTBALL_KEY?.trim() || undefined;
-}
-
 async function apiFetchResponse<T>(path: string): Promise<T[]> {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    return [];
-  }
-
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { "x-apisports-key": apiKey },
-    next: { revalidate: 0 },
-  });
-
-  if (!res.ok) {
-    throw new Error(`api-sports ${res.status} — ${path}`);
-  }
-
-  const json = (await res.json()) as {
-    errors?: Record<string, string>;
-    response?: T[];
-  };
-
-  if (json.errors && Object.keys(json.errors).length > 0) {
-    throw new Error(JSON.stringify(json.errors));
-  }
-
-  return json.response ?? [];
+  const { data } = await apiFootballFetch<T[]>(path);
+  return data;
 }
 
 type ApiFixtureRow = {
@@ -324,7 +299,7 @@ export async function fetchWc26MatchDetail(
         awayTeam?.name ?? fixture.awayTeamId,
       ),
     };
-  } catch {
-    return emptyPayload(fixtureId);
+  } catch (error) {
+    throw error;
   }
 }

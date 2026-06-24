@@ -7,7 +7,7 @@ import type {
 
 export const WC26_SYNC_STATUS_EVENT = "wc26:sync-status";
 
-export type Wc26SyncStatus = "pending" | "synced" | "unconfigured";
+export type Wc26SyncStatus = "pending" | "synced" | "unconfigured" | "degraded";
 
 let syncStatus: Wc26SyncStatus = "pending";
 
@@ -104,6 +104,14 @@ function applyScoresOutcome(outcome: FetchScoresOutcome): boolean {
 export function applyWc26ScoresToOverlay(data: Wc26ScoresApiResponse): void {
   if (isUnconfiguredScoresResponse(data)) {
     setSyncStatus("unconfigured");
+    return;
+  }
+
+  if (data.error) {
+    setSyncStatus("degraded");
+    if (data.matches.length > 0) {
+      mergeFixtureOverlay(overlayFromMatches(data.matches));
+    }
     return;
   }
 

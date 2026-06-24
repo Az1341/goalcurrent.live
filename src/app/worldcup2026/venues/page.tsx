@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import JsonLdScript from "@/components/seo/JsonLdScript";
 import VenuesSection from "@/components/wc26/VenuesSection";
 import Wc26SectionPage from "@/components/wc26/Wc26SectionPage";
 import { WC26_VENUES } from "@/data/wc26";
@@ -13,8 +14,8 @@ export const metadata: Metadata = buildPageMetadata({
   description: section.description,
   path: section.href,
 });
-function venuesStructuredData(): string {
-  return JSON.stringify({
+function venuesStructuredData(): Record<string, unknown> {
+  return {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "FIFA World Cup 2026 host venues",
@@ -39,16 +40,13 @@ function venuesStructuredData(): string {
         },
       };
     }),
-  });
+  };
 }
 
 export default function VenuesPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: venuesStructuredData() }}
-      />
+      <JsonLdScript data={venuesStructuredData()} />
       <Wc26SectionPage
         breadcrumb={section.breadcrumb}
         titleHighlight={section.titleHighlight}

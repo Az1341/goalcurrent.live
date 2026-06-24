@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { captureRouteError } from "@/lib/log";
 import { fetchPlAssists, plLeaderboardCacheControl } from "@/lib/pl/endpoints";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export async function GET(): Promise<NextResponse> {
       headers: { "Cache-Control": plLeaderboardCacheControl(body) },
     });
   } catch (error) {
-    console.error("[api/pl/assists]", error);
+    captureRouteError("api/pl/assists", error);
     return NextResponse.json(
       {
         configured: Boolean(process.env.API_FOOTBALL_KEY?.trim()),

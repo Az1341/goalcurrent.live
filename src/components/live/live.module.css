@@ -244,6 +244,17 @@
   animation: syncPulse 1.4s ease-in-out infinite;
 }
 
+.syncStatusDegraded {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
 @keyframes syncPulse {
   0%,
   100% {

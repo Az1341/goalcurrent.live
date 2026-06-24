@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureRouteError } from "@/lib/log";
+import {
+  apiFootballErrorMessage,
+  classifyApiFootballError,
+} from "@/lib/api-football/errors";
 import { getFixtureById, getTeamById } from "@/data/wc26";
 import {
   fetchLiveWc26Matches,
@@ -65,21 +70,30 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-
     if (
       error instanceof MissingApiKeyError ||
-      isMissingApiKeyError(message)
+      isMissingApiKeyError(
+        error instanceof Error ? error.message : "Unknown error",
+      )
     ) {
       return NextResponse.json([], {
         headers: { "Cache-Control": "no-store" },
       });
     }
 
-    console.error("[api/wc26/fixtures]", message);
-    return NextResponse.json([], {
-      status: 200,
-      headers: { "Cache-Control": "no-store" },
-    });
+    const code = classifyApiFootballError(error);
+    captureRouteError("api/wc26/fixtures", error);
+
+    return NextResponse.json(
+      {
+        error: code,
+        message: apiFootballErrorMessage(code),
+        fixtures: [],
+      },
+      {
+        status: code === "unknown_error" ? 500 : 503,
+        headers: { "Cache-Control": "no-store" },
+      },
+    );
   }
 }

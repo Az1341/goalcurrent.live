@@ -47,7 +47,9 @@ export function AdSlot({
     }
 
     const pushAd = () => {
-      const key = slot.trim();
+      const pathname =
+        typeof window !== "undefined" ? window.location.pathname : "";
+      const key = `${slot.trim()}@${pathname}`;
       const pushed = getPushedSlots();
       if (pushed.has(key)) {
         return;

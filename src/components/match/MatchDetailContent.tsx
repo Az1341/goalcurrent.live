@@ -7,9 +7,11 @@ import { groupHref } from "@/lib/wc26-groups";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useMatchDetail } from "@/lib/use-match-detail";
+import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import MatchRelatedLinks from "@/components/match/MatchRelatedLinks";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
+import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import {
   MatchDetailHeader,
   MatchLineups,
@@ -21,9 +23,13 @@ import styles from "@/components/match/match.module.css";
 
 type MatchDetailContentProps = {
   fixtureId: string;
+  detailUnavailable?: boolean;
 };
 
-export default function MatchDetailContent({ fixtureId }: MatchDetailContentProps) {
+export default function MatchDetailContent({
+  fixtureId,
+  detailUnavailable = false,
+}: MatchDetailContentProps) {
   const fixtures = useEffectiveFixtures();
   const fixture =
     fixtures.find((entry) => entry.id === fixtureId) ?? getFixtureById(fixtureId);
@@ -61,27 +67,37 @@ export default function MatchDetailContent({ fixtureId }: MatchDetailContentProp
         )}
       </nav>
 
-      <MatchDetailHeader header={header} detail={detail} loading={loading} />
+      <MatchDetailHeader header={header} detail={detail} loading={loading && !detailUnavailable} />
       <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="detail" />
-      <MatchTimeline
-        detail={detail}
-        loading={loading}
-        homeTeamName={header.homeName}
-        awayTeamName={header.awayName}
-      />
-      <MatchMovement detail={detail} loading={loading} />
-      <MatchPlayerStats
-        detail={detail}
-        loading={loading}
-        homeTeamName={header.homeName}
-        awayTeamName={header.awayName}
-      />
-      <MatchLineups
-        detail={detail}
-        homeTeamId={fixture.homeTeamId}
-        awayTeamId={fixture.awayTeamId}
-        loading={loading}
-      />
+      <ContentAdSlot slot={ADSENSE_SLOTS.matchMid} minHeight={120} />
+      {detailUnavailable ? (
+        <p className={styles.emptyState}>
+          Detailed live data is temporarily unavailable. Team names and schedule data
+          below are from the local fixture list.
+        </p>
+      ) : (
+        <>
+          <MatchTimeline
+            detail={detail}
+            loading={loading}
+            homeTeamName={header.homeName}
+            awayTeamName={header.awayName}
+          />
+          <MatchMovement detail={detail} loading={loading} />
+          <MatchPlayerStats
+            detail={detail}
+            loading={loading}
+            homeTeamName={header.homeName}
+            awayTeamName={header.awayName}
+          />
+          <MatchLineups
+            detail={detail}
+            homeTeamId={fixture.homeTeamId}
+            awayTeamId={fixture.awayTeamId}
+            loading={loading}
+          />
+        </>
+      )}
 
       <MatchRelatedLinks fixtureId={fixtureId} groupId={fixture.groupId} />
 

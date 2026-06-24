@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureRouteError, logInfo } from "@/lib/log";
 import {
   fetchPlTopScorers,
   plLeaderboardCacheControl,
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const cacheKey = request.url;
   const cached = getCached(cacheKey);
   if (cached) {
-    console.info(`CACHE HIT: ${ROUTE}`);
+    logInfo(ROUTE, "CACHE HIT");
     return NextResponse.json(cached, {
       headers: {
         "Cache-Control": plLeaderboardCacheControl(
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   }
 
-  console.info(`CACHE MISS: ${ROUTE}`);
+  logInfo(ROUTE, "CACHE MISS");
 
   try {
     const body = await fetchPlTopScorers();
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       headers: { "Cache-Control": plLeaderboardCacheControl(body) },
     });
   } catch (error) {
-    console.error("[api/pl/top-scorers]", error);
+    captureRouteError("api/pl/top-scorers", error);
     return NextResponse.json(
       {
         configured: Boolean(process.env.API_FOOTBALL_KEY?.trim()),

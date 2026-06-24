@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import JsonLdScript from "@/components/seo/JsonLdScript";
+import ArticleBodyWithAd from "@/components/articles/ArticleBodyWithAd";
 import { getArticleBySlug, getAllArticleSlugs } from "@/data/articles";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { absoluteUrl } from "@/lib/site-url";
@@ -116,16 +117,13 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </div>
 
-      <article
-        style={{ color: "#475569", lineHeight: 1.8, fontSize: 15 }}
-        dangerouslySetInnerHTML={{
-          __html: article.content
-            .replace(
-              /<h2>/g,
-              '<h2 style="font-size:18px;font-weight:800;color:#0f172a;margin:28px 0 10px;padding-bottom:8px;border-bottom:2px solid #2563eb;">',
-            )
-            .replace(/<p>/g, '<p style="margin-bottom:16px;">'),
-        }}
+      <ArticleBodyWithAd
+        html={article.content
+          .replace(
+            /<h2>/g,
+            '<h2 style="font-size:18px;font-weight:800;color:#0f172a;margin:28px 0 10px;padding-bottom:8px;border-bottom:2px solid #2563eb;">',
+          )
+          .replace(/<p>/g, '<p style="margin-bottom:16px;">')}
       />
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 40 }}>

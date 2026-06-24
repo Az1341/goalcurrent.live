@@ -20,11 +20,16 @@ export type Wc26ApiMatch = {
   readonly apiFixtureId?: number;
 };
 
+import type { ApiFootballErrorCode } from "@/lib/api-football/errors";
+
 export type Wc26ScoresApiResponse = {
   readonly matches: readonly Wc26ApiMatch[];
   readonly fetchedAt: string;
   readonly configured: boolean;
   readonly phase?: string;
+  readonly error?: ApiFootballErrorCode;
+  readonly message?: string;
+  readonly stale?: boolean;
 };
 
 /** Live fixture row returned by GET /api/wc26/fixtures?status=LIVE */

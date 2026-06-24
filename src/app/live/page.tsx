@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import LivePageClient from "@/app/live/LivePageClient";
+import ErrorBoundary from "@/components/system/ErrorBoundary";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 
@@ -11,6 +12,10 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function LivePage() {
-  return <LivePageClient />;
+  return (
+    <ErrorBoundary>
+      <LivePageClient />
+    </ErrorBoundary>
+  );
 }
 

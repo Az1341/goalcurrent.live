@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import PlHubClient from "@/components/pl/PlHubClient";
 import JsonLdScript from "@/components/seo/JsonLdScript";
 import { buildPageMetadata } from "@/lib/page-metadata";
@@ -23,7 +22,6 @@ export default function PremierLeagueHubPage() {
   return (
     <>
       <JsonLdScript data={jsonLd} />
-      <PlAdSlotTop />
       <PlHubClient />
     </>
   );

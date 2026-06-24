@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { captureRouteError } from "@/lib/log";
 import {
   fetchYouTubeVideos,
   parseVideoFeedCategory,
@@ -17,11 +18,27 @@ export async function GET(request: Request): Promise<NextResponse<VideosApiRespo
         ? 4
         : 12;
 
-  const payload = await fetchYouTubeVideos(category, maxResults);
+  try {
+    const payload = await fetchYouTubeVideos(category, maxResults);
 
-  return NextResponse.json(payload, {
-    headers: {
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300",
-    },
-  });
+    return NextResponse.json(payload, {
+      headers: {
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300",
+      },
+    });
+  } catch (error) {
+    captureRouteError("api/videos", error);
+    const empty: VideosApiResponse = {
+      videos: [],
+      count: 0,
+      fetchedAt: new Date().toISOString(),
+      error: "Failed to fetch videos",
+    };
+    return NextResponse.json(empty, {
+      status: 500,
+      headers: {
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+      },
+    });
+  }
 }

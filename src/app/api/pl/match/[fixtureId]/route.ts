@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureRouteError } from "@/lib/log";
 import {
   fetchPlMatchDetail,
   plMatchCacheControl,
@@ -53,7 +54,7 @@ export async function GET(
       headers: { "Cache-Control": plMatchCacheControl(body) },
     });
   } catch (error) {
-    console.error("[api/pl/match]", error);
+    captureRouteError("api/pl/match", error);
     return NextResponse.json(
       {
         configured: Boolean(process.env.API_FOOTBALL_KEY?.trim()),

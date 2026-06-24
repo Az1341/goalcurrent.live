@@ -262,6 +262,10 @@ export default function Home() {
           <LiveRibbon embedded />
         </div>
 
+        <div className={styles.sectionBlock}>
+          <AdSlot slot={ADSENSE_SLOTS.homeMid} className={styles.adUnit} />
+        </div>
+
         <div className={styles.threeCol}>
           <ColumnCard
             title="Live Now"
@@ -309,10 +313,6 @@ export default function Home() {
         <HomeWc26StandingsPreview />
 
         <HomePlSection />
-
-        <div className={styles.sectionBlock}>
-          <AdSlot slot={ADSENSE_SLOTS.homeMid} className={styles.adUnit} />
-        </div>
 
         <section className={styles.sectionBlock} aria-labelledby="wc26-heading">
           <div className={styles.sectionHeader}>

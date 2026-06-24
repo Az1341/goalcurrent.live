@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { captureRouteError } from "@/lib/log";
 import {
   fetchNewsFeed,
   parseNewsFeedCategory,
@@ -16,7 +17,8 @@ export async function GET(request: Request): Promise<NextResponse<NewsApiRespons
         "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=600",
       },
     });
-  } catch {
+  } catch (error) {
+    captureRouteError("api/news", error);
     const empty: NewsApiResponse = {
       articles: [],
       sources: [],

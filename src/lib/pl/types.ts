@@ -47,6 +47,8 @@ export type PlFixturesApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };
 
 export type PlStandingRow = {
@@ -76,6 +78,8 @@ export type PlStandingsApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };
 
 export type PlTeamRow = {
@@ -96,6 +100,8 @@ export type PlTeamsApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };
 
 export type PlPlayerStatRow = {
@@ -119,6 +125,8 @@ export type PlPlayersApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };
 
 export type PlPlayerLeaderboardApiResponse = {
@@ -130,6 +138,8 @@ export type PlPlayerLeaderboardApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };
 
 export type PlStatisticsBundle = {
@@ -148,6 +158,8 @@ export type PlStatisticsApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };
 
 export type PlLiveApiResponse = {
@@ -159,6 +171,8 @@ export type PlLiveApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };
 
 export type PlTransferRow = {
@@ -181,6 +195,8 @@ export type PlTransfersApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };
 
 export type PlMatchFixture = PlFixtureRow & {
@@ -217,4 +233,6 @@ export type PlMatchApiResponse = {
   source: PlStandingsSource;
   fetchedAt: string;
   error?: string;
+  errorCode?: import("@/lib/api-football/errors").ApiFootballErrorCode;
+  stale?: boolean;
 };

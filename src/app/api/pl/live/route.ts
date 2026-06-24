@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { captureRouteError, logInfo } from "@/lib/log";
 import { fetchPlLive, plLiveCacheControl } from "@/lib/pl/endpoints";
 import { getCached, setCached } from "@/lib/server/cache";
 
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const cacheKey = `${request.url}|lang:${locale}`;
   const cached = getCached(cacheKey);
   if (cached) {
-    console.info(`CACHE HIT: ${ROUTE}`);
+    logInfo(ROUTE, "CACHE HIT");
     return NextResponse.json(cached, {
       headers: {
         "Cache-Control": plLiveCacheControl(
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   }
 
-  console.info(`CACHE MISS: ${ROUTE}`);
+  logInfo(ROUTE, "CACHE MISS");
 
   try {
     const body = await fetchPlLive(locale);
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       headers: { "Cache-Control": plLiveCacheControl(body) },
     });
   } catch (error) {
-    console.error("[api/pl/live]", error);
+    captureRouteError("api/pl/live", error);
     return NextResponse.json(
       {
         configured: Boolean(process.env.API_FOOTBALL_KEY?.trim()),
