@@ -11,7 +11,9 @@ import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import MatchRelatedLinks from "@/components/match/MatchRelatedLinks";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
+import { ShareButtons } from "@/components/ui/ShareButtons";
 import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
+import { absoluteUrl } from "@/lib/site-url";
 import {
   MatchDetailHeader,
   MatchLineups,
@@ -68,6 +70,10 @@ export default function MatchDetailContent({
       </nav>
 
       <MatchDetailHeader header={header} detail={detail} loading={loading && !detailUnavailable} />
+      <ShareButtons
+        url={absoluteUrl(`/match/${fixtureId}`)}
+        title={`${header.homeName} vs ${header.awayName} — World Cup 2026`}
+      />
       <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="detail" />
       <ContentAdSlot slot={ADSENSE_SLOTS.matchMid} minHeight={120} />
       {detailUnavailable ? (

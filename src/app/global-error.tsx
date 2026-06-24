@@ -2,6 +2,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
+import styles from "@/components/ui/trust-pages.module.css";
 
 type GlobalErrorProps = {
   error: Error & { digest?: string };
@@ -16,13 +17,18 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html lang="en">
       <body>
-        <div style={{ padding: "2rem", textAlign: "center" }}>
-          <h1>Something went wrong</h1>
-          <p>Please try again or refresh the page.</p>
-          <button type="button" onClick={() => reset()}>
-            Try again
-          </button>
-        </div>
+        <main className={styles.page}>
+          <div className={styles.card}>
+            <p className={styles.code}>Error</p>
+            <h1>Something went wrong</h1>
+            <p>Please try again or refresh the page.</p>
+            <div className={styles.actions}>
+              <button type="button" className={styles.primary} onClick={() => reset()}>
+                Try again
+              </button>
+            </div>
+          </div>
+        </main>
       </body>
     </html>
   );

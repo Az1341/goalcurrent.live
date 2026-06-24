@@ -5,6 +5,7 @@ import JsonLdScript from "@/components/seo/JsonLdScript";
 import ArticleBodyWithAd from "@/components/articles/ArticleBodyWithAd";
 import { getArticleBySlug, getAllArticleSlugs } from "@/data/articles";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { ShareButtons } from "@/components/ui/ShareButtons";
 import { absoluteUrl } from "@/lib/site-url";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -124,6 +125,11 @@ export default async function ArticlePage({ params }: PageProps) {
             '<h2 style="font-size:18px;font-weight:800;color:#0f172a;margin:28px 0 10px;padding-bottom:8px;border-bottom:2px solid #2563eb;">',
           )
           .replace(/<p>/g, '<p style="margin-bottom:16px;">')}
+      />
+
+      <ShareButtons
+        url={absoluteUrl(`/articles/${article.slug}`)}
+        title={article.title}
       />
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 40 }}>

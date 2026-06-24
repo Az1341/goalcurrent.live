@@ -42,7 +42,7 @@ export default function MasterFooter() {
         </div>
 
         <p className={styles.footerCopy}>
-          © 2026 Ashna4All · Ahmad Zafarani · {SITE_NAME} independent fan
+          © {new Date().getFullYear()} Ashna4All · Ahmad Zafarani · {SITE_NAME} independent fan
           site · Not affiliated with FIFA, UEFA or the Premier League.
         </p>
       </div>
