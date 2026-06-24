@@ -30,6 +30,30 @@ export function getApiFootballKey(): string | undefined {
   return process.env.API_FOOTBALL_KEY?.trim() || undefined;
 }
 
+function applyApiFootballSimulation<T>(): ApiFootballFetchResult<T> | void {
+  if (process.env.NODE_ENV === "production") {
+    return;
+  }
+
+  const mode = process.env.API_FOOTBALL_SIMULATE?.trim().toLowerCase();
+  if (!mode || mode === "off") {
+    return;
+  }
+
+  switch (mode) {
+    case "429":
+      throw new ApiFootballRateLimitError("Simulated rate limit (API_FOOTBALL_SIMULATE)");
+    case "500":
+      throw new ApiFootballNetworkError("Simulated server error (API_FOOTBALL_SIMULATE)");
+    case "timeout":
+      throw new ApiFootballNetworkError("API-Football request timed out");
+    case "empty":
+      return { data: [] as T, results: 0 };
+    default:
+      return;
+  }
+}
+
 export async function apiFootballFetch<T>(
   path: string,
   init?: RequestInit,
@@ -37,6 +61,11 @@ export async function apiFootballFetch<T>(
   const apiKey = getApiFootballKey();
   if (!apiKey) {
     throw new ApiFootballAuthError("API_FOOTBALL_KEY is not configured");
+  }
+
+  const simulated = applyApiFootballSimulation<T>();
+  if (simulated) {
+    return simulated;
   }
 
   const controller = new AbortController();

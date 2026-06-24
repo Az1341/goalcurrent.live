@@ -18,6 +18,7 @@ const MatchDetailContent = dynamic(
 
 type MatchPageClientProps = {
   fixtureId: string;
+  scorebatEmbed?: string | null;
 };
 
 function sportsEventStatus(status: string): string {
@@ -43,7 +44,10 @@ function sportsEventStatus(status: string): string {
 }
 
 /** Client shell — shares unified live-scores SWR cache with scoreboard and overlay sync. */
-export default function MatchPageClient({ fixtureId }: MatchPageClientProps) {
+export default function MatchPageClient({
+  fixtureId,
+  scorebatEmbed = null,
+}: MatchPageClientProps) {
   useLiveScores();
 
   const fixtures = useEffectiveFixtures();
@@ -106,7 +110,11 @@ export default function MatchPageClient({ fixtureId }: MatchPageClientProps) {
         }
         fetchedAt={detail.stale ? detail.fetchedAt : undefined}
       />
-      <MatchDetailContent fixtureId={fixtureId} detailUnavailable={Boolean(detail.error)} />
+      <MatchDetailContent
+        fixtureId={fixtureId}
+        detailUnavailable={Boolean(detail.error)}
+        scorebatEmbed={scorebatEmbed}
+      />
     </>
   );
 }
