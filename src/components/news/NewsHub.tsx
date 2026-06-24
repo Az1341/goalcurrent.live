@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import RemoteImage from "@/components/ui/RemoteImage";
 import { NEWS_FALLBACK_ARTICLES } from "@/components/news/news-fallback";
 import type { NewsArticle, NewsApiResponse, NewsTag } from "@/types/news";
 import { mergeEditorialFirst } from "@/lib/editorial-news";
@@ -83,11 +84,13 @@ function NewsCard({ article }: { article: NewsArticle }) {
     <ArticleLink article={article} className={styles.card}>
       <div className={styles.cardImageWrap}>
         {article.image ? (
-          <img
+          <RemoteImage
             src={article.image}
             alt=""
+            width={400}
+            height={150}
+            sizes="(max-width: 768px) 100vw, 400px"
             className={styles.cardImage}
-            loading="lazy"
           />
         ) : (
           <span aria-hidden="true">📰</span>

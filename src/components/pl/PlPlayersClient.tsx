@@ -8,7 +8,7 @@ import {
   PlErrorPanel,
   PlLoadingPanel,
   PlSearchInput,
-  PlTeamBadge,
+  PlTeamLogo,
 } from "./PlShared";
 
 type ViewState = "loading" | "error" | "ready";
@@ -20,21 +20,9 @@ function PlayerPhoto({
   name: string;
   photo: string | null;
 }) {
-  const [failed, setFailed] = useState(false);
-  if (photo && !failed) {
-    return (
-      <img
-        src={photo}
-        alt=""
-        width={36}
-        height={36}
-        loading="lazy"
-        style={{ borderRadius: "999px", objectFit: "cover" }}
-        onError={() => setFailed(true)}
-      />
-    );
-  }
-  return <PlTeamBadge name={name} logo={null} size={36} />;
+  return (
+    <PlTeamLogo name={name} logo={photo} size={36} rounded />
+  );
 }
 
 export default function PlPlayersClient() {
@@ -125,7 +113,7 @@ export default function PlPlayersClient() {
                     </div>
                   </div>
                   {player.teamLogo ? (
-                    <PlTeamBadge
+                    <PlTeamLogo
                       name={player.teamName ?? "Team"}
                       logo={player.teamLogo}
                       size={28}

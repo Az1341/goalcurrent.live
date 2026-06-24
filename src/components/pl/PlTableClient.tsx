@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { PlTeamLogo } from "@/components/pl/PlShared";
 import type {
   PlFixtureRow,
   PlFixturesApiResponse,
@@ -17,18 +18,6 @@ import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlTable.module.css";
 
 type ViewState = "loading" | "error" | "ready";
-
-function teamInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) {
-    return parts[0].slice(0, 3).toUpperCase();
-  }
-  return parts
-    .slice(0, 2)
-    .map((part) => part[0] ?? "")
-    .join("")
-    .toUpperCase();
-}
 
 function formatGoalDiff(value: number): string {
   if (value > 0) return `+${value}`;
@@ -64,28 +53,6 @@ function extractTeamsFromFixtures(
   return [...teams.values()];
 }
 
-function TeamBadge({ row }: { row: PlStandingRow }) {
-  const [logoFailed, setLogoFailed] = useState(false);
-  const showLogo = row.teamLogo && !logoFailed;
-
-  return (
-    <span className={styles.badge} aria-hidden="true">
-      {showLogo ? (
-        <img
-          src={row.teamLogo!}
-          alt=""
-          width={22}
-          height={22}
-          loading="lazy"
-          onError={() => setLogoFailed(true)}
-        />
-      ) : (
-        teamInitials(row.teamName)
-      )}
-    </span>
-  );
-}
-
 function StandingRow({
   row,
   totalTeams,
@@ -110,7 +77,12 @@ function StandingRow({
             className={`${styles.zoneBar} ${zone ?? ""}`}
             aria-hidden="true"
           />
-          <TeamBadge row={row} />
+          <PlTeamLogo
+            name={row.teamName}
+            logo={row.teamLogo}
+            size={22}
+            className={styles.badge}
+          />
           <span className={styles.clubName}>{row.teamName}</span>
         </div>
       </td>

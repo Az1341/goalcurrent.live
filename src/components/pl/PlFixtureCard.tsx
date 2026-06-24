@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { PlTeamLogo } from "@/components/pl/PlShared";
 import {
   buildGoogleCalendarUrl,
   downloadIcsFile,
@@ -15,18 +16,6 @@ import { absoluteUrl } from "@/lib/site-url";
 import styles from "./PlFixtures.module.css";
 
 const PL_COMPETITION = "Premier League 2026/27";
-
-function teamInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) {
-    return parts[0].slice(0, 3).toUpperCase();
-  }
-  return parts
-    .slice(0, 2)
-    .map((part) => part[0] ?? "")
-    .join("")
-    .toUpperCase();
-}
 
 function formatLocalKickoff(kickoffUtc: string): string {
   const date = new Date(kickoffUtc);
@@ -88,34 +77,6 @@ function toCalendarEvent(fixture: PlFixtureRow): CalendarEventInput {
   };
 }
 
-function TeamBadge({
-  name,
-  logo,
-}: {
-  name: string;
-  logo: string | null;
-}) {
-  const [logoFailed, setLogoFailed] = useState(false);
-  const showLogo = logo && !logoFailed;
-
-  return (
-    <span className={styles.badge} aria-hidden="true">
-      {showLogo ? (
-        <img
-          src={logo}
-          alt=""
-          width={24}
-          height={24}
-          loading="lazy"
-          onError={() => setLogoFailed(true)}
-        />
-      ) : (
-        teamInitials(name)
-      )}
-    </span>
-  );
-}
-
 type PlFixtureCardProps = {
   fixture: PlFixtureRow;
 };
@@ -154,7 +115,12 @@ export default function PlFixtureCard({ fixture }: PlFixtureCardProps) {
 
       <div className={styles.matchRow}>
         <div className={styles.teamSide}>
-          <TeamBadge name={fixture.homeTeamName} logo={fixture.homeTeamLogo} />
+          <PlTeamLogo
+            name={fixture.homeTeamName}
+            logo={fixture.homeTeamLogo}
+            size={24}
+            className={styles.badge}
+          />
           <span className={styles.teamName}>{fixture.homeTeamName}</span>
         </div>
 
@@ -174,7 +140,12 @@ export default function PlFixtureCard({ fixture }: PlFixtureCardProps) {
         </div>
 
         <div className={`${styles.teamSide} ${styles.teamSideAway}`}>
-          <TeamBadge name={fixture.awayTeamName} logo={fixture.awayTeamLogo} />
+          <PlTeamLogo
+            name={fixture.awayTeamName}
+            logo={fixture.awayTeamLogo}
+            size={24}
+            className={styles.badge}
+          />
           <span className={styles.teamName}>{fixture.awayTeamName}</span>
         </div>
       </div>

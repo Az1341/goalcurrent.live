@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RemoteImage from "@/components/ui/RemoteImage";
 import type { NewsArticle, NewsTag } from "@/types/news";
 import styles from "./news.module.css";
 
@@ -31,11 +32,13 @@ export default function NewsArticleCard({ article }: NewsArticleCardProps) {
     <>
       <div className={styles.cardImageWrap}>
         {article.image ? (
-          <img
+          <RemoteImage
             src={article.image}
             alt=""
+            width={400}
+            height={150}
+            sizes="(max-width: 768px) 100vw, 400px"
             className={styles.cardImage}
-            loading="lazy"
           />
         ) : (
           <span aria-hidden="true">📰</span>

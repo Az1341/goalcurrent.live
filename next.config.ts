@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { REMOTE_IMAGE_HOSTNAMES } from "./src/lib/images";
 
 type RouteRedirect = NonNullable<
   Awaited<ReturnType<NonNullable<NextConfig["redirects"]>>>
@@ -105,6 +106,16 @@ const SITE_REDIRECTS: RouteRedirect[] = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1600],
+    imageSizes: [16, 24, 32, 48, 64, 96, 128, 256],
+    remotePatterns: REMOTE_IMAGE_HOSTNAMES.map((hostname) => ({
+      protocol: "https" as const,
+      hostname,
+      pathname: "/**",
+    })),
+  },
   async redirects() {
     return SITE_REDIRECTS;
   },

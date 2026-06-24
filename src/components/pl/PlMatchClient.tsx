@@ -20,20 +20,10 @@ import {
 } from "@/components/match/MatchDetailSections";
 import styles from "./PlMatch.module.css";
 import tableStyles from "./PlTable.module.css";
-import { PlErrorPanel, PlLoadingPanel, PlTeamBadge } from "./PlShared";
+import { PlErrorPanel, PlLoadingPanel, PlTeamLogo } from "./PlShared";
 
 const PL_COMPETITION = "Premier League 2026/27";
 const LIVE_POLL_MS = 30_000;
-
-function teamInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].slice(0, 3).toUpperCase();
-  return parts
-    .slice(0, 2)
-    .map((part) => part[0] ?? "")
-    .join("")
-    .toUpperCase();
-}
 
 function formatKickoff(kickoffUtc: string): string {
   const date = new Date(kickoffUtc);
@@ -256,13 +246,11 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
         <div className={styles.teamsRow}>
           <div className={styles.teamCol}>
             <span className={styles.teamLogo}>
-              {fixture.homeTeamLogo ? (
-                <img src={fixture.homeTeamLogo} alt="" width={52} height={52} />
-              ) : (
-                <span className={styles.teamInitials}>
-                  {teamInitials(fixture.homeTeamName)}
-                </span>
-              )}
+              <PlTeamLogo
+                name={fixture.homeTeamName}
+                logo={fixture.homeTeamLogo}
+                size={52}
+              />
             </span>
             <span className={styles.teamName}>{fixture.homeTeamName}</span>
           </div>
@@ -280,13 +268,11 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
 
           <div className={`${styles.teamCol} ${styles.teamColAway}`}>
             <span className={styles.teamLogo}>
-              {fixture.awayTeamLogo ? (
-                <img src={fixture.awayTeamLogo} alt="" width={52} height={52} />
-              ) : (
-                <span className={styles.teamInitials}>
-                  {teamInitials(fixture.awayTeamName)}
-                </span>
-              )}
+              <PlTeamLogo
+                name={fixture.awayTeamName}
+                logo={fixture.awayTeamLogo}
+                size={52}
+              />
             </span>
             <span className={styles.teamName}>{fixture.awayTeamName}</span>
           </div>
@@ -636,7 +622,7 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
                         <td>{row.rank}</td>
                         <td>
                           <div className={styles.tableClub}>
-                            <PlTeamBadge
+                            <PlTeamLogo
                               name={row.teamName}
                               logo={row.teamLogo}
                               size={22}

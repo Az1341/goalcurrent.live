@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { buildPageMetadata } from "@/lib/page-metadata";
 
@@ -14,8 +15,14 @@ function Fig({ file, alt, caption }: { file: string; alt: string; caption: strin
   return (
     <figure style={{ margin: "28px 0" }}>
       <div style={{ borderRadius: 12, overflow: "hidden", background: "#e2e8f0" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`${IMG}/${file}`} alt={alt} style={{ width: "100%", height: "auto", display: "block" }} loading="lazy" />
+        <Image
+          src={`${IMG}/${file}`}
+          alt={alt}
+          width={760}
+          height={428}
+          sizes="(max-width: 760px) 100vw, 760px"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
       </div>
       <figcaption style={{ fontSize: 12, color: "#64748b", marginTop: 8, lineHeight: 1.5, textAlign: "center", fontStyle: "italic" }}>
         {caption} <span style={{ color: "#94a3b8" }}>· Photo: GoalCurrent.live</span>
@@ -63,8 +70,15 @@ export default function FootballInspiringCanadaPage() {
 
       {/* Hero image */}
       <div style={{ borderRadius: 14, overflow: "hidden", marginBottom: 24, background: "#e2e8f0" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`${IMG}/hero.jpg`} alt="Young footballers train on a grass pitch in a Toronto park" style={{ width: "100%", height: "auto", display: "block" }} />
+        <Image
+          src={`${IMG}/hero.jpg`}
+          alt="Young footballers train on a grass pitch in a Toronto park"
+          width={1600}
+          height={900}
+          priority
+          sizes="(max-width: 760px) 100vw, 760px"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
       </div>
 
       {/* Meta */}

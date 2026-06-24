@@ -1,7 +1,64 @@
 "use client";
 
 import { useState } from "react";
+import RemoteImage from "@/components/ui/RemoteImage";
 import styles from "./PlData.module.css";
+
+function teamInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) {
+    return parts[0].slice(0, 3).toUpperCase();
+  }
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0] ?? "")
+    .join("")
+    .toUpperCase();
+}
+
+export function PlTeamLogo({
+  name,
+  logo,
+  size = 40,
+  className,
+  rounded = false,
+}: {
+  name: string;
+  logo: string | null;
+  size?: number;
+  className?: string;
+  rounded?: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  const initials = teamInitials(name);
+
+  return (
+    <span
+      className={className ?? styles.badge}
+      style={{ width: size, height: size }}
+      aria-hidden="true"
+    >
+      {logo && !failed ? (
+        <RemoteImage
+          src={logo}
+          alt=""
+          width={size}
+          height={size}
+          sizes={`${size}px`}
+          style={{
+            width: size,
+            height: size,
+            objectFit: "cover",
+            ...(rounded ? { borderRadius: "999px" } : {}),
+          }}
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        initials
+      )}
+    </span>
+  );
+}
 
 export function PlTeamBadge({
   name,
@@ -12,35 +69,7 @@ export function PlTeamBadge({
   logo: string | null;
   size?: number;
 }) {
-  const [failed, setFailed] = useState(false);
-  const initials = name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0] ?? "")
-    .join("")
-    .toUpperCase();
-
-  return (
-    <span
-      className={styles.badge}
-      style={{ width: size, height: size }}
-      aria-hidden="true"
-    >
-      {logo && !failed ? (
-        <img
-          src={logo}
-          alt=""
-          width={size}
-          height={size}
-          loading="lazy"
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        initials
-      )}
-    </span>
-  );
+  return <PlTeamLogo name={name} logo={logo} size={size} />;
 }
 
 export function PlLoadingPanel({ title, text }: { title: string; text: string }) {

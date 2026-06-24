@@ -1,6 +1,9 @@
+"use client";
+
+import Image from "next/image";
+import type { TeamId } from "@/types/team";
 import { getTeamFlagAlt, getTeamFlagSrc } from "@/lib/teamFlag";
 import { resolveTeamId } from "@/lib/teamIdentity";
-import type { TeamId } from "@/types/team";
 
 type TeamFlagProps = {
   teamName?: string;
@@ -44,14 +47,13 @@ export default function TeamFlag({
   const height = Math.round(size * 0.75);
 
   return (
-    <img
+    <Image
       className={className}
       src={src}
       alt={alt}
       width={size}
       height={height}
-      loading="lazy"
-      decoding="async"
+      unoptimized
       style={{
         width: size,
         height,
