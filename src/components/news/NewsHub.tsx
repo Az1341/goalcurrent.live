@@ -6,6 +6,7 @@ import RemoteImage from "@/components/ui/RemoteImage";
 import { NEWS_FALLBACK_ARTICLES } from "@/components/news/news-fallback";
 import type { NewsArticle, NewsApiResponse, NewsTag } from "@/types/news";
 import { mergeEditorialFirst } from "@/lib/editorial-news";
+import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./news.module.css";
 
@@ -193,7 +194,7 @@ export default function NewsHub() {
         <span className={styles.sourceUpdated}>{updatedLabel}</span>
       </div>
 
-      {/* GoalCurrent Editorial Articles Banner */}
+      {/* GoalCurrent.live original articles banner */}
       <Link href="/articles" style={{
         display: "block",
         background: "linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(16,185,129,0.06) 100%)",
@@ -207,7 +208,7 @@ export default function NewsHub() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>
-              ✍️ GoalCurrent Editorial
+              ✍️ {EDITORIAL_SOURCE_LABEL}
             </div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}>
               Original articles, analysis & World Cup 2026 guides

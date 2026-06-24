@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
+import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
 
 const SLUG = "football-inspiring-canadas-next-generation";
 
@@ -83,14 +84,14 @@ export default function FootballInspiringCanadaPage() {
       {/* Meta */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ marginBottom: 10, display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <span style={{ background: "rgba(37,99,235,0.1)", color: "#2563eb", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>✍️ GoalCurrent Editorial</span>
+          <span style={{ background: "rgba(37,99,235,0.1)", color: "#2563eb", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>✍️ {EDITORIAL_SOURCE_LABEL}</span>
           <span style={{ background: "rgba(220,38,38,0.1)", color: "#dc2626", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>📍 Toronto, Canada</span>
         </div>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", lineHeight: 1.2, marginBottom: 12 }}>
           Football Is Inspiring Canada&apos;s Next Generation
         </h1>
         <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#94a3b8", flexWrap: "wrap" }}>
-          <span>📅 16 June 2026</span><span>✍️ GoalCurrent.live</span><span>⏱ 13 min read</span>
+          <span>📅 16 June 2026</span><span>✍️ {EDITORIAL_SOURCE_LABEL}</span><span>⏱ 13 min read</span>
         </div>
       </div>
 

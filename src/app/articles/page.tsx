@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles/ArticleAuthorLine";
 import { ARTICLE_INDEX, ARTICLES, articleHref } from "@/data/articles";
 import { getArticleCardImage } from "@/lib/article-hub";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { EDITORIAL_AUTHOR, EDITORIAL_PUBLISHER } from "@/lib/seo/constants";
 import styles from "./article.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Football Articles & Analysis",
   description:
-    "In-depth football articles, World Cup 2026 match recaps, and expert analysis from the GoalCurrent.live Editorial Team.",
+    `In-depth football articles, World Cup 2026 match recaps, and expert analysis by ${EDITORIAL_AUTHOR} on ${EDITORIAL_PUBLISHER}.`,
   path: "/articles",
 });
 
@@ -27,10 +29,10 @@ export default function ArticlesIndexPage() {
     <main className={styles.articlePage}>
       <div className={styles.stack}>
         <div className={styles.heroCard}>
-          <div className={styles.categoryPill}>GoalCurrent Editorial</div>
+          <div className={styles.categoryPill}>{EDITORIAL_PUBLISHER}</div>
           <h1>Football Articles &amp; Analysis</h1>
           <div className={styles.hereMeta}>
-            <span>By the GoalCurrent.live Editorial Team</span>
+            <ArticleAuthorLine sepClassName={styles.sep} />
             <span className={styles.sep}>·</span>
             <span>Expert football writing &amp; analysis</span>
           </div>
@@ -84,9 +86,7 @@ export default function ArticlesIndexPage() {
           <p>
             <strong>© 2026 GoalCurrent.live — All Rights Reserved.</strong>
             <br />
-            All articles produced by the GoalCurrent.live Editorial Team. Unauthorised reproduction,
-            republication or syndication of any content is strictly prohibited without prior written
-            permission.
+            <ArticleCopyrightNotice />
             <br />
             For syndication enquiries contact us at{" "}
             <a href="https://goalcurrent.live/contact">goalcurrent.live/contact</a>

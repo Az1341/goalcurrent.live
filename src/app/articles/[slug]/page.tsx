@@ -11,6 +11,7 @@ import {
   buildStaticArticleMetadata,
 } from "@/lib/seo/article-seo";
 import { ShareButtons } from "@/components/ui/ShareButtons";
+import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
 import { absoluteUrl } from "@/lib/site-url";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -30,7 +31,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   "world-cup-2026": "🌍 World Cup 2026",
   "premier-league": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League",
   "champions-league": "⭐ Champions League",
-  editorial: "✍️ GoalCurrent Editorial",
+  editorial: `✍️ ${EDITORIAL_SOURCE_LABEL}`,
 };
 
 export default async function ArticlePage({ params }: PageProps) {
@@ -93,7 +94,7 @@ export default async function ArticlePage({ params }: PageProps) {
             }}
           >
             <time dateTime={seo.datePublished}>📅 {article.date}</time>
-            <span>✍️ GoalCurrent Editorial</span>
+            <span>✍️ {EDITORIAL_SOURCE_LABEL}</span>
             <span>⏱ {article.readTime} min read</span>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { ARTICLE_INDEX, articleHref, type ArticleIndexEntry } from "@/data/articles";
 import { EDITORIAL_ARTICLES } from "@/data/editorial";
+import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
 import { toIsoDate } from "@/lib/seo/dates";
 import type { NewsArticle } from "@/types/news";
 
@@ -19,7 +20,7 @@ export function getEditorialNewsArticles(): NewsArticle[] {
     link: article.path,
     excerpt: article.excerpt,
     date: article.publishedAt,
-    source: "GoalCurrent Editorial",
+    source: EDITORIAL_SOURCE_LABEL,
     tag: "FEATURE" as const,
     image: getArticleCardImage(
       article.path.replace(/^\/articles\//, "").replace(/\/$/, ""),
@@ -52,7 +53,7 @@ export function getMatchRecapNewsArticles(): NewsArticle[] {
       link: articleHref(article.slug),
       excerpt: article.excerpt,
       date: toIsoDate(article.date),
-      source: "GoalCurrent Editorial",
+      source: EDITORIAL_SOURCE_LABEL,
       tag: "RESULT" as const,
       image: getArticleCardImage(article.slug),
     }));

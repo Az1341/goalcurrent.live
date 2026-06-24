@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles/ArticleAuthorLine";
 import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
 
@@ -30,9 +31,7 @@ export default function ArticleJune23Recap() {
               Norway Edge Senegal, Portugal Fire Five — World Cup 2026 Matchday Recap, 23 June
             </h1>
             <div className={styles.hereMeta}>
-              <span>
-                By the <strong>GoalCurrent.live Editorial Team</strong>
-              </span>
+              <ArticleAuthorLine sepClassName={styles.sep} />
               <span className={styles.sep}>·</span>
               <span>24 June 2026</span>
             </div>
@@ -198,8 +197,7 @@ export default function ArticleJune23Recap() {
             <p>
               <strong>© 2026 GoalCurrent.live — All Rights Reserved.</strong>
               <br />
-              Written by the GoalCurrent.live Editorial Team. Unauthorised reproduction or republication of
-              this article in whole or in part is strictly prohibited without prior written permission.
+              <ArticleCopyrightNotice />
               <br />
               For syndication enquiries visit{" "}
               <a href="https://goalcurrent.live/contact" target="_blank" rel="noopener noreferrer">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { EditorialArticle } from "@/types/editorial";
+import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
 import styles from "./news.module.css";
 
 function formatArticleDate(iso: string): string {
@@ -19,7 +20,7 @@ export default function EditorialArticleView({ article }: EditorialArticleViewPr
     <main className={styles.content}>
       <article className={styles.article}>
         <header className={styles.articleHeader}>
-          <p className={styles.articleEyebrow}>GoalCurrent Editorial · World Cup 2026</p>
+          <p className={styles.articleEyebrow}>{EDITORIAL_SOURCE_LABEL} · World Cup 2026</p>
           <h1 className={styles.articleTitle}>{article.title}</h1>
           <p className={styles.articleDeck}>{article.description}</p>
           <div className={styles.articleMeta}>

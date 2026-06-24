@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import {
   DEFAULT_OG_IMAGE,
   DEFAULT_TWITTER_CARD,
+  EDITORIAL_AUTHOR,
 } from "@/lib/seo/constants";
 import { absoluteUrl } from "@/lib/site-url";
 
@@ -112,7 +113,7 @@ export function buildArticleMetadata({
   keywords = [],
   publishedTime,
   modifiedTime,
-  authors = ["GoalCurrent Editorial"],
+  authors = [EDITORIAL_AUTHOR],
   absoluteTitle = true,
   ogImage,
 }: ArticleMetadataInput): Metadata {

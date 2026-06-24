@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles/ArticleAuthorLine";
 import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
 
@@ -17,7 +18,7 @@ export default function ArticleFootballIndustry() {
           <div className={styles.categoryPill}>Analysis · Modern Football</div>
           <h1>The Machine Behind the Magic — How Football Became the World&apos;s Biggest Industry</h1>
           <div className={styles.hereMeta}>
-            <span>By the <strong>GoalCurrent.live Editorial Team</strong></span>
+            <ArticleAuthorLine sepClassName={styles.sep} />
             <span className={styles.sep}>·</span>
             <span>23 June 2026</span>
           </div>
@@ -147,8 +148,8 @@ export default function ArticleFootballIndustry() {
         <div className={styles.copyrightCard}>
           <p>
             <strong>© 2026 GoalCurrent.live — All Rights Reserved.</strong><br />
-            Written by the GoalCurrent.live Editorial Team. Unauthorised reproduction or republication of
-            this article in whole or in part is strictly prohibited without prior written permission.<br />
+            <ArticleCopyrightNotice />
+            <br />
             For syndication enquiries visit{" "}
             <a href="https://goalcurrent.live/contact" target="_blank" rel="noopener noreferrer">
               goalcurrent.live/contact

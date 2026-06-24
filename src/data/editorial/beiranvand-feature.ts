@@ -9,7 +9,7 @@ export const BEIRANVAND_FEATURE: EditorialArticle = {
   excerpt:
     "From Lorestan to Persepolis to Iran's number one shirt — how Alireza Beiranvand became a World Cup hero and why his Belgium performance mattered.",
   publishedAt: "2026-06-22T10:00:00.000Z",
-  author: "GoalCurrent Editorial",
+  author: "Ahmad Zafarani",
   keywords: [
     "Alireza Beiranvand",
     "Iran goalkeeper",

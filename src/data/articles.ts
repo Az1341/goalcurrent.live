@@ -373,7 +373,7 @@ export const ARTICLES: Article[] = [
     date: "2026-06-16",
     category: "editorial",
     readTime: 13,
-    content: `<p>Read the full feature at <a href="/articles/football-inspiring-canadas-next-generation">GoalCurrent Editorial</a> — including original photography from Toronto and a Q&A with young captain Radin Hajipour.</p>`
+    content: `<p>Read the full feature at <a href="/articles/football-inspiring-canadas-next-generation">Ahmad Zafarani on GoalCurrent.live</a> — including original photography from Toronto and a Q&A with young captain Radin Hajipour.</p>`
   },
 ];
 

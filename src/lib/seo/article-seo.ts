@@ -9,6 +9,7 @@ import type { ArticleSchemaInput } from "@/lib/seo/schema";
 import type { BreadcrumbItem } from "@/lib/seo/breadcrumbs";
 import type { Metadata } from "next";
 import { buildArticleMetadata } from "@/lib/page-metadata";
+import { EDITORIAL_AUTHOR } from "@/lib/seo/constants";
 
 export function articleSeoFromArticle(article: Article): ArticleSchemaInput {
   return {
@@ -17,7 +18,7 @@ export function articleSeoFromArticle(article: Article): ArticleSchemaInput {
     description: article.description,
     datePublished: article.date,
     dateModified: article.date,
-    author: "GoalCurrent Editorial",
+    author: EDITORIAL_AUTHOR,
   };
 }
 
@@ -35,7 +36,7 @@ export function articleSeoFromSlug(slug: string): ArticleSchemaInput | null {
       description: indexEntry.excerpt,
       datePublished: indexEntry.date,
       dateModified: indexEntry.date,
-      author: "GoalCurrent Editorial",
+      author: EDITORIAL_AUTHOR,
     };
   }
 

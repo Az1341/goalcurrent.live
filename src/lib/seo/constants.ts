@@ -12,8 +12,11 @@ export const DEFAULT_OG_IMAGE = {
 
 export const DEFAULT_TWITTER_CARD = "summary_large_image" as const;
 
-export const EDITORIAL_AUTHOR = "GoalCurrent Editorial";
+export const EDITORIAL_AUTHOR = "Ahmad Zafarani";
 export const EDITORIAL_PUBLISHER = "GoalCurrent.live";
+
+/** Display label for news cards and article source lines. */
+export const EDITORIAL_SOURCE_LABEL = `${EDITORIAL_AUTHOR} · ${EDITORIAL_PUBLISHER}`;
 
 /** Google News sitemap publication block. */
 export const NEWS_PUBLICATION_NAME = "GoalCurrent.live";
