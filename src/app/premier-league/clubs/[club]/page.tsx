@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import JsonLdScript from "@/components/seo/JsonLdScript";
+import TeamSeo from "@/components/seo/TeamSeo";
 import PlClubProfileClient from "@/components/team-profile/PlClubProfileClient";
 import { getClubBySlug, getAllClubSlugs } from "@/data/pl-clubs";
 import { buildPlClubMetadata } from "@/lib/team-profile/metadata";
@@ -25,25 +25,24 @@ export default async function ClubPage({ params }: PageProps) {
   const data = getClubBySlug(club);
   if (!data) notFound();
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SportsTeam",
-    name: data.name,
-    sport: "Soccer",
-    memberOf: {
-      "@type": "SportsOrganization",
-      name: "Premier League",
-    },
-    location: {
-      "@type": "Place",
-      name: data.stadium,
-    },
-    url: absoluteUrl(clubHref(data.slug)),
-  };
+  const path = clubHref(data.slug);
 
   return (
     <>
-      <JsonLdScript data={jsonLd} />
+      <TeamSeo
+        team={{
+          name: data.name,
+          url: absoluteUrl(path),
+          memberOfName: "Premier League",
+          memberOfType: "SportsOrganization",
+          locationName: data.stadium,
+        }}
+        breadcrumbs={[
+          { name: "Premier League", path: "/premier-league" },
+          { name: "Clubs", path: "/premier-league/clubs" },
+          { name: data.name, path },
+        ]}
+      />
       <PlClubProfileClient club={data} />
     </>
   );

@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { buildPageMetadata } from "@/lib/page-metadata";
+import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "How Football Became the World's Biggest Industry",
-  description:
-    "Billion-pound TV deals, sovereign wealth funds, and €222m transfers. How football transformed into a global industry — and what it cost the game's soul. By GoalCurrent.live.",
-  path: "/articles/football-as-an-industry",
-});
+const SLUG = "football-as-an-industry";
+
+export const metadata: Metadata = staticArticleMetadata(SLUG);
 
 export default function ArticleFootballIndustry() {
   return (
+    <StaticArticleSeo slug={SLUG}>
     <main className={styles.articlePage}>
       <div className={styles.stack}>
 
@@ -164,5 +162,6 @@ export default function ArticleFootballIndustry() {
         </div>
       </div>
     </main>
+    </StaticArticleSeo>
   );
 }

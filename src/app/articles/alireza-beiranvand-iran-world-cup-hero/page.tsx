@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import EditorialArticleView from "@/components/news/EditorialArticleView";
+import ArticleSeo from "@/components/seo/ArticleSeo";
 import { BEIRANVAND_FEATURE } from "@/data/editorial/beiranvand-feature";
+import {
+  articleBreadcrumbs,
+  articleSeoFromSlug,
+} from "@/lib/seo/article-seo";
 import { buildArticleMetadata } from "@/lib/page-metadata";
 
 const article = BEIRANVAND_FEATURE;
+const seo = articleSeoFromSlug("alireza-beiranvand-iran-world-cup-hero")!;
 
 export const metadata: Metadata = buildArticleMetadata({
   title: article.title,
@@ -11,8 +17,22 @@ export const metadata: Metadata = buildArticleMetadata({
   path: article.path,
   keywords: article.keywords,
   publishedTime: article.publishedAt,
+  modifiedTime: article.publishedAt,
+  authors: [article.author],
 });
 
 export default function BeiranvandFeaturePage() {
-  return <EditorialArticleView article={article} />;
+  return (
+    <>
+      <ArticleSeo
+        article={seo}
+        breadcrumbs={articleBreadcrumbs(
+          "alireza-beiranvand-iran-world-cup-hero",
+          article.title,
+        )}
+        showVisualBreadcrumb={false}
+      />
+      <EditorialArticleView article={article} />
+    </>
+  );
 }

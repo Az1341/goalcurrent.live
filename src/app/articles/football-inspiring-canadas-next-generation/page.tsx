@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { buildPageMetadata } from "@/lib/page-metadata";
+import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "Football Is Inspiring Canada's Next Generation",
-  description: "In Toronto and across Canada, boys and girls are discovering football's power during the FIFA World Cup 2026 era. A GoalCurrent.live community feature with original photography from Toronto.",
-  path: "/articles/football-inspiring-canadas-next-generation",
-});
+const SLUG = "football-inspiring-canadas-next-generation";
+
+export const metadata: Metadata = staticArticleMetadata(SLUG);
 
 const IMG = "/images/news/football-inspiring-canadas-next-generation";
 
@@ -59,6 +57,7 @@ function H2({ children }: { children: React.ReactNode }) {
 
 export default function FootballInspiringCanadaPage() {
   return (
+    <StaticArticleSeo slug={SLUG}>
     <main style={{ maxWidth: 760, margin: "0 auto", padding: "24px 16px 120px" }}>
 
       <nav style={{ fontSize: 12, color: "#94a3b8", marginBottom: 16 }}>
@@ -196,5 +195,6 @@ export default function FootballInspiringCanadaPage() {
       </div>
 
     </main>
+    </StaticArticleSeo>
   );
 }

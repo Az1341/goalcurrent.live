@@ -4,7 +4,12 @@ import { AdSenseScript } from "@/components/ads/AdSenseScript";
 import { GA } from "@/components/analytics/GA";
 import Layout from "@/components/layout/Layout";
 import { OneSignalInit } from "@/components/push/OneSignalInit";
+import SiteJsonLd from "@/components/seo/SiteJsonLd";
 import { BRAND_THEME_COLOR } from "@/lib/site-integrations";
+import {
+  DEFAULT_OG_IMAGE,
+  DEFAULT_TWITTER_CARD,
+} from "@/lib/seo/constants";
 import { SITE_URL, SITE_NAME } from "@/lib/site-url";
 import "./globals.css";
 
@@ -44,12 +49,22 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/icons/screenshot-desktop.png",
-        width: 1200,
-        height: 630,
-        alt: "GoalCurrent — Live Football Scores",
+        url: DEFAULT_OG_IMAGE.url,
+        width: DEFAULT_OG_IMAGE.width,
+        height: DEFAULT_OG_IMAGE.height,
+        alt: DEFAULT_OG_IMAGE.alt,
       },
     ],
+  },
+  twitter: {
+    card: DEFAULT_TWITTER_CARD,
+    title: `${SITE_NAME} - FIFA World Cup 2026`,
+    description:
+      "Live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
+    images: [DEFAULT_OG_IMAGE.url],
+  },
+  alternates: {
+    canonical: SITE_URL,
   },
   manifest: "/manifest.json",
   appleWebApp: {
@@ -85,6 +100,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${robotoCondensed.variable}`}>
       <body>
+        <SiteJsonLd />
         <Layout>{children}</Layout>
         <GA />
         <OneSignalInit />

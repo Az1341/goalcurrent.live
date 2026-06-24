@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { buildPageMetadata } from "@/lib/page-metadata";
+import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "Football as a Force for Peace",
-  description:
-    "From the Christmas Truce of 1914 to Didier Drogba's tearful plea — the remarkable history of football as a peacebuilding tool. By GoalCurrent.live.",
-  path: "/articles/football-and-peace",
-});
+const SLUG = "football-and-peace";
+
+export const metadata: Metadata = staticArticleMetadata(SLUG);
 
 export default function ArticleFootballAndPeace() {
   return (
+    <StaticArticleSeo slug={SLUG}>
     <main className={styles.articlePage}>
       <div className={styles.stack}>
 
@@ -176,5 +174,6 @@ export default function ArticleFootballAndPeace() {
         </div>
       </div>
     </main>
+    </StaticArticleSeo>
   );
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import JsonLdScript from "@/components/seo/JsonLdScript";
+import TeamSeo from "@/components/seo/TeamSeo";
 import Wc26TeamProfileClient from "@/components/team-profile/Wc26TeamProfileClient";
 import { getTeamById, WC26_TEAMS } from "@/data/wc26";
 import { isKnownTeamId, teamHref } from "@/lib/wc26-teams";
@@ -38,22 +38,23 @@ export default async function TeamPage({ params }: TeamPageProps) {
   }
 
   const team = getTeamById(teamId)!;
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SportsTeam",
-    name: team.name,
-    sport: "Soccer",
-    memberOf: {
-      "@type": "SportsEvent",
-      name: "FIFA World Cup 2026",
-    },
-    url: absoluteUrl(teamHref(teamId)),
-  };
+  const path = teamHref(teamId);
 
   return (
     <>
-      <JsonLdScript data={jsonLd} />
+      <TeamSeo
+        team={{
+          name: team.name,
+          url: absoluteUrl(path),
+          memberOfName: "FIFA World Cup 2026",
+          memberOfType: "SportsEvent",
+        }}
+        breadcrumbs={[
+          { name: "World Cup 2026", path: "/worldcup2026" },
+          { name: "Teams", path: "/worldcup2026/teams" },
+          { name: team.name, path },
+        ]}
+      />
       <Wc26TeamProfileClient teamId={teamId} />
     </>
   );

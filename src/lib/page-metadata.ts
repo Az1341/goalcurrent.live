@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import {
+  DEFAULT_OG_IMAGE,
+  DEFAULT_TWITTER_CARD,
+} from "@/lib/seo/constants";
 import { absoluteUrl } from "@/lib/site-url";
 
 type PageMetadataInput = {
@@ -7,7 +11,63 @@ type PageMetadataInput = {
   path: string;
   /** Bypass root layout title template (homepage only). */
   absoluteTitle?: boolean;
+  ogImage?: string;
+  ogType?: "website" | "article";
 };
+
+type SocialMetadataInput = {
+  title: string;
+  description: string;
+  url: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  authors?: string[];
+};
+
+function buildSocialMetadata({
+  title,
+  description,
+  url,
+  ogType = "website",
+  ogImage,
+  publishedTime,
+  modifiedTime,
+  authors,
+}: SocialMetadataInput): Pick<Metadata, "openGraph" | "twitter"> {
+  const imageUrl = ogImage ?? absoluteUrl(DEFAULT_OG_IMAGE.url);
+
+  return {
+    openGraph: {
+      title,
+      description,
+      url,
+      type: ogType,
+      images: [
+        {
+          url: imageUrl,
+          width: DEFAULT_OG_IMAGE.width,
+          height: DEFAULT_OG_IMAGE.height,
+          alt: DEFAULT_OG_IMAGE.alt,
+        },
+      ],
+      ...(ogType === "article"
+        ? {
+            publishedTime,
+            modifiedTime,
+            authors,
+          }
+        : {}),
+    },
+    twitter: {
+      card: DEFAULT_TWITTER_CARD,
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
 
 /** Shared metadata helper — title template applied by root layout. */
 export function buildPageMetadata({
@@ -15,8 +75,17 @@ export function buildPageMetadata({
   description,
   path,
   absoluteTitle = false,
+  ogImage,
+  ogType = "website",
 }: PageMetadataInput): Metadata {
   const url = absoluteUrl(path);
+  const social = buildSocialMetadata({
+    title,
+    description,
+    url,
+    ogType,
+    ogImage,
+  });
 
   return {
     title: absoluteTitle ? { absolute: title } : title,
@@ -24,18 +93,14 @@ export function buildPageMetadata({
     alternates: {
       canonical: url,
     },
-    openGraph: {
-      title,
-      description,
-      url,
-      type: "website",
-    },
+    ...social,
   };
 }
 
 type ArticleMetadataInput = PageMetadataInput & {
   keywords?: string[];
   publishedTime?: string;
+  modifiedTime?: string;
   authors?: string[];
 };
 
@@ -46,10 +111,22 @@ export function buildArticleMetadata({
   path,
   keywords = [],
   publishedTime,
+  modifiedTime,
   authors = ["GoalCurrent Editorial"],
   absoluteTitle = true,
+  ogImage,
 }: ArticleMetadataInput): Metadata {
   const url = absoluteUrl(path);
+  const social = buildSocialMetadata({
+    title,
+    description,
+    url,
+    ogType: "article",
+    ogImage,
+    publishedTime,
+    modifiedTime: modifiedTime ?? publishedTime,
+    authors,
+  });
 
   return {
     title: absoluteTitle ? { absolute: title } : title,
@@ -58,13 +135,28 @@ export function buildArticleMetadata({
     alternates: {
       canonical: url,
     },
-    openGraph: {
-      title,
-      description,
-      url,
-      type: "article",
-      publishedTime,
-      authors,
-    },
+    ...social,
   };
+}
+
+type MatchMetadataInput = {
+  title: string;
+  description: string;
+  path: string;
+  ogImage?: string;
+};
+
+export function buildMatchMetadata({
+  title,
+  description,
+  path,
+  ogImage,
+}: MatchMetadataInput): Metadata {
+  return buildPageMetadata({
+    title,
+    description,
+    path,
+    ogImage,
+    ogType: "website",
+  });
 }

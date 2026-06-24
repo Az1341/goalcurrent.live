@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { buildPageMetadata } from "@/lib/page-metadata";
+import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "World Cup 2026 June 22 Recap — Messi, Mbappé, Haaland",
-  description:
-    "Messi breaks the all-time World Cup scoring record with 18 goals. France, Norway and Argentina all win. Full June 22 match recap. By GoalCurrent.live.",
-  path: "/articles/world-cup-2026-june-22-recap",
-});
+const SLUG = "world-cup-2026-june-22-recap";
+
+export const metadata: Metadata = staticArticleMetadata(SLUG);
 
 export default function ArticleJune22Recap() {
   return (
+    <StaticArticleSeo slug={SLUG}>
     <main className={styles.articlePage}>
       <div className={styles.stack}>
 
@@ -198,5 +196,6 @@ export default function ArticleJune22Recap() {
         </div>
       </div>
     </main>
+    </StaticArticleSeo>
   );
 }

@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { buildPageMetadata } from "@/lib/page-metadata";
+import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "UEFA Champions League New Format Explained",
-  description:
-    "36 teams, eight league phase games, knockout play-offs and merit-based home advantage. UEFA's biggest format overhaul in 21 years, fully explained. By GoalCurrent.live.",
-  path: "/articles/champions-league-new-rules",
-});
+const SLUG = "champions-league-new-rules";
+
+export const metadata: Metadata = staticArticleMetadata(SLUG);
 
 export default function ArticleChampionsLeagueRules() {
   return (
+    <StaticArticleSeo slug={SLUG}>
     <main className={styles.articlePage}>
       <div className={styles.stack}>
 
@@ -188,5 +186,6 @@ export default function ArticleChampionsLeagueRules() {
         </div>
       </div>
     </main>
+    </StaticArticleSeo>
   );
 }

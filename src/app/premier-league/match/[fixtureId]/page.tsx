@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import MatchSeo from "@/components/seo/MatchSeo";
 import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import PlMatchClient from "@/components/pl/PlMatchClient";
 import { fetchPlMatchDetail } from "@/lib/pl/match-detail";
-import { buildPageMetadata } from "@/lib/page-metadata";
-import { SITE_NAME } from "@/lib/site-url";
+import { buildMatchMetadata } from "@/lib/page-metadata";
+import { absoluteUrl, SITE_NAME } from "@/lib/site-url";
 
 type PlMatchPageProps = {
   params: Promise<{ fixtureId: string }>;
@@ -13,6 +14,15 @@ function parseFixtureId(raw: string): number | null {
   const id = Number.parseInt(decodeURIComponent(raw), 10);
   if (!Number.isFinite(id) || id <= 0) return null;
   return id;
+}
+
+function plEventStatus(status: string): string {
+  const normalized = status.trim().toUpperCase();
+  if (normalized === "LIVE") return "https://schema.org/EventInProgress";
+  if (normalized === "FT") return "https://schema.org/EventCompleted";
+  if (normalized === "CANCELLED") return "https://schema.org/EventCancelled";
+  if (normalized === "POSTPONED") return "https://schema.org/EventPostponed";
+  return "https://schema.org/EventScheduled";
 }
 
 export async function generateMetadata({
@@ -27,7 +37,7 @@ export async function generateMetadata({
   const fixture = detail.fixture;
 
   if (!fixture) {
-    return buildPageMetadata({
+    return buildMatchMetadata({
       title: "Premier League Match",
       description: `Premier League match centre on ${SITE_NAME}.`,
       path: `/premier-league/match/${fixtureId}`,
@@ -36,7 +46,7 @@ export async function generateMetadata({
 
   const title = `${fixture.homeTeamName} vs ${fixture.awayTeamName}`;
 
-  return buildPageMetadata({
+  return buildMatchMetadata({
     title,
     description: `${title} — Premier League 2026/27 match centre with timeline, lineups, stats and H2H on ${SITE_NAME}.`,
     path: `/premier-league/match/${fixtureId}`,
@@ -47,9 +57,34 @@ export default async function PremierLeagueMatchPage({
   params,
 }: PlMatchPageProps) {
   const fixtureId = parseFixtureId((await params).fixtureId) ?? 0;
+  const detail = await fetchPlMatchDetail(fixtureId);
+  const fixture = detail.fixture;
+  const path = `/premier-league/match/${fixtureId}`;
 
   return (
     <>
+      {fixture ? (
+        <MatchSeo
+          event={{
+            name: `${fixture.homeTeamName} vs ${fixture.awayTeamName}`,
+            startDate: fixture.kickoffUtc,
+            url: absoluteUrl(path),
+            homeTeamName: fixture.homeTeamName,
+            awayTeamName: fixture.awayTeamName,
+            venueName: fixture.venue ?? undefined,
+            eventStatus: plEventStatus(fixture.status),
+            description: `Premier League — ${fixture.homeTeamName} vs ${fixture.awayTeamName}`,
+          }}
+          breadcrumbs={[
+            { name: "Premier League", path: "/premier-league" },
+            { name: "Fixtures", path: "/premier-league/fixtures" },
+            {
+              name: `${fixture.homeTeamName} vs ${fixture.awayTeamName}`,
+              path,
+            },
+          ]}
+        />
+      ) : null}
       <PlAdSlotTop />
       <PlMatchClient fixtureId={fixtureId} />
     </>

@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { buildPageMetadata } from "@/lib/page-metadata";
+import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "Football's Power in the Developing World",
-  description:
-    "From red-earth pitches to World Cup semi-finals — how football serves as a lifeline, a language, and a ladder for communities across the developing world. By GoalCurrent.live.",
-  path: "/articles/football-in-developing-countries",
-});
+const SLUG = "football-in-developing-countries";
+
+export const metadata: Metadata = staticArticleMetadata(SLUG);
 
 export default function ArticleFootballDevelopingCountries() {
   return (
+    <StaticArticleSeo slug={SLUG}>
     <main className={styles.articlePage}>
       <div className={styles.stack}>
 
@@ -192,5 +190,6 @@ export default function ArticleFootballDevelopingCountries() {
         </div>
       </div>
     </main>
+    </StaticArticleSeo>
   );
 }
