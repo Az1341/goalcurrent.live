@@ -1,6 +1,8 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { isAdSenseHost } from "@/lib/site-integrations";
 import styles from "./ContentAdSlot.module.css";
 
 type ContentAdSlotProps = {
@@ -16,6 +18,17 @@ export function ContentAdSlot({
   className = "",
   showPlaceholder = false,
 }: ContentAdSlotProps) {
+  const enabled = useSyncExternalStore(
+    () => () => {},
+    () => isAdSenseHost(window.location.hostname),
+    () => false,
+  );
+  const hasSlot = slot.trim().length > 0;
+
+  if (!hasSlot || (!enabled && !showPlaceholder)) {
+    return null;
+  }
+
   return (
     <aside
       className={`${styles.wrap} ${className}`.trim()}

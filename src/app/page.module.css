@@ -119,12 +119,12 @@
 
 /* ── Section spacing — tight ── */
 .sectionBlock {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .adUnit {
-  min-height: 120px;
-  margin: 8px 0;
+  min-height: 0;
+  margin: 4px 0;
 }
 
 .sectionHeader {
@@ -272,7 +272,8 @@
   color: var(--hp-muted);
 }
 
-.featuredMinute {
+.featuredMinute,
+.minLive {
   display: block;
   margin-top: 6px;
   font-size: 0.875rem;
@@ -312,8 +313,8 @@
   text-align: center;
   font-size: 0.76rem;
   color: var(--hp-muted);
-  margin: 8px 0 10px;
-  line-height: 1.5;
+  margin: 6px 0 0;
+  line-height: 1.45;
 }
 
 .featuredActions {
@@ -459,8 +460,8 @@
 .wcStandingsGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .wcGroupMini {
@@ -866,14 +867,14 @@
 }
 
 .homeTickerWrap {
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .threeCol {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
-  margin-bottom: 28px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .columnCard {
@@ -949,7 +950,8 @@
 }
 
 .compactRowInner {
-  padding: 10px 12px;
+  display: block;
+  padding: 8px 12px;
 }
 
 .compactList li {
@@ -974,14 +976,23 @@
   border-bottom: none;
 }
 
+.featuredDualActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+}
+
 .featuredDualMeta {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   font-size: 0.75rem;
   color: var(--hp-muted);
 }
 
 .featuredDualBody + .featuredActions {
-  padding: 12px 14px 14px;
+  padding: 10px 14px 12px;
   border-top: 1px solid var(--hp-border);
 }
 
@@ -1014,8 +1025,8 @@
 .wcStandingsGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .wcGroupMini {
@@ -1065,12 +1076,14 @@
   max-width: 120px;
 }
 
-.wcGroupMiniQualified {
-  margin-left: 4px;
-  font-size: 0.625rem;
+.wcGroupMiniQualBadge {
+  background: #22c55e;
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.5625rem;
   font-weight: 700;
-  color: #15803d;
-  white-space: nowrap;
+  line-height: 1.2;
   flex-shrink: 0;
 }
 

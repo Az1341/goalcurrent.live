@@ -1292,10 +1292,22 @@ a.standingsHead:hover {
 
 .groupFixtureList {
   list-style: none;
-  margin: 0 0 22px;
+  margin: 0 0 14px;
   padding: 0;
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.groupFinalMatchday {
+  margin-bottom: 4px;
+}
+
+.groupFinalMatchdayNote {
+  margin: 0 0 10px;
+  font-size: 0.8125rem;
+  color: var(--gc-text-secondary);
+  line-height: 1.45;
 }
 
 .groupFixtureRow {
@@ -1602,8 +1614,12 @@ a.standingsHead:hover {
 }
 
 .syncStatusSlot {
-  min-height: 28px;
   margin-bottom: 10px;
+}
+
+.syncStatusSlot:empty {
+  display: none;
+  margin: 0;
 }
 
 .syncStatus {

@@ -25,6 +25,7 @@ import {
   computeTeamFormMap,
   filterNewsForGroup,
   partitionGroupFixtures,
+  getActiveFinalMatchdayPair,
   selectNextGroupMatch,
 } from "@/lib/wc26-group-hub";
 import { GROUPS_HUB_HREF, WC26_HUB_HREF, WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
@@ -125,6 +126,18 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
   const { upcoming, completed } = useMemo(
     () => partitionGroupFixtures(groupId, fixtures),
     [groupId, fixtures],
+  );
+  const activeFinalPair = useMemo(
+    () => getActiveFinalMatchdayPair(groupId, fixtures),
+    [groupId, fixtures],
+  );
+  const activeFinalPairIds = useMemo(
+    () => new Set(activeFinalPair?.map((fixture) => fixture.id) ?? []),
+    [activeFinalPair],
+  );
+  const upcomingFiltered = useMemo(
+    () => upcoming.filter((fixture) => !activeFinalPairIds.has(fixture.id)),
+    [upcoming, activeFinalPairIds],
   );
   const nextMatch = useMemo(
     () => selectNextGroupMatch(groupId, fixtures),
@@ -235,15 +248,35 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
 
       <GroupStandingsSection groupId={groupId} formByTeamId={formByTeamId} />
 
+      {activeFinalPair ? (
+        <section
+          className={styles.groupFinalMatchday}
+          aria-labelledby="group-final-matchday-heading"
+        >
+          <h2 id="group-final-matchday-heading" className={styles.sectionTitle}>
+            Live — final matchday
+          </h2>
+          <p className={styles.groupFinalMatchdayNote}>
+            Both group fixtures kick off simultaneously. Scores and standings update
+            in real time.
+          </p>
+          <ul className={styles.groupFixtureList}>
+            {activeFinalPair.map((fixture) => (
+              <GroupFixtureRow key={fixture.id} fixture={fixture} tvRegion={tvRegion} />
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section aria-labelledby="group-upcoming-heading">
         <h2 id="group-upcoming-heading" className={styles.sectionTitle}>
           Upcoming matches
         </h2>
-        {upcoming.length === 0 ? (
+        {upcomingFiltered.length === 0 ? (
           <p className={styles.standingsEmpty}>No upcoming fixtures in {title}.</p>
         ) : (
           <ul className={styles.groupFixtureList}>
-            {upcoming.map((fixture) => (
+            {upcomingFiltered.map((fixture) => (
               <GroupFixtureRow key={fixture.id} fixture={fixture} tvRegion={tvRegion} />
             ))}
           </ul>

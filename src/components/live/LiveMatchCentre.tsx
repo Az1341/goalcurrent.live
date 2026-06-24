@@ -150,7 +150,6 @@ export default function LiveMatchCentre() {
       <div className={styles.liveAdWrap}>
         <ContentAdSlot slot={ADSENSE_SLOTS.liveMid} minHeight={120} />
       </div>
-
       <LiveSection
         id="today-heading"
         title="Today"

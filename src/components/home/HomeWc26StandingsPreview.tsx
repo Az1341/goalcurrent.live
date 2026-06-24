@@ -62,10 +62,12 @@ export default function HomeWc26StandingsPreview() {
                         <td>
                           <span className={styles.wcGroupMiniTeam}>
                             {team ? <TeamFlag teamId={team.id} size={16} /> : null}
-                            <span>{team?.name ?? row.teamId}</span>
                             {qualified ? (
-                              <span className={styles.wcGroupMiniQualified}>(Qualified)</span>
+                              <span className={styles.wcGroupMiniQualBadge} aria-label="Qualified">
+                                Q
+                              </span>
                             ) : null}
+                            <span>{team?.name ?? row.teamId}</span>
                           </span>
                         </td>
                         <td className={styles.wcGroupMiniPts}>{row.points}</td>

@@ -79,9 +79,6 @@ export default function StandingsTable({
                 {col.label}
               </th>
             ))}
-            <th scope="col" className={styles.colQual}>
-              Q
-            </th>
             {showForm ? (
               <th scope="col" className={styles.colForm}>
                 Form
@@ -108,6 +105,11 @@ export default function StandingsTable({
                 <td className={styles.colTeam}>
                   <span className={styles.teamCell}>
                     {team ? <TeamFlag teamId={team.id} size={22} /> : null}
+                    {qualified ? (
+                      <span className={styles.badgeQ} aria-label="Qualified">
+                        Q
+                      </span>
+                    ) : null}
                     {team ? (
                       <TeamLink teamId={team.id}>{team.name}</TeamLink>
                     ) : (
@@ -123,9 +125,6 @@ export default function StandingsTable({
                 <td>{row.goalsAgainst}</td>
                 <td>{row.goalDifference}</td>
                 <td className={styles.colPts}>{row.points}</td>
-                <td className={styles.colQual}>
-                  {qualified ? <span className={styles.badgeQ}>Q</span> : null}
-                </td>
                 {showForm ? (
                   <td className={styles.colForm}>
                     <FormBadges form={formByTeamId?.get(row.teamId) ?? []} />

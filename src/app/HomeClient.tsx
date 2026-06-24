@@ -14,7 +14,6 @@ import {
   type HomepageMatchView,
 } from "@/lib/wc26-live";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
-import type { Wc26GroupId } from "@/types/group";
 import TeamFlag from "@/components/TeamFlag";
 import FixtureMatchRow from "@/components/match/FixtureMatchRow";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
@@ -72,10 +71,42 @@ function FeaturedStatusBadge({ match }: { match: HomepageMatchView }) {
   );
 }
 
-function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
+function FeaturedMatchBody({ match }: { match: HomepageMatchView }) {
   const score = formatScore(match);
   const isLive = match.matchClass === "live";
 
+  return (
+    <>
+      <div className={styles.featuredRow}>
+        <div className={`${styles.featuredSide} ${styles.featuredSideHome}`}>
+          <TeamFlag teamId={match.homeTeamId} size={FEATURED_FLAG} />
+          <span className={styles.featuredTeamName}>{match.homeName}</span>
+        </div>
+
+        <div className={styles.featuredScorebox}>
+          <div className={styles.featuredScore}>
+            {score ?? <span className={styles.featuredVs}>vs</span>}
+          </div>
+          {isLive && match.elapsed != null ? (
+            <div className={styles.minLive}>{match.elapsed}&apos;</div>
+          ) : null}
+        </div>
+
+        <div className={`${styles.featuredSide} ${styles.featuredSideAway}`}>
+          <span className={styles.featuredTeamName}>{match.awayName}</span>
+          <TeamFlag teamId={match.awayTeamId} size={FEATURED_FLAG} />
+        </div>
+      </div>
+
+      <p className={styles.featuredMeta}>
+        {match.kickoffLabel}
+        {match.venueLabel ? ` · ${match.venueLabel}` : ""}
+      </p>
+    </>
+  );
+}
+
+function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
   return (
     <article className={styles.featuredHero}>
       <div className={styles.featuredHeroTop}>
@@ -94,31 +125,7 @@ function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
       </div>
 
       <div className={styles.featuredHeroBody}>
-        <div className={styles.featuredRow}>
-          <div className={`${styles.featuredSide} ${styles.featuredSideHome}`}>
-            <TeamFlag teamId={match.homeTeamId} size={FEATURED_FLAG} />
-            <span className={styles.featuredTeamName}>{match.homeName}</span>
-          </div>
-
-          <div className={styles.featuredScorebox}>
-            <div className={styles.featuredScore}>
-              {score ?? <span className={styles.featuredVs}>vs</span>}
-            </div>
-            {isLive && match.elapsed != null && (
-              <div className={styles.minLive}>{match.elapsed}&apos;</div>
-            )}
-          </div>
-
-          <div className={`${styles.featuredSide} ${styles.featuredSideAway}`}>
-            <span className={styles.featuredTeamName}>{match.awayName}</span>
-            <TeamFlag teamId={match.awayTeamId} size={FEATURED_FLAG} />
-          </div>
-        </div>
-
-        <p className={styles.featuredMeta}>
-          {match.kickoffLabel}
-          {match.venueLabel ? ` · ${match.venueLabel}` : ""}
-        </p>
+        <FeaturedMatchBody match={match} />
 
         <div className={styles.featuredActions}>
           <Link href={matchHref(match.fixtureId)} className={styles.btnPrimary}>
@@ -134,60 +141,40 @@ function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
 }
 
 function FeaturedSimultaneousDecider({
-  groupId,
   matches,
 }: {
-  groupId: Wc26GroupId;
   matches: readonly HomepageMatchView[];
 }) {
+  const primaryLive = matches.find((match) => match.matchClass === "live");
+
   return (
     <article className={styles.featuredHero}>
       <div className={styles.featuredHeroTop}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-          <span className={styles.featuredHeroLabel}>
-            Group {groupId.toUpperCase()} decider
-          </span>
-          <span className={`${styles.statusPill} ${styles.statusLive}`}>
-            <span className={styles.liveDot} aria-hidden="true" />
-            Simultaneous kickoff
-          </span>
+          <span className={styles.featuredHeroLabel}>Featured match</span>
+          {primaryLive ? <FeaturedStatusBadge match={primaryLive} /> : null}
         </div>
       </div>
 
       <div className={styles.featuredDualBody}>
-        {matches.map((match) => {
-          const score = formatScore(match);
-          const isLive = match.matchClass === "live";
-          return (
-            <div key={match.fixtureId} className={styles.featuredDualMatch}>
-              <FixtureMatchRow
-                homeTeamId={match.homeTeamId}
-                awayTeamId={match.awayTeamId}
-                homeName={match.homeName}
-                awayName={match.awayName}
-                centrePrimary={score ?? match.statusLabel}
-                centreSecondary={
-                  isLive && match.elapsed != null
-                    ? `${match.statusLabel} · ${match.elapsed}'`
-                    : match.statusLabel
-                }
-                flagSize={LIST_FLAG}
-                isLive={isLive}
-                href={matchHref(match.fixtureId)}
+        {matches.map((match) => (
+          <div key={match.fixtureId} className={styles.featuredDualMatch}>
+            <FeaturedMatchBody match={match} />
+            <div className={styles.featuredDualActions}>
+              <Link href={matchHref(match.fixtureId)} className={styles.btnPrimary}>
+                Match details →
+              </Link>
+              <FavouriteMatchButton
+                matchId={match.fixtureId}
+                label={`${match.homeName} vs ${match.awayName}`}
+                className={styles.favBtnOnDark}
               />
-              <p className={styles.featuredDualMeta}>
-                {match.kickoffLabel}
-                {match.venueLabel ? ` · ${match.venueLabel}` : ""}
-              </p>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
       <div className={styles.featuredActions}>
-        <Link href={`/worldcup2026/groups/${groupId}`} className={styles.btnPrimary}>
-          Group {groupId.toUpperCase()} standings →
-        </Link>
         <Link href="/worldcup2026/fixtures" className={styles.btnSecondary}>
           All fixtures
         </Link>
@@ -316,10 +303,7 @@ export default function Home() {
           {featuredSelection.mode === "simultaneous-final" &&
           featuredSelection.groupId &&
           featuredMatches.length === 2 ? (
-            <FeaturedSimultaneousDecider
-              groupId={featuredSelection.groupId}
-              matches={featuredMatches}
-            />
+            <FeaturedSimultaneousDecider matches={featuredMatches} />
           ) : featured ? (
             <FeaturedMatchHero match={featured} />
           ) : (
@@ -333,9 +317,7 @@ export default function Home() {
           <LiveRibbon embedded />
         </div>
 
-        <div className={styles.sectionBlock}>
-          <AdSlot slot={ADSENSE_SLOTS.homeMid} className={styles.adUnit} />
-        </div>
+        <AdSlot slot={ADSENSE_SLOTS.homeMid} className={styles.adUnit} />
 
         <div className={styles.threeCol}>
           <ColumnCard
@@ -408,9 +390,7 @@ export default function Home() {
 
         <HomeArticlesSection />
 
-        <div className={styles.sectionBlock}>
-          <AdSlot slot={ADSENSE_SLOTS.homeLower} className={styles.adUnit} />
-        </div>
+        <AdSlot slot={ADSENSE_SLOTS.homeLower} className={styles.adUnit} />
       </main>
     </div>
   );

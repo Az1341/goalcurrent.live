@@ -4,7 +4,8 @@ import {
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
-import { buildHomepageMatchView } from "@/lib/wc26-live";
+import { getFinalMatchdayPair } from "@/lib/wc26-final-matchday";
+import { buildHomepageMatchView, isLiveMatchStatus } from "@/lib/wc26-live";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import { filterTopScorersForTeams } from "@/lib/wc26-top-scorers-group";
@@ -104,6 +105,23 @@ export function partitionGroupFixtures(
   );
 
   return { upcoming, completed };
+}
+
+/** Final matchday pair when at least one fixture is live or has a score. */
+export function getActiveFinalMatchdayPair(
+  groupId: Wc26GroupId,
+  fixtures: readonly EffectiveFixture[],
+): readonly [EffectiveFixture, EffectiveFixture] | null {
+  const pair = getFinalMatchdayPair(groupId, fixtures);
+  if (!pair) {
+    return null;
+  }
+
+  const active = pair.some(
+    (fixture) =>
+      isLiveMatchStatus(fixture.status) || getFixtureScore(fixture) !== null,
+  );
+  return active ? pair : null;
 }
 
 export function selectNextGroupMatch(
