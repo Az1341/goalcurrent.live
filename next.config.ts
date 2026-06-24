@@ -28,12 +28,11 @@ const INTEGRATION_CSP = [
   ].join(" "),
   [
     "style-src 'self' 'unsafe-inline'",
-    "https://fonts.googleapis.com", // Google Fonts CSS
     "https://cdn.onesignal.com",
     "https://*.onesignal.com",
     "https://onesignal.com",
   ].join(" "),
-  "font-src 'self' data: https://fonts.gstatic.com",
+  "font-src 'self' data:",
   "img-src 'self' data: https:", // flags, team logos, article images, ad creatives
   [
     "connect-src 'self'",

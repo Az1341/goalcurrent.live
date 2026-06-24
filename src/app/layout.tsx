@@ -1,5 +1,5 @@
 ﻿import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Roboto_Condensed } from "next/font/google";
 import { AdSenseScript } from "@/components/ads/AdSenseScript";
 import { GA } from "@/components/analytics/GA";
 import Layout from "@/components/layout/Layout";
@@ -9,10 +9,21 @@ import { SITE_URL, SITE_NAME } from "@/lib/site-url";
 import "./globals.css";
 
 const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  preload: true,
+  adjustFontFallback: true,
+});
+
+const robotoCondensed = Roboto_Condensed({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto-condensed",
+  weight: ["400", "700"],
+  preload: true,
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
@@ -72,8 +83,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.variable}>
+    <html lang="en" className={`${inter.variable} ${robotoCondensed.variable}`}>
+      <body>
         <Layout>{children}</Layout>
         <GA />
         <OneSignalInit />

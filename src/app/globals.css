@@ -41,8 +41,11 @@
   --gc-chrome-border-strong: rgba(255, 255, 255, 0.14);
   --gc-chrome-inset: rgba(255, 255, 255, 0.06);
 
-  /* ── Typography (Inter only) ── */
-  --gc-font: var(--font-inter), system-ui, sans-serif;
+  /* ── Typography (next/font — self-hosted, preloaded) ── */
+  --font-body: var(--font-inter);
+  --font-heading: var(--font-roboto-condensed);
+  --gc-font: var(--font-body), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   --gc-weight-body: 400;
   --gc-weight-nav: 500;
   --gc-weight-section: 600;
@@ -124,7 +127,7 @@ html {
 }
 
 body {
-  font-family: var(--gc-font);
+  font-family: var(--font-body), system-ui, sans-serif;
   font-weight: var(--gc-weight-body);
   color: var(--gc-text-primary);
   background-color: #fdf6f0;
@@ -133,6 +136,17 @@ body {
   line-height: var(--gc-line-height);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), var(--font-body), sans-serif;
+  font-weight: var(--gc-weight-heading);
+  line-height: var(--gc-line-height-tight);
 }
 
 a {
