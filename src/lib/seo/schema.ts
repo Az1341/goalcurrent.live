@@ -82,6 +82,14 @@ export function webSiteSchema(): SchemaNode {
       name: SITE_NAME,
       url: SITE_URL,
     },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/worldcup2026/teams?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
   };
 }
 

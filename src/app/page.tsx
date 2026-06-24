@@ -1,8 +1,11 @@
 import dynamic from "next/dynamic";
 import type { Metadata } from "next";
+import HomeFeaturedMatchJsonLd from "@/components/seo/HomeFeaturedMatchJsonLd";
+import { WC26_FIXTURES } from "@/data/wc26";
 import { HOME_HERO_BG } from "@/lib/critical-assets";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
+import { selectFeaturedFixture } from "@/lib/wc26-live";
 
 const HomeClient = dynamic(() => import("@/app/HomeClient"), {
   ssr: true,
@@ -16,6 +19,8 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function HomePage() {
+  const featuredFixture = selectFeaturedFixture(WC26_FIXTURES);
+
   return (
     <>
       <link
@@ -24,6 +29,7 @@ export default function HomePage() {
         as="image"
         fetchPriority="high"
       />
+      {featuredFixture ? <HomeFeaturedMatchJsonLd fixture={featuredFixture} /> : null}
       <HomeClient />
     </>
   );

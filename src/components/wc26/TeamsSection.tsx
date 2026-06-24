@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { WC26_GROUP_IDS, WC26_TEAMS, WC26_TEAM_COUNT } from "@/data/wc26";
 import TeamCard from "./TeamCard";
 import {
@@ -15,6 +15,13 @@ import styles from "./wc26.module.css";
 export default function TeamsSection() {
   const [query, setQuery] = useState("");
   const [groupFilter, setGroupFilter] = useState<TeamGroupFilter>("all");
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) {
+      setQuery(q);
+    }
+  }, []);
 
   const filteredTeams = useMemo(
     () => filterTeams(WC26_TEAMS, query, groupFilter),

@@ -6,10 +6,9 @@ import ErrorBoundary from "@/components/system/ErrorBoundary";
 import { WC26_FIXTURES, getFixtureById, getTeamById, getVenueById } from "@/data/wc26";
 import { isKnownFixtureId, matchHref } from "@/lib/wc26-match";
 import { buildMatchMetadata } from "@/lib/page-metadata";
+import { sportsEventStatus } from "@/lib/seo/sports-event-status";
 import { getScoreBatEmbedForFixture } from "@/lib/scorebat/getScoreBatEmbed";
 import { absoluteUrl, SITE_NAME } from "@/lib/site-url";
-import { isLiveMatchStatus } from "@/lib/wc26-live";
-import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 
 type MatchPageProps = {
   params: Promise<{ fixtureId: string }>;
@@ -19,28 +18,6 @@ export function generateStaticParams() {
   return WC26_FIXTURES.map((fixture) => ({
     fixtureId: fixture.id,
   }));
-}
-
-function sportsEventStatus(status: string): string {
-  const normalized = status.trim().toLowerCase();
-
-  if (isLiveMatchStatus(status)) {
-    return "https://schema.org/EventInProgress";
-  }
-
-  if (isCompletedMatchStatus(status) || normalized === "ft" || normalized === "finished") {
-    return "https://schema.org/EventCompleted";
-  }
-
-  if (normalized === "cancelled") {
-    return "https://schema.org/EventCancelled";
-  }
-
-  if (normalized === "postponed") {
-    return "https://schema.org/EventPostponed";
-  }
-
-  return "https://schema.org/EventScheduled";
 }
 
 export async function generateMetadata({ params }: MatchPageProps): Promise<Metadata> {
