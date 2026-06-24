@@ -1,6 +1,6 @@
 # GoalCurrent.live
 
-Next.js app for **https://www.goalcurrent.live** — FIFA World Cup 2026 fixtures, live centre, standings, and match detail.
+Next.js app for **https://goalcurrent.live** —  fixtures, live centre, standings, and match detail.
 
 ## Quick start
 
