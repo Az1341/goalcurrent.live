@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import JsonLdScript from "@/components/seo/JsonLdScript";
 import { getArticleBySlug, getAllArticleSlugs } from "@/data/articles";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { absoluteUrl } from "@/lib/site-url";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -33,8 +35,22 @@ export default async function ArticlePage({ params }: PageProps) {
   const article = getArticleBySlug(slug);
   if (!article) notFound();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: article.title,
+    datePublished: article.date,
+    image: absoluteUrl("/icons/screenshot-desktop.png"),
+    author: {
+      "@type": "Organization",
+      name: "GoalCurrent",
+    },
+  };
+
   return (
-    <main style={{ maxWidth: 760, margin: "0 auto", padding: "24px 16px 120px" }}>
+    <>
+      <JsonLdScript data={jsonLd} />
+      <main style={{ maxWidth: 760, margin: "0 auto", padding: "24px 16px 120px" }}>
       <nav style={{ fontSize: 12, color: "#94a3b8", marginBottom: 16 }}>
         <Link href="/" style={{ color: "#94a3b8", textDecoration: "none" }}>
           Home
@@ -157,5 +173,6 @@ export default async function ArticlePage({ params }: PageProps) {
         </Link>
       </div>
     </main>
+    </>
   );
 }

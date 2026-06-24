@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import JsonLdScript from "@/components/seo/JsonLdScript";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import Wc26HeroStats from "@/components/wc26/Wc26HeroStats";
 import Wc26Scoreboard from "@/components/wc26/Wc26Scoreboard";
@@ -7,7 +8,7 @@ import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
 import { WC26_TOURNAMENT } from "@/data/wc26";
 import { WC26_SECTIONS } from "@/lib/wc26-sections";
 import { buildPageMetadata } from "@/lib/page-metadata";
-import { SITE_NAME } from "@/lib/site-url";
+import { SITE_NAME, absoluteUrl } from "@/lib/site-url";
 import styles from "@/components/wc26/wc26.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -19,8 +20,29 @@ export const metadata: Metadata = buildPageMetadata({
 export default function WorldCupHubPage() {
   const hosts = WC26_TOURNAMENT.hosts.join(" · ");
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SportsOrganization",
+        name: "FIFA World Cup 2026",
+        sport: "Football",
+        url: absoluteUrl("/worldcup2026"),
+      },
+      {
+        "@type": "EventSeries",
+        name: "FIFA World Cup 2026",
+        startDate: WC26_TOURNAMENT.startUtc,
+        endDate: WC26_TOURNAMENT.endUtc,
+        url: absoluteUrl("/worldcup2026"),
+      },
+    ],
+  };
+
   return (
-    <main className={styles.wc26Content}>
+    <>
+      <JsonLdScript data={jsonLd} />
+      <main className={styles.wc26Content}>
       <Wc26Breadcrumb items={[{ label: "World Cup 2026" }]} />
 
       <h1 className={styles.pageTitle}>
@@ -47,5 +69,6 @@ export default function WorldCupHubPage() {
         ))}
       </div>
     </main>
+    </>
   );
 }

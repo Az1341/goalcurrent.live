@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import PlHubClient from "@/components/pl/PlHubClient";
+import JsonLdScript from "@/components/seo/JsonLdScript";
 import { buildPageMetadata } from "@/lib/page-metadata";
-import { SITE_NAME } from "@/lib/site-url";
+import { SITE_NAME, absoluteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Premier League 2026/27",
@@ -11,8 +12,17 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function PremierLeagueHubPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsOrganization",
+    name: "Premier League",
+    sport: "Football",
+    url: absoluteUrl("/premier-league"),
+  };
+
   return (
     <>
+      <JsonLdScript data={jsonLd} />
       <PlAdSlotTop />
       <PlHubClient />
     </>
