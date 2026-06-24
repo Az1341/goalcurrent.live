@@ -15,6 +15,8 @@
   --hp-status-finished: #64748b;
   --hp-burgundy: #7b0d1e;
   --hp-burgundy-dark: #5f0917;
+  --hp-content-max: var(--gc-home-max);
+  --hp-gutter: var(--gc-home-gutter);
 
   overflow-x: hidden;
   max-width: 100%;
@@ -26,11 +28,19 @@
   padding-top: 12px;
 }
 
+.homeMain {
+  max-width: var(--hp-content-max);
+  margin: 0 auto;
+  width: 100%;
+  padding: 12px var(--hp-gutter) 0;
+  box-sizing: border-box;
+}
+
 /* ── Hero: compact rounded banner ── */
 .homeHeroWrap {
   max-width: var(--hp-content-max);
   margin: 0 auto;
-  padding: 12px 12px 0;
+  padding: 12px var(--hp-gutter) 0;
 }
 
 /* ── Hero with background image ── */
@@ -586,7 +596,7 @@
 .newsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .newsItem {
@@ -695,7 +705,7 @@
 
 /* ── Mobile ── */
 @media (max-width: 768px) {
-  .homeMain { padding: 10px 10px 0; }
+  .homeMain { padding: 10px var(--hp-gutter) 0; }
   .homeHero { min-height: 140px; border-radius: 12px; margin-bottom: 12px; }
   .homeHeroContent { padding: 14px 14px 16px; }
   .homeHeroContent h1 { font-size: 1.05rem; }
@@ -719,7 +729,7 @@
   .colHome, .colAway { font-size: 0.78rem; }
   .colScore { font-size: 0.88rem; }
 
-  .newsGrid { grid-template-columns: 1fr; gap: 6px; }
+  .newsGrid { grid-template-columns: 1fr; gap: 10px; }
   .wcNav { gap: 6px; }
 }
 
@@ -884,7 +894,7 @@
 .threeCol {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 18px;
   margin-bottom: 28px;
 }
 
@@ -1233,7 +1243,7 @@
 .articlesHomeGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 .articlesHomeCard {

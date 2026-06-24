@@ -57,6 +57,8 @@
 
   /* ── Layout ── */
   --gc-content-max: 960px;
+  --gc-home-max: 1320px;
+  --gc-home-gutter: 14px;
   --gc-radius-sm: 8px;
   --gc-radius: 10px;
   --gc-radius-lg: 12px;
@@ -103,6 +105,18 @@
   --gc-match-stat-home: #c8102e;
   --gc-match-stat-away: #0a3470;
   --gc-match-stat-track: #cbd5e1;
+}
+
+@media (min-width: 769px) {
+  :root {
+    --gc-home-gutter: 22px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gc-home-gutter: 32px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
