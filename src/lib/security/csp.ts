@@ -30,6 +30,7 @@ const IMG_SRC = [
   "blob:",
   "data:",
   "https://*.goalcurrent.live",
+  "https://goalcurrent.live",
   "https://www.goalcurrent.live",
   ...REMOTE_IMAGE_HOSTNAMES.map((host) => `https://${host}`),
   "https:",

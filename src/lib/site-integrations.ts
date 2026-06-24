@@ -42,7 +42,7 @@ export function isAdSenseHost(hostname: string): boolean {
 }
 
 /**
- * OneSignal app is locked to https://www.goalcurrent.live in the dashboard.
+ * OneSignal app domain — confirm apex goalcurrent.live is allowed in the dashboard.
  * Loading on localhost/preview throws a runtime error.
  */
 export function isOneSignalHost(hostname: string): boolean {
