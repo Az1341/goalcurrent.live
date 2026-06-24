@@ -2,23 +2,10 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import MatchDetailLink from "@/components/match/MatchDetailLink";
-import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
-import TeamFlag from "@/components/TeamFlag";
-import { FavouriteMatchButton } from "@/components/FavouriteButton";
-import { getTeamById, getVenueById, groupLabel } from "@/data/wc26";
+import LiveMatchCard from "@/components/live/LiveMatchCard";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
-import {
-  getFixtureScore,
-  isEffectiveFixtureCompleted,
-  type EffectiveFixture,
-} from "@/lib/wc26-fixture-overlay";
-import { formatVisitorKickoff } from "@/lib/wc26-format";
-import {
-  formatFixtureStatusLabel,
-  isLiveMatchStatus,
-  partitionFixturesForLiveCentre,
-} from "@/lib/wc26-live";
+import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
+import { partitionFixturesForLiveCentre } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import type { Wc26TvRegionCode } from "@/lib/wc26-fixtures-page";
@@ -35,75 +22,6 @@ type LiveSectionProps = {
   showLiveIndicator?: boolean;
   tone?: "live" | "today" | "upcoming" | "completed";
 };
-
-function LiveFixtureRow({
-  fixture,
-  tvRegion,
-}: {
-  fixture: EffectiveFixture;
-  tvRegion: Wc26TvRegionCode;
-}) {
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
-  const venue = getVenueById(fixture.venueId);
-  const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
-  const groupText = fixture.groupId ? groupLabel(fixture.groupId) : null;
-  const isLive = isLiveMatchStatus(fixture.status);
-  const isCompleted = isEffectiveFixtureCompleted(fixture);
-  const statusLabel = isCompleted
-    ? formatFixtureStatusLabel(fixture.status === "scheduled" ? "ft" : fixture.status)
-    : formatFixtureStatusLabel(fixture.status);
-  const score = getFixtureScore(fixture);
-
-  return (
-    <li className={`${styles.fixtureRow} ${isLive ? styles.fixtureRowLive : ""}`}>
-      {/* Top meta row */}
-      <div className={styles.fixtureMeta}>
-        {groupText ? (
-          <span className={styles.fixtureGroup}>{groupText}</span>
-        ) : (
-          <span className={styles.fixtureGroup}>
-            {fixture.stage.replace(/-/g, " ")}
-          </span>
-        )}
-        <span className={styles.fixtureKickoff}>
-          {formatVisitorKickoff(fixture.kickoffUtc)}
-        </span>
-        <span
-          className={`${styles.fixtureStatus} ${isLive ? styles.fixtureStatusLive : ""}`}
-        >
-          {isLive ? "● " : ""}
-          {statusLabel}
-          {fixture.elapsed != null && isLive ? ` ${fixture.elapsed}'` : ""}
-        </span>
-        <FavouriteMatchButton matchId={fixture.id} label={label} />
-        <MatchDetailLink fixtureId={fixture.id} />
-      </div>
-      {/* Teams + score row — balanced grid */}
-      <div className={styles.fixtureMatchup}>
-        <span className={`${styles.fixtureTeam} ${styles.fixtureTeamHome}`}>
-          {home ? <TeamFlag teamId={home.id} size={26} /> : null}
-          <span className={styles.fixtureTeamName}>{home?.name ?? fixture.homeTeamId}</span>
-        </span>
-        <span className={`${styles.fixtureVs} ${isLive ? styles.fixtureVsLive : ""}`}>
-          {score ? `${score.home}–${score.away}` : "vs"}
-        </span>
-        <span className={`${styles.fixtureTeam} ${styles.fixtureTeamAway}`}>
-          {away ? <TeamFlag teamId={away.id} size={26} /> : null}
-          <span className={styles.fixtureTeamName}>{away?.name ?? fixture.awayTeamId}</span>
-        </span>
-      </div>
-      {venue ? (
-        <div className={styles.fixtureVenue}>
-          {venue.name}, {venue.city}
-        </div>
-      ) : null}
-      <div className={styles.fixtureTvRow}>
-        <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="chips" />
-      </div>
-    </li>
-  );
-}
 
 function sectionToneClass(tone: LiveSectionProps["tone"]): string {
   switch (tone) {
@@ -151,7 +69,7 @@ function LiveSection({
       {fixtures.length > 0 ? (
         <ul className={styles.fixtureList}>
           {fixtures.map((fixture) => (
-            <LiveFixtureRow key={fixture.id} fixture={fixture} tvRegion={tvRegion} />
+            <LiveMatchCard key={fixture.id} fixture={fixture} tvRegion={tvRegion} />
           ))}
         </ul>
       ) : null}
