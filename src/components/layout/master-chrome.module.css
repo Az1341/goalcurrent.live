@@ -74,7 +74,6 @@
   align-items: center;
   background: transparent;
   border-bottom: none;
-  overflow: visible;
   position: relative;
   z-index: 320;
   justify-content: flex-start;
@@ -404,6 +403,18 @@
 @media (min-width: 769px) {
   .desktopNav {
     display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 0 12px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .desktopNav::-webkit-scrollbar {
+    display: none;
   }
 
   .headerActions {
@@ -414,5 +425,7 @@
 @media (max-width: 768px) {
   .desktopNav {
     display: none;
+    overflow-x: visible;
+    white-space: normal;
   }
 }

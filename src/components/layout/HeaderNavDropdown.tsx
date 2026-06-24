@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId, useState } from "react";
+import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 import NavLink from "@/components/nav/NavLink";
 import type { NavLinkItem } from "@/lib/nav";
 import styles from "./master-chrome.module.css";
@@ -18,6 +18,33 @@ export default function HeaderNavDropdown({
 }: HeaderNavDropdownProps) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [panelPos, setPanelPos] = useState<{ top: number; left: number } | null>(
+    null,
+  );
+
+  const syncPanelPos = useCallback(() => {
+    const button = buttonRef.current;
+    if (!button) {
+      return;
+    }
+    const rect = button.getBoundingClientRect();
+    setPanelPos({ top: rect.bottom - 1, left: rect.left });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setPanelPos(null);
+      return;
+    }
+    syncPanelPos();
+    window.addEventListener("resize", syncPanelPos);
+    window.addEventListener("scroll", syncPanelPos, true);
+    return () => {
+      window.removeEventListener("resize", syncPanelPos);
+      window.removeEventListener("scroll", syncPanelPos, true);
+    };
+  }, [open, syncPanelPos]);
 
   const openMenu = useCallback(() => setOpen(true), []);
   const closeMenu = useCallback(() => setOpen(false), []);
@@ -35,6 +62,7 @@ export default function HeaderNavDropdown({
       }}
     >
       <button
+        ref={buttonRef}
         type="button"
         className={`${styles.navBtn} ${isActive || open ? styles.navBtnOpen : ""}`}
         aria-expanded={open}
@@ -51,8 +79,17 @@ export default function HeaderNavDropdown({
         <span aria-hidden="true"> ▾</span>
       </button>
 
-      {open ? (
-        <div id={panelId} className={styles.dropdownPanel} role="menu">
+      {open && panelPos ? (
+        <div
+          id={panelId}
+          className={styles.dropdownPanel}
+          role="menu"
+          style={{
+            position: "fixed",
+            top: panelPos.top,
+            left: panelPos.left,
+          }}
+        >
           {links.map((link) => (
             <NavLink
               key={link.href}
