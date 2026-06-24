@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import NavLink from "@/components/nav/NavLink";
 import { useState } from "react";
 import {
   MORE_SHEET_LEVEL1,
@@ -120,7 +120,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                 const active = isMoreSheetLinkActive(pathname, item.href);
 
                 return (
-                  <Link
+                  <NavLink
                     key={item.label}
                     href={item.href}
                     className={`${styles.sheetLink} ${active ? styles.sheetLinkActive : ""}`}
@@ -128,7 +128,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                     onClick={handleNavigate}
                   >
                     {item.label}
-                  </Link>
+                  </NavLink>
                 );
               })}
             </nav>
@@ -160,7 +160,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                   }
 
                   return (
-                    <Link
+                    <NavLink
                       key={key}
                       href={link.href}
                       className={`${styles.sheetLink} ${active ? styles.sheetLinkActive : ""}`}
@@ -168,7 +168,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                       onClick={handleNavigate}
                     >
                       {link.label}
-                    </Link>
+                    </NavLink>
                   );
                 })}
               </nav>

@@ -1,3 +1,5 @@
+/* Global reset, design tokens, and base typography only — page styles use CSS modules. */
+
 *,
 *::before,
 *::after {

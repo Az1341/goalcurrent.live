@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useId, useState } from "react";
+import NavLink from "@/components/nav/NavLink";
 import type { NavLinkItem } from "@/lib/nav";
 import styles from "./master-chrome.module.css";
 
@@ -54,7 +54,7 @@ export default function HeaderNavDropdown({
       {open ? (
         <div id={panelId} className={styles.dropdownPanel} role="menu">
           {links.map((link) => (
-            <Link
+            <NavLink
               key={link.href}
               href={link.href}
               className={styles.dropdownLink}
@@ -62,7 +62,7 @@ export default function HeaderNavDropdown({
               onClick={closeMenu}
             >
               {link.label}
-            </Link>
+            </NavLink>
           ))}
         </div>
       ) : null}

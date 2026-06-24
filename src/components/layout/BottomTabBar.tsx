@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import NavLink from "@/components/nav/NavLink";
 import { useState } from "react";
 import {
   MOBILE_BOTTOM_TABS,
@@ -107,7 +107,7 @@ export default function BottomTabBar() {
         {MOBILE_BOTTOM_TABS.map((tab) => {
           const active = isMobileBottomTabActive(pathname, tab);
           return (
-            <Link
+            <NavLink
               key={tab.id}
               href={tab.href}
               className={`${styles.tabLink} ${active ? styles.tabLinkActive : ""}`}
@@ -117,7 +117,7 @@ export default function BottomTabBar() {
                 <TabIcon tabId={tab.id} />
               </span>
               <span className={styles.tabLabel}>{tab.label}</span>
-            </Link>
+            </NavLink>
           );
         })}
 

@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import type { Metadata } from "next";
+import { HOME_HERO_BG } from "@/lib/critical-assets";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 
@@ -15,5 +16,15 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function HomePage() {
-  return <HomeClient />;
+  return (
+    <>
+      <link
+        rel="preload"
+        href={HOME_HERO_BG}
+        as="image"
+        fetchPriority="high"
+      />
+      <HomeClient />
+    </>
+  );
 }

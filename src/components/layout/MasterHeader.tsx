@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import NavLink from "@/components/nav/NavLink";
 import {
   DESKTOP_PL_DROPDOWN,
   DESKTOP_PRIMARY_NAV,
@@ -27,26 +27,26 @@ export default function MasterHeader() {
     <div className={styles.chromeWrap} data-gc-chrome="site-header">
       <header className={styles.masterHeader} role="banner">
         <div className={styles.bar}>
-          <Link href="/" className={styles.brand}>
+          <NavLink href="/" className={styles.brand}>
             <div className={styles.brandLogoWrap}>
               <Image src="/logo.svg" alt="" width={48} height={48} priority />
             </div>
             <div className={styles.brandName}>
               Goal<span>Current</span>.live
             </div>
-          </Link>
+          </NavLink>
 
           <nav className={styles.desktopNav} aria-label="Main navigation">
             {DESKTOP_PRIMARY_NAV.map((item) => {
               const active = isMainNavActive(pathname, item.href, item.exact);
               return (
-                <Link
+                <NavLink
                   key={item.href}
                   href={item.href}
                   className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}
                 >
                   {item.label}
-                </Link>
+                </NavLink>
               );
             })}
             <HeaderNavDropdown
