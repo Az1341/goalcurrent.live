@@ -23,6 +23,13 @@ function isDebugEndpoint(value: string | null): value is DebugEndpoint {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { ok: false, error: "Debug disabled in production" },
+      { status: 403, headers: NO_STORE_HEADERS },
+    );
+  }
+
   const endpointParam = request.nextUrl.searchParams.get("endpoint");
 
   if (!isDebugEndpoint(endpointParam)) {

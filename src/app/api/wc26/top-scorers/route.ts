@@ -1,11 +1,28 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getCached, setCached } from "@/lib/server/cache";
 import { fetchWc26TopScorers } from "@/lib/server/wc26-top-scorers";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(): Promise<NextResponse> {
+const ROUTE = "/api/wc26/top-scorers";
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const cacheKey = request.url;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    console.info(`CACHE HIT: ${ROUTE}`);
+    return NextResponse.json(cached, {
+      headers: {
+        "Cache-Control": "s-maxage=300, stale-while-revalidate=60",
+      },
+    });
+  }
+
+  console.info(`CACHE MISS: ${ROUTE}`);
+
   try {
     const body = await fetchWc26TopScorers();
+    setCached(cacheKey, body);
 
     return NextResponse.json(body, {
       headers: {

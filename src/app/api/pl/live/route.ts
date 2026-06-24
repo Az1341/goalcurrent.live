@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchPlLive, plLiveCacheControl } from "@/lib/pl/endpoints";
+import { getCached, setCached } from "@/lib/server/cache";
 
 export const dynamic = "force-dynamic";
+
+const ROUTE = "/api/pl/live";
 
 function resolveRequestLocale(request: NextRequest): string {
   return (
@@ -10,8 +13,25 @@ function resolveRequestLocale(request: NextRequest): string {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  const locale = resolveRequestLocale(request);
+  const cacheKey = `${request.url}|lang:${locale}`;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    console.info(`CACHE HIT: ${ROUTE}`);
+    return NextResponse.json(cached, {
+      headers: {
+        "Cache-Control": plLiveCacheControl(
+          cached as Parameters<typeof plLiveCacheControl>[0],
+        ),
+      },
+    });
+  }
+
+  console.info(`CACHE MISS: ${ROUTE}`);
+
   try {
-    const body = await fetchPlLive(resolveRequestLocale(request));
+    const body = await fetchPlLive(locale);
+    setCached(cacheKey, body);
     return NextResponse.json(body, {
       headers: { "Cache-Control": plLiveCacheControl(body) },
     });

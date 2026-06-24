@@ -243,7 +243,7 @@ export default function PlFixturesClient() {
             })}
           </div>
 
-          <PlMobileAdSlot slot="4567890124" />
+          <PlMobileAdSlot />
 
           {listIsDeferred ? (
             <div className={styles.panel} role="status" aria-live="polite">

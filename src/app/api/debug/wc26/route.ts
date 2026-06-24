@@ -14,6 +14,13 @@ const NO_STORE_HEADERS = {
 };
 
 export async function GET(): Promise<NextResponse> {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { ok: false, error: "Debug disabled in production" },
+      { status: 403, headers: NO_STORE_HEADERS },
+    );
+  }
+
   try {
     const [rawTopScorers, rawFixtures, rawEvents, merged] = await Promise.all([
       fetchWc26TopScorersRaw(),

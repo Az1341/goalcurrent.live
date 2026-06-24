@@ -55,7 +55,6 @@ export const DESKTOP_PRIMARY_NAV: NavItem[] = [
 /** Legacy / footer — full primary list for other consumers. */
 export const MAIN_NAV: NavItem[] = [
   ...DESKTOP_PRIMARY_NAV,
-  { href: "/news", label: "News" },
   { href: "/worldcup2026", label: "World Cup 2026", exact: true },
   { href: "/premier-league", label: "Premier League", exact: true },
 ];

@@ -29,6 +29,14 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: SITE_NAME,
     type: "website",
+    images: [
+      {
+        url: "/icons/screenshot-desktop.png",
+        width: 1200,
+        height: 630,
+        alt: "GoalCurrent — Live Football Scores",
+      },
+    ],
   },
   manifest: "/manifest.json",
   appleWebApp: {

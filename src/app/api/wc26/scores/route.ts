@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCached, setCached } from "@/lib/server/cache";
 import {
   fetchFinishedWc26Matches,
   fetchLiveWc26Matches,
@@ -10,6 +11,8 @@ import {
 import type { Wc26ScoresApiResponse } from "@/types/fixture-overlay";
 
 export const dynamic = "force-dynamic";
+
+const ROUTE = "/api/wc26/scores";
 
 function unconfiguredResponse(): Wc26ScoresApiResponse {
   return {
@@ -38,7 +41,39 @@ function isUpstreamQuotaError(message: string): boolean {
   );
 }
 
+function scoresCacheControl(phase?: string): string {
+  if (phase === "live") {
+    return "s-maxage=30, stale-while-revalidate=30";
+  }
+  if (phase === "unconfigured" || phase === "rate-limited") {
+    return "no-store";
+  }
+  return "s-maxage=300, stale-while-revalidate=60";
+}
+
+function jsonScores(
+  body: Wc26ScoresApiResponse,
+  cacheKey: string,
+): NextResponse {
+  setCached(cacheKey, body);
+  return NextResponse.json(body, {
+    headers: { "Cache-Control": scoresCacheControl(body.phase) },
+  });
+}
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  const cacheKey = request.url;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    console.info(`CACHE HIT: ${ROUTE}`);
+    const body = cached as Wc26ScoresApiResponse;
+    return NextResponse.json(body, {
+      headers: { "Cache-Control": scoresCacheControl(body.phase) },
+    });
+  }
+
+  console.info(`CACHE MISS: ${ROUTE}`);
+
   const { searchParams } = request.nextUrl;
   const live = searchParams.get("live");
   const results = searchParams.get("results");
@@ -51,20 +86,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const wantsResults = results === "wc" || hasNoFilters;
 
   if (!isWc26ApiConfigured()) {
-    return NextResponse.json(unconfiguredResponse(), {
-      status: 200,
-      headers: { "Cache-Control": "no-store" },
-    });
+    return jsonScores(unconfiguredResponse(), cacheKey);
   }
 
   try {
     if (wantsLive) {
       if (!isTournamentLive()) {
-        return NextResponse.json(emptyResponse("pre-tournament"), {
-          headers: {
-            "Cache-Control": "s-maxage=30, stale-while-revalidate=30",
-          },
-        });
+        return jsonScores(emptyResponse("pre-tournament"), cacheKey);
       }
 
       const matches = await fetchLiveWc26Matches();
@@ -75,11 +103,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         phase: "live",
       };
 
-      return NextResponse.json(body, {
-        headers: {
-          "Cache-Control": "s-maxage=30, stale-while-revalidate=30",
-        },
-      });
+      return jsonScores(body, cacheKey);
     }
 
     if (wantsResults) {
@@ -91,11 +115,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         phase: "results",
       };
 
-      return NextResponse.json(body, {
-        headers: {
-          "Cache-Control": "s-maxage=300, stale-while-revalidate=60",
-        },
-      });
+      return jsonScores(body, cacheKey);
     }
 
     return NextResponse.json(
@@ -109,19 +129,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       error instanceof MissingApiKeyError ||
       isMissingApiKeyError(message)
     ) {
-      return NextResponse.json(unconfiguredResponse(), {
-        status: 200,
-        headers: { "Cache-Control": "no-store" },
-      });
+      return jsonScores(unconfiguredResponse(), cacheKey);
     }
 
     console.error("[api/wc26/scores]", message);
 
     if (isUpstreamQuotaError(message)) {
-      return NextResponse.json(emptyResponse("rate-limited"), {
-        status: 200,
-        headers: { "Cache-Control": "no-store" },
-      });
+      return jsonScores(emptyResponse("rate-limited"), cacheKey);
     }
 
     return NextResponse.json(

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PlAdSlot } from "@/components/pl/PlCommercialStrip";
+import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import PlPlayersClient from "@/components/pl/PlPlayersClient";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
@@ -13,7 +13,7 @@ export const metadata: Metadata = buildPageMetadata({
 export default function PremierLeaguePlayersPage() {
   return (
     <>
-      <PlAdSlot slot="5678901234" />
+      <PlAdSlotTop />
       <PlPlayersClient />
     </>
   );

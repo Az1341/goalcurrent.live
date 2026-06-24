@@ -1,14 +1,33 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import {
   fetchPlTopScorers,
   plLeaderboardCacheControl,
 } from "@/lib/pl/endpoints";
+import { getCached, setCached } from "@/lib/server/cache";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(): Promise<NextResponse> {
+const ROUTE = "/api/pl/top-scorers";
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const cacheKey = request.url;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    console.info(`CACHE HIT: ${ROUTE}`);
+    return NextResponse.json(cached, {
+      headers: {
+        "Cache-Control": plLeaderboardCacheControl(
+          cached as Parameters<typeof plLeaderboardCacheControl>[0],
+        ),
+      },
+    });
+  }
+
+  console.info(`CACHE MISS: ${ROUTE}`);
+
   try {
     const body = await fetchPlTopScorers();
+    setCached(cacheKey, body);
     return NextResponse.json(body, {
       headers: { "Cache-Control": plLeaderboardCacheControl(body) },
     });

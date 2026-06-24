@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchPlFixtures, plFixturesCacheControl } from "@/lib/pl/api";
+import { getCached, setCached } from "@/lib/server/cache";
 
 export const dynamic = "force-dynamic";
+
+const ROUTE = "/api/pl/fixtures";
 
 function resolveRequestLocale(request: NextRequest): string {
   return (
@@ -10,8 +13,25 @@ function resolveRequestLocale(request: NextRequest): string {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  const locale = resolveRequestLocale(request);
+  const cacheKey = `${request.url}|lang:${locale}`;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    console.info(`CACHE HIT: ${ROUTE}`);
+    return NextResponse.json(cached, {
+      headers: {
+        "Cache-Control": plFixturesCacheControl(
+          cached as Parameters<typeof plFixturesCacheControl>[0],
+        ),
+      },
+    });
+  }
+
+  console.info(`CACHE MISS: ${ROUTE}`);
+
   try {
-    const body = await fetchPlFixtures(resolveRequestLocale(request));
+    const body = await fetchPlFixtures(locale);
+    setCached(cacheKey, body);
 
     return NextResponse.json(body, {
       headers: {

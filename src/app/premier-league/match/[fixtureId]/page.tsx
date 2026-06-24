@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PlAdSlot } from "@/components/pl/PlCommercialStrip";
+import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import PlMatchClient from "@/components/pl/PlMatchClient";
 import { fetchPlMatchDetail } from "@/lib/pl/match-detail";
 import { buildPageMetadata } from "@/lib/page-metadata";
@@ -50,7 +50,7 @@ export default async function PremierLeagueMatchPage({
 
   return (
     <>
-      <PlAdSlot slot="8901234567" />
+      <PlAdSlotTop />
       <PlMatchClient fixtureId={fixtureId} />
     </>
   );

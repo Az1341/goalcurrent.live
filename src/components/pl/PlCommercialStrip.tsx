@@ -1,4 +1,5 @@
 import AdSenseUnit from "@/components/AdSenseUnit";
+import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import { NORDVPN_HREF } from "@/lib/site-keys";
 import { SITE_NAME } from "@/lib/site-url";
 import styles from "./PlCommercialStrip.module.css";
@@ -16,11 +17,23 @@ export function PlAdSlot({ slot, className = "" }: PlAdSlotProps) {
   );
 }
 
+export function PlAdSlotTop({ className = "" }: { className?: string }) {
+  return <PlAdSlot slot={ADSENSE_SLOTS.plTop} className={className} />;
+}
+
+export function PlAdSlotMid({ className = "" }: { className?: string }) {
+  return <PlAdSlot slot={ADSENSE_SLOTS.plMid} className={className} />;
+}
+
+export function PlAdSlotBottom({ className = "" }: { className?: string }) {
+  return <PlAdSlot slot={ADSENSE_SLOTS.plBottom} className={className} />;
+}
+
 /** Mobile-only fixtures ad — below matchweek pills on small screens. */
-export function PlMobileAdSlot({ slot }: { slot: string }) {
+export function PlMobileAdSlot() {
   return (
     <div className={styles.mobileAdWrap} data-gc-pl-mobile-ad="">
-      <AdSenseUnit slot={slot} showPlaceholder />
+      <AdSenseUnit slot={ADSENSE_SLOTS.plMid} showPlaceholder />
     </div>
   );
 }

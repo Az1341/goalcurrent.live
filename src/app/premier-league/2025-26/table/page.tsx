@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import UnderConstruction from "@/components/UnderConstruction";
-import { PlAdSlot } from "@/components/pl/PlCommercialStrip";
+import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 
@@ -19,7 +19,7 @@ export const metadata: Metadata = buildPageMetadata({
 export default function PremierLeague2526TablePage() {
   return (
     <>
-      <PlAdSlot slot="8901234567" />
+      <PlAdSlotTop />
       <UnderConstruction
         title="Premier League Table 2025/26"
         emoji="📋"
