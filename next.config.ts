@@ -33,20 +33,20 @@ const SITE_REDIRECTS: RouteRedirect[] = [
   },
   {
     source: "/:path*",
-    has: [{ type: "host", value: "goalcurrent.live" }],
-    destination: "https://www.goalcurrent.live/:path*",
+    has: [{ type: "host", value: "www.goalcurrent.live" }],
+    destination: "https://goalcurrent.live/:path*",
     permanent: true,
   },
   {
     source: "/:path*",
     has: [{ type: "host", value: "goalcurrent.online" }],
-    destination: "https://www.goalcurrent.live/:path*",
+    destination: "https://goalcurrent.live/:path*",
     permanent: true,
   },
   {
     source: "/:path*",
     has: [{ type: "host", value: "www.goalcurrent.online" }],
-    destination: "https://www.goalcurrent.live/:path*",
+    destination: "https://goalcurrent.live/:path*",
     permanent: true,
   },
 ];
