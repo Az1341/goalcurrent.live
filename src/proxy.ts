@@ -8,15 +8,22 @@ const LEGACY_GROUP_PATH = /^\/worldcup2026\/groups\/group-([a-l])$/i;
 const LOCALE_PREFIX = /^\/(en|fa|ar|fr|de|nl|es|pt|it)(\/|$)/;
 const LOCALE_NEXT_ASSET =
   /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/_next\/(.+)$/;
+const LOCALE_API =
+  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/api\/(.+)$/;
 const LOCALE_PUBLIC_ASSET =
   /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(flags|images|icons)(\/.*)?$/;
 const LOCALE_PUBLIC_FILE =
-  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(logo\.svg|favicon\.ico|favicon\.svg)$/;
+  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(logo\.svg|favicon\.ico|favicon\.svg|sw\.js|OneSignalSDKWorker\.js|OneSignalSDKUpdaterWorker\.js|manifest\.json|ads\.txt)$/;
 
 const PUBLIC_STATIC_FILES = new Set([
   "/logo.svg",
   "/favicon.ico",
   "/favicon.svg",
+  "/sw.js",
+  "/OneSignalSDKWorker.js",
+  "/OneSignalSDKUpdaterWorker.js",
+  "/manifest.json",
+  "/ads.txt",
 ]);
 
 function isRootPublicStaticPath(pathname: string): boolean {
@@ -116,6 +123,19 @@ export function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = `/_next/${localeAsset[2]}`;
     return NextResponse.rewrite(url);
+  }
+
+  // Locale-prefixed API calls (e.g. mistaken /fa/api/*) → /api/*
+  const localeApi = LOCALE_API.exec(pathname);
+  if (localeApi) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/api/${localeApi[2]}`;
+    return NextResponse.rewrite(url);
+  }
+
+  // API routes must bypass i18n (otherwise /api/pl/fixtures → /en/api/pl/fixtures → 404)
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
   }
 
   // Locale-prefixed /public assets (flags, images, icons, logo)
