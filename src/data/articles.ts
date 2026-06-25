@@ -80,6 +80,28 @@ export function articleHref(slug: string): string {
   return `/articles/${slug}`;
 }
 
+export type ExternalArticleCard = {
+  title: string;
+  excerpt: string;
+  href: string;
+  image: string;
+  source: string;
+  date: string;
+};
+
+/** External editorial links (title/summary only — full text stays on source site). */
+export const EXTERNAL_ARTICLE_CARDS: readonly ExternalArticleCard[] = [
+  {
+    title: "England's next opponents are out of World Cup after FIFA rule change",
+    excerpt:
+      "Panama and Jordan are officially eliminated under FIFA's head-to-head tiebreaker rules, even though both still have a final group match to play.",
+    href: "https://www.msn.com/en-gb/sport/football/england-s-next-opponents-are-out-of-world-cup-after-fifa-rule-change/ar-AA26rwH8",
+    image: "/images/football-hero-bg.jpg",
+    source: "MSN",
+    date: "2026-06-25",
+  },
+];
+
 export const ARTICLES: Article[] = [
   {
     slug: "world-cup-2026-complete-guide",

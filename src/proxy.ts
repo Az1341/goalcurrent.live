@@ -8,6 +8,27 @@ const LEGACY_GROUP_PATH = /^\/worldcup2026\/groups\/group-([a-l])$/i;
 const LOCALE_PREFIX = /^\/(en|fa|ar|fr|de|nl|es|pt|it)(\/|$)/;
 const LOCALE_NEXT_ASSET =
   /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/_next\/(.+)$/;
+const LOCALE_PUBLIC_ASSET =
+  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(flags|images|icons)(\/.*)?$/;
+const LOCALE_PUBLIC_FILE =
+  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(logo\.svg|favicon\.ico|favicon\.svg)$/;
+
+const PUBLIC_STATIC_FILES = new Set([
+  "/logo.svg",
+  "/favicon.ico",
+  "/favicon.svg",
+]);
+
+function isRootPublicStaticPath(pathname: string): boolean {
+  if (PUBLIC_STATIC_FILES.has(pathname)) {
+    return true;
+  }
+  return (
+    pathname.startsWith("/flags/") ||
+    pathname.startsWith("/images/") ||
+    pathname.startsWith("/icons/")
+  );
+}
 
 const handleI18n = createIntlMiddleware(routing);
 
@@ -95,6 +116,20 @@ export function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = `/_next/${localeAsset[2]}`;
     return NextResponse.rewrite(url);
+  }
+
+  // Locale-prefixed /public assets (flags, images, icons, logo)
+  const localePublic =
+    LOCALE_PUBLIC_ASSET.exec(pathname) ?? LOCALE_PUBLIC_FILE.exec(pathname);
+  if (localePublic) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/(en|fa|ar|fr|de|nl|es|pt|it)/, "") || "/";
+    return NextResponse.rewrite(url);
+  }
+
+  // Root /public assets must bypass i18n (otherwise /logo.svg → /en/logo.svg → 404 HTML)
+  if (isRootPublicStaticPath(pathname)) {
+    return NextResponse.next();
   }
 
   if (pathname.startsWith("/_next/")) {

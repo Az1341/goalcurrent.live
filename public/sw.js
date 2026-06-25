@@ -1,5 +1,5 @@
 // GoalCurrent.online — Service Worker (staging PWA foundation)
-const CACHE_NAME = "goalcurrent-online-v2";
+const CACHE_NAME = "goalcurrent-online-v4";
 const API_CACHE = "goalcurrent-online-api-v1";
 
 const LOCALES = ["en", "fa", "ar", "fr", "de", "nl", "es", "pt", "it"];
@@ -153,12 +153,28 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+function isPublicStaticAsset(pathname) {
+  return (
+    pathname.startsWith("/flags/") ||
+    pathname.startsWith("/images/") ||
+    pathname.startsWith("/icons/") ||
+    pathname === "/logo.svg" ||
+    pathname === "/favicon.ico" ||
+    pathname === "/favicon.svg"
+  );
+}
+
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
   if (event.request.method !== "GET") return;
   if (url.origin !== location.origin) return;
   if (isLocalDevHost(url.hostname)) return;
+
+  // Never cache-intercept flags, photos, or logos — always load fresh from network.
+  if (isPublicStaticAsset(url.pathname)) {
+    return;
+  }
 
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(networkFirstWithTimeout(event.request, 5000));

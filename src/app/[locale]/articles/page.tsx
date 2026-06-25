@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles/ArticleAuthorLine";
-import { ARTICLE_INDEX, ARTICLES, articleHref } from "@/data/articles";
+import { ARTICLE_INDEX, ARTICLES, EXTERNAL_ARTICLE_CARDS, articleHref } from "@/data/articles";
 import { getArticleCardImage } from "@/lib/article-hub";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { EDITORIAL_AUTHOR, EDITORIAL_PUBLISHER } from "@/lib/seo/constants";
@@ -39,6 +39,30 @@ export default function ArticlesIndexPage() {
         </div>
 
         <div className={styles.articlesGrid}>
+          {EXTERNAL_ARTICLE_CARDS.map((article) => (
+            <a
+              key={article.href}
+              href={article.href}
+              className={styles.articleIndexCard}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className={styles.articleIndexImageWrap}>
+                <Image
+                  src={article.image}
+                  alt=""
+                  width={640}
+                  height={280}
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  className={styles.articleIndexImage}
+                />
+              </div>
+              <span className={styles.pill}>{article.source}</span>
+              <h2>{article.title}</h2>
+              <p>{article.excerpt}</p>
+              <span className={styles.readMore}>Read on MSN ↗</span>
+            </a>
+          ))}
           {ARTICLE_INDEX.map((a) => {
             const image = getArticleCardImage(a.slug);
             return (
