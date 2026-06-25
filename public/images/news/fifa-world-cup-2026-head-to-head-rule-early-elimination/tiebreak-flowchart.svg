@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" role="img" aria-labelledby="flowTitle">
+  <title id="flowTitle">Flowchart explaining FIFA head-to-head tiebreaker steps</title>
+  <rect width="960" height="640" fill="#f8fafc" rx="16"/>
+  <text x="480" y="40" text-anchor="middle" fill="#041e42" font-size="22" font-weight="700">How FIFA Ranks Teams Level on Points</text>
+  <rect x="330" y="64" width="300" height="56" rx="10" fill="#041e42"/>
+  <text x="480" y="98" text-anchor="middle" fill="#fff" font-size="16" font-weight="600">Teams finish level on points</text>
+  <path d="M480 120 L480 150" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="280" y="150" width="400" height="56" rx="10" fill="#7b0d1e"/>
+  <text x="480" y="184" text-anchor="middle" fill="#fff" font-size="16" font-weight="600">Compare head-to-head results</text>
+  <path d="M480 206 L480 236" stroke="#64748b" stroke-width="2"/>
+  <rect x="220" y="236" width="520" height="56" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="480" y="270" text-anchor="middle" fill="#334155" font-size="15">Still tied? Goal difference among tied teams only</text>
+  <path d="M480 292 L480 322" stroke="#64748b" stroke-width="2"/>
+  <rect x="220" y="322" width="520" height="56" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="480" y="356" text-anchor="middle" fill="#334155" font-size="15">Still tied? Goals scored among tied teams</text>
+  <path d="M480 378 L480 408" stroke="#64748b" stroke-width="2"/>
+  <rect x="250" y="408" width="460" height="56" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="480" y="442" text-anchor="middle" fill="#334155" font-size="15">Further FIFA criteria (fair play, draw, etc.)</text>
+  <rect x="120" y="500" width="720" height="96" rx="10" fill="#e2e8f0"/>
+  <text x="480" y="532" text-anchor="middle" fill="#041e42" font-size="15" font-weight="700">Editorial note</text>
+  <text x="480" y="560" text-anchor="middle" fill="#475569" font-size="14">This is not automatic elimination after two defeats  it is the ranking order when points are equal.</text>
+  <text x="480" y="582" text-anchor="middle" fill="#475569" font-size="14">Based on FIFA World Cup 2026 Regulations, Article 13.</text>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>

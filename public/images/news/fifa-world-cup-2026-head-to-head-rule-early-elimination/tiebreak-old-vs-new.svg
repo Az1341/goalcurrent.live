@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="title">
+  <title id="title">Comparison of old and new FIFA World Cup group tiebreaker order</title>
+  <rect width="960" height="520" fill="#f8fafc" rx="16"/>
+  <text x="480" y="44" text-anchor="middle" fill="#041e42" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Tiebreaker Order: What Changed?</text>
+  <rect x="40" y="72" width="400" height="400" rx="12" fill="#fff" stroke="#cbd5e1"/>
+  <text x="240" y="108" text-anchor="middle" fill="#64748b" font-size="16" font-weight="700">PREVIOUS EMPHASIS</text>
+  <text x="240" y="140" text-anchor="middle" fill="#041e42" font-size="20" font-weight="700">Goal difference often decisive</text>
+  <text x="64" y="190" fill="#334155" font-size="17">1. Points</text>
+  <text x="64" y="230" fill="#334155" font-size="17">2. Goal difference</text>
+  <text x="64" y="270" fill="#334155" font-size="17">3. Goals scored</text>
+  <text x="64" y="310" fill="#334155" font-size="17">4. Head-to-head (among tied teams)</text>
+  <text x="64" y="380" fill="#64748b" font-size="14">A heavy win in match three could still rescue a team level on points.</text>
+  <rect x="520" y="72" width="400" height="400" rx="12" fill="#fff" stroke="#7b0d1e" stroke-width="2"/>
+  <text x="720" y="108" text-anchor="middle" fill="#7b0d1e" font-size="16" font-weight="700">FIFA 2026 (ARTICLE 13)</text>
+  <text x="720" y="140" text-anchor="middle" fill="#041e42" font-size="20" font-weight="700">Head-to-head comes first</text>
+  <text x="544" y="190" fill="#334155" font-size="17">1. Points</text>
+  <text x="544" y="230" fill="#7b0d1e" font-size="17" font-weight="700">2. Head-to-head among tied teams</text>
+  <text x="544" y="270" fill="#334155" font-size="17">3. Goal difference (tied teams only)</text>
+  <text x="544" y="310" fill="#334155" font-size="17">4. Goals scored (tied teams only)</text>
+  <text x="544" y="380" fill="#64748b" font-size="14">A defeat to a direct rival can become permanent before the final matchday.</text>
+</svg>

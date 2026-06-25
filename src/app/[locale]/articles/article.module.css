@@ -316,3 +316,131 @@
   color: #7b0d1e;
   margin-top: auto;
 }
+
+/* Long-form editorial components */
+.readTime {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.figure {
+  margin: 22px 0;
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius-lg);
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.figureImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.figureCaption {
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  color: var(--gc-text-muted);
+  line-height: 1.5;
+  border-top: 1px solid var(--gc-border);
+}
+
+.pullQuote {
+  margin: 24px 0;
+  padding: 18px 20px 18px 22px;
+  border-left: 4px solid #7b0d1e;
+  background: rgba(123, 13, 30, 0.05);
+  border-radius: 0 var(--gc-radius-sm) var(--gc-radius-sm) 0;
+}
+
+.pullQuote p {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--gc-text-primary);
+  line-height: 1.55;
+}
+
+.keyTakeaways,
+.calloutBox,
+.comparisonBox,
+.relatedArticles,
+.officialSources {
+  margin: 24px 0;
+  border-radius: var(--gc-radius-lg);
+  padding: 18px 20px;
+}
+
+.keyTakeaways {
+  background: rgba(4, 30, 66, 0.05);
+  border: 1px solid rgba(4, 30, 66, 0.12);
+}
+
+.keyTakeaways h3,
+.calloutBox h3,
+.comparisonBox h3,
+.relatedArticles h3,
+.officialSources h3 {
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #041e42;
+}
+
+.keyTakeaways ul,
+.officialSources ul,
+.relatedArticles ul {
+  margin: 0 0 0 18px;
+}
+
+.calloutBox {
+  background: rgba(123, 13, 30, 0.06);
+  border: 1px solid rgba(123, 13, 30, 0.16);
+}
+
+.calloutBox p:last-child {
+  margin-bottom: 0;
+}
+
+.comparisonBox {
+  background: #fff;
+  border: 1px solid var(--gc-border);
+}
+
+.relatedArticles {
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+}
+
+.relatedArticles a,
+.officialSources a {
+  color: #7b0d1e;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.relatedArticles a:hover,
+.officialSources a:hover {
+  text-decoration: underline;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

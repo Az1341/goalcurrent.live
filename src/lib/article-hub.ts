@@ -8,6 +8,8 @@ import type { NewsArticle } from "@/types/news";
 export const ARTICLE_CARD_IMAGES: Record<string, string> = {
   "world-cup-2026-june-22-recap": "/images/football-hero-bg.jpg",
   "world-cup-2026-june-23-recap": "/images/football-hero-bg.jpg",
+  "fifa-world-cup-2026-head-to-head-rule-early-elimination":
+    "/images/news/fifa-world-cup-2026-head-to-head-rule-early-elimination/hero.svg",
 };
 
 export function getArticleCardImage(slug: string): string | undefined {

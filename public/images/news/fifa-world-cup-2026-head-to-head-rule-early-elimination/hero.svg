@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">FIFA World Cup 2026 head-to-head tiebreaker editorial graphic</title>
+  <desc id="heroDesc">Original GoalCurrent.live graphic showing Article 13 tiebreaker order for the 2026 World Cup group stage</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#041e42"/>
+      <stop offset="55%" stop-color="#0b2f5c"/>
+      <stop offset="100%" stop-color="#7b0d1e"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f5d76e"/>
+      <stop offset="100%" stop-color="#c9a227"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="1040" cy="140" r="180" fill="#ffffff" opacity="0.04"/>
+  <circle cx="180" cy="620" r="220" fill="#ffffff" opacity="0.03"/>
+  <g transform="translate(920 210)">
+    <ellipse cx="0" cy="170" rx="70" ry="16" fill="#000" opacity="0.25"/>
+    <path d="M-42 150 C-42 40 -18 0 0 0 C18 0 42 40 42 150 Z" fill="url(#gold)" stroke="#8a6d12" stroke-width="3"/>
+    <rect x="-34" y="118" width="68" height="34" rx="4" fill="#8a6d12"/>
+    <path d="M-18 0 C-10 -26 10 -26 18 0" fill="none" stroke="#f5d76e" stroke-width="4"/>
+  </g>
+  <text x="72" y="120" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="0.08em">WORLD CUP 2026 · ANALYSIS</text>
+  <text x="72" y="210" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="54" font-weight="700">Head-to-Head Before</text>
+  <text x="72" y="280" fill="#f5d76e" font-family="Segoe UI, Arial, sans-serif" font-size="54" font-weight="700">Goal Difference</text>
+  <text x="72" y="360" fill="rgba(255,255,255,0.82)" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="400">FIFA Article 13 · Group-stage tiebreakers explained</text>
+  <rect x="72" y="420" width="520" height="4" fill="#f5d76e" opacity="0.8"/>
+  <text x="72" y="470" fill="rgba(255,255,255,0.7)" font-family="Segoe UI, Arial, sans-serif" font-size="20">GoalCurrent.live editorial · 25 June 2026</text>
+</svg>

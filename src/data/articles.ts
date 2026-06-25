@@ -74,6 +74,15 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
       "Norway beat Senegal 3–2, Algeria down Jordan 2–1, Portugal rout Uzbekistan 5–0, Colombia beat Congo DR, Croatia defeat Panama, and England draw with Ghana.",
     date: "24 June 2026",
   },
+  {
+    slug: "fifa-world-cup-2026-head-to-head-rule-early-elimination",
+    category: "Analysis",
+    title:
+      "FIFA's Head-to-Head Rule Has Changed the World Cup Group Stage - But Not in the Way Some Headlines Suggest",
+    excerpt:
+      "FIFA Article 13 now ranks head-to-head results before goal difference. It does not auto-eliminate teams after two defeats — but it can seal group fates earlier.",
+    date: "25 June 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {
