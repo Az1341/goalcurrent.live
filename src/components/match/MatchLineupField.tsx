@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import type { MatchLineupPlayer } from "@/types/match-detail";
 import { shouldUseUnoptimizedImage } from "@/lib/images";
+import styles from "./MatchLineupField.module.css";
 
 export type MatchLineupFieldProps = {
   home: readonly MatchLineupPlayer[];
@@ -12,6 +13,7 @@ export type MatchLineupFieldProps = {
   awayTeamName?: string;
   homeFormation?: string | null;
   awayFormation?: string | null;
+  variant?: "page" | "embedded";
 };
 
 type GridCoord = { row: number; col: number };
@@ -48,18 +50,12 @@ function fallbackGrid(
   players: readonly MatchLineupPlayer[],
 ): GridCoord {
   const positionKey = (player.position ?? "M").charAt(0).toUpperCase();
-  const rowByPosition: Record<string, number> = {
-    G: 1,
-    D: 2,
-    M: 3,
-    F: 5,
-  };
+  const rowByPosition: Record<string, number> = { G: 1, D: 2, M: 3, F: 5 };
   const row = rowByPosition[positionKey] ?? 3;
-  const sameRowIndex =
-    players
-      .slice(0, index + 1)
-      .filter((entry) => (entry.position ?? "M").charAt(0).toUpperCase() === positionKey)
-      .length;
+  const sameRowIndex = players
+    .slice(0, index + 1)
+    .filter((entry) => (entry.position ?? "M").charAt(0).toUpperCase() === positionKey)
+    .length;
   return { row, col: sameRowIndex };
 }
 
@@ -71,13 +67,11 @@ function gridToPercent(
 ): { left: number; top: number } {
   const colsInRow = Math.max(rowMaxCols.get(grid.row) ?? grid.col, 1);
   const left = ((grid.col - 0.5) / colsInRow) * 100;
-
   const rowSpan = Math.max(maxRow - 1, 1);
   const rowProgress = (grid.row - 1) / rowSpan;
   const homeTop = 6 + rowProgress * 38;
   const awayTop = 94 - rowProgress * 38;
   const top = side === "home" ? homeTop : awayTop;
-
   return { left, top };
 }
 
@@ -86,11 +80,12 @@ function surname(name: string): string {
   return parts[parts.length - 1] ?? name;
 }
 
-function ratingTone(rating: number | null | undefined): string {
-  if (rating == null) return "bg-slate-600";
-  if (rating >= 7.5) return "bg-emerald-500";
-  if (rating >= 7) return "bg-amber-500";
-  return "bg-orange-500";
+function ratingClass(rating: number | null | undefined): string {
+  if (rating == null) return styles.ratingMuted;
+  if (rating >= 8) return styles.ratingHigh;
+  if (rating >= 7.5) return styles.ratingGood;
+  if (rating >= 7) return styles.ratingMid;
+  return styles.ratingLow;
 }
 
 function PlayerAvatar({ name, photo }: { name: string; photo?: string | null }) {
@@ -99,21 +94,19 @@ function PlayerAvatar({ name, photo }: { name: string; photo?: string | null }) 
   const showPhoto = Boolean(photo) && !failed;
 
   return (
-    <div className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-white/90 bg-slate-700 shadow-md">
+    <div className={styles.avatar}>
       {showPhoto ? (
         <Image
           src={photo!}
           alt={name}
-          width={44}
-          height={44}
-          className="h-full w-full object-cover"
+          width={56}
+          height={56}
+          className={styles.avatarPhoto}
           unoptimized={shouldUseUnoptimizedImage(photo!)}
           onError={() => setFailed(true)}
         />
       ) : (
-        <span className="flex h-full w-full items-center justify-center text-sm font-semibold text-white/90">
-          {initial}
-        </span>
+        <span className={styles.avatarInitial}>{initial}</span>
       )}
     </div>
   );
@@ -140,36 +133,27 @@ function PlayerMarker({
 
   return (
     <div
-      className="absolute z-10 flex w-[4.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center"
+      className={styles.marker}
       style={{ left: `${left}%`, top: `${top}%` }}
       title={`${player.name}${player.number != null ? ` · #${player.number}` : ""}`}
     >
-      <div className="relative">
+      <div className={styles.avatarWrap}>
         <PlayerAvatar name={player.name} photo={player.photo} />
-
         {player.rating != null ? (
-          <span
-            className={`absolute -right-1 -top-1 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none text-white shadow ${ratingTone(player.rating)}`}
-          >
+          <span className={`${styles.rating} ${ratingClass(player.rating)}`}>
             {player.rating.toFixed(1)}
           </span>
         ) : null}
-
-        <span className="absolute -bottom-1 -right-1 flex items-center gap-0.5">
-          <span className="flex h-5 min-w-5 items-center justify-center rounded-full border border-white/80 bg-slate-900/90 px-1 text-[10px] font-bold text-white shadow">
-            {player.number ?? "–"}
-          </span>
+        <span className={styles.badges}>
+          <span className={styles.number}>{player.number ?? "–"}</span>
           {player.is_captain ? (
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-[9px] font-extrabold text-slate-900 shadow">
+            <span className={styles.captain} aria-label="Captain">
               C
             </span>
           ) : null}
         </span>
       </div>
-
-      <span className="mt-1 max-w-[4.75rem] truncate text-center text-[10px] font-semibold leading-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]">
-        {surname(player.name)}
-      </span>
+      <span className={styles.playerName}>{surname(player.name)}</span>
     </div>
   );
 }
@@ -205,25 +189,19 @@ function TeamHeader({
   teamName,
   formation,
   align,
-  className = "",
 }: {
   teamName: string;
   formation?: string | null;
   align: "start" | "end";
-  className?: string;
 }) {
   return (
     <div
-      className={`flex items-center gap-2 px-1 ${
-        align === "end" ? "flex-row-reverse justify-end" : "justify-between"
-      } ${className}`}
+      className={`${styles.teamHeader} ${
+        align === "end" ? styles.teamHeaderEnd : styles.teamHeaderStart
+      }`}
     >
-      <span className="text-sm font-semibold text-[var(--gc-text-primary)]">{teamName}</span>
-      {formation ? (
-        <span className="rounded-full border border-emerald-800/30 bg-emerald-900/10 px-2.5 py-0.5 text-xs font-medium text-emerald-900">
-          {formation}
-        </span>
-      ) : null}
+      <span className={styles.teamName}>{teamName}</span>
+      {formation ? <span className={styles.formation}>{formation}</span> : null}
     </div>
   );
 }
@@ -235,82 +213,69 @@ export default function MatchLineupField({
   awayTeamName = "Away",
   homeFormation,
   awayFormation,
+  variant = "page",
 }: MatchLineupFieldProps) {
   if (home.length === 0 && away.length === 0) {
     return null;
   }
 
+  const embedded = variant === "embedded";
+
   return (
     <section
-      className="mb-8"
-      aria-labelledby="lineup-field-heading"
+      className={embedded ? styles.rootEmbedded : styles.root}
+      aria-labelledby={embedded ? undefined : "lineup-field-heading"}
     >
-      <h2
-        id="lineup-field-heading"
-        className="mb-3 text-lg font-semibold text-[var(--gc-text-primary)]"
-      >
-        Tactical lineup
-      </h2>
+      {embedded ? null : (
+        <h2 id="lineup-field-heading" className={styles.heading}>
+          Tactical lineup
+        </h2>
+      )}
 
-      <div className="relative mx-auto w-full max-w-xl">
-        <TeamHeader
-          teamName={homeTeamName}
-          formation={homeFormation}
-          align="start"
-          className="mb-2"
-        />
+      <div className={embedded ? `${styles.wrap} ${styles.wrapEmbedded}` : styles.wrap}>
+        {embedded ? null : (
+          <TeamHeader teamName={homeTeamName} formation={homeFormation} align="start" />
+        )}
 
-        <div className="relative aspect-[2/3] w-full overflow-hidden rounded-2xl border-2 border-white/85 bg-gradient-to-b from-emerald-800 via-emerald-900 to-emerald-800 shadow-[inset_0_0_80px_rgba(0,0,0,0.35)]">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06),transparent_65%)]" />
-
-          <div className="absolute inset-x-0 top-1/2 h-px bg-white/75" />
-          <div className="absolute left-1/2 top-1/2 h-[22%] w-[22%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/75" />
-          <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/85" />
-
-          <div className="absolute left-1/2 top-0 h-[17%] w-[48%] -translate-x-1/2 border border-t-0 border-white/75" />
-          <div className="absolute left-1/2 top-0 h-[7%] w-[22%] -translate-x-1/2 border border-t-0 border-white/75" />
-          <div className="absolute bottom-0 left-1/2 h-[17%] w-[48%] -translate-x-1/2 border border-b-0 border-white/75" />
-          <div className="absolute bottom-0 left-1/2 h-[7%] w-[22%] -translate-x-1/2 border border-b-0 border-white/75" />
-
-          <div className="absolute inset-0">
+        <div className={styles.pitch}>
+          <div className={styles.pitchGlow} />
+          <div className={styles.halfway} />
+          <div className={styles.centerCircle} />
+          <div className={styles.centerSpot} />
+          <div className={styles.penaltyTopOuter} />
+          <div className={styles.penaltyTopInner} />
+          <div className={styles.penaltyBottomOuter} />
+          <div className={styles.penaltyBottomInner} />
+          <div className={styles.markers}>
             <TeamMarkers players={home} side="home" />
             <TeamMarkers players={away} side="away" />
           </div>
         </div>
 
-        <TeamHeader
-          teamName={awayTeamName}
-          formation={awayFormation}
-          align="end"
-          className="mt-2"
-        />
+        {embedded ? null : (
+          <TeamHeader teamName={awayTeamName} formation={awayFormation} align="end" />
+        )}
 
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-4 text-xs text-[var(--gc-text-muted)]">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="rounded-full bg-emerald-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
-              7.5+
+        {embedded ? null : (
+          <div className={styles.legend}>
+            <span className={styles.legendItem}>
+              <span className={styles.legendSwatchHigh}>7.5+</span>
+              Excellent
             </span>
-            Excellent
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
-              7.0+
+            <span className={styles.legendItem}>
+              <span className={styles.legendSwatchMid}>7.0+</span>
+              Good
             </span>
-            Good
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="rounded-full bg-orange-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
-              &lt;7.0
+            <span className={styles.legendItem}>
+              <span className={styles.legendSwatchLow}>&lt;7.0</span>
+              Below average
             </span>
-            Below average
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-[9px] font-extrabold text-slate-900">
-              C
+            <span className={styles.legendItem}>
+              <span className={styles.legendCaptain}>C</span>
+              Captain
             </span>
-            Captain
-          </span>
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -2759,6 +2759,14 @@ a.standingsHead:hover {
   color: var(--gc-text-muted);
 }
 
+.finalRoundLineupPitch {
+  margin-top: 2px;
+}
+
+.finalRoundLineupPitch section {
+  margin: 0;
+}
+
 .finalRoundDetailsBtn {
   align-self: flex-start;
   font-size: 0.8125rem;

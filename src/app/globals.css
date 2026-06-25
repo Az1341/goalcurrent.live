@@ -1,5 +1,4 @@
-@import "tailwindcss/theme" layer(theme);
-@import "tailwindcss/utilities" layer(utilities);
+@import "tailwindcss";
 
 /* Global reset, design tokens, and base typography only — page styles use CSS modules. */
 

@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import TeamFlag from "@/components/TeamFlag";
-import PlayerRow from "@/components/wc26/PlayerRow";
+import MatchLineupField from "@/components/match/MatchLineupField";
+import {
+  DEMO_KOR_LINEUP,
+  DEMO_RSA_LINEUP,
+  RSA_KOR_DEMO_FORMATIONS,
+  isRsaKorDemoFixture,
+} from "@/data/wc26/demo-lineups-rsa-kor";
 import { getTeamById } from "@/data/wc26";
 import {
   getFixtureScore,
@@ -31,6 +37,7 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
   const isCompleted = isEffectiveFixtureCompleted(fixture);
   const score = getFixtureScore(fixture);
   const { detail, loading } = useMatchDetail(fixture.id, isLive);
+  const useDemoLineup = isRsaKorDemoFixture(fixture.matchNumber);
 
   const centreScore =
     isLive || isCompleted
@@ -42,6 +49,26 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
   const venueTime = formatVenueKickoffTime(fixture.kickoffUtc, fixture.venueId);
   const venueTz = formatVenueTimezoneAbbr(fixture.venueId);
   const venueLabel = formatVenueKickoffLabel(fixture.kickoffUtc, fixture.venueId);
+
+  const homeLineup =
+    detail.lineups.home?.startXI?.length
+      ? detail.lineups.home.startXI
+      : useDemoLineup
+        ? DEMO_RSA_LINEUP
+        : [];
+  const awayLineup =
+    detail.lineups.away?.startXI?.length
+      ? detail.lineups.away.startXI
+      : useDemoLineup
+        ? DEMO_KOR_LINEUP
+        : [];
+  const homeFormation =
+    detail.lineups.home?.formation ??
+    (useDemoLineup ? RSA_KOR_DEMO_FORMATIONS.home : null);
+  const awayFormation =
+    detail.lineups.away?.formation ??
+    (useDemoLineup ? RSA_KOR_DEMO_FORMATIONS.away : null);
+  const hasLineup = homeLineup.length > 0 || awayLineup.length > 0;
 
   return (
     <article className={styles.finalRoundCard}>
@@ -80,22 +107,22 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
 
       {loading ? (
         <p className={styles.finalRoundLineupNote}>Loading lineups…</p>
+      ) : hasLineup ? (
+        <div className={styles.finalRoundLineupPitch}>
+          <MatchLineupField
+            variant="embedded"
+            home={homeLineup}
+            away={awayLineup}
+            homeTeamName={home?.name ?? fixture.homeTeamId}
+            awayTeamName={away?.name ?? fixture.awayTeamId}
+            homeFormation={homeFormation}
+            awayFormation={awayFormation}
+          />
+        </div>
       ) : (
-        <>
-          <PlayerRow
-            label={detail.lineups.home?.teamName ?? home?.name ?? "Home"}
-            players={detail.lineups.home?.startXI ?? []}
-          />
-          <PlayerRow
-            label={detail.lineups.away?.teamName ?? away?.name ?? "Away"}
-            players={detail.lineups.away?.startXI ?? []}
-          />
-          {!detail.lineups.home && !detail.lineups.away ? (
-            <p className={styles.finalRoundLineupNote}>
-              Lineups publish closer to kick-off when API-Football data is available.
-            </p>
-          ) : null}
-        </>
+        <p className={styles.finalRoundLineupNote}>
+          Lineups publish closer to kick-off when API-Football data is available.
+        </p>
       )}
 
       <Link href={matchHref(fixture.id)} className={styles.finalRoundDetailsBtn}>
