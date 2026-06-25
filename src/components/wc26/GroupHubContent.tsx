@@ -274,11 +274,7 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
               </span>
             </div>
             <p className={styles.groupNextMatchMeta}>
-              {nextMatch ? (
-                <LocalizedKickoffLabel iso={nextMatch.kickoffUtc} />
-              ) : (
-                nextMatchView.statusLabel
-              )}
+              <LocalizedKickoffLabel iso={nextMatchView.kickoffUtc} />
               {nextVenue ? ` · ${nextVenue.name}, ${nextVenue.city}` : ""}
             </p>
             {nextMatch ? (

@@ -306,6 +306,7 @@
   gap: 12px;
   font-size: 0.875rem;
   color: var(--gc-content-accent);
+  font-family: var(--gc-font);
 }
 
 .nordAd {
@@ -324,6 +325,7 @@
   border-radius: 6px;
   font-weight: 700;
   font-size: 0.875rem;
+  font-family: var(--gc-font);
 }
 
 .footerCopy {
@@ -331,6 +333,7 @@
   line-height: 1.65;
   color: var(--gc-text-muted);
   padding-top: 4px;
+  font-family: var(--gc-font);
 }
 
 /* ── Cookie & subscribe ── */

@@ -1,5 +1,5 @@
 // GoalCurrent.online — Service Worker (staging PWA foundation)
-const CACHE_NAME = "goalcurrent-online-v4";
+const CACHE_NAME = "goalcurrent-online-v5";
 const API_CACHE = "goalcurrent-online-api-v1";
 
 const LOCALES = ["en", "fa", "ar", "fr", "de", "nl", "es", "pt", "it"];

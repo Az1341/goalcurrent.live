@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import {
   formatVisitorKickoff,
   formatVisitorKickoffTime,
@@ -27,32 +27,53 @@ export function formatDeviceKickoffLabel(iso: string): string {
   }).format(new Date(iso));
 }
 
-/**
- * Hydration-safe kickoff time: SSR + first client paint use fixed UTC,
- * then swap to the visitor locale after mount (via useEffect).
- */
-export function useLocalizedKickoffTime(iso: string): string {
-  const [time, setTime] = useState(() => formatVisitorKickoffTime(iso));
-  useEffect(() => {
-    setTime(formatDeviceKickoffTime(iso));
-  }, [iso]);
-  return time;
+function deviceTimezoneLabel(): string {
+  try {
+    const parts = new Intl.DateTimeFormat(undefined, {
+      timeZoneName: "short",
+    }).formatToParts(new Date());
+    return parts.find((part) => part.type === "timeZoneName")?.value ?? "local";
+  } catch {
+    return "local";
+  }
 }
 
-/** Same mount guard pattern for full kickoff labels. */
+const noopSubscribe = () => () => {};
+
+/**
+ * Hydration-safe kickoff time: SSR uses fixed UTC, first client render uses device locale.
+ */
+export function useLocalizedKickoffTime(iso: string): string {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => formatDeviceKickoffTime(iso),
+    () => formatVisitorKickoffTime(iso),
+  );
+}
+
+/** Same pattern for full kickoff labels (date + time). */
 export function useLocalizedKickoffLabel(iso: string): string {
-  const [label, setLabel] = useState(() => formatVisitorKickoff(iso));
-  useEffect(() => {
-    setLabel(formatDeviceKickoffLabel(iso));
-  }, [iso]);
-  return label;
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => formatDeviceKickoffLabel(iso),
+    () => formatVisitorKickoff(iso),
+  );
+}
+
+/** Short timezone label for fixture cards (e.g. BST, PDT). */
+export function useDeviceTimezoneLabel(): string {
+  return useSyncExternalStore(
+    noopSubscribe,
+    deviceTimezoneLabel,
+    () => "UTC",
+  );
 }
 
 /** Explicit mount flag when components need to branch layout before/after hydration. */
 export function useIsClientMounted(): boolean {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  return mounted;
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
 }

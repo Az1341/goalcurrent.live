@@ -28,7 +28,6 @@ import {
   formatLongLocalDate,
   shortDayParts,
   formatStageLabel,
-  formatVisitorTimezone,
   getDistinctStages,
   localDateKey,
   pickDefaultDateKey,
@@ -39,6 +38,7 @@ import {
   type FixtureMatchClass,
 } from "@/lib/wc26-fixtures-page";
 import { LocalizedKickoffTime } from "@/components/match/LocalizedKickoff";
+import { useDeviceTimezoneLabel } from "@/lib/client/use-local-kickoff";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import TvRegionSelect from "@/components/wc26/TvRegionSelect";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
@@ -75,6 +75,7 @@ function FixtureMatchCard({
   const groupPrefix = fixture.groupId ? `${groupLabel(fixture.groupId)} · ` : "";
   const score = getFixtureScore(fixture);
   const kickoffLocal = <LocalizedKickoffTime iso={fixture.kickoffUtc} />;
+  const timezoneLabel = useDeviceTimezoneLabel();
 
   const cardStateClass =
     matchClass === "ft"
@@ -165,7 +166,7 @@ function FixtureMatchCard({
           ) : (
             <>
               <div className={styles.fixCentreKickoff}>{kickoffLocal}</div>
-              <div className={styles.fixCentreNote}>{formatVisitorTimezone()}</div>
+              <div className={styles.fixCentreNote}>{timezoneLabel}</div>
             </>
           )}
         </div>
@@ -196,6 +197,7 @@ function FixtureMatchCard({
 }
 
 export default function FixturesCalendar() {
+  const timezoneLabel = useDeviceTimezoneLabel();
   const [fixtures, setFixtures] = useState<readonly EffectiveFixture[]>(() =>
     getEffectiveFixtures(),
   );
@@ -455,7 +457,7 @@ export default function FixturesCalendar() {
                 </div>
                 <div className={styles.fixDaySub} suppressHydrationWarning>
                   {clientReady
-                    ? `Times in your local timezone (${formatVisitorTimezone()})`
+                    ? `Times in your local timezone (${timezoneLabel})`
                     : "Times in your local timezone"}
                 </div>
               </div>
