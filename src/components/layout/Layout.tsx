@@ -11,10 +11,10 @@ type LayoutProps = {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-gc-shell>
       <MasterHeader />
 
-      <div className={`${styles.main} ${styles.mainWithTabBar}`}>
+      <div className={`${styles.main} ${styles.mainWithTabBar}`} data-gc-shell>
         {children}
         <MasterFooter />
       </div>

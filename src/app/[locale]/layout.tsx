@@ -133,22 +133,21 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
   const direction = getDirection(locale);
-  const fontClass = `${inter.variable} ${robotoCondensed.variable} ${notoSansArabic.variable} ${vazirmatn.variable}`;
-  const rtlFont =
-    locale === "fa"
-      ? "var(--font-vazirmatn)"
-      : locale === "ar"
-        ? "var(--font-noto-arabic)"
-        : undefined;
+  const fontVariables = [inter.variable, robotoCondensed.variable];
+  if (locale === "fa") {
+    fontVariables.push(vazirmatn.variable);
+  } else if (locale === "ar") {
+    fontVariables.push(notoSansArabic.variable);
+  }
 
   return (
     <html
       lang={locale}
       dir={direction}
-      className={fontClass}
-      style={rtlFont ? { fontFamily: `${rtlFont}, var(--font-inter), sans-serif` } : undefined}
+      className={fontVariables.join(" ")}
+      suppressHydrationWarning
     >
-      <body>
+      <body className="gc-body">
         <NextIntlClientProvider messages={messages}>
           <SiteJsonLd locale={locale} />
           <Layout>{children}</Layout>

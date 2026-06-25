@@ -29,6 +29,9 @@ export default function LocaleSwitcher() {
           </option>
         ))}
       </select>
+      <span className={styles.chevron} aria-hidden="true">
+        ▾
+      </span>
     </label>
   );
 }

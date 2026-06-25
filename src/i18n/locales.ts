@@ -14,6 +14,9 @@ export type AppLocale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: AppLocale = "en";
 
+/** Shown on language menu rows (renders reliably across platforms). */
+export const LANGUAGE_MENU_ICON = "🌐";
+
 export const RTL_LOCALES = new Set<AppLocale>(["fa", "ar"]);
 
 export type LocaleMeta = {

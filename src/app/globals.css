@@ -195,3 +195,38 @@ button {
 [dir="rtl"] [class*="backBtn"] {
   transform: scaleX(-1);
 }
+
+/* ── Pre-i18n layout: sport grids stay LTR (home-left / away-right) ── */
+[data-gc-shell] {
+  direction: ltr;
+}
+
+[dir="rtl"] [data-gc-chrome],
+[dir="rtl"] [data-gc-text] {
+  direction: rtl;
+  text-align: start;
+}
+
+/* RTL body copy — Latin UI chrome keeps Inter/Roboto via --font-body */
+html[lang="fa"] body.gc-body {
+  font-family: var(--font-vazirmatn), var(--font-inter), system-ui, sans-serif;
+}
+
+html[lang="ar"] body.gc-body {
+  font-family: var(--font-noto-arabic), var(--font-inter), system-ui, sans-serif;
+}
+
+html[lang="fa"] body.gc-body h1,
+html[lang="fa"] body.gc-body h2,
+html[lang="fa"] body.gc-body h3,
+html[lang="fa"] body.gc-body h4,
+html[lang="fa"] body.gc-body h5,
+html[lang="fa"] body.gc-body h6,
+html[lang="ar"] body.gc-body h1,
+html[lang="ar"] body.gc-body h2,
+html[lang="ar"] body.gc-body h3,
+html[lang="ar"] body.gc-body h4,
+html[lang="ar"] body.gc-body h5,
+html[lang="ar"] body.gc-body h6 {
+  font-family: inherit;
+}

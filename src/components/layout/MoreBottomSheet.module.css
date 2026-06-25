@@ -78,8 +78,8 @@
 
 .panelStack {
   position: relative;
-  flex: 1;
-  min-height: 0;
+  flex: 1 1 0;
+  min-height: 240px;
   overflow: hidden;
 }
 
@@ -102,10 +102,17 @@
 }
 
 .sheetList {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0 8px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   height: 100%;
-  padding: 4px 0 8px;
+}
+
+.sheetList li {
+  margin: 0;
+  padding: 0;
 }
 
 .sheetDivider {
@@ -136,10 +143,31 @@
   color: var(--gc-brand-accent, #c8102e);
 }
 
+.sheetRowLeading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.sheetRowIcon {
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.sheetRowLanguage {
+  gap: 12px;
+}
+
 .chevron {
   color: var(--gc-brand-accent, #c8102e);
-  font-size: 1.125rem;
+  font-size: 0.875rem;
   line-height: 1;
+  flex-shrink: 0;
+  opacity: 0.95;
 }
 
 .sheetLink {
@@ -178,9 +206,18 @@
   align-items: flex-start;
   gap: 2px;
   min-width: 0;
+  flex: 1;
+}
+
+.sheetRowTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
 }
 
 .sheetRowMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.8125rem;
   font-weight: 500;
   color: #64748b;
@@ -216,12 +253,6 @@
   background: #fff1f2;
 }
 
-.langFlag {
-  font-size: 1.25rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
 .langLabel {
   flex: 1;
   min-width: 0;
@@ -244,6 +275,10 @@
 
 [dir="rtl"] .sheetRowLabel {
   align-items: flex-end;
+}
+
+[dir="rtl"] .sheetRowLeading {
+  flex-direction: row-reverse;
 }
 
 @media (min-width: 769px) {

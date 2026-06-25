@@ -134,7 +134,7 @@ export default function BottomTabBar() {
           <span className={styles.iconWrap}>
             <MoreIcon />
           </span>
-          <span className={styles.tabLabel}>More</span>
+          <span className={styles.tabLabel}>{t("more")}</span>
         </button>
       </nav>
 

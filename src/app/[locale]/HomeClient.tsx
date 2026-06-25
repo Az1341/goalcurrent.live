@@ -256,7 +256,9 @@ function ColumnCard({
 }) {
   return (
     <section className={styles.columnCard}>
-      <h2 className={styles.columnCardTitle}>{title}</h2>
+      <h2 className={styles.columnCardTitle} data-gc-text>
+        {title}
+      </h2>
       <div className={styles.columnCardBody}>
         {isEmpty ? <p className={styles.columnEmpty}>{emptyMessage}</p> : children}
       </div>
@@ -288,11 +290,11 @@ export default function Home() {
   const t = useTranslations("home");
 
   return (
-    <div className={styles.homeRoot}>
+    <div className={styles.homeRoot} data-gc-shell>
       <main className={styles.homeMain}>
         <header className={styles.homeHero}>
           <div className={styles.homeHeroBg} aria-hidden="true" />
-          <div className={styles.homeHeroContent}>
+          <div className={styles.homeHeroContent} data-gc-text>
             <h1>{t("title")}</h1>
             <p>{t("subtitle", { siteName: SITE_NAME })}</p>
             <span className={styles.homeBadge}>{t("badge")}</span>
@@ -300,7 +302,7 @@ export default function Home() {
         </header>
 
         <section className={styles.sectionBlock} aria-labelledby="featured-match-heading">
-          <h2 id="featured-match-heading" className={styles.sectionTitle}>
+          <h2 id="featured-match-heading" className={styles.sectionTitle} data-gc-text>
             {t("featuredMatch")}
           </h2>
           {featuredSelection.mode === "simultaneous-final" &&
