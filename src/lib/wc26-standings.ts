@@ -9,8 +9,7 @@ import {
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
-import type { BracketMatchTemplate } from "@/lib/wc26/bracket-types";
-import type { KnockoutFeedSlot } from "@/lib/wc26/bracket-types";
+import type { BracketMatchTemplate, BracketSlotRef, KnockoutFeedSlot } from "@/lib/wc26/bracket-types";
 import { FIFA_KNOCKOUT_ROUND_TEMPLATES, FIFA_ROUND_OF_32_TEMPLATES } from "@/lib/wc26/fifa-bracket-mapping";
 import { WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
@@ -372,7 +371,6 @@ export function teamDisplayName(teamId: TeamId): string {
 }
 
 export type {
-  BracketMatchTemplate,
   BracketSlotRef,
 } from "@/lib/wc26/bracket-types";
 
@@ -401,9 +399,55 @@ export const GROUP_B_ROUND_OF_32_MATCHES = FIFA_ROUND_OF_32_TEMPLATES.filter(
     (match.home.kind === "group-runner-up" && match.home.groupId === "a"),
 );
 
-function resolveBracketSlot(
-  slot: import("@/lib/wc26/bracket-types").BracketSlotRef,
+function allGroupsComplete(fixtures: readonly EffectiveFixture[]): boolean {
+  return WC26_GROUPS.every((group) => isGroupComplete(group.id, fixtures));
+}
+
+/** Assign ranked third-placed teams to Ro32 slots (match order, exclusive groups). */
+function createThirdPlaceAssignmentMap(
   fixtures: readonly EffectiveFixture[],
+): Map<string, TeamId> {
+  if (!allGroupsComplete(fixtures)) {
+    return new Map();
+  }
+
+  const ranked = computeRankedThirdPlaceTeams(fixtures);
+  const qualifyingGroups = new Set(
+    ranked.slice(0, 8).map((entry) => entry.groupId),
+  );
+  const usedGroups = new Set<Wc26GroupId>();
+  const assignments = new Map<string, TeamId>();
+
+  for (const template of FIFA_ROUND_OF_32_TEMPLATES) {
+    for (const side of ["home", "away"] as const) {
+      const slot = template[side];
+      if (slot.kind !== "third-place") {
+        continue;
+      }
+
+      const key = `${template.matchNumber}-${side}`;
+      const candidate = ranked.find(
+        (entry) =>
+          slot.groups.includes(entry.groupId) &&
+          qualifyingGroups.has(entry.groupId) &&
+          !usedGroups.has(entry.groupId),
+      );
+
+      if (candidate) {
+        assignments.set(key, candidate.row.teamId);
+        usedGroups.add(candidate.groupId);
+      }
+    }
+  }
+
+  return assignments;
+}
+
+function resolveBracketSlot(
+  slot: BracketSlotRef,
+  fixtures: readonly EffectiveFixture[],
+  thirdPlaceMap: ReadonlyMap<string, TeamId>,
+  slotKey: string,
 ): ResolvedBracketSide {
   if (slot.kind === "group-winner") {
     const teamId = resolveGroupPositionTeam(slot.groupId, 1, fixtures);
@@ -429,19 +473,41 @@ function resolveBracketSlot(
     };
   }
 
+  if (!allGroupsComplete(fixtures)) {
+    return {
+      teamId: null,
+      label: slot.label,
+      pending: true,
+    };
+  }
+
+  const teamId = thirdPlaceMap.get(slotKey) ?? null;
   return {
-    teamId: null,
-    label: slot.label,
-    pending: true,
+    teamId,
+    label: teamId ? teamDisplayName(teamId) : slot.label,
+    pending: !teamId,
   };
 }
 
 export function resolveBracketMatch(
   template: BracketMatchTemplate,
   fixtures: readonly EffectiveFixture[],
+  thirdPlaceMap: ReadonlyMap<string, TeamId> = createThirdPlaceAssignmentMap(
+    fixtures,
+  ),
 ): ResolvedBracketMatch {
-  const home = resolveBracketSlot(template.home, fixtures);
-  const away = resolveBracketSlot(template.away, fixtures);
+  const home = resolveBracketSlot(
+    template.home,
+    fixtures,
+    thirdPlaceMap,
+    `${template.matchNumber}-home`,
+  );
+  const away = resolveBracketSlot(
+    template.away,
+    fixtures,
+    thirdPlaceMap,
+    `${template.matchNumber}-away`,
+  );
   const winnerTeamId = resolveKnockoutMatchWinner(template.matchNumber, fixtures);
   const score = formatKnockoutMatchScore(template.matchNumber, fixtures);
 

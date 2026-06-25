@@ -63,6 +63,22 @@
   margin-left: auto;
 }
 
+.featuredImageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 6;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--gc-surface-elevated, #1a2332);
+}
+
+.featuredImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .featured {
   display: block;
   background: linear-gradient(135deg, #334155 0%, #475569 50%, #64748b 100%);

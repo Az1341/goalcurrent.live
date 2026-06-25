@@ -52,19 +52,17 @@ export default function ArticlesIndexPage() {
               href={articleHref(a.slug)}
               className={styles.articleIndexCard}
             >
-              {image ? (
-                <div className={styles.articleIndexImageWrap}>
-                  <Image
-                    src={image}
-                    alt=""
-                    width={640}
-                    height={280}
-                    sizes="(max-width: 768px) 100vw, 400px"
-                    className={styles.articleIndexImage}
-                    unoptimized={isArticleCardImageUnoptimized(image)}
-                  />
-                </div>
-              ) : null}
+              <div className={styles.articleIndexImageWrap}>
+                <Image
+                  src={image}
+                  alt=""
+                  width={640}
+                  height={280}
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  className={styles.articleIndexImage}
+                  unoptimized={isArticleCardImageUnoptimized(image)}
+                />
+              </div>
               <span className={styles.pill}>{a.category}</span>
               <h2>{a.title}</h2>
               <p>{a.excerpt}</p>

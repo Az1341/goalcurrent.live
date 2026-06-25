@@ -1,4 +1,4 @@
-import RemoteImage from "@/components/ui/RemoteImage";
+import CardMedia from "@/components/ui/CardMedia";
 import type { YouTubeVideo } from "@/types/video";
 import styles from "./videos.module.css";
 
@@ -28,13 +28,14 @@ export default function VideoCard({ video }: VideoCardProps) {
       rel="noopener noreferrer"
     >
       <div className={styles.thumbWrap}>
-        <RemoteImage
+        <CardMedia
           src={video.thumbnail}
           alt=""
           width={320}
           height={180}
           sizes="(max-width: 640px) 100vw, 320px"
           className={styles.thumb}
+          placeholder="▶"
         />
       </div>
       <div className={styles.cardBody}>

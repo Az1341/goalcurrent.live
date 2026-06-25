@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import VideoCategoryFeed from "@/components/videos/VideoCategoryFeed";
+import { withVideoFallback } from "@/components/videos/videos-fallback";
 import { fetchYouTubeVideos } from "@/lib/youtube-videos";
 import { buildPageMetadata } from "@/lib/page-metadata";
 
@@ -21,7 +22,7 @@ export default async function WorldCupVideosPage() {
       heading="World Cup 2026"
       headingAccent="Videos"
       intro="World Cup 2026 previews and highlights from YouTube — refreshed hourly."
-      videos={videos}
+      videos={withVideoFallback(videos, 12)}
       emptyMessage="No World Cup videos available right now."
     />
   );

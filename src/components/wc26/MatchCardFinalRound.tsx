@@ -2,21 +2,24 @@
 
 import Link from "next/link";
 import TeamFlag from "@/components/TeamFlag";
-import MatchLineupField from "@/components/match/MatchLineupField";
-import { LocalizedKickoffLabel, LocalizedKickoffTime } from "@/components/match/LocalizedKickoff";
+import PlayerRow from "@/components/wc26/PlayerRow";
 import {
   DEMO_KOR_LINEUP,
   DEMO_RSA_LINEUP,
-  RSA_KOR_DEMO_FORMATIONS,
   isRsaKorDemoFixture,
 } from "@/data/wc26/demo-lineups-rsa-kor";
-import { getTeamById, getVenueById } from "@/data/wc26";
+import { getTeamById } from "@/data/wc26";
 import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
 import { buildHomepageMatchView, isLiveMatchStatus } from "@/lib/wc26-live";
+import {
+  formatVenueKickoffLabel,
+  formatVenueKickoffTime,
+  formatVenueTimezoneAbbr,
+} from "@/lib/wc26/time-converter";
 import { useMatchDetail } from "@/lib/use-match-detail";
 import { matchHref } from "@/lib/wc26-match";
 import styles from "./wc26.module.css";
@@ -28,7 +31,6 @@ type MatchCardFinalRoundProps = {
 export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProps) {
   const home = getTeamById(fixture.homeTeamId);
   const away = getTeamById(fixture.awayTeamId);
-  const venue = getVenueById(fixture.venueId);
   const view = buildHomepageMatchView(fixture);
   const isLive = isLiveMatchStatus(fixture.status);
   const isCompleted = isEffectiveFixtureCompleted(fixture);
@@ -36,6 +38,9 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
   const score = getFixtureScore(fixture);
   const { detail, loading } = useMatchDetail(fixture.id, isLive);
   const useDemoLineup = isRsaKorDemoFixture(fixture.matchNumber);
+  const venueTime = formatVenueKickoffTime(fixture.kickoffUtc, fixture.venueId);
+  const venueTz = formatVenueTimezoneAbbr(fixture.venueId);
+  const venueLabel = formatVenueKickoffLabel(fixture.kickoffUtc, fixture.venueId);
 
   const centreScore =
     isLive || isCompleted
@@ -56,12 +61,6 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
       : useDemoLineup
         ? DEMO_KOR_LINEUP
         : [];
-  const homeFormation =
-    detail.lineups.home?.formation ??
-    (useDemoLineup ? RSA_KOR_DEMO_FORMATIONS.home : null);
-  const awayFormation =
-    detail.lineups.away?.formation ??
-    (useDemoLineup ? RSA_KOR_DEMO_FORMATIONS.away : null);
   const hasLineup = homeLineup.length > 0 || awayLineup.length > 0;
 
   return (
@@ -72,7 +71,7 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
           {isLive ? <span className={styles.finalRoundLiveDot} aria-hidden="true" /> : null}
         </span>
         <span className={styles.finalRoundCardTime}>
-          <LocalizedKickoffTime iso={fixture.kickoffUtc} />
+          {venueTime} {venueTz}
         </span>
       </div>
 
@@ -89,11 +88,7 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
             <span className={styles.finalRoundVs}>vs</span>
           )}
           <span className={styles.finalRoundStatus}>
-            {isUpcoming ? (
-              <LocalizedKickoffTime iso={fixture.kickoffUtc} />
-            ) : (
-              view.statusLabel
-            )}
+            {isUpcoming ? `${venueTime} ${venueTz}` : view.statusLabel}
           </span>
         </div>
 
@@ -103,24 +98,14 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
         </div>
       </div>
 
-      <p className={styles.finalRoundVenue}>
-        <LocalizedKickoffLabel iso={fixture.kickoffUtc} />
-        {venue ? ` · ${venue.name}, ${venue.city}` : ""}
-      </p>
+      <p className={styles.finalRoundVenue}>{venueLabel}</p>
 
       {loading ? (
         <p className={styles.finalRoundLineupNote}>Loading lineups…</p>
       ) : hasLineup ? (
-        <div className={styles.finalRoundLineupPitch}>
-          <MatchLineupField
-            variant="embedded"
-            home={homeLineup}
-            away={awayLineup}
-            homeTeamName={home?.name ?? fixture.homeTeamId}
-            awayTeamName={away?.name ?? fixture.awayTeamId}
-            homeFormation={homeFormation}
-            awayFormation={awayFormation}
-          />
+        <div className={styles.finalRoundPlayerRows}>
+          <PlayerRow label={home?.name ?? fixture.homeTeamId} players={homeLineup} />
+          <PlayerRow label={away?.name ?? fixture.awayTeamId} players={awayLineup} />
         </div>
       ) : (
         <p className={styles.finalRoundLineupNote}>

@@ -2753,6 +2753,13 @@ a.standingsHead:hover {
   color: var(--gc-text-secondary);
 }
 
+.finalRoundPlayerRows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
 .finalRoundLineupNote {
   margin: 0;
   font-size: 0.75rem;

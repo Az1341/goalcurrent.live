@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import VideoCategoryFeed from "@/components/videos/VideoCategoryFeed";
+import { withVideoFallback } from "@/components/videos/videos-fallback";
 import { fetchYouTubeVideos } from "@/lib/youtube-videos";
 import { buildPageMetadata } from "@/lib/page-metadata";
 
@@ -21,7 +22,7 @@ export default async function PremierLeagueVideosPage() {
       heading="Premier League"
       headingAccent="Videos"
       intro="Premier League 2026/27 highlights from YouTube — refreshed hourly."
-      videos={videos}
+      videos={withVideoFallback(videos, 12)}
       emptyMessage="No PL videos available right now."
     />
   );

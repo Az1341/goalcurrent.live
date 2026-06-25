@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
-import RemoteImage from "@/components/ui/RemoteImage";
+import CardMedia from "@/components/ui/CardMedia";
 import { NEWS_FALLBACK_ARTICLES } from "@/components/news/news-fallback";
+import { withNewsFallback } from "@/lib/content-fallback";
 import type { NewsArticle, NewsApiResponse, NewsTag } from "@/types/news";
 import { mergeEditorialFirst } from "@/lib/editorial-news";
 import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
@@ -63,6 +64,16 @@ function ArticleLink({ article, className, children }: ArticleLinkProps) {
 function FeaturedArticle({ article }: { article: NewsArticle }) {
   return (
     <ArticleLink article={article} className={styles.featured}>
+      <div className={styles.featuredImageWrap}>
+        <CardMedia
+          src={article.image}
+          alt=""
+          width={800}
+          height={280}
+          sizes="(max-width: 768px) 100vw, 800px"
+          className={styles.featuredImage}
+        />
+      </div>
       <span className={styles.featuredTag}>{article.tag}</span>
       <div className={styles.featuredTitle}>{article.title}</div>
       <div className={styles.featuredMeta}>
@@ -84,18 +95,14 @@ function NewsCard({ article }: { article: NewsArticle }) {
   return (
     <ArticleLink article={article} className={styles.card}>
       <div className={styles.cardImageWrap}>
-        {article.image ? (
-          <RemoteImage
-            src={article.image}
-            alt=""
-            width={400}
-            height={150}
-            sizes="(max-width: 768px) 100vw, 400px"
-            className={styles.cardImage}
-          />
-        ) : (
-          <span aria-hidden="true">📰</span>
-        )}
+        <CardMedia
+          src={article.image}
+          alt=""
+          width={400}
+          height={150}
+          sizes="(max-width: 768px) 100vw, 400px"
+          className={styles.cardImage}
+        />
       </div>
       <div className={styles.cardBody}>
         <span className={tagClassName(article.tag)}>{article.tag}</span>
@@ -144,7 +151,7 @@ export default function NewsHub() {
   const articles = useMemo(() => {
     if (!data?.articles.length) {
       setUpdatedLabel("Showing fallback news · Live feed updating…");
-      return mergeEditorialFirst([...NEWS_FALLBACK_ARTICLES]);
+      return withNewsFallback(mergeEditorialFirst([...NEWS_FALLBACK_ARTICLES]));
     }
     setUpdatedLabel(
       `Updated: ${new Date().toLocaleTimeString("en-GB", {
@@ -152,7 +159,7 @@ export default function NewsHub() {
         minute: "2-digit",
       })} · ${data.sources.join(" + ") || "BBC Sport + ESPN"}`,
     );
-    return mergeEditorialFirst(data.articles);
+    return withNewsFallback(mergeEditorialFirst(data.articles));
   }, [data?.articles, data?.sources]);
 
   const sources = useMemo(() => data?.sources ?? [SITE_NAME], [data?.sources]);

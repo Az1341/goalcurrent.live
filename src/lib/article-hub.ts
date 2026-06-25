@@ -12,8 +12,10 @@ export const ARTICLE_CARD_IMAGES: Record<string, string> = {
     "/images/news/fifa-world-cup-2026-head-to-head-rule-early-elimination/hero.svg",
 };
 
-export function getArticleCardImage(slug: string): string | undefined {
-  return ARTICLE_CARD_IMAGES[slug];
+const DEFAULT_ARTICLE_CARD_IMAGE = "/images/football-hero-bg.jpg";
+
+export function getArticleCardImage(slug: string): string {
+  return ARTICLE_CARD_IMAGES[slug] ?? DEFAULT_ARTICLE_CARD_IMAGE;
 }
 
 /** SVG card art must bypass the Next.js image optimizer (same as article pages). */

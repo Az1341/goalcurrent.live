@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import NewsCategoryFeed from "@/components/news/NewsCategoryFeed";
+import { withNewsFallback } from "@/lib/content-fallback";
 import { fetchNewsFeed } from "@/lib/news-rss";
 import { buildPageMetadata } from "@/lib/page-metadata";
 
@@ -21,7 +22,7 @@ export default async function PremierLeagueNewsPage() {
       heading="Premier League"
       headingAccent="News"
       intro="Premier League headlines from BBC Sport and ESPN — refreshed hourly."
-      articles={articles}
+      articles={withNewsFallback(articles)}
       sources={sources}
       emptyMessage="No Premier League news right now. Check back soon."
     />

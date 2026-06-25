@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import VideoHub from "@/components/videos/VideoHub";
+import { withVideoFallback } from "@/components/videos/videos-fallback";
 import { fetchYouTubeVideos } from "@/lib/youtube-videos";
 import { buildPageMetadata } from "@/lib/page-metadata";
 
@@ -16,5 +17,5 @@ export const metadata: Metadata = buildPageMetadata({
 export default async function VideosHubPage() {
   const { videos } = await fetchYouTubeVideos("all", 4);
 
-  return <VideoHub latestVideos={videos} />;
+  return <VideoHub latestVideos={withVideoFallback(videos, 4)} />;
 }
