@@ -6,17 +6,10 @@ import { getCached, setCached } from "@/lib/server/cache";
 export const dynamic = "force-dynamic";
 
 const ROUTE = "/api/pl/fixtures";
+const CACHE_KEY = "pl-fixtures";
 
-function resolveRequestLocale(request: NextRequest): string {
-  return (
-    request.headers.get("accept-language")?.split(",")[0]?.trim() ?? "en-GB"
-  );
-}
-
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  const locale = resolveRequestLocale(request);
-  const cacheKey = `${request.url}|lang:${locale}`;
-  const cached = getCached(cacheKey);
+export async function GET(_request: NextRequest): Promise<NextResponse> {
+  const cached = getCached(CACHE_KEY);
   if (cached) {
     logInfo(ROUTE, "CACHE HIT");
     return NextResponse.json(cached, {
@@ -31,8 +24,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   logInfo(ROUTE, "CACHE MISS");
 
   try {
-    const body = await fetchPlFixtures(locale);
-    setCached(cacheKey, body);
+    const body = await fetchPlFixtures("en-GB");
+    setCached(CACHE_KEY, body);
 
     return NextResponse.json(body, {
       headers: {

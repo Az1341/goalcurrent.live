@@ -16,6 +16,10 @@ export type MatchLineupPlayer = {
   readonly name: string;
   readonly number: number | null;
   readonly position: string | null;
+  readonly photo?: string | null;
+  readonly is_captain?: boolean;
+  readonly rating?: number | null;
+  readonly grid_position?: string | null;
 };
 
 export type MatchLineupSide = {

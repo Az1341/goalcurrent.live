@@ -16,7 +16,7 @@ export function staticArticleMetadata(slug: string): Metadata {
   return buildStaticArticleMetadata(slug);
 }
 
-export function StaticArticleSeo({ slug, children }: StaticArticleSeoProps) {
+export async function StaticArticleSeo({ slug, children }: StaticArticleSeoProps) {
   const seo = articleSeoFromSlug(slug);
   if (!seo) {
     return <>{children}</>;

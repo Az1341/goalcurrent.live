@@ -15,6 +15,55 @@ function formatMinute(elapsed: number | null): string {
   return `${elapsed}'`;
 }
 
+const SKELETON_MATCH_COUNT = 2;
+
+function Wc26ScoreboardSkeletonMatch() {
+  return (
+    <article className={styles.scoreboardMatch} aria-hidden="true">
+      <div className={styles.scoreboardTeam}>
+        <div
+          className={`${styles.scoreboardSkeletonBar} ${styles.scoreboardSkeletonFlag} animate-skeleton-shimmer`}
+        />
+        <div
+          className={`${styles.scoreboardSkeletonBar} ${styles.scoreboardSkeletonTeamName} animate-skeleton-shimmer`}
+        />
+      </div>
+
+      <div className={styles.scoreboardCenter}>
+        <div
+          className={`${styles.scoreboardSkeletonBar} ${styles.scoreboardSkeletonScore} animate-skeleton-shimmer`}
+        />
+        <div
+          className={`${styles.scoreboardSkeletonBar} ${styles.scoreboardSkeletonMinute} animate-skeleton-shimmer`}
+        />
+      </div>
+
+      <div className={`${styles.scoreboardTeam} ${styles.scoreboardTeamAway}`}>
+        <div
+          className={`${styles.scoreboardSkeletonBar} ${styles.scoreboardSkeletonTeamName} ${styles.scoreboardSkeletonTeamNameAway} animate-skeleton-shimmer`}
+        />
+        <div
+          className={`${styles.scoreboardSkeletonBar} ${styles.scoreboardSkeletonFlag} animate-skeleton-shimmer`}
+        />
+      </div>
+    </article>
+  );
+}
+
+function Wc26ScoreboardSkeleton() {
+  return (
+    <section
+      className={styles.scoreboard}
+      aria-busy="true"
+      aria-label="Loading live World Cup matches"
+    >
+      {Array.from({ length: SKELETON_MATCH_COUNT }, (_, index) => (
+        <Wc26ScoreboardSkeletonMatch key={index} />
+      ))}
+    </section>
+  );
+}
+
 function mapLiveMatch(match: Wc26ApiMatch): Wc26LiveFixturePayload | null {
   if (!isLiveOverlayStatus(match.status)) {
     return null;
@@ -57,7 +106,7 @@ export default function Wc26Scoreboard() {
   }, [data]);
 
   if (isLoading && fixtures.length === 0) {
-    return null;
+    return <Wc26ScoreboardSkeleton />;
   }
 
   if (fixtures.length === 0) {

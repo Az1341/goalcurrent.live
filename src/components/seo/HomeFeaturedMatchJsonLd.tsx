@@ -4,9 +4,13 @@ import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 
 type HomeFeaturedMatchJsonLdProps = {
   fixture: EffectiveFixture;
+  locale: string;
 };
 
 /** Server-rendered SportsEvent schema for the homepage featured match. */
-export default function HomeFeaturedMatchJsonLd({ fixture }: HomeFeaturedMatchJsonLdProps) {
-  return <JsonLd data={buildHomeFeaturedSportsEventSchema(fixture)} />;
+export default function HomeFeaturedMatchJsonLd({
+  fixture,
+  locale,
+}: HomeFeaturedMatchJsonLdProps) {
+  return <JsonLd data={buildHomeFeaturedSportsEventSchema(fixture, locale)} />;
 }

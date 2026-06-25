@@ -1,3 +1,6 @@
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
 /* Global reset, design tokens, and base typography only — page styles use CSS modules. */
 
 *,
@@ -137,6 +140,39 @@
   50% {
     opacity: 0.55;
   }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-skeleton-shimmer {
+  --skeleton-from: #e5e7eb;
+  --skeleton-mid: #f3f4f6;
+  --skeleton-to: #e5e7eb;
+
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-from) 0%,
+    var(--skeleton-mid) 45%,
+    var(--skeleton-to) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: background-position;
+}
+
+.dark .animate-skeleton-shimmer {
+  --skeleton-from: #374151;
+  --skeleton-mid: #4b5563;
+  --skeleton-to: #374151;
 }
 
 html {

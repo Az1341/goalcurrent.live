@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getLocale } from "next-intl/server";
 import JsonLd from "@/components/seo/JsonLd";
 import type { BreadcrumbItem } from "@/lib/seo/breadcrumbs";
 import { breadcrumbSchema } from "@/lib/seo/breadcrumbs";
@@ -10,14 +11,15 @@ import {
 import styles from "./seo.module.css";
 
 type MatchSeoProps = {
-  event: SportsEventSchemaInput;
+  event: Omit<SportsEventSchemaInput, "locale">;
   breadcrumbs: readonly BreadcrumbItem[];
 };
 
-export default function MatchSeo({ event, breadcrumbs }: MatchSeoProps) {
+export default async function MatchSeo({ event, breadcrumbs }: MatchSeoProps) {
+  const locale = await getLocale();
   const schema = combineSchemaGraph([
-    sportsEventSchema(event),
-    breadcrumbSchema(breadcrumbs),
+    sportsEventSchema({ ...event, locale }),
+    breadcrumbSchema(breadcrumbs, locale),
   ]);
 
   return (

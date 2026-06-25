@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 import HomeFeaturedMatchJsonLd from "@/components/seo/HomeFeaturedMatchJsonLd";
 import { WC26_FIXTURES } from "@/data/wc26";
 import { HOME_HERO_BG } from "@/lib/critical-assets";
@@ -18,7 +19,8 @@ export const metadata: Metadata = buildPageMetadata({
   absoluteTitle: true,
 });
 
-export default function HomePage() {
+export default async function HomePage() {
+  const locale = await getLocale();
   const featuredSelection = selectFeaturedFixtures(WC26_FIXTURES);
 
   return (
@@ -30,7 +32,11 @@ export default function HomePage() {
         fetchPriority="high"
       />
       {featuredSelection.fixtures.map((fixture) => (
-        <HomeFeaturedMatchJsonLd key={fixture.id} fixture={fixture} />
+        <HomeFeaturedMatchJsonLd
+          key={fixture.id}
+          fixture={fixture}
+          locale={locale}
+        />
       ))}
       <HomeClient />
     </>

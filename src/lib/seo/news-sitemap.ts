@@ -5,17 +5,16 @@ import {
   type Article,
 } from "@/data/articles";
 import { EDITORIAL_ARTICLES } from "@/data/editorial";
-import {
-  NEWS_PUBLICATION_LANGUAGE,
-  NEWS_PUBLICATION_NAME,
-} from "@/lib/seo/constants";
+import { routing } from "@/i18n/routing";
+import { localizedUrl } from "@/lib/i18n/urls";
+import { NEWS_PUBLICATION_NAME } from "@/lib/seo/constants";
 import { toNewsPublicationDate } from "@/lib/seo/dates";
-import { absoluteUrl } from "@/lib/site-url";
 
 export type NewsSitemapEntry = {
   loc: string;
   title: string;
   publicationDate: string;
+  language: string;
 };
 
 const MIN_CONTENT_LENGTH = 280;
@@ -25,46 +24,65 @@ function isSubstantiveArticle(article: Article): boolean {
   return text.length >= MIN_CONTENT_LENGTH;
 }
 
-function indexEntryToNews(entry: (typeof ARTICLE_INDEX)[number]): NewsSitemapEntry {
-  return {
-    loc: absoluteUrl(articleHref(entry.slug)),
-    title: entry.title,
-    publicationDate: toNewsPublicationDate(entry.date),
-  };
+function expandForAllLocales(
+  path: string,
+  title: string,
+  publicationDate: string,
+): NewsSitemapEntry[] {
+  return routing.locales.map((locale) => ({
+    loc: localizedUrl(path, locale),
+    title,
+    publicationDate,
+    language: locale,
+  }));
 }
 
-function articleToNews(article: Article): NewsSitemapEntry {
-  return {
-    loc: absoluteUrl(articleHref(article.slug)),
-    title: article.title,
-    publicationDate: toNewsPublicationDate(article.date),
-  };
+function addLocalizedEntries(
+  byLoc: Map<string, NewsSitemapEntry>,
+  path: string,
+  title: string,
+  publicationDate: string,
+): void {
+  for (const entry of expandForAllLocales(path, title, publicationDate)) {
+    byLoc.set(entry.loc, entry);
+  }
 }
 
-/** Article and news URLs eligible for Google News sitemap. */
+/** Article and news URLs eligible for Google News sitemap (all supported locales). */
 export function getNewsSitemapEntries(): NewsSitemapEntry[] {
-  const byUrl = new Map<string, NewsSitemapEntry>();
+  const byLoc = new Map<string, NewsSitemapEntry>();
 
   for (const entry of ARTICLE_INDEX) {
-    byUrl.set(articleHref(entry.slug), indexEntryToNews(entry));
+    addLocalizedEntries(
+      byLoc,
+      articleHref(entry.slug),
+      entry.title,
+      toNewsPublicationDate(entry.date),
+    );
   }
 
   for (const article of ARTICLES) {
     if (!isSubstantiveArticle(article)) {
       continue;
     }
-    byUrl.set(articleHref(article.slug), articleToNews(article));
+    addLocalizedEntries(
+      byLoc,
+      articleHref(article.slug),
+      article.title,
+      toNewsPublicationDate(article.date),
+    );
   }
 
   for (const editorial of EDITORIAL_ARTICLES) {
-    byUrl.set(editorial.path, {
-      loc: absoluteUrl(editorial.path),
-      title: editorial.title,
-      publicationDate: toNewsPublicationDate(editorial.publishedAt),
-    });
+    addLocalizedEntries(
+      byLoc,
+      editorial.path,
+      editorial.title,
+      toNewsPublicationDate(editorial.publishedAt),
+    );
   }
 
-  return [...byUrl.values()].sort(
+  return [...byLoc.values()].sort(
     (a, b) => Date.parse(b.publicationDate) - Date.parse(a.publicationDate),
   );
 }
@@ -87,7 +105,7 @@ export function buildNewsSitemapXml(): string {
     <news:news>
       <news:publication>
         <news:name>${escapeXml(NEWS_PUBLICATION_NAME)}</news:name>
-        <news:language>${NEWS_PUBLICATION_LANGUAGE}</news:language>
+        <news:language>${escapeXml(entry.language)}</news:language>
       </news:publication>
       <news:publication_date>${escapeXml(entry.publicationDate)}</news:publication_date>
       <news:title>${escapeXml(entry.title)}</news:title>

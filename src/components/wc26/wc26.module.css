@@ -2619,3 +2619,37 @@ a.standingsHead:hover {
   box-shadow: 0 0 0 2px rgba(255, 59, 59, 0.25);
   flex-shrink: 0;
 }
+
+.scoreboardSkeletonBar {
+  --skeleton-from: #2a2a2a;
+  --skeleton-mid: #3d3d3d;
+  --skeleton-to: #2a2a2a;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.scoreboardSkeletonFlag {
+  width: 22px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+.scoreboardSkeletonTeamName {
+  height: 14px;
+  width: 72px;
+  max-width: 100%;
+}
+
+.scoreboardSkeletonTeamNameAway {
+  width: 64px;
+}
+
+.scoreboardSkeletonScore {
+  height: 16px;
+  width: 48px;
+}
+
+.scoreboardSkeletonMinute {
+  height: 12px;
+  width: 40px;
+}

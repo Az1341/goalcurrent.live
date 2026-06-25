@@ -11,6 +11,11 @@ declare global {
     OneSignalDeferred?: Array<
       (oneSignal: {
         init: (options: { appId: string }) => Promise<void>;
+        User: {
+          addTag: (key: string, value: string) => Promise<void>;
+          addEmail: (email: string) => Promise<void>;
+          setExternalUserId: (id: string) => Promise<void>;
+        };
       }) => void | Promise<void>
     >;
     dataLayer?: unknown[];

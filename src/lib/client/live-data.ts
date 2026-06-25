@@ -1,7 +1,12 @@
 "use client";
 
 import useSWR, { type SWRConfiguration } from "swr";
-import { fetcher, LIVE_SWR_OPTIONS } from "@/lib/client/fetcher";
+import {
+  fetcher,
+  LIVE_POLL_HUB_MS,
+  LIVE_POLL_MATCH_MS,
+  visibilityAwareRefreshInterval,
+} from "@/lib/client/fetcher";
 
 export const LIVE_API_PATHS = {
   wc26LiveScores: "/api/wc26/scores?live=true",
@@ -14,6 +19,7 @@ export const LIVE_API_PATHS = {
 } as const;
 
 type UseLiveApiOptions = {
+  /** Poll interval in ms; omit for hub default (75s). Pass 30_000 for live match pages. */
   refreshInterval?: number;
 };
 
@@ -21,11 +27,16 @@ export function useLiveApi<T = unknown>(
   path: string | null,
   options?: UseLiveApiOptions,
 ) {
+  const pollMs =
+    options?.refreshInterval !== undefined
+      ? options.refreshInterval
+      : LIVE_POLL_HUB_MS;
+
   const swrOptions: SWRConfiguration = {
-    ...LIVE_SWR_OPTIONS,
-    ...(options?.refreshInterval !== undefined
-      ? { refreshInterval: options.refreshInterval }
-      : {}),
+    refreshInterval: () => visibilityAwareRefreshInterval(pollMs),
+    dedupingInterval: pollMs > 0 ? pollMs : LIVE_POLL_HUB_MS,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
     onSuccess: () => {
       if (path) {
         console.info("Unified SWR:", path);
@@ -35,3 +46,5 @@ export function useLiveApi<T = unknown>(
 
   return useSWR<T>(path, fetcher, swrOptions);
 }
+
+export { LIVE_POLL_MATCH_MS, LIVE_POLL_HUB_MS };

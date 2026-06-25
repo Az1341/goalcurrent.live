@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getLocale } from "next-intl/server";
 import JsonLd from "@/components/seo/JsonLd";
 import type { BreadcrumbItem } from "@/lib/seo/breadcrumbs";
 import { breadcrumbSchema } from "@/lib/seo/breadcrumbs";
@@ -14,10 +15,11 @@ type TeamSeoProps = {
   breadcrumbs: readonly BreadcrumbItem[];
 };
 
-export default function TeamSeo({ team, breadcrumbs }: TeamSeoProps) {
+export default async function TeamSeo({ team, breadcrumbs }: TeamSeoProps) {
+  const locale = await getLocale();
   const schema = combineSchemaGraph([
     sportsTeamSchema(team),
-    breadcrumbSchema(breadcrumbs),
+    breadcrumbSchema(breadcrumbs, locale),
   ]);
 
   return (

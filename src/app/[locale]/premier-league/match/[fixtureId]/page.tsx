@@ -4,7 +4,7 @@ import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import PlMatchClient from "@/components/pl/PlMatchClient";
 import { fetchPlMatchDetail } from "@/lib/pl/match-detail";
 import { buildMatchMetadata } from "@/lib/page-metadata";
-import { absoluteUrl, SITE_NAME } from "@/lib/site-url";
+import { SITE_NAME } from "@/lib/site-url";
 
 type PlMatchPageProps = {
   params: Promise<{ fixtureId: string }>;
@@ -68,7 +68,7 @@ export default async function PremierLeagueMatchPage({
           event={{
             name: `${fixture.homeTeamName} vs ${fixture.awayTeamName}`,
             startDate: fixture.kickoffUtc,
-            url: absoluteUrl(path),
+            path,
             homeTeamName: fixture.homeTeamName,
             awayTeamName: fixture.awayTeamName,
             venueName: fixture.venue ?? undefined,

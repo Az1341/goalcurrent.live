@@ -4,9 +4,12 @@ import { getStaleApiCache, setSuccessApiCache } from "@/lib/api-football/cache";
 import { apiFootballErrorMessage } from "@/lib/api-football/errors";
 import { respondApiFootballFailure } from "@/lib/api-football/route-errors";
 import { fetchWc26MatchDetail } from "@/lib/server/wc26-match-detail";
+import { getCached } from "@/lib/server/cache";
 import type { MatchDetailPayload } from "@/types/match-detail";
 
 export const dynamic = "force-dynamic";
+
+const MATCH_CACHE_CONTROL = "s-maxage=45, stale-while-revalidate=45";
 
 type RouteParams = {
   params: Promise<{ fixtureId: string }>;
@@ -37,14 +40,19 @@ export async function GET(
 
   const cacheKey = `wc26-match:${fixtureId}`;
 
+  const cached = getCached(cacheKey);
+  if (cached) {
+    return NextResponse.json(cached as MatchDetailPayload, {
+      headers: { "Cache-Control": MATCH_CACHE_CONTROL },
+    });
+  }
+
   try {
     const detail = await fetchWc26MatchDetail(fixtureId);
     setSuccessApiCache(cacheKey, detail, 30_000);
 
     return NextResponse.json(detail, {
-      headers: {
-        "Cache-Control": "s-maxage=30, stale-while-revalidate=30",
-      },
+      headers: { "Cache-Control": MATCH_CACHE_CONTROL },
     });
   } catch (error) {
     const staleBody = getStaleApiCache<MatchDetailPayload>(cacheKey);

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import useSWR from "swr";
 import type {
   PlFixtureRow,
   PlFixturesApiResponse,
@@ -15,9 +16,8 @@ import {
   resolveDisplayStandings,
 } from "@/lib/pl/standings-display";
 import { PlTeamBadge } from "@/components/pl/PlShared";
+import { fetcher, LIVE_SWR_OPTIONS } from "@/lib/client/fetcher";
 import styles from "@/app/[locale]/page.module.css";
-
-type ViewState = "loading" | "error" | "ready";
 
 const PL_QUICK_LINKS = [
   { href: "/premier-league", labelKey: "plHome" },
@@ -120,64 +120,46 @@ function PlTableCompact({ rows }: { rows: readonly PlStandingRow[] }) {
 
 export default function HomePlSection() {
   const t = useTranslations("nav");
-  const [view, setView] = useState<ViewState>("loading");
-  const [fixturesData, setFixturesData] = useState<PlFixturesApiResponse | null>(
-    null,
+
+  const {
+    data: fixturesData,
+    error: fixturesError,
+    isLoading: fixturesLoading,
+  } = useSWR<PlFixturesApiResponse>("/api/pl/fixtures", fetcher, LIVE_SWR_OPTIONS);
+
+  const {
+    data: standingsRaw,
+    error: standingsError,
+    isLoading: standingsLoading,
+  } = useSWR<PlStandingsApiResponse>("/api/pl/standings", fetcher, LIVE_SWR_OPTIONS);
+
+  const needsTeamsFallback =
+    standingsRaw !== undefined && standingsRaw.standings.length === 0;
+
+  const { data: teamsData } = useSWR<PlTeamsApiResponse>(
+    needsTeamsFallback ? "/api/pl/teams" : null,
+    fetcher,
+    LIVE_SWR_OPTIONS,
   );
-  const [standingsData, setStandingsData] =
-    useState<PlStandingsApiResponse | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const [fixturesRes, standingsRes] = await Promise.all([
-          fetch("/api/pl/fixtures", { cache: "no-store" }),
-          fetch("/api/pl/standings", { cache: "no-store" }),
-        ]);
-
-        if (!fixturesRes.ok || !standingsRes.ok) {
-          throw new Error("Could not load Premier League data.");
-        }
-
-        const fixturesBody = (await fixturesRes.json()) as PlFixturesApiResponse;
-        let standingsBody = (await standingsRes.json()) as PlStandingsApiResponse;
-
-        if (!standingsBody.standings.length) {
-          const teamsRes = await fetch("/api/pl/teams", { cache: "no-store" });
-          if (teamsRes.ok) {
-            const teamsBody = (await teamsRes.json()) as PlTeamsApiResponse;
-            if (teamsBody.teams.length) {
-              standingsBody = {
-                ...standingsBody,
-                standings: buildZeroStandingsFromTeams(
-                  teamsBody.teams.map((team) => ({
-                    id: team.teamId,
-                    name: team.name,
-                    logo: team.logo,
-                  })),
-                ),
-              };
-            }
-          }
-        }
-
-        if (cancelled) return;
-        setFixturesData(fixturesBody);
-        setStandingsData(standingsBody);
-        setView("ready");
-      } catch {
-        if (cancelled) return;
-        setView("error");
-      }
-    }
-
-    void load();
-    return () => {
-      cancelled = true;
+  const standingsData = useMemo((): PlStandingsApiResponse | null => {
+    if (!standingsRaw) return null;
+    if (standingsRaw.standings.length > 0) return standingsRaw;
+    if (!teamsData?.teams.length) return standingsRaw;
+    return {
+      ...standingsRaw,
+      standings: buildZeroStandingsFromTeams(
+        teamsData.teams.map((team) => ({
+          id: team.teamId,
+          name: team.name,
+          logo: team.logo,
+        })),
+      ),
     };
-  }, []);
+  }, [standingsRaw, teamsData]);
+
+  const loading = fixturesLoading || standingsLoading;
+  const error = fixturesError ?? standingsError;
 
   const nextFixture = useMemo(
     () =>
@@ -214,18 +196,18 @@ export default function HomePlSection() {
         </Link>
       </div>
 
-      {view === "loading" ? (
+      {loading ? (
         <p className={styles.columnEmpty}>Loading Premier League data…</p>
       ) : null}
 
-      {view === "error" ? (
+      {error ? (
         <p className={styles.columnEmpty}>
           Premier League data is temporarily unavailable.{" "}
           <Link href="/premier-league">Visit PL hub</Link>
         </p>
       ) : null}
 
-      {view === "ready" ? (
+      {!loading && !error ? (
         <>
           <div className={styles.plHomeGrid}>
             <div className={styles.plHomeCard}>

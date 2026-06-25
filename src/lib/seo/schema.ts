@@ -1,3 +1,5 @@
+import { routing } from "@/i18n/routing";
+import { localizedUrl } from "@/lib/i18n/urls";
 import {
   DEFAULT_OG_IMAGE_ALT,
   EDITORIAL_AUTHOR,
@@ -15,17 +17,19 @@ export type ArticleSchemaInput = {
   dateModified?: string;
   author?: string;
   image?: string;
+  locale?: string;
 };
 
 export type SportsEventSchemaInput = {
   name: string;
   startDate: string;
-  url: string;
+  path: string;
   homeTeamName: string;
   awayTeamName: string;
   venueName?: string;
   eventStatus?: string;
   description?: string;
+  locale?: string;
 };
 
 export type SportsTeamSchemaInput = {
@@ -99,7 +103,8 @@ export function siteGraphSchema(locale = "en"): SchemaNode {
 }
 
 export function newsArticleSchema(input: ArticleSchemaInput): SchemaNode {
-  const url = absoluteUrl(input.path);
+  const locale = input.locale ?? routing.defaultLocale;
+  const url = localizedUrl(input.path, locale);
   const published = toIsoDate(input.datePublished);
   const modified = toIsoDate(input.dateModified ?? input.datePublished);
 
@@ -110,6 +115,7 @@ export function newsArticleSchema(input: ArticleSchemaInput): SchemaNode {
     description: input.description,
     datePublished: published,
     dateModified: modified,
+    inLanguage: locale,
     image: [input.image ?? defaultOgImageUrl()],
     author: {
       "@type": "Person",
@@ -132,13 +138,18 @@ export function newsArticleSchema(input: ArticleSchemaInput): SchemaNode {
 }
 
 export function sportsEventSchema(input: SportsEventSchemaInput): SchemaNode {
+  const locale = input.locale ?? routing.defaultLocale;
+  const url = localizedUrl(input.path, locale);
+
   return {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
+    "@id": url,
     name: input.name,
     description: input.description ?? input.name,
     startDate: input.startDate,
-    url: input.url,
+    url,
+    inLanguage: locale,
     eventStatus: input.eventStatus ?? "https://schema.org/EventScheduled",
     location: input.venueName
       ? {

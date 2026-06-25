@@ -61,7 +61,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
         event={{
           name: `${home.name} vs ${away.name}`,
           startDate: fixture.kickoffUtc,
-          url: absoluteUrl(matchHref(fixtureId)),
+          path: matchHref(fixtureId),
           homeTeamName: home.name,
           awayTeamName: away.name,
           venueName: venue?.name,

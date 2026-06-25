@@ -20,7 +20,6 @@ export const EDITORIAL_SOURCE_LABEL = `${EDITORIAL_AUTHOR} · ${EDITORIAL_PUBLIS
 
 /** Google News sitemap publication block. */
 export const NEWS_PUBLICATION_NAME = "GoalCurrent.live";
-export const NEWS_PUBLICATION_LANGUAGE = "en";
 
 export function defaultOgImageUrl(): string {
   return absoluteUrl(DEFAULT_OG_IMAGE.url);

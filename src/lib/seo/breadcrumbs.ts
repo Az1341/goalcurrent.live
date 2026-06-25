@@ -1,4 +1,5 @@
-import { absoluteUrl } from "@/lib/site-url";
+import { routing } from "@/i18n/routing";
+import { localizedUrl } from "@/lib/i18n/urls";
 
 export type BreadcrumbItem = {
   name: string;
@@ -11,7 +12,10 @@ export function breadcrumbItems(
   return [{ name: "Home", path: "/" }, ...items];
 }
 
-export function breadcrumbSchema(items: readonly BreadcrumbItem[]) {
+export function breadcrumbSchema(
+  items: readonly BreadcrumbItem[],
+  locale: string = routing.defaultLocale,
+) {
   const trail = breadcrumbItems(items);
 
   return {
@@ -21,7 +25,7 @@ export function breadcrumbSchema(items: readonly BreadcrumbItem[]) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: absoluteUrl(item.path),
+      item: localizedUrl(item.path, locale),
     })),
   };
 }
