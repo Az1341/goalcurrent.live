@@ -1,0 +1,276 @@
+{
+  "common": {
+    "loading": "A carregar…",
+    "vs": "vs",
+    "home": "Início",
+    "live": "Ao vivo",
+    "ft": "FT",
+    "ht": "HT",
+    "firstHalf": "1st H",
+    "secondHalf": "2nd H",
+    "tbd": "TBD",
+    "updatedMinutesAgo": "Updated {count, plural, one {# minute ago} other {# minutes ago}}",
+    "updatedSecondsAgo": "Updated {count, plural, one {# second ago} other {# seconds ago}}",
+    "returnHome": "Voltar ao início",
+    "tryAgain": "Try again",
+    "backToHome": "뿯↽ Back to Home",
+    "viewAll": "View all",
+    "search": "Search",
+    "noResults": "No results found.",
+    "subscribe": "Subscrever",
+    "language": "Idioma"
+  },
+  "nav": {
+    "home": "Início",
+    "live": "Ao vivo",
+    "favourites": "Favoritos",
+    "news": "Notícias",
+    "articles": "Artigos",
+    "videos": "Vídeos",
+    "worldCup2026": "World Cup 2026",
+    "premierLeague": "Premier League",
+    "table": "Table",
+    "fixtures": "Fixtures",
+    "table2627": "Table 26/27",
+    "fixtures2627": "Fixtures 26/27",
+    "clubs": "Clubs",
+    "players": "Players",
+    "statistics": "Statistics",
+    "transfers": "Transfers",
+    "groups": "Groups",
+    "standings": "Standings",
+    "teams": "Teams",
+    "venues": "Venues",
+    "bracket": "Bracket",
+    "pl2627": "PL 26/27",
+    "wc26": "WC26",
+    "overview": "Overview",
+    "plHome": "PL Home",
+    "wc26Home": "WC26 Home",
+    "mainNavigation": "Main navigation",
+    "openMoreNavigation": "Open more navigation",
+    "backToMenu": "Back to menu",
+    "closeMenu": "Close menu",
+    "articlesEditorial": "✍붿 Articles & Editorial",
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "affiliateDisclosure": "Affiliate Disclosure",
+    "language": "Idioma",
+    "liveResults": "Live Results",
+    "liveMatches": "Live Matches",
+    "plVideos": "붿뿯붿 PL Videos",
+    "wcVideos": "붿뿯붿 WC Videos",
+    "latestNews": "Latest News",
+    "editorialArticles": "✍붿 Editorial & Articles",
+    "worldCupNews": "World Cup News",
+    "premierLeagueNews": "Premier League News",
+    "latestVideos": "Latest Videos",
+    "plClubs": "Premier League Clubs",
+    "worldCupTeams": "World Cup Teams",
+    "plPlayers": "Premier League Players",
+    "plTable2627": "Premier League 26/27",
+    "wc26GroupTables": "WC26 Group Tables",
+    "wc26Bracket": "WC26 Bracket",
+    "videoAudio": "Video & Audio",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "tiktok": "TikTok",
+    "twitter": "X / Twitter"
+  },
+  "layout": {
+    "cookieConsent": {
+      "ariaLabel": "Cookie consent",
+      "message": "We use cookies to personalise content and analyse traffic.",
+      "policy": "Cookie Policy",
+      "decline": "Decline",
+      "accept": "Accept ✓"
+    },
+    "footer": {
+      "ariaLabel": "Footer",
+      "socialAria": "Social media",
+      "nordVpn": "붿붿 Stream securely abroad — NordVPN affiliate",
+      "nordAd": "AD",
+      "nordCta": "Get NordVPN 뿯↽",
+      "copyright": "뿯½ {year} Ashna4All 뿯½ Ahmad Zafarani 뿯½ {siteName} independent fan site 뿯½ Not affiliated with FIFA, UEFA or the Premier League."
+    },
+    "liveRibbon": {
+      "live": "LIVE",
+      "ft": "FT",
+      "vs": "vs",
+      "viewAllFixtures": "View all fixtures",
+      "worldCup2026": "WORLD CUP 2026",
+      "liveNow": "LIVE NOW",
+      "latestResults": "LATEST RESULTS",
+      "emptyMessage": "Fixtures from local schedule — scores when API sync is active",
+      "liveMatchesAria": "Live matches",
+      "latestResultsAria": "Latest results",
+      "moreMatches": "+{count} More Matches",
+      "viewMoreMatchesAria": "View {count} more matches",
+      "allFixtures": "ALL FIXTURES",
+      "viewAllFixturesAria": "View all fixtures",
+      "tickerAria": "Live scores ticker",
+      "liveElapsed": "LIVE {elapsed}'"
+    }
+  },
+  "errors": {
+    "notFound": {
+      "code": "404",
+      "title": "Page not found",
+      "description": "The page you are looking for does not exist or may have moved.",
+      "returnHome": "Return home",
+      "liveScores": "Live scores"
+    },
+    "generic": {
+      "code": "Error",
+      "title": "Something went wrong",
+      "description": "Please try again or return home.",
+      "tryAgain": "Try again",
+      "returnHome": "Return home"
+    }
+  },
+  "match": {
+    "title": "{home} vs {away}",
+    "liveMatch": "Live match",
+    "matchCentre": "Match centre",
+    "noEvents": "No events recorded yet.",
+    "status": {
+      "scheduled": "Scheduled",
+      "postponed": "Postponed",
+      "cancelled": "Cancelled",
+      "live": "Live",
+      "ht": "Half Time",
+      "1h": "1st Half",
+      "2h": "2nd Half",
+      "ft": "Full Time",
+      "aet": "AET",
+      "pen": "Penalties",
+      "et": "Extra Time"
+    },
+    "events": {
+      "goal": "Goal",
+      "ownGoal": "Own goal",
+      "penaltyGoal": "Penalty goal",
+      "redCard": "Red card",
+      "yellowCard": "Yellow card",
+      "substitution": "Substitution"
+    }
+  },
+  "wc26": {
+    "group": "Group {id}",
+    "groupStage": "Group Stage",
+    "hubTitle": "FIFA World Cup 2026",
+    "sections": {
+      "groups": {
+        "label": "Groups",
+        "title": "Groups",
+        "description": "All twelve groups for the expanded 48-team tournament. Browse each group for live standings, fixtures and qualified teams."
+      },
+      "fixtures": {
+        "label": "Fixtures",
+        "title": "Fixtures",
+        "description": "Full World Cup 2026 group-stage schedule — all 72 matches with dates, UTC kickoffs, venues and links to each match centre."
+      },
+      "standings": {
+        "label": "Standings",
+        "title": "Standings",
+        "description": "Live group tables for all twelve groups — P, W, D, L, GF, GA, GD and Pts updated from verified match results."
+      },
+      "teams": {
+        "label": "Teams",
+        "title": "Teams",
+        "description": "All 48 qualified nations at World Cup 2026 — browse squads, groups and links to every team's fixtures and standings."
+      },
+      "venues": {
+        "label": "Venues",
+        "title": "Venues",
+        "description": "Sixteen host stadiums across USA, Mexico and Canada — cities, capacities and tournament venues for World Cup 2026."
+      },
+      "bracket": {
+        "label": "Bracket",
+        "title": "Knockout Bracket",
+        "description": "Knockout stage path from the Round of 32 through to the final. Bracket fills in as knockout fixtures are confirmed."
+      }
+    },
+    "standings": {
+      "team": "Team",
+      "played": "P",
+      "won": "W",
+      "drawn": "D",
+      "lost": "L",
+      "gf": "GF",
+      "ga": "GA",
+      "gd": "GD",
+      "pts": "PTS"
+    },
+    "fixtures": {
+      "searchPlaceholder": "Search team, venue or match…",
+      "noMatches": "No matches found."
+    },
+    "teams": {
+      "searchPlaceholder": "Search team, code, or group…"
+    },
+    "venues": {
+      "capacity": "Capacity:"
+    },
+    "bracket": {
+      "tbdVsTbd": "TBD vs TBD"
+    }
+  },
+  "pl": {
+    "hubTitle": "Premier League",
+    "table": {
+      "zoneCl": "CL",
+      "zoneEl": "EL",
+      "zoneConf": "Conf",
+      "zoneRel": "Rel"
+    },
+    "loading": "Loading Premier League data…"
+  },
+  "home": {
+    "title": "Resultados de futebol ao vivo e centro de jogos",
+    "badge": "World Cup 2026 뿯½ lead competition",
+    "featuredMatch": "Featured match",
+    "liveNow": "Live Now",
+    "viewAllLive": "View All Live Matches",
+    "noLiveMatches": "No live matches right now.",
+    "subtitle": "Live results, fixtures and news from {siteName} — World Cup 2026 is the lead competition.",
+    "matchDetails": "Match details",
+    "allFixtures": "All fixtures",
+    "noFixturesLoaded": "No World Cup fixtures loaded.",
+    "latestResults": "Latest Results",
+    "viewAllResults": "View All Results",
+    "noRecentResults": "No recent full-time results.",
+    "upcomingFixtures": "Upcoming Fixtures",
+    "viewAllFixtures": "View All Fixtures",
+    "noUpcomingFixtures": "No upcoming fixtures scheduled.",
+    "wc26Title": "World Cup 2026",
+    "viewAll": "View All",
+    "wc26Summary": "USA · Mexico · Canada · 11 Jun – 19 Jul 2026 · {gamesPlayed} played · {gamesLeft} remaining"
+  },
+  "favourites": {
+    "add": "Add {team} to favourites",
+    "remove": "Remove {team} from favourites",
+    "title": "Favourites",
+    "empty": "No favourites yet. Star teams on match pages to save them here.",
+    "stripTitle": "Your Favourites",
+    "manage": "Manage",
+    "emptyStripLead": "Star a match or team to see them here. Browse",
+    "liveScores": "live scores",
+    "worldCupTeams": "World Cup teams",
+    "or": "or"
+  },
+  "news": {
+    "loading": "Loading…",
+    "updated": "Updated: {date}",
+    "empty": "No news articles available."
+  },
+  "seo": {
+    "siteTitle": "{siteName} - FIFA World Cup 2026 | Live Scores, News & Teams",
+    "siteDescription": "{siteName} - live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
+    "matchDescription": "World Cup 2026 match — {title}. Live centre, timeline, statistics and lineups on {siteName}.",
+    "titleTemplate": "{title} - {siteName}"
+  }
+}

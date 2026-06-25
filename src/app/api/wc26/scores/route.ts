@@ -22,6 +22,11 @@ export const dynamic = "force-dynamic";
 
 const ROUTE = "/api/wc26/scores";
 
+/** Stable cache key — /api/scores re-exports this handler but must share cache. */
+function scoresCacheKey(request: NextRequest): string {
+  return `${ROUTE}${request.nextUrl.search}`;
+}
+
 function unconfiguredResponse(): Wc26ScoresApiResponse {
   return {
     matches: [],
@@ -42,7 +47,7 @@ function emptyResponse(phase?: string): Wc26ScoresApiResponse {
 
 function scoresCacheControl(phase?: string): string {
   if (phase === "live") {
-    return "s-maxage=30, stale-while-revalidate=30";
+    return "s-maxage=45, stale-while-revalidate=45";
   }
   if (phase === "unconfigured" || phase === "rate-limited") {
     return "no-store";
@@ -86,7 +91,7 @@ function failureScoresBody(
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  const cacheKey = request.url;
+  const cacheKey = scoresCacheKey(request);
   const cached = getCached(cacheKey);
   if (cached) {
     logInfo(ROUTE, "CACHE HIT");

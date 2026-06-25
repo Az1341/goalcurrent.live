@@ -1,28 +1,97 @@
+import createIntlMiddleware from "next-intl/middleware";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { routing } from "@/i18n/routing";
 import { CONTENT_SECURITY_POLICY } from "@/lib/security/csp";
 
 const LEGACY_GROUP_PATH = /^\/worldcup2026\/groups\/group-([a-l])$/i;
+const LOCALE_PREFIX = /^\/(en|fa|ar|fr|de|nl|es|pt|it)(\/|$)/;
+
+const handleI18n = createIntlMiddleware(routing);
+
+const SITE_REDIRECTS: Array<{ source: RegExp; destination: (match: RegExpMatchArray, localePrefix: string) => string }> = [
+  {
+    source: /^\/video\/?$/,
+    destination: (_m, prefix) => `${prefix}/videos`,
+  },
+  {
+    source: /^\/video\/(.+)$/,
+    destination: (m, prefix) => `${prefix}/videos/${m[1]}`,
+  },
+  {
+    source: /^\/worldcup2026\/favourites\/?$/,
+    destination: (_m, prefix) => `${prefix}/favourites`,
+  },
+  {
+    source: /^\/news\/articles\/?$/,
+    destination: (_m, prefix) => `${prefix}/articles`,
+  },
+  {
+    source: /^\/news\/articles\/(.+)$/,
+    destination: (m, prefix) => `${prefix}/articles/${m[1]}`,
+  },
+  {
+    source: /^\/news\/alireza-beiranvand-iran-world-cup-hero\/?$/,
+    destination: (_m, prefix) =>
+      `${prefix}/articles/alireza-beiranvand-iran-world-cup-hero`,
+  },
+  {
+    source: /^\/worldcup2026\/match\/(.+)$/,
+    destination: (m, prefix) => `${prefix}/match/${m[1]}`,
+  },
+];
 
 function applySecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set("Content-Security-Policy", CONTENT_SECURITY_POLICY);
   return response;
 }
 
-/** Next.js 16 proxy — CSP on every route + legacy WC26 group redirects. */
-export function proxy(request: NextRequest) {
-  const legacy = LEGACY_GROUP_PATH.exec(request.nextUrl.pathname);
-  if (legacy) {
+function localePrefixFromPath(pathname: string): string {
+  const match = LOCALE_PREFIX.exec(pathname);
+  if (!match) return "";
+  const locale = match[1];
+  return locale === routing.defaultLocale ? "" : `/${locale}`;
+}
+
+function applyLegacyRedirects(request: NextRequest): NextResponse | null {
+  const { pathname } = request.nextUrl;
+  const localePrefix = localePrefixFromPath(pathname);
+  const pathWithoutLocale = localePrefix
+    ? pathname.slice(localePrefix.length) || "/"
+    : pathname;
+
+  const legacyGroup = LEGACY_GROUP_PATH.exec(pathWithoutLocale);
+  if (legacyGroup) {
     const url = request.nextUrl.clone();
-    url.pathname = `/worldcup2026/groups/${legacy[1]!.toLowerCase()}`;
+    url.pathname = `${localePrefix}/worldcup2026/groups/${legacyGroup[1]!.toLowerCase()}`;
     return applySecurityHeaders(NextResponse.redirect(url, 307));
   }
 
-  return applySecurityHeaders(NextResponse.next());
+  for (const rule of SITE_REDIRECTS) {
+    const match = rule.source.exec(pathWithoutLocale);
+    if (match) {
+      const url = request.nextUrl.clone();
+      url.pathname = rule.destination(match, localePrefix);
+      return applySecurityHeaders(NextResponse.redirect(url, 308));
+    }
+  }
+
+  return null;
+}
+
+/** Next.js 16 proxy — locale routing, legacy redirects, CSP. */
+export function proxy(request: NextRequest) {
+  const legacyRedirect = applyLegacyRedirects(request);
+  if (legacyRedirect) {
+    return legacyRedirect;
+  }
+
+  const response = handleI18n(request);
+  return applySecurityHeaders(response);
 }
 
 export const proxyConfig = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|sw.js|OneSignalSDKWorker.js|manifest.json|ads.txt).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|sw.js|OneSignalSDKWorker.js|manifest.json|ads.txt|.*\\..*).*)",
   ],
 };

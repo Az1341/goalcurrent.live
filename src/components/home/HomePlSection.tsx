@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type {
   PlFixtureRow,
@@ -14,15 +15,15 @@ import {
   resolveDisplayStandings,
 } from "@/lib/pl/standings-display";
 import { PlTeamBadge } from "@/components/pl/PlShared";
-import styles from "@/app/page.module.css";
+import styles from "@/app/[locale]/page.module.css";
 
 type ViewState = "loading" | "error" | "ready";
 
 const PL_QUICK_LINKS = [
-  { href: "/premier-league", label: "PL Hub" },
-  { href: "/premier-league/fixtures", label: "Fixtures" },
-  { href: "/premier-league/table", label: "Table" },
-  { href: "/premier-league/live", label: "Live" },
+  { href: "/premier-league", labelKey: "plHome" },
+  { href: "/premier-league/fixtures", labelKey: "fixtures" },
+  { href: "/premier-league/table", labelKey: "table" },
+  { href: "/premier-league/live", labelKey: "live" },
 ] as const;
 
 function findNextFixture(fixtures: PlFixtureRow[]): PlFixtureRow | null {
@@ -118,6 +119,7 @@ function PlTableCompact({ rows }: { rows: readonly PlStandingRow[] }) {
 }
 
 export default function HomePlSection() {
+  const t = useTranslations("nav");
   const [view, setView] = useState<ViewState>("loading");
   const [fixturesData, setFixturesData] = useState<PlFixturesApiResponse | null>(
     null,
@@ -262,7 +264,7 @@ export default function HomePlSection() {
           <nav className={styles.plQuickLinks} aria-label="Premier League quick links">
             {PL_QUICK_LINKS.map((link) => (
               <Link key={link.href} href={link.href} className={styles.plQuickLink}>
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             ))}
           </nav>

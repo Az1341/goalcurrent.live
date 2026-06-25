@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import InfoPageShell, { InfoBackLink } from "@/components/info/InfoPageShell";
 import { FOOTER_SOCIAL } from "@/lib/nav";
 import { buildPageMetadata } from "@/lib/page-metadata";
@@ -12,7 +13,8 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/about",
 });
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const t = await getTranslations("nav");
   return (
     <InfoPageShell>
       <div className={styles.stack}>
@@ -169,13 +171,13 @@ export default function AboutPage() {
           <div className={styles.socialList}>
             {FOOTER_SOCIAL.map((social) => (
               <a
-                key={social.label}
+                key={social.href}
                 className={styles.socialLink}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {social.label}
+                {t(social.labelKey)}
               </a>
             ))}
           </div>

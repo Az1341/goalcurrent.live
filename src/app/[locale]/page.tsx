@@ -7,7 +7,7 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 import { selectFeaturedFixtures } from "@/lib/wc26-live";
 
-const HomeClient = dynamic(() => import("@/app/HomeClient"), {
+const HomeClient = dynamic(() => import("@/app/[locale]/HomeClient"), {
   ssr: true,
 });
 

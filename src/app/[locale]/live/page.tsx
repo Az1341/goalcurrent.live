@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import LivePageClient from "@/app/live/LivePageClient";
+import LivePageClient from "@/app/[locale]/live/LivePageClient";
 import ErrorBoundary from "@/components/system/ErrorBoundary";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";

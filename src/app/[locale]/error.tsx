@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useEffect } from "react";
 import styles from "@/components/ui/trust-pages.module.css";
 
@@ -10,6 +11,8 @@ type ErrorPageProps = {
 };
 
 export default function Error({ error, reset }: ErrorPageProps) {
+  const t = useTranslations("errors.generic");
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -17,15 +20,15 @@ export default function Error({ error, reset }: ErrorPageProps) {
   return (
     <main className={styles.page}>
       <div className={styles.card}>
-        <p className={styles.code}>Error</p>
-        <h1>Something went wrong</h1>
-        <p>Please try again or return home.</p>
+        <p className={styles.code}>{t("code")}</p>
+        <h1>{t("title")}</h1>
+        <p>{t("description")}</p>
         <div className={styles.actions}>
           <button type="button" className={styles.primary} onClick={() => reset()}>
-            Try again
+            {t("tryAgain")}
           </button>
           <Link href="/" className={styles.secondary}>
-            Return home
+            {t("returnHome")}
           </Link>
         </div>
       </div>

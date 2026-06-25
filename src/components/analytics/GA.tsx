@@ -15,13 +15,39 @@ export function GA() {
   const enabled = Boolean(GA_ID) && isAnalyticsHost(hostname);
 
   useEffect(() => {
-    if (!enabled || window.__gc_sw_registered) {
+    if (!enabled) {
       return;
     }
 
     if ("serviceWorker" in navigator) {
+      const host = window.location.hostname;
+      const isLocalDev =
+        host === "localhost" || host.endsWith(".localhost");
+
+      if (isLocalDev) {
+        void (async () => {
+          const registrations =
+            await navigator.serviceWorker.getRegistrations();
+          if (registrations.length === 0) {
+            return;
+          }
+          const cacheKeys = await caches.keys();
+          await Promise.all(cacheKeys.map((key) => caches.delete(key)));
+          await Promise.all(
+            registrations.map((registration) => registration.unregister()),
+          );
+        })();
+        return;
+      }
+
+      if (window.__gc_sw_registered) {
+        return;
+      }
+
       window.__gc_sw_registered = true;
-      navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+      navigator.serviceWorker
+        .register("/sw.js", { scope: "/" })
+        .catch(() => {});
     }
   }, [enabled]);
 

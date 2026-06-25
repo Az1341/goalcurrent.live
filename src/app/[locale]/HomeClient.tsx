@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import {
@@ -27,7 +28,7 @@ import HomeFavouritesStrip from "@/components/home/HomeFavouritesStrip";
 import HomeNewsSection from "@/components/home/HomeNewsSection";
 import HomePlSection from "@/components/home/HomePlSection";
 import HomeWc26StandingsPreview from "@/components/home/HomeWc26StandingsPreview";
-import styles from "@/app/page.module.css";
+import styles from "@/app/[locale]/page.module.css";
 
 const FEATURED_FLAG = 64;
 const LIST_FLAG = 22;
@@ -107,11 +108,13 @@ function FeaturedMatchBody({ match }: { match: HomepageMatchView }) {
 }
 
 function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
+  const t = useTranslations("home");
+
   return (
     <article className={styles.featuredHero}>
       <div className={styles.featuredHeroTop}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-          <span className={styles.featuredHeroLabel}>Featured match</span>
+          <span className={styles.featuredHeroLabel}>{t("featuredMatch")}</span>
           <FeaturedStatusBadge match={match} />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -129,10 +132,10 @@ function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
 
         <div className={styles.featuredActions}>
           <Link href={matchHref(match.fixtureId)} className={styles.btnPrimary}>
-            Match details →
+            {t("matchDetails")} →
           </Link>
           <Link href="/worldcup2026/fixtures" className={styles.btnSecondary}>
-            All fixtures
+            {t("allFixtures")}
           </Link>
         </div>
       </div>
@@ -145,13 +148,14 @@ function FeaturedSimultaneousDecider({
 }: {
   matches: readonly HomepageMatchView[];
 }) {
+  const t = useTranslations("home");
   const primaryLive = matches.find((match) => match.matchClass === "live");
 
   return (
     <article className={styles.featuredHero}>
       <div className={styles.featuredHeroTop}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-          <span className={styles.featuredHeroLabel}>Featured match</span>
+          <span className={styles.featuredHeroLabel}>{t("featuredMatch")}</span>
           {primaryLive ? <FeaturedStatusBadge match={primaryLive} /> : null}
         </div>
       </div>
@@ -162,7 +166,7 @@ function FeaturedSimultaneousDecider({
             <FeaturedMatchBody match={match} />
             <div className={styles.featuredDualActions}>
               <Link href={matchHref(match.fixtureId)} className={styles.btnPrimary}>
-                Match details →
+                {t("matchDetails")} →
               </Link>
               <FavouriteMatchButton
                 matchId={match.fixtureId}
@@ -176,7 +180,7 @@ function FeaturedSimultaneousDecider({
 
       <div className={styles.featuredActions}>
         <Link href="/worldcup2026/fixtures" className={styles.btnSecondary}>
-          All fixtures
+          {t("allFixtures")}
         </Link>
       </div>
     </article>
@@ -281,24 +285,23 @@ export default function Home() {
 
   const { gamesPlayed, gamesLeft } = useTournamentStats();
 
+  const t = useTranslations("home");
+
   return (
     <div className={styles.homeRoot}>
       <main className={styles.homeMain}>
         <header className={styles.homeHero}>
           <div className={styles.homeHeroBg} aria-hidden="true" />
           <div className={styles.homeHeroContent}>
-            <h1>Football live scores &amp; match centre</h1>
-            <p>
-              Live results, fixtures and news from {SITE_NAME} — World Cup 2026
-              is the lead competition.
-            </p>
-            <span className={styles.homeBadge}>World Cup 2026 · lead competition</span>
+            <h1>{t("title")}</h1>
+            <p>{t("subtitle", { siteName: SITE_NAME })}</p>
+            <span className={styles.homeBadge}>{t("badge")}</span>
           </div>
         </header>
 
         <section className={styles.sectionBlock} aria-labelledby="featured-match-heading">
           <h2 id="featured-match-heading" className={styles.sectionTitle}>
-            Featured match
+            {t("featuredMatch")}
           </h2>
           {featuredSelection.mode === "simultaneous-final" &&
           featuredSelection.groupId &&
@@ -307,7 +310,7 @@ export default function Home() {
           ) : featured ? (
             <FeaturedMatchHero match={featured} />
           ) : (
-            <p className={styles.sectionNote}>No World Cup fixtures loaded.</p>
+            <p className={styles.sectionNote}>{t("noFixturesLoaded")}</p>
           )}
         </section>
 
@@ -321,10 +324,10 @@ export default function Home() {
 
         <div className={styles.threeCol}>
           <ColumnCard
-            title="Live Now"
+            title={t("liveNow")}
             footerHref="/live"
-            footerLabel="View All Live Matches"
-            emptyMessage="No live matches right now."
+            footerLabel={t("viewAllLive")}
+            emptyMessage={t("noLiveMatches")}
             isEmpty={liveMatches.length === 0}
           >
             <CompactMatchList
@@ -335,10 +338,10 @@ export default function Home() {
           </ColumnCard>
 
           <ColumnCard
-            title="Latest Results"
+            title={t("latestResults")}
             footerHref="/live"
-            footerLabel="View All Results"
-            emptyMessage="No recent full-time results."
+            footerLabel={t("viewAllResults")}
+            emptyMessage={t("noRecentResults")}
             isEmpty={latestResults.length === 0}
           >
             <CompactMatchList
@@ -349,10 +352,10 @@ export default function Home() {
           </ColumnCard>
 
           <ColumnCard
-            title="Upcoming Fixtures"
+            title={t("upcomingFixtures")}
             footerHref="/worldcup2026/fixtures"
-            footerLabel="View All Fixtures"
-            emptyMessage="No upcoming fixtures scheduled."
+            footerLabel={t("viewAllFixtures")}
+            emptyMessage={t("noUpcomingFixtures")}
             isEmpty={upcomingMatches.length === 0}
           >
             <CompactMatchList
@@ -372,17 +375,15 @@ export default function Home() {
             <div className={styles.sectionTitleRow}>
               <span className={styles.sectionBar} aria-hidden="true" />
               <h2 id="wc26-heading" className={styles.sectionTitle}>
-                World Cup 2026
+                {t("wc26Title")}
               </h2>
             </div>
             <Link href="/worldcup2026" className={styles.sectionLink}>
-              View All →
+              {t("viewAll")} →
             </Link>
           </div>
           <p className={styles.wc26Summary}>
-            USA · Mexico · Canada · 11 Jun – 19 Jul 2026 ·{" "}
-            <strong>{gamesPlayed}</strong> played · <strong>{gamesLeft}</strong>{" "}
-            remaining
+            {t("wc26Summary", { gamesPlayed, gamesLeft })}
           </p>
         </section>
 

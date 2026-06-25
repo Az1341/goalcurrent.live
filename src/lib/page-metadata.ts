@@ -4,12 +4,18 @@ import {
   DEFAULT_TWITTER_CARD,
   EDITORIAL_AUTHOR,
 } from "@/lib/seo/constants";
+import {
+  buildHreflangAlternates,
+  localizedUrl,
+} from "@/lib/i18n/urls";
+import { routing } from "@/i18n/routing";
 import { absoluteUrl } from "@/lib/site-url";
 
 type PageMetadataInput = {
   title: string;
   description: string;
   path: string;
+  locale?: string;
   /** Bypass root layout title template (homepage only). */
   absoluteTitle?: boolean;
   ogImage?: string;
@@ -75,11 +81,12 @@ export function buildPageMetadata({
   title,
   description,
   path,
+  locale = routing.defaultLocale,
   absoluteTitle = false,
   ogImage,
   ogType = "website",
 }: PageMetadataInput): Metadata {
-  const url = absoluteUrl(path);
+  const url = localizedUrl(path, locale);
   const social = buildSocialMetadata({
     title,
     description,
@@ -93,6 +100,7 @@ export function buildPageMetadata({
     description,
     alternates: {
       canonical: url,
+      languages: buildHreflangAlternates(path),
     },
     ...social,
   };
@@ -110,6 +118,7 @@ export function buildArticleMetadata({
   title,
   description,
   path,
+  locale = routing.defaultLocale,
   keywords = [],
   publishedTime,
   modifiedTime,
@@ -117,7 +126,7 @@ export function buildArticleMetadata({
   absoluteTitle = true,
   ogImage,
 }: ArticleMetadataInput): Metadata {
-  const url = absoluteUrl(path);
+  const url = localizedUrl(path, locale);
   const social = buildSocialMetadata({
     title,
     description,
@@ -135,6 +144,7 @@ export function buildArticleMetadata({
     keywords,
     alternates: {
       canonical: url,
+      languages: buildHreflangAlternates(path),
     },
     ...social,
   };
@@ -144,6 +154,7 @@ type MatchMetadataInput = {
   title: string;
   description: string;
   path: string;
+  locale?: string;
   ogImage?: string;
 };
 
@@ -151,12 +162,14 @@ export function buildMatchMetadata({
   title,
   description,
   path,
+  locale,
   ogImage,
 }: MatchMetadataInput): Metadata {
   return buildPageMetadata({
     title,
     description,
     path,
+    locale,
     ogImage,
     ogType: "website",
   });

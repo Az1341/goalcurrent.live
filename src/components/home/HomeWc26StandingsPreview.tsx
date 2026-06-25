@@ -9,7 +9,7 @@ import { isGroupComplete, isQualifyingStandingPosition } from "@/lib/wc26-standi
 import { groupHref, WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
 import type { Wc26GroupId } from "@/types/group";
 import wc26Styles from "@/components/wc26/wc26.module.css";
-import styles from "@/app/page.module.css";
+import styles from "@/app/[locale]/page.module.css";
 
 const PREVIEW_GROUPS: readonly Wc26GroupId[] = ["a", "b", "c", "d"];
 

@@ -1,11 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import NavLink from "@/components/nav/NavLink";
-import { useState } from "react";
-import {
+import { LOCALE_META, LOCALES, type AppLocale } from "@/i18n/locales";
+import { useState } from "react";import {
   MORE_SHEET_LEVEL1,
-  MORE_SHEET_SUBMENU_TITLES,
+  MORE_SHEET_SUBMENU_TITLE_KEYS,
   MORE_SHEET_SUBMENUS,
   type MoreSheetSubmenuId,
   isMoreSheetLinkActive,
@@ -19,7 +20,10 @@ type MoreBottomSheetProps = {
 
 export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps) {
   const pathname = usePathname();
-  const [submenu, setSubmenu] = useState<MoreSheetSubmenuId | null>(null);
+  const router = useRouter();
+  const locale = useLocale() as AppLocale;
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");  const [submenu, setSubmenu] = useState<MoreSheetSubmenuId | null>(null);
   const activeSubmenu = open ? submenu : null;
 
   const handleClose = () => {
@@ -32,7 +36,17 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
     onClose();
   };
 
-  const submenuTitle = activeSubmenu ? MORE_SHEET_SUBMENU_TITLES[activeSubmenu] : "More";
+  const handleLocaleChange = (nextLocale: AppLocale) => {
+    if (nextLocale === locale) {
+      handleNavigate();
+      return;
+    }
+    router.replace(pathname, { locale: nextLocale });
+    handleNavigate();
+  };
+
+  const submenuTitle = activeSubmenu    ? t(MORE_SHEET_SUBMENU_TITLE_KEYS[activeSubmenu])
+    : tCommon("viewAll");
 
   return (
     <>
@@ -46,7 +60,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
         className={`${styles.sheet} ${open ? styles.sheetOpen : ""}`}
         role="dialog"
         aria-modal="true"
-        aria-label="More navigation"
+        aria-label={t("openMoreNavigation")}
         aria-hidden={!open}
       >
         <div className={styles.sheetHeader}>
@@ -54,7 +68,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
             <button
               type="button"
               className={styles.backBtn}
-              aria-label="Back to menu"
+              aria-label={t("backToMenu")}
               onClick={() => setSubmenu(null)}
             >
               ←
@@ -68,7 +82,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
           <button
             type="button"
             className={styles.closeBtn}
-            aria-label="Close menu"
+            aria-label={t("closeMenu")}
             onClick={handleClose}
           >
             ×
@@ -80,13 +94,14 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
             className={`${styles.panel} ${activeSubmenu ? styles.panelHidden : styles.panelActive}`}
             aria-hidden={Boolean(activeSubmenu)}
           >
-            <nav className={styles.sheetList} aria-label="More menu">
+            <nav className={styles.sheetList} aria-label={t("openMoreNavigation")}>
               {MORE_SHEET_LEVEL1.map((item, index) => {
                 if (item.type === "divider") {
                   return <hr key={`divider-${index}`} className={styles.sheetDivider} />;
                 }
 
                 if (item.type === "submenu") {
+                  const isLanguage = item.id === "language";
                   return (
                     <button
                       key={item.id}
@@ -94,7 +109,16 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                       className={styles.sheetRow}
                       onClick={() => setSubmenu(item.id)}
                     >
-                      <span>{item.label}</span>
+                      {isLanguage ? (
+                        <span className={styles.sheetRowLabel}>
+                          <span>{t(item.labelKey)}</span>
+                          <span className={styles.sheetRowMeta}>
+                            {LOCALE_META[locale].flag} {LOCALE_META[locale].label}
+                          </span>
+                        </span>
+                      ) : (
+                        <span>{t(item.labelKey)}</span>
+                      )}
                       <span className={styles.chevron} aria-hidden="true">
                         ›
                       </span>
@@ -105,14 +129,14 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                 if (item.external) {
                   return (
                     <a
-                      key={item.label}
+                      key={item.href}
                       href={item.href}
                       className={`${styles.sheetLink} ${styles.sheetLinkExternal}`}
                       target="_blank"
                       rel="noopener noreferrer sponsored"
                       onClick={handleNavigate}
                     >
-                      {item.label}
+                      {t(item.labelKey)}
                     </a>
                   );
                 }
@@ -121,13 +145,13 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
 
                 return (
                   <NavLink
-                    key={item.label}
+                    key={item.href}
                     href={item.href}
                     className={`${styles.sheetLink} ${active ? styles.sheetLinkActive : ""}`}
                     aria-current={active ? "page" : undefined}
                     onClick={handleNavigate}
                   >
-                    {item.label}
+                    {t(item.labelKey)}
                   </NavLink>
                 );
               })}
@@ -138,10 +162,36 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
             className={`${styles.panel} ${activeSubmenu ? styles.panelActive : styles.panelHidden}`}
             aria-hidden={!activeSubmenu}
           >
-            {activeSubmenu && (
+            {activeSubmenu === "language" ? (
+              <div className={styles.sheetList} role="list" aria-label={t("language")}>
+                {LOCALES.map((code) => {
+                  const meta = LOCALE_META[code];
+                  const isActive = locale === code;
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      role="listitem"
+                      className={`${styles.langRow} ${isActive ? styles.langRowActive : ""}`}
+                      aria-current={isActive ? "true" : undefined}
+                      onClick={() => handleLocaleChange(code)}
+                    >
+                      <span className={styles.langFlag} aria-hidden="true">
+                        {meta.flag}
+                      </span>
+                      <span className={styles.langLabel}>{meta.label}</span>
+                      {isActive ? (
+                        <span className={styles.langCheck} aria-hidden="true">
+                          ✓
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : activeSubmenu ? (
               <nav className={styles.sheetList} aria-label={`${submenuTitle} links`}>
-                {MORE_SHEET_SUBMENUS[activeSubmenu].map((link, index) => {
-                  const key = `${activeSubmenu}-${link.label}-${index}`;
+                {MORE_SHEET_SUBMENUS[activeSubmenu].map((link, index) => {                  const key = `${activeSubmenu}-${link.labelKey}-${index}`;
                   const active = !link.external && isMoreSheetLinkActive(pathname, link.href);
 
                   if (link.external) {
@@ -154,7 +204,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                         rel="noopener noreferrer sponsored"
                         onClick={handleNavigate}
                       >
-                        {link.label}
+                        {t(link.labelKey)}
                       </a>
                     );
                   }
@@ -167,13 +217,12 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                       aria-current={active ? "page" : undefined}
                       onClick={handleNavigate}
                     >
-                      {link.label}
+                      {t(link.labelKey)}
                     </NavLink>
                   );
                 })}
               </nav>
-            )}
-          </div>
+            ) : null}          </div>
         </div>
       </div>
     </>

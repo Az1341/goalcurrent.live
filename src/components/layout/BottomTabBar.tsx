@@ -1,6 +1,7 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import NavLink from "@/components/nav/NavLink";
 import { useState } from "react";
 import {
@@ -95,6 +96,8 @@ function TabIcon({ tabId }: { tabId: string }) {
 
 export default function BottomTabBar() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const [moreOpen, setMoreOpen] = useState(false);
 
   return (
@@ -116,7 +119,7 @@ export default function BottomTabBar() {
               <span className={styles.iconWrap}>
                 <TabIcon tabId={tab.id} />
               </span>
-              <span className={styles.tabLabel}>{tab.label}</span>
+              <span className={styles.tabLabel}>{t(tab.labelKey)}</span>
             </NavLink>
           );
         })}
@@ -125,7 +128,7 @@ export default function BottomTabBar() {
           type="button"
           className={`${styles.tabButton} ${moreOpen ? styles.tabButtonActive : ""}`}
           aria-expanded={moreOpen}
-          aria-label="Open more navigation"
+          aria-label={t("openMoreNavigation")}
           onClick={() => setMoreOpen(true)}
         >
           <span className={styles.iconWrap}>

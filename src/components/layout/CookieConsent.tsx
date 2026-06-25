@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useSyncExternalStore } from "react";
 import {
   COOKIE_CONSENT_ACCEPTED,
@@ -26,6 +27,7 @@ function shouldShowConsentBanner(): boolean {
 }
 
 export default function CookieConsent() {
+  const t = useTranslations("layout.cookieConsent");
   const open = useSyncExternalStore(
     subscribeConsent,
     shouldShowConsentBanner,
@@ -52,11 +54,11 @@ export default function CookieConsent() {
   if (!open) return null;
 
   return (
-    <div className={styles.cookieDialog} role="dialog" aria-label="Cookie consent">
+    <div className={styles.cookieDialog} role="dialog" aria-label={t("ariaLabel")}>
       <p className={styles.cookieText}>
-        We use cookies to personalise content and analyse traffic.{" "}
+        {t("message")}{" "}
         <Link href="/cookies" className={styles.cookiePolicyLink}>
-          Cookie Policy
+          {t("policy")}
         </Link>
       </p>
       <div className={styles.cookieActions}>
@@ -65,10 +67,10 @@ export default function CookieConsent() {
           className={styles.cookieBtnSecondary}
           onClick={decline}
         >
-          Decline
+          {t("decline")}
         </button>
         <button type="button" className={styles.cookieBtnPrimary} onClick={accept}>
-          Accept ✓
+          {t("accept")}
         </button>
       </div>
     </div>

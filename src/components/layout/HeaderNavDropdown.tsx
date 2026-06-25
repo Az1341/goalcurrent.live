@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import NavLink from "@/components/nav/NavLink";
 import type { NavLinkItem } from "@/lib/nav";
 import styles from "./master-chrome.module.css";
@@ -16,6 +17,7 @@ export default function HeaderNavDropdown({
   links,
   isActive,
 }: HeaderNavDropdownProps) {
+  const t = useTranslations("nav");
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -98,7 +100,7 @@ export default function HeaderNavDropdown({
               role="menuitem"
               onClick={closeMenu}
             >
-              {link.label}
+              {t(link.labelKey)}
             </NavLink>
           ))}
         </div>

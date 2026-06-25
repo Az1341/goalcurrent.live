@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import MatchPageClient from "@/app/match/[fixtureId]/MatchPageClient";
+import MatchPageClient from "@/app/[locale]/match/[fixtureId]/MatchPageClient";
 import MatchSeo from "@/components/seo/MatchSeo";
 import ErrorBoundary from "@/components/system/ErrorBoundary";
 import { WC26_FIXTURES, getFixtureById, getTeamById, getVenueById } from "@/data/wc26";

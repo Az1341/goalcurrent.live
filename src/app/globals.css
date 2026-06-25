@@ -186,3 +186,12 @@ button {
   border: 0;
   display: block;
 }
+
+[dir="rtl"] {
+  text-align: start;
+}
+
+[dir="rtl"] .backBtn,
+[dir="rtl"] [class*="backBtn"] {
+  transform: scaleX(-1);
+}

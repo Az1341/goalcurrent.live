@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import ContactForm from "@/components/info/ContactForm";
 import InfoPageShell, { InfoBackLink } from "@/components/info/InfoPageShell";
 import { FOOTER_SOCIAL } from "@/lib/nav";
@@ -12,7 +13,8 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/contact",
 });
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const t = await getTranslations("nav");
   return (
     <InfoPageShell>
       <div className={styles.stack}>
@@ -103,13 +105,13 @@ export default function ContactPage() {
           <div className={styles.socialList}>
             {FOOTER_SOCIAL.map((social) => (
               <a
-                key={social.label}
+                key={social.href}
                 className={styles.socialLink}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {social.label}
+                {t(social.labelKey)}
               </a>
             ))}
           </div>

@@ -15,7 +15,8 @@ import {
 import { fetchPlFixtures } from "@/lib/pl/api";
 import { groupHref } from "@/lib/wc26-groups";
 import { matchHref } from "@/lib/wc26-match";
-import { absoluteUrl } from "@/lib/site-url";
+import { localizedUrl } from "@/lib/i18n/urls";
+import { routing } from "@/i18n/routing";
 import { SITEMAP_STATIC_PATHS } from "@/lib/seo/sitemap-static-paths";
 import { teamHref } from "@/lib/wc26-teams";
 
@@ -50,11 +51,25 @@ function entry(
   changeFrequency: ChangeFrequency = "daily",
 ): SitemapEntry {
   return {
-    url: absoluteUrl(path),
+    url: localizedUrl(path, routing.defaultLocale),
     lastModified,
     changeFrequency,
     priority,
   };
+}
+
+function localizedEntries(
+  path: string,
+  lastModified: Date,
+  priority: number,
+  changeFrequency: ChangeFrequency = "daily",
+): SitemapEntry[] {
+  return routing.locales.map((locale) => ({
+    url: localizedUrl(path, locale),
+    lastModified,
+    changeFrequency,
+    priority,
+  }));
 }
 
 function staticPriority(path: string): number {
@@ -88,8 +103,8 @@ async function plMatchEntries(fallback: Date): Promise<SitemapEntry[]> {
     if (!body.fixtures?.length) {
       return [];
     }
-    return body.fixtures.map((fixture) =>
-      entry(
+    return body.fixtures.flatMap((fixture) =>
+      localizedEntries(
         `/premier-league/match/${fixture.fixtureId}`,
         fallback,
         0.75,
@@ -104,8 +119,8 @@ async function plMatchEntries(fallback: Date): Promise<SitemapEntry[]> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
 
-  const staticEntries = SITEMAP_STATIC_PATHS.map((path) =>
-    entry(
+  const staticEntries = SITEMAP_STATIC_PATHS.flatMap((path) =>
+    localizedEntries(
       path,
       lastModified,
       staticPriority(path),
@@ -113,16 +128,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ),
   );
 
-  const groupEntries = WC26_GROUP_IDS.map((groupId) =>
-    entry(groupHref(groupId), lastModified, 0.85, "weekly"),
+  const groupEntries = WC26_GROUP_IDS.flatMap((groupId) =>
+    localizedEntries(groupHref(groupId), lastModified, 0.85, "weekly"),
   );
 
-  const teamEntries = WC26_TEAMS.map((team) =>
-    entry(teamHref(team.id), lastModified, 0.8, "weekly"),
+  const teamEntries = WC26_TEAMS.flatMap((team) =>
+    localizedEntries(teamHref(team.id), lastModified, 0.8, "weekly"),
   );
 
-  const wc26MatchEntries = WC26_FIXTURES.map((fixture) =>
-    entry(
+  const wc26MatchEntries = WC26_FIXTURES.flatMap((fixture) =>
+    localizedEntries(
       matchHref(fixture.id),
       new Date(fixture.kickoffUtc),
       0.8,
@@ -130,14 +145,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ),
   );
 
-  const plClubEntries = getAllClubSlugs().map((slug) =>
-    entry(`/premier-league/clubs/${slug}`, lastModified, 0.8, "weekly"),
+  const plClubEntries = getAllClubSlugs().flatMap((slug) =>
+    localizedEntries(`/premier-league/clubs/${slug}`, lastModified, 0.8, "weekly"),
   );
 
   const canonicalArticleSlugs = new Set(getAllCanonicalArticleSlugs());
 
-  const articlePageEntries = getAllCanonicalArticleSlugs().map((slug) =>
-    entry(
+  const articlePageEntries = getAllCanonicalArticleSlugs().flatMap((slug) =>
+    localizedEntries(
       articleHref(slug),
       articleLastModified(slug, lastModified),
       0.85,
@@ -147,8 +162,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const editorialEntries = EDITORIAL_ARTICLES.filter(
     (article) => !canonicalArticleSlugs.has(article.slug),
-  ).map((article) =>
-    entry(
+  ).flatMap((article) =>
+    localizedEntries(
       article.path,
       new Date(article.publishedAt),
       0.85,

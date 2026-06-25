@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { formatNewsRelativeTime } from "@/lib/news-format";
 import { useNewsFeed } from "@/lib/use-news-feed";
 import type { NewsArticle } from "@/types/news";
-import styles from "@/app/page.module.css";
+import styles from "@/app/[locale]/page.module.css";
 
 const HOME_NEWS_LIMIT = 6;
 

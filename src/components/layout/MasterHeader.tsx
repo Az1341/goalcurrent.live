@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import NavLink from "@/components/nav/NavLink";
 import {
   DESKTOP_PL_DROPDOWN,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/nav";
 import HeaderNavDropdown from "./HeaderNavDropdown";
 import LiveRibbon from "./LiveRibbon";
+import LocaleSwitcher from "./LocaleSwitcher";
 import styles from "./master-chrome.module.css";
 
 function openSubscribeDialog() {
@@ -21,6 +23,8 @@ function openSubscribeDialog() {
 
 export default function MasterHeader() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const isHome = pathname === "/";
 
   return (
@@ -36,7 +40,7 @@ export default function MasterHeader() {
             </div>
           </NavLink>
 
-          <nav className={styles.desktopNav} aria-label="Main navigation">
+          <nav className={styles.desktopNav} aria-label={t("mainNavigation")}>
             {DESKTOP_PRIMARY_NAV.map((item) => {
               const active = isMainNavActive(pathname, item.href, item.exact);
               return (
@@ -45,29 +49,30 @@ export default function MasterHeader() {
                   href={item.href}
                   className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </NavLink>
               );
             })}
             <HeaderNavDropdown
-              label="PL 26/27"
+              label={t("pl2627")}
               links={DESKTOP_PL_DROPDOWN}
               isActive={isDesktopPlActive(pathname)}
             />
             <HeaderNavDropdown
-              label="WC26"
+              label={t("wc26")}
               links={DESKTOP_WC26_DROPDOWN}
               isActive={isDesktopWc26Active(pathname)}
             />
           </nav>
 
           <div className={styles.headerActions}>
+            <LocaleSwitcher />
             <button
               type="button"
               className={styles.headerSubscribe}
               onClick={openSubscribeDialog}
             >
-              Subscribe
+              {tCommon("subscribe")}
             </button>
           </div>
         </div>

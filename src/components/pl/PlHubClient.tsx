@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { PlAdSlotMid } from "@/components/pl/PlCommercialStrip";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
@@ -90,6 +91,7 @@ function HubStandingRow({ row }: { row: PlStandingRow }) {
 }
 
 export default function PlHubClient() {
+  const t = useTranslations("nav");
   const [view, setView] = useState<ViewState>("loading");
   const [fixturesData, setFixturesData] = useState<PlFixturesApiResponse | null>(
     null,
@@ -327,7 +329,7 @@ export default function PlHubClient() {
               <nav className={styles.hubLinks} aria-label="Premier League sections">
                 {HUB_LINKS.map((item) => (
                   <Link key={item.href} href={item.href} className={styles.hubLink}>
-                    {item.label}
+                    {t(item.labelKey)}
                   </Link>
                 ))}
               </nav>

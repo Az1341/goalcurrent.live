@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import TeamFlag from "@/components/TeamFlag";
 import { matchHref } from "@/lib/wc26-match";
 import {
@@ -32,7 +33,11 @@ function tickerStatusClass(matchClass: HomepageMatchView["matchClass"]) {
   return styles.liveMatchStatusUpcoming;
 }
 
-function renderMatchItem(match: HomepageMatchView, keySuffix = "") {
+function renderMatchItem(
+  match: HomepageMatchView,
+  t: ReturnType<typeof useTranslations>,
+  keySuffix = "",
+) {
   const score = formatScore(match);
   const homeName = formatTickerTeamName(match.homeTeamId, match.homeName);
   const awayName = formatTickerTeamName(match.awayTeamId, match.awayName);
@@ -40,10 +45,10 @@ function renderMatchItem(match: HomepageMatchView, keySuffix = "") {
   const isFt = match.matchClass === "ft";
   const statusLabel = isLive
     ? match.elapsed != null
-      ? `LIVE ${match.elapsed}'`
-      : "LIVE"
+      ? t("liveElapsed", { elapsed: match.elapsed })
+      : t("live")
     : isFt
-      ? "FT"
+      ? t("ft")
       : match.statusLabel;
   const matchTitle = formatTickerMatchTitle(
     match.homeName,
@@ -66,7 +71,7 @@ function renderMatchItem(match: HomepageMatchView, keySuffix = "") {
         <span
           className={`${styles.liveMatchScore} ${tickerStatusClass(match.matchClass)}`}
         >
-          {score ?? (isLive ? "LIVE" : "vs")}
+          {score ?? (isLive ? t("live") : t("vs"))}
         </span>
         <span className={styles.liveMatchTeams}>{awayName}</span>
         <TeamFlag teamId={match.awayTeamId} size={16} />
@@ -85,6 +90,7 @@ type LiveRibbonProps = {
 };
 
 export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
+  const t = useTranslations("layout.liveRibbon");
   const fixtures = useEffectiveFixtures();
   const allMatches = selectRibbonFixtures(fixtures);
   const [isMobile, setIsMobile] = useState(false);
@@ -107,12 +113,10 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
       <div
         className={`${styles.liveRibbon} ${embedded ? styles.liveRibbonEmbedded : ""}`}
         role="region"
-        aria-label="Live scores ticker"
+        aria-label={t("tickerAria")}
       >
-        <span className={styles.liveRibbonLabel}>WORLD CUP 2026</span>
-        <span className={styles.liveRibbonMessage}>
-          Fixtures from local schedule — scores when API sync is active
-        </span>
+        <span className={styles.liveRibbonLabel}>{t("worldCup2026")}</span>
+        <span className={styles.liveRibbonMessage}>{t("emptyMessage")}</span>
       </div>
     );
   }
@@ -126,30 +130,30 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
     <div
       className={`${styles.liveRibbon} ${embedded ? styles.liveRibbonEmbedded : ""}`}
       role="region"
-      aria-label="Live scores ticker"
+      aria-label={t("tickerAria")}
     >
       <span className={styles.liveRibbonLabel}>
         {hasLive ? <span className={styles.liveDot} aria-hidden="true" /> : null}
-        {hasLive ? "LIVE NOW" : "LATEST RESULTS"}
+        {hasLive ? t("liveNow") : t("latestResults")}
       </span>
       <div className={styles.tickerScroll}>
         <ul
           className={`${styles.tickerTrack} ${styles.liveRibbonList}`}
-          aria-label={hasLive ? "Live matches" : "Latest results"}
+          aria-label={hasLive ? t("liveMatchesAria") : t("latestResultsAria")}
         >
           {isMobile
-            ? allMatches.map((match) => renderMatchItem(match))
+            ? allMatches.map((match) => renderMatchItem(match, t))
             : desktopTrackMatches.map((match, index) =>
-                renderMatchItem(match, `-loop-${index}`),
+                renderMatchItem(match, t, `-loop-${index}`),
               )}
           {!isMobile && hiddenCount > 0 ? (
             <li className={styles.liveRibbonItem}>
               <Link
                 href={FIXTURES_HREF}
                 className={styles.liveRibbonMore}
-                aria-label={`View ${hiddenCount} more matches`}
+                aria-label={t("viewMoreMatchesAria", { count: hiddenCount })}
               >
-                +{hiddenCount} More Matches
+                {t("moreMatches", { count: hiddenCount })}
               </Link>
             </li>
           ) : null}
@@ -158,9 +162,9 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
               <Link
                 href={FIXTURES_HREF}
                 className={styles.liveRibbonMore}
-                aria-label="View all fixtures"
+                aria-label={t("viewAllFixturesAria")}
               >
-                ALL FIXTURES
+                {t("allFixtures")}
               </Link>
             </li>
           ) : null}

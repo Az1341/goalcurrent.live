@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getArticleCardImage, getHomepageArticles } from "@/lib/article-hub";
 import { articleHref } from "@/data/articles";
-import styles from "@/app/page.module.css";
+import styles from "@/app/[locale]/page.module.css";
 
 export default function HomeArticlesSection() {
   const articles = getHomepageArticles(3);

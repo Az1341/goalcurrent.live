@@ -172,6 +172,80 @@
   opacity: 0.65;
 }
 
+.sheetRowLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sheetRowMeta {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.langRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 18px;
+  border: none;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  background: transparent;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--gc-text-primary, #0f172a);
+  text-align: start;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.langRow:last-child {
+  border-bottom: none;
+}
+
+.langRow:active {
+  background: #fff1f2;
+}
+
+.langRowActive {
+  color: var(--gc-brand-accent, #c8102e);
+  background: #fff1f2;
+}
+
+.langFlag {
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.langLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.langCheck {
+  color: var(--gc-brand-accent, #c8102e);
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+[dir="rtl"] .panelHidden {
+  transform: translateX(-100%);
+}
+
+[dir="rtl"] .sheetRow {
+  text-align: right;
+}
+
+[dir="rtl"] .sheetRowLabel {
+  align-items: flex-end;
+}
+
 @media (min-width: 769px) {
   .moreOverlay,
   .sheet {

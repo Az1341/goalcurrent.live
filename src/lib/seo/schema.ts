@@ -71,12 +71,13 @@ export function organizationSchema(): SchemaNode {
   };
 }
 
-export function webSiteSchema(): SchemaNode {
+export function webSiteSchema(locale = "en"): SchemaNode {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_NAME,
     url: SITE_URL,
+    inLanguage: locale,
     publisher: {
       "@type": "Organization",
       name: SITE_NAME,
@@ -93,8 +94,8 @@ export function webSiteSchema(): SchemaNode {
   };
 }
 
-export function siteGraphSchema(): SchemaNode {
-  return combineSchemaGraph([organizationSchema(), webSiteSchema()]);
+export function siteGraphSchema(locale = "en"): SchemaNode {
+  return combineSchemaGraph([organizationSchema(), webSiteSchema(locale)]);
 }
 
 export function newsArticleSchema(input: ArticleSchemaInput): SchemaNode {
