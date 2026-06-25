@@ -176,6 +176,15 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.match("/") || caches.match("/offline.html");
+      }),
+    );
+    return;
+  }
+
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(networkFirstWithTimeout(event.request, 5000));
     return;

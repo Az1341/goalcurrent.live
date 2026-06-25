@@ -108,7 +108,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: BRAND_THEME_COLOR,
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#8B0000",
 };
 
 export function generateStaticParams() {
@@ -151,6 +154,27 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <SiteJsonLd locale={locale} />
           <Layout>{children}</Layout>
+          <div
+            style={{
+              marginTop: "2rem",
+              display: "flex",
+              justifyContent: "center",
+              paddingBottom: "1.5rem",
+            }}
+          >
+            <a
+              href="https://play.google.com/store/apps/details?id=com.goalcurrent.app"
+              rel="noopener"
+              style={{ display: "block" }}
+            >
+              <img
+                src="/google-play-badge.png"
+                alt="Get it on Google Play"
+                width={180}
+                height={54}
+              />
+            </a>
+          </div>
           <GA />
           <OneSignalInit />
           <AdSenseScript />
