@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import useSWR from "swr";
 import {
   resolveTimelineEventDisplay,
   resolveEventSide,
@@ -18,12 +19,12 @@ import {
   MatchMovement,
   MatchPlayerStats,
 } from "@/components/match/MatchDetailSections";
+import { fetcher, LIVE_MATCH_SWR_OPTIONS } from "@/lib/client/fetcher";
 import styles from "./PlMatch.module.css";
 import tableStyles from "./PlTable.module.css";
 import { PlErrorPanel, PlLoadingPanel, PlTeamLogo } from "./PlShared";
 
 const PL_COMPETITION = "Premier League 2026/27";
-const LIVE_POLL_MS = 30_000;
 
 function formatKickoff(kickoffUtc: string): string {
   const date = new Date(kickoffUtc);
@@ -85,58 +86,26 @@ type PlMatchClientProps = {
 };
 
 export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
-  const [data, setData] = useState<PlMatchApiResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [shareNote, setShareNote] = useState<string | null>(null);
 
   const invalidId = !Number.isFinite(fixtureId) || fixtureId <= 0;
+  const url = invalidId ? null : `/api/pl/match/${fixtureId}`;
 
-  const load = useCallback(async () => {
-    if (invalidId) {
-      setData(null);
-      setErrorMessage("Invalid match link.");
-      setLoading(false);
-      return;
-    }
+  const { data, error, isLoading } = useSWR<PlMatchApiResponse>(
+    url,
+    fetcher,
+    LIVE_MATCH_SWR_OPTIONS,
+  );
 
-    setLoading(true);
-
-    try {
-      const res = await fetch(`/api/pl/match/${fixtureId}`, {
-        cache: "no-store",
-      });
-      if (!res.ok) {
-        throw new Error(`Request failed (${res.status})`);
-      }
-      const body = (await res.json()) as PlMatchApiResponse;
-      setData(body);
-      if (!body.fixture) {
-        setErrorMessage(body.error ?? "Match not found.");
-      } else {
-        setErrorMessage(null);
-      }
-    } catch (error) {
-      setData(null);
-      setErrorMessage(
-        error instanceof Error ? error.message : "Unknown error",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [fixtureId, invalidId]);
-
-  useEffect(() => {
-    Promise.resolve().then(() => void load());
-  }, [load]);
-
-  useEffect(() => {
-    if (data?.fixture?.status !== "LIVE") return;
-    const timer = window.setInterval(() => {
-      void load();
-    }, LIVE_POLL_MS);
-    return () => window.clearInterval(timer);
-  }, [data?.fixture?.status, load]);
+  const errorMessage = error
+    ? error instanceof Error
+      ? error.message
+      : "Unknown error"
+    : invalidId
+      ? "Invalid match link."
+      : data && !data.fixture
+        ? data.error ?? "Match not found."
+        : null;
 
   const fixture = data?.fixture ?? null;
 
@@ -177,7 +146,7 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <main className={styles.plPage}>
         <PlLoadingPanel title="Loading match" text="Fetching match centre…" />

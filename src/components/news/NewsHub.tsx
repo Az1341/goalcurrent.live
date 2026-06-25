@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import useSWR from "swr";
 import RemoteImage from "@/components/ui/RemoteImage";
 import { NEWS_FALLBACK_ARTICLES } from "@/components/news/news-fallback";
 import type { NewsArticle, NewsApiResponse, NewsTag } from "@/types/news";
 import { mergeEditorialFirst } from "@/lib/editorial-news";
 import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
 import { SITE_NAME } from "@/lib/site-url";
+import { fetcher, visibilityAwareRefreshInterval } from "@/lib/client/fetcher";
 import styles from "./news.module.css";
-
-const REFRESH_MS = 3_600_000;
 
 function formatNewsDate(iso: string): string {
   try {
@@ -124,52 +124,39 @@ function LoadingSkeleton() {
   );
 }
 
+const NEWS_REFRESH_MS = 3_600_000;
+const NEWS_DEDUP_MS = 60_000;
+
 export default function NewsHub() {
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [sources, setSources] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [usingFallback, setUsingFallback] = useState(false);
   const [updatedLabel, setUpdatedLabel] = useState("Loading…");
 
-  const loadNews = useCallback(async () => {
-    try {
-      const response = await fetch("/api/news", { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error(`News API ${response.status}`);
-      }
+  const { data, error, isLoading } = useSWR<NewsApiResponse>(
+    "/api/news",
+    fetcher,
+    {
+      refreshInterval: () => visibilityAwareRefreshInterval(NEWS_REFRESH_MS),
+      dedupingInterval: NEWS_DEDUP_MS,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+    },
+  );
 
-      const data = (await response.json()) as NewsApiResponse;
-      if (!data.articles.length) {
-        throw new Error("No articles");
-      }
-
-      setArticles(mergeEditorialFirst(data.articles));
-      setSources(data.sources);
-      setUsingFallback(false);
-      setUpdatedLabel(
-        `Updated: ${new Date().toLocaleTimeString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })} · ${data.sources.join(" + ") || "BBC Sport + ESPN"}`,
-      );
-    } catch {
-      setArticles(mergeEditorialFirst([...NEWS_FALLBACK_ARTICLES]));
-      setSources([SITE_NAME]);
-      setUsingFallback(true);
+  const articles = useMemo(() => {
+    if (!data?.articles.length) {
       setUpdatedLabel("Showing fallback news · Live feed updating…");
-    } finally {
-      setLoading(false);
+      return mergeEditorialFirst([...NEWS_FALLBACK_ARTICLES]);
     }
-  }, []);
+    setUpdatedLabel(
+      `Updated: ${new Date().toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })} · ${data.sources.join(" + ") || "BBC Sport + ESPN"}`,
+    );
+    return mergeEditorialFirst(data.articles);
+  }, [data?.articles, data?.sources]);
 
-  useEffect(() => {
-    Promise.resolve().then(() => void loadNews());
-    const timer = window.setInterval(() => {
-      void loadNews();
-    }, REFRESH_MS);
-    return () => window.clearInterval(timer);
-  }, [loadNews]);
-
+  const sources = useMemo(() => data?.sources ?? [SITE_NAME], [data?.sources]);
+  const usingFallback = !data?.articles.length || !!error;
   const featured = articles[0];
   const rest = articles.slice(1);
 
@@ -221,11 +208,11 @@ export default function NewsHub() {
         </div>
       </Link>
 
-      {loading ? <LoadingSkeleton /> : null}
+      {isLoading ? <LoadingSkeleton /> : null}
 
-      {!loading && featured ? <FeaturedArticle article={featured} /> : null}
+      {!isLoading && featured ? <FeaturedArticle article={featured} /> : null}
 
-      {!loading ? (
+      {!isLoading ? (
         <>
           {usingFallback ? (
             <p className={styles.fallbackNote}>

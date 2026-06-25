@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import useSWR from "swr";
 import { PlAdSlotMid } from "@/components/pl/PlCommercialStrip";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
 import type {
@@ -23,6 +24,7 @@ import {
 } from "@/lib/pl/pl-broadcasters";
 import { PL_SECTION_NAV } from "@/lib/nav";
 import { SITE_NAME } from "@/lib/site-url";
+import { fetcher, LIVE_SWR_OPTIONS } from "@/lib/client/fetcher";
 import styles from "./PlData.module.css";
 import tableStyles from "./PlTable.module.css";
 import {
@@ -92,103 +94,83 @@ function HubStandingRow({ row }: { row: PlStandingRow }) {
 
 export default function PlHubClient() {
   const t = useTranslations("nav");
-  const [view, setView] = useState<ViewState>("loading");
-  const [fixturesData, setFixturesData] = useState<PlFixturesApiResponse | null>(
-    null,
+
+  const { data: fixturesData, error: fixturesError, isLoading: fixturesLoading } =
+    useSWR<PlFixturesApiResponse>("/api/pl/fixtures", (url) =>
+      fetch(url).then((res) => res.json()).then(withVisitorBroadcasters),
+      LIVE_SWR_OPTIONS,
+    );
+
+  const { data: teamsData, error: teamsError } = useSWR<PlTeamsApiResponse>(
+    "/api/pl/teams",
+    fetcher,
+    LIVE_SWR_OPTIONS,
   );
-  const [standingsData, setStandingsData] =
-    useState<PlStandingsApiResponse | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  const { data: standingsData, error: standingsError, isLoading: standingsLoading } =
+    useSWR<PlStandingsApiResponse>("/api/pl/standings", fetcher, LIVE_SWR_OPTIONS);
 
-    async function load() {
-      setView("loading");
-      try {
-        const [fixturesRes, standingsRes] = await Promise.all([
-          fetch("/api/pl/fixtures", { cache: "no-store" }),
-          fetch("/api/pl/standings", { cache: "no-store" }),
-        ]);
+  const isLoading = fixturesLoading || standingsLoading;
+  const hasError = fixturesError || standingsError;
+  const errorMessage = hasError
+    ? "Could not load Premier League hub data."
+    : null;
 
-        if (!fixturesRes.ok || !standingsRes.ok) {
-          throw new Error("Could not load Premier League hub data.");
-        }
-
-        const fixturesBody = withVisitorBroadcasters(
-          (await fixturesRes.json()) as PlFixturesApiResponse,
-        );
-        let standingsBody = (await standingsRes.json()) as PlStandingsApiResponse;
-
-        if (!standingsBody.standings.length) {
-          const teamsRes = await fetch("/api/pl/teams", { cache: "no-store" });
-          if (teamsRes.ok) {
-            const teamsBody = (await teamsRes.json()) as PlTeamsApiResponse;
-            if (teamsBody.teams.length) {
-              standingsBody = {
-                ...standingsBody,
-                standings: buildZeroStandingsFromTeams(
-                  teamsBody.teams.map((team) => ({
-                    id: team.teamId,
-                    name: team.name,
-                    logo: team.logo,
-                  })),
-                ),
-              };
-            }
-          }
-
-          if (!standingsBody.standings.length && fixturesBody.fixtures.length) {
-            const teams = new Map<
-              number,
-              { id: number; name: string; logo: string | null }
-            >();
-            for (const fixture of fixturesBody.fixtures) {
-              teams.set(fixture.homeTeamId, {
-                id: fixture.homeTeamId,
-                name: fixture.homeTeamName,
-                logo: fixture.homeTeamLogo,
-              });
-              teams.set(fixture.awayTeamId, {
-                id: fixture.awayTeamId,
-                name: fixture.awayTeamName,
-                logo: fixture.awayTeamLogo,
-              });
-            }
-            if (teams.size) {
-              standingsBody = {
-                ...standingsBody,
-                standings: buildZeroStandingsFromTeams([...teams.values()]),
-              };
-            }
-          }
-        }
-
-        if (cancelled) return;
-        setFixturesData(fixturesBody);
-        setStandingsData(standingsBody);
-        setView("ready");
-      } catch (error) {
-        if (cancelled) return;
-        setErrorMessage(
-          error instanceof Error ? error.message : "Unknown error",
-        );
-        setView("error");
+  let processedStandingsData: PlStandingsApiResponse | undefined = standingsData;
+  if (!processedStandingsData?.standings.length && fixturesData?.fixtures.length) {
+    const fallbackStandings: PlStandingsApiResponse = {
+      configured: true,
+      league: "Premier League",
+      leagueId: 39,
+      season: 2026,
+      standings: [],
+      source: "fallback",
+      fetchedAt: new Date().toISOString(),
+    };
+    const baseData = processedStandingsData || fallbackStandings;
+    if (teamsData?.teams.length) {
+      processedStandingsData = {
+        ...baseData,
+        standings: buildZeroStandingsFromTeams(
+          teamsData.teams.map((team) => ({
+            id: team.teamId,
+            name: team.name,
+            logo: team.logo,
+          })),
+        ),
+      };
+    } else {
+      const teams = new Map<
+        number,
+        { id: number; name: string; logo: string | null }
+      >();
+      for (const fixture of fixturesData.fixtures) {
+        teams.set(fixture.homeTeamId, {
+          id: fixture.homeTeamId,
+          name: fixture.homeTeamName,
+          logo: fixture.homeTeamLogo,
+        });
+        teams.set(fixture.awayTeamId, {
+          id: fixture.awayTeamId,
+          name: fixture.awayTeamName,
+          logo: fixture.awayTeamLogo,
+        });
+      }
+      if (teams.size) {
+        processedStandingsData = {
+          ...baseData,
+          standings: buildZeroStandingsFromTeams([...teams.values()]),
+        };
       }
     }
-
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  }
 
   const nextFixture = useMemo(
     () =>
       fixturesData?.fixtures.length
         ? findNextFixture(fixturesData.fixtures)
         : null,
-    [fixturesData],
+    [fixturesData?.fixtures],
   );
 
   const latestResult = useMemo(
@@ -196,28 +178,28 @@ export default function PlHubClient() {
       fixturesData?.fixtures.length
         ? findLatestResult(fixturesData.fixtures)
         : null,
-    [fixturesData],
+    [fixturesData?.fixtures],
   );
 
   const tableSnapshot = useMemo(() => {
-    if (!standingsData?.standings.length) return [];
-    return resolveDisplayStandings(standingsData.standings).slice(0, 6);
-  }, [standingsData]);
+    if (!processedStandingsData?.standings.length) return [];
+    return resolveDisplayStandings(processedStandingsData.standings).slice(0, 6);
+  }, [processedStandingsData?.standings]);
 
   const updatedAtLabel = useMemo(() => {
-    const iso = fixturesData?.fetchedAt ?? standingsData?.fetchedAt;
+    const iso = fixturesData?.fetchedAt ?? processedStandingsData?.fetchedAt;
     if (!iso) return "—";
     return new Date(iso).toLocaleString(undefined, {
       dateStyle: "medium",
       timeStyle: "short",
     });
-  }, [fixturesData?.fetchedAt, standingsData?.fetchedAt]);
+  }, [fixturesData?.fetchedAt, processedStandingsData?.fetchedAt]);
 
   const preseasonTable =
     tableSnapshot.length > 0 && isPreseasonStandings(tableSnapshot);
 
   const configured =
-    fixturesData?.configured !== false || standingsData?.configured !== false;
+    fixturesData?.configured !== false || processedStandingsData?.configured !== false;
 
   return (
     <main className={styles.plPage}>
@@ -231,17 +213,17 @@ export default function PlHubClient() {
 
       <PlAdSlotMid />
 
-      {view === "loading" ? (
+      {isLoading ? (
         <PlLoadingPanel title="Loading hub" text="Fetching Premier League data…" />
       ) : null}
-      {view === "error" ? (
+      {hasError ? (
         <PlErrorPanel
           title="Could not load hub"
           text={errorMessage ?? "Premier League data is temporarily unavailable."}
         />
       ) : null}
 
-      {view === "ready" ? (
+      {!isLoading && !hasError && fixturesData ? (
         <>
           <div className={styles.hubGrid}>
             <section className={styles.hubCard} aria-labelledby="pl-next-fixture">
