@@ -66,12 +66,14 @@ const nextConfig: NextConfig = {
     return SITE_REDIRECTS;
   },
   async rewrites() {
-    return [
-      {
-        source: "/.well-known/assetlinks.json",
-        destination: "/api/well-known/assetlinks",
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: "/.well-known/assetlinks.json",
+          destination: "/api/well-known/assetlinks",
+        },
+      ],
+    };
   },
   async headers() {
     return [

@@ -117,6 +117,12 @@ function applyLegacyRedirects(request: NextRequest): NextResponse | null {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (pathname === "/.well-known/assetlinks.json") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/api/well-known/assetlinks";
+    return NextResponse.rewrite(url);
+  }
+
   // Client navigations sometimes request /{locale}/_next/* — rewrite to /_next/*
   const localeAsset = LOCALE_NEXT_ASSET.exec(pathname);
   if (localeAsset) {
@@ -167,6 +173,7 @@ export function proxy(request: NextRequest) {
 
 export const proxyConfig = {
   matcher: [
+    "/.well-known/assetlinks.json",
     "/((?!api|_next|_vercel|favicon.ico|sw.js|OneSignalSDKWorker.js|manifest.json|ads.txt|.*\\..*).*)",
   ],
 };
