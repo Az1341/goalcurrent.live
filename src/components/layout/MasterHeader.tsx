@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import NavLink from "@/components/nav/NavLink";
@@ -33,13 +32,12 @@ export default function MasterHeader() {
         <div className={styles.bar}>
           <NavLink href="/" className={styles.brand}>
             <div className={styles.brandLogoWrap}>
-              <Image
+              <img
                 src="/logo.svg"
-                alt=""
+                alt="GoalCurrent"
                 width={48}
                 height={48}
-                priority
-                unoptimized
+                decoding="async"
               />
             </div>
             <div className={styles.brandName}>

@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { FOOTER_LINKS, FOOTER_SOCIAL } from "@/lib/nav";
 import { NORDVPN_HREF } from "@/lib/site-keys";
 import { SITE_NAME } from "@/lib/site-url";
+import GooglePlayBadge from "./GooglePlayBadge";
 import styles from "./master-chrome.module.css";
 
 export default function MasterFooter() {
@@ -47,6 +48,10 @@ export default function MasterFooter() {
           <a className={styles.nordCta} href={NORDVPN_HREF} rel="noopener noreferrer sponsored">
             {tLayout("nordCta")}
           </a>
+        </div>
+
+        <div className={styles.googlePlayWrap}>
+          <GooglePlayBadge />
         </div>
 
         <p className={styles.footerCopy}>

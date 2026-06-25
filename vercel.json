@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/google-play-badge.png",
+      "destination": "/images/google-play-badge.png",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/.well-known/assetlinks.json",

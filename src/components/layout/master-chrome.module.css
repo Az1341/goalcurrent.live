@@ -47,6 +47,12 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
+.brandLogoWrap img {
+  display: block;
+  width: 48px;
+  height: 48px;
+}
+
 .brandName {
   font-size: 1.25rem;
   font-weight: 800;
@@ -326,6 +332,24 @@
   font-weight: 700;
   font-size: 0.875rem;
   font-family: var(--gc-font);
+}
+
+.googlePlayWrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.googlePlayLink {
+  display: block;
+  line-height: 0;
+}
+
+.googlePlayBadge {
+  display: block;
+  width: min(180px, 100%);
+  height: auto;
+  max-width: 100%;
 }
 
 .footerCopy {

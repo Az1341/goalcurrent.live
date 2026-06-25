@@ -11,6 +11,11 @@ type RouteRedirect = NonNullable<
 
 /** CSP is applied per-request in src/proxy.ts (Next.js 16 middleware). */
 const SITE_REDIRECTS: RouteRedirect[] = [
+  {
+    source: "/google-play-badge.png",
+    destination: "/images/google-play-badge.png",
+    permanent: true,
+  },
   { source: "/video", destination: "/videos", permanent: true },
   { source: "/video/:path*", destination: "/videos/:path*", permanent: true },
   {

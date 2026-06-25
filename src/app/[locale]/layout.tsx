@@ -154,27 +154,6 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <SiteJsonLd locale={locale} />
           <Layout>{children}</Layout>
-          <div
-            style={{
-              marginTop: "2rem",
-              display: "flex",
-              justifyContent: "center",
-              paddingBottom: "1.5rem",
-            }}
-          >
-            <a
-              href="https://play.google.com/store/apps/details?id=com.goalcurrent.app"
-              rel="noopener"
-              style={{ display: "block" }}
-            >
-              <img
-                src="/google-play-badge.png"
-                alt="Get it on Google Play"
-                width={180}
-                height={54}
-              />
-            </a>
-          </div>
           <GA />
           <OneSignalInit />
           <AdSenseScript />

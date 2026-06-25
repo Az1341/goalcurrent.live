@@ -5,6 +5,7 @@ const REQUIRED_PUBLIC = [
   "public/logo.svg",
   "public/favicon.ico",
   "public/images/football-hero-bg.jpg",
+  "public/images/google-play-badge.png",
   "public/images/hero-home.png",
   "public/flags/4x3/br.svg",
   "public/flags/4x3/gb-eng.svg",
@@ -15,6 +16,8 @@ const REQUIRED_SOURCE_SNIPPETS = [
   { file: "src/lib/article-hub.ts", mustInclude: "getArticleCardImage" },
   { file: "src/lib/teamFlag.ts", mustInclude: "/flags/4x3" },
   { file: "src/components/layout/MasterHeader.tsx", mustInclude: "/logo.svg" },
+  { file: "src/lib/site-keys.ts", mustInclude: "/images/google-play-badge.png" },
+  { file: "src/components/layout/GooglePlayBadge.tsx", mustInclude: "GOOGLE_PLAY_BADGE_SRC" },
 ];
 let failed = false;
 for (const rel of REQUIRED_PUBLIC) {

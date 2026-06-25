@@ -11,3 +11,7 @@ export const TV_REGION_KEY = "gc_tv_region_v1";
 
 /** NordVPN affiliate placeholder — replace when live link is confirmed */
 export const NORDVPN_HREF = "https://go.nordvpn.net/aff_c?offer_id=15&aff_id=148347";
+
+export const GOOGLE_PLAY_APP_URL =
+  "https://play.google.com/store/apps/details?id=com.goalcurrent.app";
+export const GOOGLE_PLAY_BADGE_SRC = "/images/google-play-badge.png";
