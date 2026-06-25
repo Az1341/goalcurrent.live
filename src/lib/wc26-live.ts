@@ -166,6 +166,7 @@ export type HomepageMatchView = {
   readonly matchClass: HomepageMatchClass;
   readonly statusLabel: string;
   readonly score: { home: number; away: number } | null;
+  readonly kickoffUtc: string;
   readonly kickoffLabel: string;
   readonly venueLabel: string;
   readonly roundLabel: string;
@@ -211,6 +212,7 @@ export function buildHomepageMatchView(fixture: EffectiveFixture): HomepageMatch
     matchClass,
     statusLabel: homepageStatusLabel(fixture, matchClass),
     score: getFixtureScore(fixture),
+    kickoffUtc: fixture.kickoffUtc,
     kickoffLabel: formatVisitorKickoff(fixture.kickoffUtc),
     venueLabel: venue ? `${venue.name}, ${venue.city}` : "",
     roundLabel,
@@ -219,29 +221,62 @@ export function buildHomepageMatchView(fixture: EffectiveFixture): HomepageMatch
 }
 
 export type FeaturedFixtureSelection = {
-  readonly mode: "single" | "simultaneous-final";
+  readonly mode: "single" | "simultaneous";
   readonly fixtures: readonly EffectiveFixture[];
   readonly groupId?: Wc26GroupId;
 };
 
-/** Featured: simultaneous final-round live deciders, else first live/today/upcoming. */
+function featuredCandidateFixtures(
+  fixtures: readonly EffectiveFixture[],
+): readonly EffectiveFixture[] {
+  const buckets = partitionFixturesForLiveCentre(fixtures);
+  return [...buckets.live, ...buckets.today, ...buckets.upcoming];
+}
+
+/** All non-finished fixtures that share the seed kickoff slot (2+ → dual featured hero). */
+function findSimultaneousKickoffPeers(
+  fixtures: readonly EffectiveFixture[],
+  seed: EffectiveFixture,
+): readonly EffectiveFixture[] {
+  const peers = featuredCandidateFixtures(fixtures).filter(
+    (fixture) => fixture.kickoffUtc === seed.kickoffUtc,
+  );
+
+  if (peers.length < 2) {
+    return [seed];
+  }
+
+  return [...peers].sort(sortByKickoffAsc);
+}
+
+/** Featured: simultaneous kickoff slots (2+), else first live/today/upcoming. */
 export function selectFeaturedFixtures(
   fixtures: readonly EffectiveFixture[],
 ): FeaturedFixtureSelection {
-  const simultaneous = findLiveSimultaneousFinalRoundGroup(fixtures);
-  if (simultaneous) {
+  const liveFinal = findLiveSimultaneousFinalRoundGroup(fixtures);
+  if (liveFinal) {
     return {
-      mode: "simultaneous-final",
-      fixtures: simultaneous.fixtures,
-      groupId: simultaneous.groupId,
+      mode: "simultaneous",
+      fixtures: liveFinal.fixtures,
+      groupId: liveFinal.groupId,
     };
   }
 
-  const single = selectFeaturedFixture(fixtures);
-  return {
-    mode: "single",
-    fixtures: single ? [single] : [],
-  };
+  const seed = selectFeaturedFixture(fixtures);
+  if (!seed) {
+    return { mode: "single", fixtures: [] };
+  }
+
+  const peers = findSimultaneousKickoffPeers(fixtures, seed);
+  if (peers.length >= 2) {
+    return {
+      mode: "simultaneous",
+      fixtures: peers,
+      groupId: seed.groupId,
+    };
+  }
+
+  return { mode: "single", fixtures: [seed] };
 }
 
 /** Featured: first live, else first today, else next upcoming. */

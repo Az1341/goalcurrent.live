@@ -3,6 +3,10 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import {
+  useLocalizedKickoffLabel,
+  useLocalizedKickoffTime,
+} from "@/lib/client/use-local-kickoff";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import {
@@ -75,6 +79,7 @@ function FeaturedStatusBadge({ match }: { match: HomepageMatchView }) {
 function FeaturedMatchBody({ match }: { match: HomepageMatchView }) {
   const score = formatScore(match);
   const isLive = match.matchClass === "live";
+  const kickoffLabel = useLocalizedKickoffLabel(match.kickoffUtc);
 
   return (
     <>
@@ -100,7 +105,7 @@ function FeaturedMatchBody({ match }: { match: HomepageMatchView }) {
       </div>
 
       <p className={styles.featuredMeta}>
-        {match.kickoffLabel}
+        {kickoffLabel}
         {match.venueLabel ? ` · ${match.venueLabel}` : ""}
       </p>
     </>
@@ -160,7 +165,11 @@ function FeaturedSimultaneousDecider({
         </div>
       </div>
 
-      <div className={styles.featuredDualBody}>
+      <div
+        className={`${styles.featuredDualBody} ${
+          matches.length === 2 ? styles.featuredDualBodyPair : ""
+        }`}
+      >
         {matches.map((match) => (
           <div key={match.fixtureId} className={styles.featuredDualMatch}>
             <FeaturedMatchBody match={match} />
@@ -187,6 +196,50 @@ function FeaturedSimultaneousDecider({
   );
 }
 
+function CompactMatchRow({
+  match,
+  showHalf,
+  fixture,
+}: {
+  match: HomepageMatchView;
+  showHalf: boolean;
+  fixture: EffectiveFixture | undefined;
+}) {
+  const kickoffTime = useLocalizedKickoffTime(match.kickoffUtc);
+  const score = formatScore(match);
+  const half = fixture ? formatHalfIndicator(fixture) : null;
+  const isLive = match.matchClass === "live";
+
+  return (
+    <li>
+      <FixtureMatchRow
+        className={styles.compactRowInner}
+        href={matchHref(match.fixtureId)}
+        homeTeamId={match.homeTeamId}
+        awayTeamId={match.awayTeamId}
+        homeName={match.homeName}
+        awayName={match.awayName}
+        centrePrimary={
+          score ?? (match.matchClass === "upcoming" ? kickoffTime : "–")
+        }
+        centreSecondary={
+          showHalf && half
+            ? half
+            : match.matchClass === "ft"
+              ? "FT"
+              : isLive && match.elapsed != null
+                ? `${match.statusLabel} · ${match.elapsed}'`
+                : match.matchClass === "upcoming"
+                  ? undefined
+                  : match.statusLabel
+        }
+        flagSize={LIST_FLAG}
+        isLive={isLive}
+      />
+    </li>
+  );
+}
+
 function CompactMatchList({
   matches,
   showHalf,
@@ -202,39 +255,14 @@ function CompactMatchList({
 
   return (
     <ul className={styles.compactList}>
-      {matches.map((match) => {
-        const score = formatScore(match);
-        const fixture = fixtureById.get(match.fixtureId);
-        const half = fixture ? formatHalfIndicator(fixture) : null;
-        const isLive = match.matchClass === "live";
-
-        return (
-          <li key={match.fixtureId}>
-            <FixtureMatchRow
-              className={styles.compactRowInner}
-              href={matchHref(match.fixtureId)}
-              homeTeamId={match.homeTeamId}
-              awayTeamId={match.awayTeamId}
-              homeName={match.homeName}
-              awayName={match.awayName}
-              centrePrimary={score ?? (match.matchClass === "upcoming" ? match.statusLabel : "–")}
-              centreSecondary={
-                showHalf && half
-                  ? half
-                  : match.matchClass === "ft"
-                    ? "FT"
-                    : isLive && match.elapsed != null
-                      ? `${match.statusLabel} · ${match.elapsed}'`
-                      : match.matchClass === "upcoming"
-                        ? undefined
-                        : match.statusLabel
-              }
-              flagSize={LIST_FLAG}
-              isLive={isLive}
-            />
-          </li>
-        );
-      })}
+      {matches.map((match) => (
+        <CompactMatchRow
+          key={match.fixtureId}
+          match={match}
+          showHalf={showHalf}
+          fixture={fixtureById.get(match.fixtureId)}
+        />
+      ))}
     </ul>
   );
 }
@@ -305,9 +333,7 @@ export default function Home() {
           <h2 id="featured-match-heading" className={styles.sectionTitle} data-gc-text>
             {t("featuredMatch")}
           </h2>
-          {featuredSelection.mode === "simultaneous-final" &&
-          featuredSelection.groupId &&
-          featuredMatches.length === 2 ? (
+          {featuredSelection.mode === "simultaneous" && featuredMatches.length >= 2 ? (
             <FeaturedSimultaneousDecider matches={featuredMatches} />
           ) : featured ? (
             <FeaturedMatchHero match={featured} />

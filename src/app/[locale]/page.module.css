@@ -967,6 +967,21 @@
   gap: 0;
 }
 
+@media (min-width: 720px) {
+  .featuredDualBodyPair {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .featuredDualBodyPair .featuredDualMatch {
+    border-bottom: none;
+    border-right: 1px solid var(--hp-border);
+  }
+
+  .featuredDualBodyPair .featuredDualMatch:last-child {
+    border-right: none;
+  }
+}
+
 .featuredDualMatch {
   padding: 12px 14px;
   border-bottom: 1px solid var(--hp-border);

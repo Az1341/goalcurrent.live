@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { getTeamById } from "@/data/wc26";
 import {
@@ -5,6 +7,7 @@ import {
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
+import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import { formatFixtureStatusLabel, isLiveMatchStatus } from "@/lib/wc26-live";
 import { matchHref } from "@/lib/wc26-match";
 import FixtureMatchRow from "@/components/match/FixtureMatchRow";
@@ -18,7 +21,7 @@ function statusColumnLabel(
   fixture: EffectiveFixture,
   isLive: boolean,
   isCompleted: boolean,
-): string {
+): string | undefined {
   if (isLive) {
     if (fixture.elapsed != null) {
       return `${fixture.elapsed}'`;
@@ -28,7 +31,7 @@ function statusColumnLabel(
   if (isCompleted) {
     return "FT";
   }
-  return formatFixtureStatusLabel(fixture.status);
+  return undefined;
 }
 
 export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
@@ -36,6 +39,8 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
   const away = getTeamById(fixture.awayTeamId);
   const isLive = isLiveMatchStatus(fixture.status);
   const isCompleted = isEffectiveFixtureCompleted(fixture);
+  const isScheduled = !isLive && !isCompleted;
+  const kickoffTime = useLocalizedKickoffTime(fixture.kickoffUtc);
   const score = getFixtureScore(fixture);
   const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
 
@@ -44,7 +49,7 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
       ? score
         ? `${score.home}–${score.away}`
         : "–"
-      : "vs";
+      : kickoffTime;
 
   const centreSecondary = statusColumnLabel(fixture, isLive, isCompleted);
 
@@ -53,7 +58,11 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
       <Link
         href={matchHref(fixture.id)}
         className={`${styles.matchRowLink} ${isLive ? styles.matchRowLive : ""}`}
-        aria-label={`${label} - ${centreSecondary}`}
+        aria-label={
+          isScheduled
+            ? `${label} - ${kickoffTime}`
+            : `${label} - ${centreSecondary ?? centrePrimary}`
+        }
       >
         <FixtureMatchRow
           homeTeamId={fixture.homeTeamId}
