@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 export async function GET() {
   return NextResponse.json(
     [{
-      relation: ["delegate_permission/common.handle_all_urls"],
+      relation: [
+        "delegate_permission/common.handle_all_urls",
+        "delegate_permission/common.get_login_creds",
+      ],
       target: {
         namespace: "android_app",
         package_name: "com.goalcurrent.app",
