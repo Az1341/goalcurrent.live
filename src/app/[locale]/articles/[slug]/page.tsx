@@ -4,7 +4,7 @@ import Link from "next/link";
 import ArticleSeo from "@/components/seo/ArticleSeo";
 import RelatedInternalLinks from "@/components/seo/RelatedInternalLinks";
 import ArticleBodyWithAd from "@/components/articles/ArticleBodyWithAd";
-import { getArticleBySlug, getAllArticleSlugs } from "@/data/articles";
+import { getArticleBySlug, getDynamicArticleSlugs } from "@/data/articles";
 import {
   articleBreadcrumbs,
   articleSeoFromArticle,
@@ -17,7 +17,7 @@ import { absoluteUrl } from "@/lib/site-url";
 type PageProps = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return getAllArticleSlugs().map((slug) => ({ slug }));
+  return getDynamicArticleSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

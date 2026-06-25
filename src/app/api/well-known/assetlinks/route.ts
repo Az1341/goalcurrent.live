@@ -3,10 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   return NextResponse.json(
     [{
-      relation: [
-        "delegate_permission/common.handle_all_urls",
-        "delegate_permission/common.get_login_creds",
-      ],
+      relation: ["delegate_permission/common.handle_all_urls"],
       target: {
         namespace: "android_app",
         package_name: "com.goalcurrent.app",
@@ -16,12 +13,6 @@ export async function GET() {
         ]
       }
     }],
-    {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "no-cache"
-      }
-    }
+    { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache" } }
   );
 }

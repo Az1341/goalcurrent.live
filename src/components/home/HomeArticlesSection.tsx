@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { getArticleCardImage, getHomepageArticles } from "@/lib/article-hub";
+import { getArticleCardImage, getHomepageArticles, isArticleCardImageUnoptimized } from "@/lib/article-hub";
 import { articleHref } from "@/data/articles";
 import styles from "@/app/[locale]/page.module.css";
 
@@ -41,6 +41,7 @@ export default function HomeArticlesSection() {
                     height={200}
                     sizes="(max-width: 900px) 100vw, 33vw"
                     className={styles.articlesHomeImage}
+                    unoptimized={isArticleCardImageUnoptimized(image)}
                   />
                 </div>
               ) : null}

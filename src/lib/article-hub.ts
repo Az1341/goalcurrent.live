@@ -16,6 +16,11 @@ export function getArticleCardImage(slug: string): string | undefined {
   return ARTICLE_CARD_IMAGES[slug];
 }
 
+/** SVG card art must bypass the Next.js image optimizer (same as article pages). */
+export function isArticleCardImageUnoptimized(src: string): boolean {
+  return src.endsWith(".svg");
+}
+
 export function getEditorialNewsArticles(): NewsArticle[] {
   return EDITORIAL_ARTICLES.map((article) => ({
     title: article.title,

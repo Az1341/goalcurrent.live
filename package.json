@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "eslint",
     "i18n:check": "node scripts/check-message-parity.cjs",
+    "verify:design": "node scripts/verify-fundamentals.cjs",
     "test:i18n": "node --test tests/i18n/*.test.mjs"
   },
   "dependencies": {

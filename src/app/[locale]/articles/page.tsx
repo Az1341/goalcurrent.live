@@ -3,8 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles/ArticleAuthorLine";
 import { ARTICLE_INDEX, ARTICLES, EXTERNAL_ARTICLE_CARDS, articleHref } from "@/data/articles";
-import { getArticleCardImage } from "@/lib/article-hub";
+import { getArticleCardImage, isArticleCardImageUnoptimized } from "@/lib/article-hub";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { toIsoDate } from "@/lib/seo/dates";
 import { EDITORIAL_AUTHOR, EDITORIAL_PUBLISHER } from "@/lib/seo/constants";
 import styles from "./article.module.css";
 
@@ -23,7 +24,11 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export default function ArticlesIndexPage() {
+  const sortedIndex = [...ARTICLE_INDEX].sort((a, b) =>
+    toIsoDate(b.date).localeCompare(toIsoDate(a.date)),
+  );
   const sortedArticles = [...ARTICLES].sort((a, b) => b.date.localeCompare(a.date));
+  const indexSlugs = new Set(sortedIndex.map((a) => a.slug));
 
   return (
     <main className={styles.articlePage}>
@@ -39,6 +44,34 @@ export default function ArticlesIndexPage() {
         </div>
 
         <div className={styles.articlesGrid}>
+          {sortedIndex.map((a) => {
+            const image = getArticleCardImage(a.slug);
+            return (
+            <Link
+              key={a.slug}
+              href={articleHref(a.slug)}
+              className={styles.articleIndexCard}
+            >
+              {image ? (
+                <div className={styles.articleIndexImageWrap}>
+                  <Image
+                    src={image}
+                    alt=""
+                    width={640}
+                    height={280}
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    className={styles.articleIndexImage}
+                    unoptimized={isArticleCardImageUnoptimized(image)}
+                  />
+                </div>
+              ) : null}
+              <span className={styles.pill}>{a.category}</span>
+              <h2>{a.title}</h2>
+              <p>{a.excerpt}</p>
+              <span className={styles.readMore}>Read article →</span>
+            </Link>
+            );
+          })}
           {EXTERNAL_ARTICLE_CARDS.map((article) => (
             <a
               key={article.href}
@@ -63,34 +96,7 @@ export default function ArticlesIndexPage() {
               <span className={styles.readMore}>Read on MSN ↗</span>
             </a>
           ))}
-          {ARTICLE_INDEX.map((a) => {
-            const image = getArticleCardImage(a.slug);
-            return (
-            <Link
-              key={a.slug}
-              href={articleHref(a.slug)}
-              className={styles.articleIndexCard}
-            >
-              {image ? (
-                <div className={styles.articleIndexImageWrap}>
-                  <Image
-                    src={image}
-                    alt=""
-                    width={640}
-                    height={280}
-                    sizes="(max-width: 768px) 100vw, 400px"
-                    className={styles.articleIndexImage}
-                  />
-                </div>
-              ) : null}
-              <span className={styles.pill}>{a.category}</span>
-              <h2>{a.title}</h2>
-              <p>{a.excerpt}</p>
-              <span className={styles.readMore}>Read article →</span>
-            </Link>
-            );
-          })}
-          {sortedArticles.map((a) => (
+          {sortedArticles.filter((a) => !indexSlugs.has(a.slug)).map((a) => (
             <Link
               key={a.slug}
               href={articleHref(a.slug)}

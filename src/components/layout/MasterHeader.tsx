@@ -14,7 +14,7 @@ import {
 } from "@/lib/nav";
 import HeaderNavDropdown from "./HeaderNavDropdown";
 import LiveRibbon from "./LiveRibbon";
-import LocaleSwitcher from "./LocaleSwitcher";
+import HeaderLocaleDropdown from "./HeaderLocaleDropdown";
 import styles from "./master-chrome.module.css";
 
 function openSubscribeDialog() {
@@ -33,7 +33,14 @@ export default function MasterHeader() {
         <div className={styles.bar}>
           <NavLink href="/" className={styles.brand}>
             <div className={styles.brandLogoWrap}>
-              <Image src="/logo.svg" alt="" width={48} height={48} priority />
+              <Image
+                src="/logo.svg"
+                alt=""
+                width={48}
+                height={48}
+                priority
+                unoptimized
+              />
             </div>
             <div className={styles.brandName}>
               Goal<span>Current</span>.live
@@ -66,7 +73,7 @@ export default function MasterHeader() {
           </nav>
 
           <div className={styles.headerActions}>
-            <LocaleSwitcher />
+            <HeaderLocaleDropdown />
             <button
               type="button"
               className={styles.headerSubscribe}

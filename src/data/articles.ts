@@ -427,6 +427,11 @@ export function getAllArticleSlugs(): string[] {
   return getAllCanonicalArticleSlugs();
 }
 
+/** Slugs served by `articles/[slug]` — excludes dedicated `articles/<slug>/page.tsx` routes. */
+export function getDynamicArticleSlugs(): string[] {
+  return ARTICLES.map((article) => article.slug);
+}
+
 export function getArticlesByCategory(category: Article["category"]): Article[] {
   return ARTICLES.filter(a => a.category === category);
 }
