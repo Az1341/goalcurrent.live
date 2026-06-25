@@ -11,6 +11,7 @@ import {
 import { isLiveMatchStatus } from "@/lib/wc26-live";
 import type { BracketMatchTemplate, BracketSlotRef, KnockoutFeedSlot } from "@/lib/wc26/bracket-types";
 import { FIFA_KNOCKOUT_ROUND_TEMPLATES, FIFA_ROUND_OF_32_TEMPLATES } from "@/lib/wc26/fifa-bracket-mapping";
+import { resolveBracketMatchSchedule } from "@/data/wc26/knockout-schedule";
 import { WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import { getTeamById } from "@/lib/teamIdentity";
@@ -387,6 +388,8 @@ export type ResolvedBracketMatch = {
   readonly away: ResolvedBracketSide;
   readonly score: string | null;
   readonly winnerTeamId: TeamId | null;
+  readonly kickoffUtc: string | null;
+  readonly venueId: import("@/types/venue").VenueId | null;
 };
 
 /** Official Ro32 templates that involve Group B (FIFA match numbers). */
@@ -510,6 +513,7 @@ export function resolveBracketMatch(
   );
   const winnerTeamId = resolveKnockoutMatchWinner(template.matchNumber, fixtures);
   const score = formatKnockoutMatchScore(template.matchNumber, fixtures);
+  const schedule = resolveBracketMatchSchedule(template.matchNumber, fixtures);
 
   return {
     matchNumber: template.matchNumber,
@@ -518,6 +522,8 @@ export function resolveBracketMatch(
     away: highlightWinnerSide(away, winnerTeamId),
     score,
     winnerTeamId,
+    kickoffUtc: schedule?.kickoffUtc ?? null,
+    venueId: schedule?.venueId ?? null,
   };
 }
 
@@ -649,6 +655,7 @@ export function buildKnockoutBracketRounds(
       const away = resolveKnockoutFeedSlot(entry.away, fixtures, winnerByMatch);
       const winnerTeamId = resolveKnockoutMatchWinner(entry.matchNumber, fixtures);
       const score = formatKnockoutMatchScore(entry.matchNumber, fixtures);
+      const schedule = resolveBracketMatchSchedule(entry.matchNumber, fixtures);
 
       if (winnerTeamId) {
         winnerByMatch.set(entry.matchNumber, winnerTeamId);
@@ -661,6 +668,8 @@ export function buildKnockoutBracketRounds(
         away: highlightWinnerSide(away, winnerTeamId),
         score,
         winnerTeamId,
+        kickoffUtc: schedule?.kickoffUtc ?? null,
+        venueId: schedule?.venueId ?? null,
       };
     });
 

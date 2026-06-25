@@ -1,4 +1,5 @@
 import type { ResolvedBracketMatch } from "@/lib/wc26-standings";
+import BracketMatchKickoff from "@/components/wc26/BracketMatchKickoff";
 import BracketTeamSlot from "@/components/wc26/BracketTeamSlot";
 import styles from "./wc26.module.css";
 
@@ -20,6 +21,9 @@ export default function BracketMatch({ match }: BracketMatchProps) {
         Match {match.matchNumber} · {match.round}
         {match.score ? <span className={styles.bracketMatchScore}>{match.score}</span> : null}
       </div>
+      {match.kickoffUtc && match.venueId ? (
+        <BracketMatchKickoff kickoffUtc={match.kickoffUtc} venueId={match.venueId} />
+      ) : null}
       <div className={styles.bracketMatchTeams}>
         <BracketTeamSlot side={match.home} isWinner={homeWinner} />
         <div className={styles.bracketMatchVs}>vs</div>

@@ -65,6 +65,12 @@ export {
   getFixturesByTeam,
 } from "./fixtures";
 
+export {
+  WC26_KNOCKOUT_SCHEDULE,
+  getKnockoutScheduleByMatchNumber,
+  resolveBracketMatchSchedule,
+} from "./knockout-schedule";
+
 // ── Placeholder standings (zeroed rows, not calculated) ───────────────────────
 import type { GroupStandings } from "@/types/standing";
 import type { Wc26GroupId } from "@/types/group";
