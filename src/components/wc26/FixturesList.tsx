@@ -2,7 +2,7 @@
 
 import type { Fixture } from "@/types/fixture";
 import { getTeamById, getVenueById } from "@/data/wc26";
-import { formatVisitorKickoff } from "@/lib/wc26-format";
+import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import TeamFlag from "@/components/TeamFlag";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
@@ -41,7 +41,7 @@ export default function FixturesList({ fixtures }: FixturesListProps) {
                   : fixture.stage.replace(/-/g, " ")}
               </span>
               <span className={styles.fixtureKickoff}>
-                {formatVisitorKickoff(fixture.kickoffUtc)}
+                <LocalizedKickoffLabel iso={fixture.kickoffUtc} />
               </span>
               <FavouriteMatchButton matchId={fixture.id} label={label} />
               <MatchDetailLink fixtureId={fixture.id} className={styles.fixDetailLink} />

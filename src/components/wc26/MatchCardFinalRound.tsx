@@ -3,13 +3,14 @@
 import Link from "next/link";
 import TeamFlag from "@/components/TeamFlag";
 import MatchLineupField from "@/components/match/MatchLineupField";
+import { LocalizedKickoffLabel, LocalizedKickoffTime } from "@/components/match/LocalizedKickoff";
 import {
   DEMO_KOR_LINEUP,
   DEMO_RSA_LINEUP,
   RSA_KOR_DEMO_FORMATIONS,
   isRsaKorDemoFixture,
 } from "@/data/wc26/demo-lineups-rsa-kor";
-import { getTeamById } from "@/data/wc26";
+import { getTeamById, getVenueById } from "@/data/wc26";
 import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
@@ -18,11 +19,6 @@ import {
 import { buildHomepageMatchView, isLiveMatchStatus } from "@/lib/wc26-live";
 import { useMatchDetail } from "@/lib/use-match-detail";
 import { matchHref } from "@/lib/wc26-match";
-import {
-  formatVenueKickoffLabel,
-  formatVenueKickoffTime,
-  formatVenueTimezoneAbbr,
-} from "@/lib/wc26/time-converter";
 import styles from "./wc26.module.css";
 
 type MatchCardFinalRoundProps = {
@@ -32,9 +28,11 @@ type MatchCardFinalRoundProps = {
 export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProps) {
   const home = getTeamById(fixture.homeTeamId);
   const away = getTeamById(fixture.awayTeamId);
+  const venue = getVenueById(fixture.venueId);
   const view = buildHomepageMatchView(fixture);
   const isLive = isLiveMatchStatus(fixture.status);
   const isCompleted = isEffectiveFixtureCompleted(fixture);
+  const isUpcoming = !isLive && !isCompleted;
   const score = getFixtureScore(fixture);
   const { detail, loading } = useMatchDetail(fixture.id, isLive);
   const useDemoLineup = isRsaKorDemoFixture(fixture.matchNumber);
@@ -45,10 +43,6 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
         ? `${score.home}–${score.away}`
         : "–"
       : null;
-
-  const venueTime = formatVenueKickoffTime(fixture.kickoffUtc, fixture.venueId);
-  const venueTz = formatVenueTimezoneAbbr(fixture.venueId);
-  const venueLabel = formatVenueKickoffLabel(fixture.kickoffUtc, fixture.venueId);
 
   const homeLineup =
     detail.lineups.home?.startXI?.length
@@ -78,7 +72,7 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
           {isLive ? <span className={styles.finalRoundLiveDot} aria-hidden="true" /> : null}
         </span>
         <span className={styles.finalRoundCardTime}>
-          {venueTime} {venueTz}
+          <LocalizedKickoffTime iso={fixture.kickoffUtc} />
         </span>
       </div>
 
@@ -94,7 +88,13 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
           ) : (
             <span className={styles.finalRoundVs}>vs</span>
           )}
-          <span className={styles.finalRoundStatus}>{view.statusLabel}</span>
+          <span className={styles.finalRoundStatus}>
+            {isUpcoming ? (
+              <LocalizedKickoffTime iso={fixture.kickoffUtc} />
+            ) : (
+              view.statusLabel
+            )}
+          </span>
         </div>
 
         <div className={`${styles.finalRoundSide} ${styles.finalRoundSideAway}`}>
@@ -103,7 +103,10 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
         </div>
       </div>
 
-      <p className={styles.finalRoundVenue}>{venueLabel}</p>
+      <p className={styles.finalRoundVenue}>
+        <LocalizedKickoffLabel iso={fixture.kickoffUtc} />
+        {venue ? ` · ${venue.name}, ${venue.city}` : ""}
+      </p>
 
       {loading ? (
         <p className={styles.finalRoundLineupNote}>Loading lineups…</p>

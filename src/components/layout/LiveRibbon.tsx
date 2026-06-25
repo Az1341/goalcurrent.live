@@ -14,6 +14,7 @@ import {
   formatTickerTeamName,
   getRibbonVisibleLimit,
 } from "@/lib/wc26-ticker-names";
+import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import styles from "./live-ribbon.module.css";
 
@@ -33,11 +34,16 @@ function tickerStatusClass(matchClass: HomepageMatchView["matchClass"]) {
   return styles.liveMatchStatusUpcoming;
 }
 
-function renderMatchItem(
-  match: HomepageMatchView,
-  t: ReturnType<typeof useTranslations>,
+function TickerMatchItem({
+  match,
+  t,
   keySuffix = "",
-) {
+}: {
+  match: HomepageMatchView;
+  t: ReturnType<typeof useTranslations>;
+  keySuffix?: string;
+}) {
+  const kickoffTime = useLocalizedKickoffTime(match.kickoffUtc);
   const score = formatScore(match);
   const homeName = formatTickerTeamName(match.homeTeamId, match.homeName);
   const awayName = formatTickerTeamName(match.awayTeamId, match.awayName);
@@ -49,7 +55,7 @@ function renderMatchItem(
       : t("live")
     : isFt
       ? t("ft")
-      : match.statusLabel;
+      : kickoffTime;
   const matchTitle = formatTickerMatchTitle(
     match.homeName,
     match.awayName,
@@ -142,10 +148,17 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
           aria-label={hasLive ? t("liveMatchesAria") : t("latestResultsAria")}
         >
           {isMobile
-            ? allMatches.map((match) => renderMatchItem(match, t))
-            : desktopTrackMatches.map((match, index) =>
-                renderMatchItem(match, t, `-loop-${index}`),
-              )}
+            ? allMatches.map((match) => (
+                <TickerMatchItem key={match.fixtureId} match={match} t={t} />
+              ))
+            : desktopTrackMatches.map((match, index) => (
+                <TickerMatchItem
+                  key={`${match.fixtureId}-loop-${index}`}
+                  match={match}
+                  t={t}
+                  keySuffix={`-loop-${index}`}
+                />
+              ))}
           {!isMobile && hiddenCount > 0 ? (
             <li className={styles.liveRibbonItem}>
               <Link

@@ -38,7 +38,7 @@ import {
   classifyFixtureMatch,
   type FixtureMatchClass,
 } from "@/lib/wc26-fixtures-page";
-import { formatVisitorKickoffTime } from "@/lib/wc26-format";
+import { LocalizedKickoffTime } from "@/components/match/LocalizedKickoff";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import TvRegionSelect from "@/components/wc26/TvRegionSelect";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
@@ -74,7 +74,7 @@ function FixtureMatchCard({
   const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
   const groupPrefix = fixture.groupId ? `${groupLabel(fixture.groupId)} · ` : "";
   const score = getFixtureScore(fixture);
-  const kickoffLocal = formatVisitorKickoffTime(fixture.kickoffUtc);
+  const kickoffLocal = <LocalizedKickoffTime iso={fixture.kickoffUtc} />;
 
   const cardStateClass =
     matchClass === "ft"

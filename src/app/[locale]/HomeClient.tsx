@@ -68,10 +68,12 @@ function statusPillClass(status: HomepageMatchClass) {
 
 function FeaturedStatusBadge({ match }: { match: HomepageMatchView }) {
   const isLive = match.matchClass === "live";
+  const isUpcoming = match.matchClass === "upcoming";
+  const kickoffTime = useLocalizedKickoffTime(match.kickoffUtc);
   return (
     <span className={`${styles.statusPill} ${statusPillClass(match.matchClass)}`}>
       {isLive ? <span className={styles.liveDot} aria-hidden="true" /> : null}
-      {match.statusLabel}
+      {isUpcoming ? kickoffTime : match.statusLabel}
     </span>
   );
 }

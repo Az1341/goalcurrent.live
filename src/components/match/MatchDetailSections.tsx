@@ -14,7 +14,10 @@ import {
   type TimelineEventDisplay,
   type TimelineEventSide,
 } from "./timeline-event-badge";
+import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
+import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import styles from "./match.module.css";
+import MatchLineupPitchSection from "./MatchLineupPitchSection";
 import {
   aggregateMatchPlayerStats,
   formatOptionalStat,
@@ -54,7 +57,9 @@ type MatchDetailHeaderProps = {
 
 export function MatchDetailHeader({ header, detail, loading }: MatchDetailHeaderProps) {
   const isLive = header.matchClass === "live";
+  const isUpcoming = header.matchClass === "upcoming";
   const isFinishedOrLive = header.matchClass === "live" || header.matchClass === "ft";
+  const kickoffTime = useLocalizedKickoffTime(header.kickoffUtc);
   const scoreText = header.score
     ? `${header.score.home} – ${header.score.away}`
     : "vs";
@@ -114,7 +119,7 @@ export function MatchDetailHeader({ header, detail, loading }: MatchDetailHeader
           <div className={styles.scoreCol}>
             <div className={styles.scoreMain}>{scoreText}</div>
             <div className={styles.scoreSub}>
-              {header.statusLabel}
+              {isUpcoming ? kickoffTime : header.statusLabel}
               {header.elapsed != null && isLive ? (
                 <span className={styles.scoreElapsed}>{header.elapsed}&apos;</span>
               ) : null}
@@ -144,7 +149,7 @@ export function MatchDetailHeader({ header, detail, loading }: MatchDetailHeader
           </div>
         </div>
         <p className={styles.kickoffLine}>
-          {header.kickoffLabel}
+          <LocalizedKickoffLabel iso={header.kickoffUtc} />
           {header.venueLabel ? ` · ${header.venueLabel}` : ""}
         </p>
       </div>
@@ -524,95 +529,28 @@ type MatchLineupsProps = {
   detail: MatchDetailPayload;
   homeTeamId: string;
   awayTeamId: string;
+  matchNumber: number;
+  fixtureId: string;
   loading: boolean;
 };
-
-function LineupBlock({
-  title,
-  side,
-}: {
-  title: string;
-  side: MatchDetailPayload["lineups"]["home"];
-}) {
-  if (!side) {
-    return (
-      <div className={styles.lineupSide}>
-        <h3>{title}</h3>
-        <p className={styles.emptyState}>Lineup not available yet.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.lineupSide}>
-      <h3>{title}</h3>
-      <p className={styles.lineupMeta}>
-        {side.formation ? `Formation ${side.formation}` : "Formation TBC"}
-        {side.coach ? ` · ${side.coach}` : ""}
-      </p>
-      <p className={styles.lineupMeta}>Starting XI</p>
-      <ul className={styles.lineupList}>
-        {side.startXI.map((player) => (
-          <li key={`${player.number}-${player.name}`} className={styles.lineupPlayer}>
-            <span className={styles.lineupNum}>{player.number ?? "–"}</span>
-            <span>
-              {player.name}
-              {player.position ? ` (${player.position})` : ""}
-            </span>
-          </li>
-        ))}
-      </ul>
-      {side.substitutes.length > 0 ? (
-        <>
-          <p className={styles.lineupMeta} style={{ marginTop: 12 }}>
-            Bench
-          </p>
-          <ul className={styles.lineupList}>
-            {side.substitutes.map((player) => (
-              <li key={`sub-${player.number}-${player.name}`} className={styles.lineupPlayer}>
-                <span className={styles.lineupNum}>{player.number ?? "–"}</span>
-                <span>{player.name}</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
-    </div>
-  );
-}
 
 export function MatchLineups({
   detail,
   homeTeamId,
   awayTeamId,
+  matchNumber,
+  fixtureId,
   loading,
 }: MatchLineupsProps) {
-  const home = getTeamById(homeTeamId);
-  const away = getTeamById(awayTeamId);
-
   return (
-    <section className={styles.section} aria-labelledby="match-lineups-heading">
-      <h2 id="match-lineups-heading" className={styles.sectionTitle}>
-        Lineups
-      </h2>
-      <div className={styles.panel}>
-        {loading ? (
-          <p className={styles.emptyState}>Loading lineups…</p>
-        ) : !detail.lineups.home && !detail.lineups.away ? (
-          <p className={styles.emptyState}>
-            {detailEmptyMessage(
-              detail,
-              "Lineups will be published closer to kickoff when the API feed is available.",
-              "Lineups will appear when server API sync is configured and the match is underway or finished.",
-            )}
-          </p>
-        ) : (
-          <div className={styles.lineupGrid}>
-            <LineupBlock title={home?.name ?? "Home"} side={detail.lineups.home} />
-            <LineupBlock title={away?.name ?? "Away"} side={detail.lineups.away} />
-          </div>
-        )}
-      </div>
-    </section>
+    <MatchLineupPitchSection
+      fixtureId={fixtureId}
+      matchNumber={matchNumber}
+      homeTeamId={homeTeamId}
+      awayTeamId={awayTeamId}
+      detail={detail}
+      loading={loading}
+      variant="page"
+    />
   );
 }

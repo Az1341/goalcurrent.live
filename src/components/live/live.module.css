@@ -265,4 +265,27 @@
   .liveAdWrap [data-gc-content-ad] {
     margin-top: 10px;
   }
+
+  .lineupBenchGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.livePitchStack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.livePitchCard {
+  background: var(--gc-card);
+  border: 1px solid var(--gc-border);
+  border-radius: 12px;
+  padding: 12px 12px 8px;
+  overflow: visible;
+}
+
+.livePitchCard section {
+  margin-bottom: 0;
 }

@@ -8,7 +8,7 @@ import { getFixtureById, getTeamById, groupLabel } from "@/data/wc26";
 import { FAVOURITES_HREF } from "@/lib/nav";
 import { useFavourites } from "@/lib/use-favourites";
 import { useIsClient } from "@/lib/use-is-client";
-import { formatVisitorKickoff } from "@/lib/wc26-format";
+import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
 import styles from "@/app/[locale]/page.module.css";
@@ -34,7 +34,7 @@ export default function HomeFavouritesStrip() {
             matchId,
             home,
             away,
-            kickoff: formatVisitorKickoff(fixture.kickoffUtc),
+            kickoffUtc: fixture.kickoffUtc,
           };
         })
         .filter((item): item is NonNullable<typeof item> => item != null)
@@ -72,14 +72,16 @@ export default function HomeFavouritesStrip() {
           <Link href="/worldcup2026/teams">{t("worldCupTeams")}</Link>.
         </p>      ) : (
         <ul className={styles.favouritesList}>
-          {favouriteMatches.map(({ matchId, home, away, kickoff }) => (
+          {favouriteMatches.map(({ matchId, home, away, kickoffUtc }) => (
             <li key={`match-${matchId}`}>
               <Link href={matchHref(matchId)} className={styles.favouritesChip}>
                 {home ? <TeamFlag teamId={home.id} size={20} /> : null}
                 <span className={styles.favouritesChipLabel}>
                   {home?.name ?? tCommon("tbd")} vs {away?.name ?? tCommon("tbd")}
                 </span>
-                <span className={styles.favouritesChipMeta}>{kickoff}</span>
+                <span className={styles.favouritesChipMeta}>
+                  <LocalizedKickoffLabel iso={kickoffUtc} />
+                </span>
               </Link>
             </li>
           ))}

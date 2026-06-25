@@ -33,32 +33,26 @@ export function formatDeviceKickoffLabel(iso: string): string {
  */
 export function useLocalizedKickoffTime(iso: string): string {
   const [time, setTime] = useState(() => formatVisitorKickoffTime(iso));
-
   useEffect(() => {
     setTime(formatDeviceKickoffTime(iso));
   }, [iso]);
-
   return time;
 }
 
 /** Same mount guard pattern for full kickoff labels. */
 export function useLocalizedKickoffLabel(iso: string): string {
   const [label, setLabel] = useState(() => formatVisitorKickoff(iso));
-
   useEffect(() => {
     setLabel(formatDeviceKickoffLabel(iso));
   }, [iso]);
-
   return label;
 }
 
 /** Explicit mount flag when components need to branch layout before/after hydration. */
 export function useIsClientMounted(): boolean {
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
     setMounted(true);
   }, []);
-
   return mounted;
 }

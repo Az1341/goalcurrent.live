@@ -44,17 +44,9 @@ import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useNewsFeed } from "@/lib/use-news-feed";
 import { useLiveTopScorers } from "@/lib/client/useLiveTopScorers";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
-import { formatKickoffUtc, formatVisitorKickoff } from "@/lib/wc26-format";
-import { useIsClient } from "@/lib/use-is-client";
+import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
+import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import styles from "./wc26.module.css";
-
-/** SSR-stable UTC label; switches to visitor-local after mount to avoid hydration mismatch. */
-function VisitorKickoffLabel({ iso }: { iso: string }) {
-  const mounted = useIsClient();
-  const label = mounted ? formatVisitorKickoff(iso) : formatKickoffUtc(iso);
-
-  return <span>{label}</span>;
-}
 
 type GroupHubContentProps = {
   groupId: Wc26GroupId;
@@ -80,6 +72,7 @@ function GroupFixtureRow({
   tvRegion: ReturnType<typeof useWc26TvRegion>["tvRegion"];
 }) {
   const view = buildHomepageMatchView(fixture);
+  const kickoffTime = useLocalizedKickoffTime(fixture.kickoffUtc);
   const score =
     view.score != null ? `${view.score.home}–${view.score.away}` : null;
 
@@ -91,13 +84,15 @@ function GroupFixtureRow({
         awayTeamId={view.awayTeamId}
         homeName={view.homeName}
         awayName={view.awayName}
-        centrePrimary={score ?? view.statusLabel}
+        centrePrimary={
+          score ?? (view.matchClass === "upcoming" ? kickoffTime : view.statusLabel)
+        }
         centreSecondary={score ? view.statusLabel : undefined}
         flagSize={22}
         isLive={view.matchClass === "live"}
       />
       <div className={styles.groupFixtureMeta}>
-        <VisitorKickoffLabel iso={fixture.kickoffUtc} />
+        <LocalizedKickoffLabel iso={fixture.kickoffUtc} />
         {view.venueLabel ? <span>{view.venueLabel}</span> : null}
         <MatchTvBroadcast
           tvRegion={tvRegion}
@@ -279,7 +274,11 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
               </span>
             </div>
             <p className={styles.groupNextMatchMeta}>
-              {nextMatchView.statusLabel}
+              {nextMatch ? (
+                <LocalizedKickoffLabel iso={nextMatch.kickoffUtc} />
+              ) : (
+                nextMatchView.statusLabel
+              )}
               {nextVenue ? ` · ${nextVenue.name}, ${nextVenue.city}` : ""}
             </p>
             {nextMatch ? (

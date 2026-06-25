@@ -9,7 +9,7 @@ import {
 } from "@/lib/favourites";
 import { useFavourites } from "@/lib/use-favourites";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { formatVisitorKickoff } from "@/lib/wc26-format";
+import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
 import {
@@ -159,11 +159,11 @@ export default function FavouritesPageContent() {
                             <>
                               <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>vs</div>
                               <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
-                                {formatVisitorKickoff(wc26Fixture.kickoffUtc)}
+                                <LocalizedKickoffLabel iso={wc26Fixture.kickoffUtc} />
                               </div>
                             </>
                           )}
-                          {!scoreText && <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>{formatVisitorKickoff(wc26Fixture.kickoffUtc)}</div>}
+                          {!scoreText && <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}><LocalizedKickoffLabel iso={wc26Fixture.kickoffUtc} /></div>}
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-start" }}>
                           <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{away?.name ?? "Away"}</span>

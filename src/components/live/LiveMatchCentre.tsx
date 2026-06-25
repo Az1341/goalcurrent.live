@@ -10,7 +10,10 @@ import { partitionFixturesForLiveCentre } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
+import MatchLineupPitchSection from "@/components/match/MatchLineupPitchSection";
 import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
+import { isLiveMatchStatus } from "@/lib/wc26-live";
+import { matchHref } from "@/lib/wc26-match";
 import styles from "./live.module.css";
 
 type LiveSectionProps = {
@@ -146,6 +149,24 @@ export default function LiveMatchCentre() {
         showLiveIndicator
         tone="live"
       />
+
+      {buckets.live.length > 0 ? (
+        <div className={styles.livePitchStack}>
+          {buckets.live.map((fixture) => (
+            <div key={`pitch-${fixture.id}`} className={styles.livePitchCard}>
+              <MatchLineupPitchSection
+                fixtureId={fixture.id}
+                matchNumber={fixture.matchNumber}
+                homeTeamId={fixture.homeTeamId}
+                awayTeamId={fixture.awayTeamId}
+                poll={isLiveMatchStatus(fixture.status)}
+                variant="embedded"
+                matchHref={matchHref(fixture.id)}
+              />
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <div className={styles.liveAdWrap}>
         <ContentAdSlot slot={ADSENSE_SLOTS.liveMid} minHeight={120} />

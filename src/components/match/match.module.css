@@ -578,6 +578,33 @@
   gap: 14px;
 }
 
+.lineupPitchWrap {
+  margin: 0 auto;
+  max-width: 28rem;
+  width: 100%;
+}
+
+.lineupBenchGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.lineupBench {
+  min-width: 0;
+}
+
+.lineupEmbeddedLink {
+  margin: 0 0 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.lineupEmbeddedLink a {
+  color: var(--wc26-accent);
+}
+
 .lineupSide h3 {
   font-size: 0.875rem;
   font-weight: 600;

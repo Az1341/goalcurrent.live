@@ -109,9 +109,11 @@ export default function MatchDetailContent({
           />
           <MatchLineups
             detail={detail}
+            loading={loading}
             homeTeamId={fixture.homeTeamId}
             awayTeamId={fixture.awayTeamId}
-            loading={loading}
+            matchNumber={fixture.matchNumber}
+            fixtureId={fixture.id}
           />
         </>
       )}

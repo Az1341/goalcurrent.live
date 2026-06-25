@@ -69,8 +69,8 @@ function gridToPercent(
   const left = ((grid.col - 0.5) / colsInRow) * 100;
   const rowSpan = Math.max(maxRow - 1, 1);
   const rowProgress = (grid.row - 1) / rowSpan;
-  const homeTop = 6 + rowProgress * 38;
-  const awayTop = 94 - rowProgress * 38;
+  const homeTop = 12 + rowProgress * 30;
+  const awayTop = 88 - rowProgress * 30;
   const top = side === "home" ? homeTop : awayTop;
   return { left, top };
 }
@@ -238,14 +238,22 @@ export default function MatchLineupField({
         )}
 
         <div className={styles.pitch}>
-          <div className={styles.pitchGlow} />
-          <div className={styles.halfway} />
-          <div className={styles.centerCircle} />
-          <div className={styles.centerSpot} />
-          <div className={styles.penaltyTopOuter} />
-          <div className={styles.penaltyTopInner} />
-          <div className={styles.penaltyBottomOuter} />
-          <div className={styles.penaltyBottomInner} />
+          {embedded && homeFormation ? (
+            <span className={styles.formationTagTop}>{homeFormation}</span>
+          ) : null}
+          {embedded && awayFormation ? (
+            <span className={styles.formationTagBottom}>{awayFormation}</span>
+          ) : null}
+          <div className={styles.pitchSurface}>
+            <div className={styles.pitchGlow} />
+            <div className={styles.halfway} />
+            <div className={styles.centerCircle} />
+            <div className={styles.centerSpot} />
+            <div className={styles.penaltyTopOuter} />
+            <div className={styles.penaltyTopInner} />
+            <div className={styles.penaltyBottomOuter} />
+            <div className={styles.penaltyBottomInner} />
+          </div>
           <div className={styles.markers}>
             <TeamMarkers players={home} side="home" />
             <TeamMarkers players={away} side="away" />
