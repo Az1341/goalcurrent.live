@@ -2,6 +2,7 @@
 
 import Script from "next/script";
 import { useSyncExternalStore } from "react";
+import { useLocale } from "next-intl";
 import { ONESIGNAL_APP_ID, isOneSignalHost } from "@/lib/site-integrations";
 
 export function OneSignalInit() {
@@ -10,6 +11,7 @@ export function OneSignalInit() {
     () => window.location.hostname,
     () => "",
   );
+  const locale = useLocale();
   const enabled = isOneSignalHost(hostname);
 
   if (!enabled) {
@@ -30,6 +32,7 @@ export function OneSignalInit() {
             OneSignalDeferred.push(async function(OneSignal) {
               try {
                 await OneSignal.init({ appId: "${ONESIGNAL_APP_ID}" });
+                await OneSignal.User.addTag("language", "${locale}");
               } catch (err) {
                 console.warn("[OneSignal] init skipped:", err);
               }
