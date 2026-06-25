@@ -9,6 +9,9 @@ import {
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
+import type { BracketMatchTemplate } from "@/lib/wc26/bracket-types";
+import type { KnockoutFeedSlot } from "@/lib/wc26/bracket-types";
+import { FIFA_KNOCKOUT_ROUND_TEMPLATES, FIFA_ROUND_OF_32_TEMPLATES } from "@/lib/wc26/fifa-bracket-mapping";
 import { WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import { getTeamById } from "@/lib/teamIdentity";
@@ -368,21 +371,10 @@ export function teamDisplayName(teamId: TeamId): string {
   return getTeamById(teamId)?.name ?? teamId;
 }
 
-export type BracketSlotRef =
-  | { readonly kind: "group-winner"; readonly groupId: Wc26GroupId }
-  | { readonly kind: "group-runner-up"; readonly groupId: Wc26GroupId }
-  | {
-      readonly kind: "third-place";
-      readonly groups: readonly Wc26GroupId[];
-      readonly label: string;
-    };
-
-export type BracketMatchTemplate = {
-  readonly matchNumber: number;
-  readonly round: string;
-  readonly home: BracketSlotRef;
-  readonly away: BracketSlotRef;
-};
+export type {
+  BracketMatchTemplate,
+  BracketSlotRef,
+} from "@/lib/wc26/bracket-types";
 
 export type ResolvedBracketSide = {
   readonly teamId: TeamId | null;
@@ -395,30 +387,22 @@ export type ResolvedBracketMatch = {
   readonly round: string;
   readonly home: ResolvedBracketSide;
   readonly away: ResolvedBracketSide;
+  readonly score: string | null;
+  readonly winnerTeamId: TeamId | null;
 };
 
 /** Official Ro32 templates that involve Group B (FIFA match numbers). */
-export const GROUP_B_ROUND_OF_32_MATCHES: readonly BracketMatchTemplate[] = [
-  {
-    matchNumber: 73,
-    round: "Round of 32",
-    home: { kind: "group-runner-up", groupId: "a" },
-    away: { kind: "group-runner-up", groupId: "b" },
-  },
-  {
-    matchNumber: 85,
-    round: "Round of 32",
-    home: { kind: "group-winner", groupId: "b" },
-    away: {
-      kind: "third-place",
-      groups: ["e", "f", "g", "i", "j"],
-      label: "Best 3rd place (Groups E/F/G/I/J)",
-    },
-  },
-];
+export const GROUP_B_ROUND_OF_32_MATCHES = FIFA_ROUND_OF_32_TEMPLATES.filter(
+  (match) =>
+    (match.home.kind === "group-winner" && match.home.groupId === "b") ||
+    (match.home.kind === "group-runner-up" && match.home.groupId === "b") ||
+    (match.away.kind === "group-winner" && match.away.groupId === "b") ||
+    (match.away.kind === "group-runner-up" && match.away.groupId === "b") ||
+    (match.home.kind === "group-runner-up" && match.home.groupId === "a"),
+);
 
 function resolveBracketSlot(
-  slot: BracketSlotRef,
+  slot: import("@/lib/wc26/bracket-types").BracketSlotRef,
   fixtures: readonly EffectiveFixture[],
 ): ResolvedBracketSide {
   if (slot.kind === "group-winner") {
@@ -456,12 +440,210 @@ export function resolveBracketMatch(
   template: BracketMatchTemplate,
   fixtures: readonly EffectiveFixture[],
 ): ResolvedBracketMatch {
+  const home = resolveBracketSlot(template.home, fixtures);
+  const away = resolveBracketSlot(template.away, fixtures);
+  const winnerTeamId = resolveKnockoutMatchWinner(template.matchNumber, fixtures);
+  const score = formatKnockoutMatchScore(template.matchNumber, fixtures);
+
   return {
     matchNumber: template.matchNumber,
     round: template.round,
-    home: resolveBracketSlot(template.home, fixtures),
-    away: resolveBracketSlot(template.away, fixtures),
+    home: highlightWinnerSide(home, winnerTeamId),
+    away: highlightWinnerSide(away, winnerTeamId),
+    score,
+    winnerTeamId,
   };
+}
+
+function highlightWinnerSide(
+  side: ResolvedBracketSide,
+  winnerTeamId: TeamId | null,
+): ResolvedBracketSide {
+  if (!winnerTeamId || !side.teamId) {
+    return side;
+  }
+  return {
+    ...side,
+    label:
+      side.teamId === winnerTeamId ? `${side.label} ✓` : side.label,
+  };
+}
+
+function formatKnockoutMatchScore(
+  matchNumber: number,
+  fixtures: readonly EffectiveFixture[],
+): string | null {
+  const fixture = fixtures.find(
+    (entry) => entry.matchNumber === matchNumber && entry.stage !== "group",
+  );
+  if (!fixture || !isCompletedMatchStatus(fixture.status)) {
+    return null;
+  }
+  const score = getFixtureScore(fixture);
+  if (!score) {
+    return null;
+  }
+  return `${score.home}–${score.away}`;
+}
+
+/** Winner of a completed knockout fixture by official match number. */
+export function resolveKnockoutMatchWinner(
+  matchNumber: number,
+  fixtures: readonly EffectiveFixture[],
+): TeamId | null {
+  const fixture = fixtures.find(
+    (entry) => entry.matchNumber === matchNumber && entry.stage !== "group",
+  );
+  if (!fixture || !isCompletedMatchStatus(fixture.status)) {
+    return null;
+  }
+
+  const score = getFixtureScore(fixture);
+  if (!score) {
+    return null;
+  }
+
+  if (score.home > score.away) {
+    return fixture.homeTeamId;
+  }
+  if (score.away > score.home) {
+    return fixture.awayTeamId;
+  }
+
+  return null;
+}
+
+function resolveKnockoutFeedSlot(
+  slot: KnockoutFeedSlot,
+  fixtures: readonly EffectiveFixture[],
+  resolvedWinners: ReadonlyMap<number, TeamId | null>,
+): ResolvedBracketSide {
+  const sourceMatch = slot.kind === "winner" ? slot.matchNumber : slot.matchNumber;
+  const teamId = resolvedWinners.get(sourceMatch) ?? null;
+
+  if (slot.kind === "loser") {
+    const fixture = fixtures.find((entry) => entry.matchNumber === sourceMatch);
+    if (!fixture || !teamId) {
+      return {
+        teamId: null,
+        label: `Loser Match ${sourceMatch}`,
+        pending: true,
+      };
+    }
+    const loserId =
+      fixture.homeTeamId === teamId ? fixture.awayTeamId : fixture.homeTeamId;
+    return {
+      teamId: loserId,
+      label: teamDisplayName(loserId),
+      pending: false,
+    };
+  }
+
+  return {
+    teamId,
+    label: teamId ? teamDisplayName(teamId) : `Winner Match ${sourceMatch}`,
+    pending: !teamId,
+  };
+}
+
+export function buildRoundOf32BracketView(
+  fixtures: readonly EffectiveFixture[],
+): readonly ResolvedBracketMatch[] {
+  return FIFA_ROUND_OF_32_TEMPLATES.map((template) =>
+    resolveBracketMatch(template, fixtures),
+  );
+}
+
+export type BracketRoundView = {
+  readonly round: string;
+  readonly matches: readonly ResolvedBracketMatch[];
+};
+
+export function buildKnockoutBracketRounds(
+  fixtures: readonly EffectiveFixture[],
+): readonly BracketRoundView[] {
+  const ro32 = buildRoundOf32BracketView(fixtures);
+  const winnerByMatch = new Map<number, TeamId | null>();
+
+  for (const match of ro32) {
+    winnerByMatch.set(
+      match.matchNumber,
+      match.winnerTeamId ??
+        resolveKnockoutMatchWinner(match.matchNumber, fixtures),
+    );
+  }
+
+  const rounds: BracketRoundView[] = [
+    { round: "Round of 32", matches: ro32 },
+  ];
+
+  for (const template of FIFA_KNOCKOUT_ROUND_TEMPLATES) {
+    const matches = template.matches.map((entry) => {
+      const home = resolveKnockoutFeedSlot(entry.home, fixtures, winnerByMatch);
+      const away = resolveKnockoutFeedSlot(entry.away, fixtures, winnerByMatch);
+      const winnerTeamId = resolveKnockoutMatchWinner(entry.matchNumber, fixtures);
+      const score = formatKnockoutMatchScore(entry.matchNumber, fixtures);
+
+      if (winnerTeamId) {
+        winnerByMatch.set(entry.matchNumber, winnerTeamId);
+      }
+
+      return {
+        matchNumber: entry.matchNumber,
+        round: template.round,
+        home: highlightWinnerSide(home, winnerTeamId),
+        away: highlightWinnerSide(away, winnerTeamId),
+        score,
+        winnerTeamId,
+      };
+    });
+
+    rounds.push({ round: template.round, matches });
+  }
+
+  return rounds;
+}
+
+export type RankedThirdPlaceTeam = {
+  readonly groupId: Wc26GroupId;
+  readonly row: StandingRow;
+};
+
+/** Rank third-placed teams across completed groups (FIFA tie-break subset). */
+export function computeRankedThirdPlaceTeams(
+  fixtures: readonly EffectiveFixture[] = getEffectiveFixtures(),
+): readonly RankedThirdPlaceTeam[] {
+  const thirds: RankedThirdPlaceTeam[] = [];
+
+  for (const group of WC26_GROUPS) {
+    if (!isGroupComplete(group.id, fixtures)) {
+      continue;
+    }
+    const standings = computeGroupStandings(group.id, fixtures);
+    const third = standings.rows[2];
+    if (third) {
+      thirds.push({ groupId: group.id, row: third });
+    }
+  }
+
+  return [...thirds].sort((left, right) => {
+    if (right.row.points !== left.row.points) {
+      return right.row.points - left.row.points;
+    }
+    if (right.row.goalDifference !== left.row.goalDifference) {
+      return right.row.goalDifference - left.row.goalDifference;
+    }
+    if (right.row.goalsFor !== left.row.goalsFor) {
+      return right.row.goalsFor - left.row.goalsFor;
+    }
+    return compareByName(left.row, right.row);
+  });
+}
+
+export function areAllGroupStagesComplete(
+  fixtures: readonly EffectiveFixture[] = getEffectiveFixtures(),
+): boolean {
+  return WC26_GROUPS.every((group) => isGroupComplete(group.id, fixtures));
 }
 
 export function buildGroupBBracketView(

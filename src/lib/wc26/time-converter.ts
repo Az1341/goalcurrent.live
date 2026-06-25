@@ -1,0 +1,64 @@
+import { getVenueById } from "@/data/wc26";
+import { formatVisitorKickoffTime } from "@/lib/wc26-format";
+
+/** Format kickoff in the host venue IANA timezone (e.g. America/Mexico_City). */
+export function formatVenueKickoffTime(
+  kickoffUtc: string,
+  venueId: string,
+): string {
+  const venue = getVenueById(venueId);
+  const timeZone = venue?.timezone ?? "UTC";
+
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone,
+    }).format(new Date(kickoffUtc));
+  } catch {
+    return formatVisitorKickoffTime(kickoffUtc);
+  }
+}
+
+/** Venue-local date + time label for match cards. */
+export function formatVenueKickoffLabel(
+  kickoffUtc: string,
+  venueId: string,
+): string {
+  const venue = getVenueById(venueId);
+  const timeZone = venue?.timezone ?? "UTC";
+  const stadium = venue?.name ?? "Stadium";
+
+  try {
+    const when = new Intl.DateTimeFormat(undefined, {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone,
+    }).format(new Date(kickoffUtc));
+
+    return `${when} · ${stadium}`;
+  } catch {
+    return stadium;
+  }
+}
+
+/** Short venue timezone abbreviation for display next to local time. */
+export function formatVenueTimezoneAbbr(venueId: string): string {
+  const venue = getVenueById(venueId);
+  const timeZone = venue?.timezone ?? "UTC";
+
+  try {
+    const parts = new Intl.DateTimeFormat(undefined, {
+      timeZone,
+      timeZoneName: "short",
+    }).formatToParts(new Date());
+    return parts.find((part) => part.type === "timeZoneName")?.value ?? timeZone;
+  } catch {
+    return timeZone;
+  }
+}

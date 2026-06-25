@@ -7,6 +7,11 @@ import MatchDetailLink from "@/components/match/MatchDetailLink";
 import FixtureMatchRow from "@/components/match/FixtureMatchRow";
 import TeamLink from "@/components/wc26/TeamLink";
 import GroupStandingsSection from "@/components/wc26/GroupStandingsSection";
+import GroupFinalMatchdaySection from "@/components/wc26/GroupFinalMatchdaySection";
+import { getFinalMatchdayPair } from "@/lib/wc26-final-matchday";
+import {
+  isEffectiveFixtureCompleted,
+} from "@/lib/wc26-fixture-overlay";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import {
@@ -19,15 +24,14 @@ import {
 import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
 import {
   buildGroupTeamNamesList,
-  buildHomepageMatchView,
   computeGroupHeaderStats,
   computeGroupMatchStats,
   computeTeamFormMap,
   filterNewsForGroup,
   partitionGroupFixtures,
-  getActiveFinalMatchdayPair,
   selectNextGroupMatch,
 } from "@/lib/wc26-group-hub";
+import { buildHomepageMatchView, isLiveMatchStatus } from "@/lib/wc26-live";
 import { GROUPS_HUB_HREF, WC26_HUB_HREF, WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
 import {
   getGroupQualification,
@@ -132,17 +136,27 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
     () => partitionGroupFixtures(groupId, fixtures),
     [groupId, fixtures],
   );
-  const activeFinalPair = useMemo(
-    () => getActiveFinalMatchdayPair(groupId, fixtures),
+  const finalMatchdayPair = useMemo(
+    () => getFinalMatchdayPair(groupId, fixtures),
     [groupId, fixtures],
   );
-  const activeFinalPairIds = useMemo(
-    () => new Set(activeFinalPair?.map((fixture) => fixture.id) ?? []),
-    [activeFinalPair],
+  const showFinalMatchdayBoard = useMemo(() => {
+    if (!finalMatchdayPair) {
+      return false;
+    }
+    return finalMatchdayPair.some(
+      (fixture) =>
+        isLiveMatchStatus(fixture.status) ||
+        !isEffectiveFixtureCompleted(fixture),
+    );
+  }, [finalMatchdayPair]);
+  const finalMatchdayPairIds = useMemo(
+    () => new Set(finalMatchdayPair?.map((fixture) => fixture.id) ?? []),
+    [finalMatchdayPair],
   );
   const upcomingFiltered = useMemo(
-    () => upcoming.filter((fixture) => !activeFinalPairIds.has(fixture.id)),
-    [upcoming, activeFinalPairIds],
+    () => upcoming.filter((fixture) => !finalMatchdayPairIds.has(fixture.id)),
+    [upcoming, finalMatchdayPairIds],
   );
   const nextMatch = useMemo(
     () => selectNextGroupMatch(groupId, fixtures),
@@ -286,24 +300,12 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
 
       <GroupStandingsSection groupId={groupId} formByTeamId={formByTeamId} />
 
-      {activeFinalPair ? (
-        <section
-          className={styles.groupFinalMatchday}
-          aria-labelledby="group-final-matchday-heading"
-        >
-          <h2 id="group-final-matchday-heading" className={styles.sectionTitle}>
-            Live — final matchday
-          </h2>
-          <p className={styles.groupFinalMatchdayNote}>
-            Both group fixtures kick off simultaneously. Scores and standings update
-            in real time.
-          </p>
-          <ul className={styles.groupFixtureList}>
-            {activeFinalPair.map((fixture) => (
-              <GroupFixtureRow key={fixture.id} fixture={fixture} tvRegion={tvRegion} />
-            ))}
-          </ul>
-        </section>
+      {showFinalMatchdayBoard && finalMatchdayPair ? (
+        <GroupFinalMatchdaySection
+          groupId={groupId}
+          fixtures={finalMatchdayPair}
+          title={`Final matchday — ${title}`}
+        />
       ) : null}
 
       <section aria-labelledby="group-upcoming-heading">

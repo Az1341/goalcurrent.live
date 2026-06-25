@@ -45,12 +45,31 @@ type ApiEventRow = {
   detail: string;
 };
 
+type ApiLineupPlayerEntry = {
+  player: {
+    id?: number;
+    name: string;
+    number: number | null;
+    pos: string | null;
+    grid?: string | null;
+    photo?: string | null;
+  };
+};
+
 type ApiLineupRow = {
   team: { name: string };
   coach: { name: string | null } | null;
   formation: string | null;
-  startXI: Array<{ player: { name: string; number: number | null; pos: string | null } }>;
-  substitutes: Array<{ player: { name: string; number: number | null; pos: string | null } }>;
+  startXI: ApiLineupPlayerEntry[];
+  substitutes: ApiLineupPlayerEntry[];
+};
+
+type ApiFixturePlayerRow = {
+  team: { name: string };
+  players: Array<{
+    player: { id: number; name: string; photo: string | null };
+    statistics: Array<{ games: { captain?: boolean; rating?: string | number | null } }>;
+  }>;
 };
 
 type ApiStatRow = {
@@ -103,23 +122,61 @@ function mapEvents(rows: ApiEventRow[]): MatchEventItem[] {
   }));
 }
 
-function mapPlayers(
-  players: Array<{ player: { name: string; number: number | null; pos: string | null } }>,
-): MatchLineupPlayer[] {
-  return players.map((entry) => ({
-    name: entry.player.name,
-    number: entry.player.number,
-    position: entry.player.pos,
-  }));
+function buildPlayerMetaMap(
+  rows: ApiFixturePlayerRow[],
+): Map<string, { photo: string | null; isCaptain: boolean; rating: number | null }> {
+  const map = new Map<string, { photo: string | null; isCaptain: boolean; rating: number | null }>();
+
+  for (const row of rows) {
+    for (const entry of row.players ?? []) {
+      const stats = entry.statistics?.[0]?.games;
+      const ratingRaw = stats?.rating;
+      const rating =
+        ratingRaw == null
+          ? null
+          : typeof ratingRaw === "number"
+            ? ratingRaw
+            : Number.parseFloat(String(ratingRaw));
+
+      map.set(entry.player.name.toLowerCase(), {
+        photo: entry.player.photo,
+        isCaptain: Boolean(stats?.captain),
+        rating: Number.isFinite(rating) ? rating : null,
+      });
+    }
+  }
+
+  return map;
 }
 
-function mapLineupSide(row: ApiLineupRow): MatchLineupSide {
+function mapPlayers(
+  players: ApiLineupPlayerEntry[],
+  meta: Map<string, { photo: string | null; isCaptain: boolean; rating: number | null }>,
+): MatchLineupPlayer[] {
+  return players.map((entry) => {
+    const metaRow = meta.get(entry.player.name.toLowerCase());
+    return {
+      name: entry.player.name,
+      number: entry.player.number,
+      position: entry.player.pos,
+      photo: entry.player.photo ?? metaRow?.photo ?? null,
+      is_captain: metaRow?.isCaptain ?? false,
+      rating: metaRow?.rating ?? null,
+      grid_position: entry.player.grid ?? null,
+    };
+  });
+}
+
+function mapLineupSide(
+  row: ApiLineupRow,
+  meta: Map<string, { photo: string | null; isCaptain: boolean; rating: number | null }>,
+): MatchLineupSide {
   return {
     teamName: row.team.name,
     formation: row.formation,
     coach: row.coach?.name ?? null,
-    startXI: mapPlayers(row.startXI ?? []),
-    substitutes: mapPlayers(row.substitutes ?? []),
+    startXI: mapPlayers(row.startXI ?? [], meta),
+    substitutes: mapPlayers(row.substitutes ?? [], meta),
   };
 }
 
@@ -192,6 +249,7 @@ function mapStatistics(
 function resolveLineupSides(
   rows: ApiLineupRow[],
   fixtureId: string,
+  meta: Map<string, { photo: string | null; isCaptain: boolean; rating: number | null }>,
 ): { home: MatchLineupSide | null; away: MatchLineupSide | null } {
   const fixture = getFixtureById(fixtureId);
   if (!fixture) {
@@ -202,7 +260,7 @@ function resolveLineupSides(
   let away: MatchLineupSide | null = null;
 
   for (const row of rows) {
-    const side = mapLineupSide(row);
+    const side = mapLineupSide(row, meta);
     const teamId = resolveTeamId(row.team.name);
     if (teamId === fixture.homeTeamId) {
       home = side;
@@ -212,7 +270,7 @@ function resolveLineupSides(
   }
 
   if (rows.length === 2 && (!home || !away)) {
-    const mapped = rows.map(mapLineupSide);
+    const mapped = rows.map((row) => mapLineupSide(row, meta));
     return { home: home ?? mapped[0], away: away ?? mapped[1] };
   }
 
@@ -276,12 +334,14 @@ export async function fetchWc26MatchDetail(
       return emptyPayload(fixtureId);
     }
 
-    const [events, lineups, statistics] = await Promise.all([
+    const [events, lineups, statistics, players] = await Promise.all([
       apiFetchResponse<ApiEventRow>(`/fixtures/events?fixture=${apiFixtureId}`),
       apiFetchResponse<ApiLineupRow>(`/fixtures/lineups?fixture=${apiFixtureId}`),
       apiFetchResponse<ApiStatRow>(`/fixtures/statistics?fixture=${apiFixtureId}`),
+      apiFetchResponse<ApiFixturePlayerRow>(`/fixtures/players?fixture=${apiFixtureId}`),
     ]);
 
+    const playerMeta = buildPlayerMetaMap(players);
     const fixture = getFixtureById(fixtureId)!;
     const homeTeam = getTeamById(fixture.homeTeamId);
     const awayTeam = getTeamById(fixture.awayTeamId);
@@ -292,7 +352,7 @@ export async function fetchWc26MatchDetail(
       apiAvailable: true,
       fetchedAt: new Date().toISOString(),
       events: mapEvents(events),
-      lineups: resolveLineupSides(lineups, fixtureId),
+      lineups: resolveLineupSides(lineups, fixtureId, playerMeta),
       statistics: mapStatistics(
         statistics,
         homeTeam?.name ?? fixture.homeTeamId,
