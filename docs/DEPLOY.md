@@ -1,12 +1,23 @@
 # GoalCurrent.live — deployment
 
-**Plan #006 — 26 June 2026** · Pre-rename validated · Vercel reconnect ready.
+**Plan #007 — 26 June 2026** · Post-rename remote sync.
 
-## Pre-rename checklist
+## Post-rename sync (GitHub UI rename done)
 
-- [ ] `npm run verify:design` passes
-- [ ] GitHub repo renamed to `goalcurrent.live`
+```bash
+git remote set-url origin https://github.com/Az1341/goalcurrent.live.git
+git remote -v
+git push origin main
+```
+
+GitHub redirects `goalcurrent-live-nextjs` → `goalcurrent.live` automatically after rename.
+
+## Pre-flight checklist
+
+- [x] Docs/config use `goalcurrent.live` only (no legacy repo names)
+- [ ] GitHub repo renamed to `goalcurrent.live` in UI
 - [ ] `git remote set-url origin https://github.com/Az1341/goalcurrent.live.git`
+- [ ] `git push origin main` succeeds
 - [ ] Vercel project `goalcurrent.live` linked to repo `goalcurrent.live`
 - [ ] Production branch = `main`
 
