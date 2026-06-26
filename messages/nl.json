@@ -217,7 +217,37 @@
       "capacity": "Capacity:"
     },
     "bracket": {
-      "tbdVsTbd": "TBD vs TBD"
+      "eyebrow": "WK 2026 · Knock-outfase",
+      "title": "Road to the Final",
+      "subtitle": "Alle 64 wedstrijden · Bracketweergave",
+      "note": "Alle tijden in lokale bezoekerstijd. Data kunnen wijzigen.",
+      "degraded": "Gegevens kunnen vertraagd zijn",
+      "backToHub": "Terug naar WK 2026-hub",
+      "tabs": {
+        "bracket": "Bracket",
+        "schedule": "Schema",
+        "results": "Uitslagen",
+        "groups": "Groepen",
+        "stats": "Statistieken"
+      },
+      "rounds": {
+        "r32": "Zestiende finales",
+        "r16": "Achtste finales",
+        "qf": "Kwartfinales",
+        "sf": "Halve finales",
+        "3rd": "Derde plaats",
+        "final": "Finale"
+      },
+      "card": {
+        "viewMatchCenter": "Naar matchcentrum →",
+        "tbd": "N.n.b."
+      },
+      "live": {
+        "lineupsBanner": "Live opstellingen 1 uur voor aftrap",
+        "matchCenter": "Matchcentrum →",
+        "live": "LIVE"
+      },
+      "tbdVsTbd": "N.n.b. vs N.n.b."
     }
   },
   "pl": {

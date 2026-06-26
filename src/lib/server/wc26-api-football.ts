@@ -4,6 +4,7 @@ import {
   ApiFootballAuthError,
 } from "@/lib/api-football/errors";
 import {
+  findFixtureIdByKickoffUtc,
   findFixtureIdByTeamNames,
   mapApiStatusShort,
 } from "@/lib/wc26-fixture-match";
@@ -71,7 +72,9 @@ async function apiFetch(path: string): Promise<ApiFootballFixture[]> {
 function normalizeApiFixture(raw: ApiFootballFixture): Wc26ApiMatch | null {
   const homeName = raw.teams.home.name;
   const awayName = raw.teams.away.name;
-  const fixtureId = findFixtureIdByTeamNames(homeName, awayName);
+  const fixtureId =
+    findFixtureIdByTeamNames(homeName, awayName) ??
+    findFixtureIdByKickoffUtc(raw.fixture.date);
   if (!fixtureId) {
     return null;
   }

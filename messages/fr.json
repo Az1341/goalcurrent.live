@@ -217,7 +217,37 @@
       "capacity": "Capacity:"
     },
     "bracket": {
-      "tbdVsTbd": "TBD vs TBD"
+      "eyebrow": "Coupe du Monde 2026 · Phase à élimination",
+      "title": "Route vers la Finale",
+      "subtitle": "Les 64 matchs · Vue tableau",
+      "note": "Toutes les heures en heure locale du visiteur. Dates et coups d'envoi susceptibles de changer.",
+      "degraded": "Les données peuvent être retardées",
+      "backToHub": "Retour au hub Coupe du Monde 2026",
+      "tabs": {
+        "bracket": "Tableau",
+        "schedule": "Calendrier",
+        "results": "Résultats",
+        "groups": "Groupes",
+        "stats": "Stats"
+      },
+      "rounds": {
+        "r32": "Seizièmes",
+        "r16": "Huitièmes",
+        "qf": "Quarts",
+        "sf": "Demi-finales",
+        "3rd": "Match pour la 3e place",
+        "final": "Finale"
+      },
+      "card": {
+        "viewMatchCenter": "Voir le centre du match →",
+        "tbd": "À déterminer"
+      },
+      "live": {
+        "lineupsBanner": "Compositions en direct 1 h avant le coup d'envoi",
+        "matchCenter": "Centre du match →",
+        "live": "EN DIRECT"
+      },
+      "tbdVsTbd": "À déterminer vs À déterminer"
     }
   },
   "pl": {

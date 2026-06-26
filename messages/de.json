@@ -217,7 +217,37 @@
       "capacity": "Capacity:"
     },
     "bracket": {
-      "tbdVsTbd": "TBD vs TBD"
+      "eyebrow": "WM 2026 · K.-o.-Phase",
+      "title": "Road to the Final",
+      "subtitle": "Alle 64 Spiele · Turnierbaum",
+      "note": "Alle Zeiten in der lokalen Besucherzeit. Termine können sich ändern.",
+      "degraded": "Daten können verzögert sein",
+      "backToHub": "Zurück zum WM-2026-Hub",
+      "tabs": {
+        "bracket": "Turnierbaum",
+        "schedule": "Spielplan",
+        "results": "Ergebnisse",
+        "groups": "Gruppen",
+        "stats": "Statistik"
+      },
+      "rounds": {
+        "r32": "Achtzehntelfinale",
+        "r16": "Achtelfinale",
+        "qf": "Viertelfinale",
+        "sf": "Halbfinale",
+        "3rd": "Spiel um Platz 3",
+        "final": "Finale"
+      },
+      "card": {
+        "viewMatchCenter": "Match Center →",
+        "tbd": "Offen"
+      },
+      "live": {
+        "lineupsBanner": "Live-Aufstellungen 1 Stunde vor Anpfiff",
+        "matchCenter": "Match Center →",
+        "live": "LIVE"
+      },
+      "tbdVsTbd": "Offen vs Offen"
     }
   },
   "pl": {

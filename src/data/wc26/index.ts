@@ -66,6 +66,13 @@ export {
 } from "./fixtures";
 
 export {
+  WC26_KNOCKOUT_FIXTURES,
+  WC26_KNOCKOUT_PLACEHOLDER_TEAM,
+  getKnockoutFixtureByMatchNumber,
+  isKnockoutPlaceholderTeam,
+} from "./knockout-fixtures";
+
+export {
   WC26_KNOCKOUT_SCHEDULE,
   getKnockoutScheduleByMatchNumber,
   resolveBracketMatchSchedule,
@@ -79,7 +86,7 @@ import { createEmptyStandingRow } from "@/types/standing";
 import { WC26_GROUPS } from "./groups";
 import { WC26_TEAMS } from "./teams";
 import { WC26_VENUES } from "./venues";
-import { WC26_FIXTURES } from "./fixtures";
+import { WC26_FIXTURES, WC26_TOURNAMENT } from "./fixtures";
 import { getTeamById } from "./teams";
 
 /** Empty group tables — one zeroed row per team, ready for future data. */
@@ -161,13 +168,23 @@ function validateWc26Dataset(): void {
     }
   }
 
+  if (WC26_FIXTURES.length !== WC26_TOURNAMENT.fixtureCount) {
+    throw new Error(
+      `Expected ${WC26_TOURNAMENT.fixtureCount} fixtures, found ${WC26_FIXTURES.length}`,
+    );
+  }
+
   for (const fixture of WC26_FIXTURES) {
-    if (!teamIds.has(fixture.homeTeamId)) {
+    const homeKnown =
+      teamIds.has(fixture.homeTeamId) || fixture.homeTeamId === "tbd";
+    const awayKnown =
+      teamIds.has(fixture.awayTeamId) || fixture.awayTeamId === "tbd";
+    if (!homeKnown) {
       throw new Error(
         `Fixture ${fixture.id} references unknown home team: ${fixture.homeTeamId}`,
       );
     }
-    if (!teamIds.has(fixture.awayTeamId)) {
+    if (!awayKnown) {
       throw new Error(
         `Fixture ${fixture.id} references unknown away team: ${fixture.awayTeamId}`,
       );

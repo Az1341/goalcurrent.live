@@ -217,6 +217,36 @@
       "capacity": "Capacity:"
     },
     "bracket": {
+      "eyebrow": "World Cup 2026 · Knockout Stage",
+      "title": "Road to the Final",
+      "subtitle": "All 64 matches · Bracket view",
+      "note": "All times shown in visitor local time. Dates and kick-off times subject to change.",
+      "degraded": "Data may be delayed",
+      "backToHub": "Back to World Cup 2026 hub",
+      "tabs": {
+        "bracket": "Bracket",
+        "schedule": "Schedule",
+        "results": "Results",
+        "groups": "Groups",
+        "stats": "Stats"
+      },
+      "rounds": {
+        "r32": "Round of 32",
+        "r16": "Round of 16",
+        "qf": "Quarter-Finals",
+        "sf": "Semi-Finals",
+        "3rd": "Third Place",
+        "final": "Final"
+      },
+      "card": {
+        "viewMatchCenter": "View Match Center →",
+        "tbd": "TBD"
+      },
+      "live": {
+        "lineupsBanner": "Live Line-ups Available 1 Hour Before Kick-off",
+        "matchCenter": "Match Center →",
+        "live": "LIVE"
+      },
       "tbdVsTbd": "TBD vs TBD"
     }
   },

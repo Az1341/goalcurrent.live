@@ -217,7 +217,37 @@
       "capacity": "Capacity:"
     },
     "bracket": {
-      "tbdVsTbd": "TBD vs TBD"
+      "eyebrow": "Copa del Mundo 2026 · Fase eliminatoria",
+      "title": "Camino a la Final",
+      "subtitle": "Los 64 partidos · Vista de cuadro",
+      "note": "Todas las horas en hora local del visitante. Fechas y horarios sujetos a cambios.",
+      "degraded": "Los datos pueden estar retrasados",
+      "backToHub": "Volver al hub de la Copa 2026",
+      "tabs": {
+        "bracket": "Cuadro",
+        "schedule": "Calendario",
+        "results": "Resultados",
+        "groups": "Grupos",
+        "stats": "Estadísticas"
+      },
+      "rounds": {
+        "r32": "Dieciseisavos",
+        "r16": "Octavos",
+        "qf": "Cuartos",
+        "sf": "Semifinales",
+        "3rd": "Tercer puesto",
+        "final": "Final"
+      },
+      "card": {
+        "viewMatchCenter": "Ver centro del partido →",
+        "tbd": "Por definir"
+      },
+      "live": {
+        "lineupsBanner": "Alineaciones en vivo disponibles 1 hora antes",
+        "matchCenter": "Centro del partido →",
+        "live": "EN VIVO"
+      },
+      "tbdVsTbd": "Por definir vs Por definir"
     }
   },
   "pl": {

@@ -2,6 +2,7 @@ import type { Fixture } from "@/types/fixture";
 import type { Wc26GroupId } from "@/types/group";
 import type { TeamId } from "@/types/team";
 import type { VenueId } from "@/types/venue";
+import { WC26_KNOCKOUT_FIXTURES } from "./knockout-fixtures";
 
 /** Tournament metadata — no scores or results. */
 export const WC26_TOURNAMENT = {
@@ -14,7 +15,7 @@ export const WC26_TOURNAMENT = {
   venueCount: 16,
   /** Group-stage fixtures loaded in this dataset. */
   groupStageFixtureCount: 72,
-  /** Total matches in the expanded format (knockout not loaded yet). */
+  /** Total matches in the expanded format (group + knockout). */
   fixtureCount: 104,
 } as const;
 
@@ -130,8 +131,7 @@ function buildFixture(
   };
 }
 
-/** All 72 official group-stage fixtures — no scores. */
-export const WC26_FIXTURES: readonly Fixture[] = GROUP_STAGE_RAW.map(
+const WC26_GROUP_FIXTURES: readonly Fixture[] = GROUP_STAGE_RAW.map(
   ([matchNumber, groupId, matchday, homeTeamId, awayTeamId, venueId, kickoffUtc]) =>
     buildFixture(
       matchNumber,
@@ -143,6 +143,12 @@ export const WC26_FIXTURES: readonly Fixture[] = GROUP_STAGE_RAW.map(
       kickoffUtc,
     ),
 );
+
+/** All 104 official fixtures — 72 group stage + 32 knockout. */
+export const WC26_FIXTURES: readonly Fixture[] = [
+  ...WC26_GROUP_FIXTURES,
+  ...WC26_KNOCKOUT_FIXTURES,
+];
 
 const fixtureById = new Map<string, Fixture>(
   WC26_FIXTURES.map((fixture) => [fixture.id, fixture]),

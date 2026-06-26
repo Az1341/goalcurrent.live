@@ -217,7 +217,37 @@
       "capacity": "Capacity:"
     },
     "bracket": {
-      "tbdVsTbd": "TBD vs TBD"
+      "eyebrow": "Mundial 2026 · Fase eliminatória",
+      "title": "Rumo à Final",
+      "subtitle": "Todos os 64 jogos · Vista de chave",
+      "note": "Todos os horários no fuso local do visitante. Datas sujeitas a alterações.",
+      "degraded": "Os dados podem estar atrasados",
+      "backToHub": "Voltar ao hub do Mundial 2026",
+      "tabs": {
+        "bracket": "Chave",
+        "schedule": "Calendário",
+        "results": "Resultados",
+        "groups": "Grupos",
+        "stats": "Estatísticas"
+      },
+      "rounds": {
+        "r32": "16 avos",
+        "r16": "Oitavos",
+        "qf": "Quartos",
+        "sf": "Meias-finais",
+        "3rd": "3.º lugar",
+        "final": "Final"
+      },
+      "card": {
+        "viewMatchCenter": "Ver centro do jogo →",
+        "tbd": "A definir"
+      },
+      "live": {
+        "lineupsBanner": "Onzes iniciais ao vivo 1 hora antes",
+        "matchCenter": "Centro do jogo →",
+        "live": "AO VIVO"
+      },
+      "tbdVsTbd": "A definir vs A definir"
     }
   },
   "pl": {

@@ -22,10 +22,37 @@ test("fifa bracket mapping defines sixteen round-of-32 templates", () => {
   assert.equal(matches.length, 16);
 });
 
-test("bracket section renders modular round components", () => {
-  const raw = readFileSync(join(root, "src/components/wc26/BracketSection.tsx"), "utf8");
-  assert.match(raw, /buildKnockoutBracketRounds/);
-  assert.match(raw, /BracketRound/);
+test("knockout fixtures cover matches 73 through 104", () => {
+  const raw = readFileSync(join(root, "src/data/wc26/knockout-fixtures.ts"), "utf8");
+  assert.match(raw, /WC26_KNOCKOUT_FIXTURES/);
+  assert.match(raw, /padStart\(3, "0"\)/);
+  const scheduleRaw = readFileSync(
+    join(root, "src/data/wc26/knockout-schedule.ts"),
+    "utf8",
+  );
+  const entries = scheduleRaw.match(/matchNumber:\s*\d+/g) ?? [];
+  assert.equal(entries.length, 32);
+});
+
+test("bracket page client renders horizontal bracket grid", () => {
+  const pageRaw = readFileSync(
+    join(root, "src/components/wc26/bracket/BracketPageClient.tsx"),
+    "utf8",
+  );
+  const viewRaw = readFileSync(
+    join(root, "src/lib/wc26/bracket-view.ts"),
+    "utf8",
+  );
+  assert.match(pageRaw, /BracketGrid/);
+  assert.match(pageRaw, /buildBracketGridView/);
+  assert.match(viewRaw, /buildBracketGridView/);
+  assert.match(viewRaw, /BracketMatchCardView/);
+});
+
+test("fixture match resolver maps knockout kickoffs", () => {
+  const raw = readFileSync(join(root, "src/lib/wc26-fixture-match.ts"), "utf8");
+  assert.match(raw, /findFixtureIdByKickoffUtc/);
+  assert.match(raw, /findFixtureIdByMatchNumber/);
 });
 
 test("group hub mounts final matchday dual-card section", () => {

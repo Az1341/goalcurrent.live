@@ -1,24 +1,15 @@
 import type { Metadata } from "next";
-import BracketSection from "@/components/wc26/BracketSection";
-import Wc26SectionPage from "@/components/wc26/Wc26SectionPage";
-import { getWc26Section } from "@/lib/wc26-sections";
+import BracketPageClient from "@/components/wc26/bracket/BracketPageClient";
 import { buildPageMetadata } from "@/lib/page-metadata";
-
-const section = getWc26Section("bracket")!;
+import { SITE_NAME } from "@/lib/site-url";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${section.label} — World Cup 2026`,
-  description: section.description,
-  path: section.href,
+  title: `World Cup 2026 Bracket | Road to the Final — ${SITE_NAME}`,
+  description:
+    "Live World Cup 2026 knockout bracket. Track all 64 matches from Round of 32 to the Final. Scores, fixtures and results updated in real time.",
+  path: "/worldcup2026/bracket",
 });
+
 export default function BracketPage() {
-  return (
-    <Wc26SectionPage
-      breadcrumb={section.breadcrumb}
-      titleHighlight={section.titleHighlight}
-      intro={section.description}
-    >
-      <BracketSection />
-    </Wc26SectionPage>
-  );
+  return <BracketPageClient />;
 }

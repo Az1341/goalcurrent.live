@@ -168,11 +168,24 @@ const TEAM_SEEDS: readonly TeamSeed[] = [
 
 export const WC26_TEAMS: readonly Team[] = TEAM_SEEDS.map(buildTeam);
 
+/** Synthetic team for unconfirmed knockout slots — not counted in the 48 nations. */
+export const WC26_TBD_TEAM: Team = {
+  id: "tbd",
+  name: "TBD",
+  code: "TBD",
+  groupId: "a",
+  flagCode: "",
+  aliases: ["TBD", "To Be Determined"],
+};
+
 const teamById = new Map<TeamId, Team>(
   WC26_TEAMS.map((team) => [team.id, team]),
 );
 
 export function getTeamById(id: TeamId): Team | undefined {
+  if (id === WC26_TBD_TEAM.id) {
+    return WC26_TBD_TEAM;
+  }
   return teamById.get(id);
 }
 

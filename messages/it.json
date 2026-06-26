@@ -217,7 +217,37 @@
       "capacity": "Capacity:"
     },
     "bracket": {
-      "tbdVsTbd": "TBD vs TBD"
+      "eyebrow": "Mondiale 2026 · Fase a eliminazione",
+      "title": "Road to the Final",
+      "subtitle": "Tutte le 64 partite · Vista tabellone",
+      "note": "Tutti gli orari nell'ora locale del visitatore. Date soggette a modifiche.",
+      "degraded": "I dati potrebbero essere in ritardo",
+      "backToHub": "Torna all'hub Mondiale 2026",
+      "tabs": {
+        "bracket": "Tabellone",
+        "schedule": "Calendario",
+        "results": "Risultati",
+        "groups": "Gironi",
+        "stats": "Statistiche"
+      },
+      "rounds": {
+        "r32": "Sedicesimi",
+        "r16": "Ottavi",
+        "qf": "Quarti",
+        "sf": "Semifinali",
+        "3rd": "Terzo posto",
+        "final": "Finale"
+      },
+      "card": {
+        "viewMatchCenter": "Vai al match center →",
+        "tbd": "Da definire"
+      },
+      "live": {
+        "lineupsBanner": "Formazioni live disponibili 1 ora prima",
+        "matchCenter": "Match center →",
+        "live": "LIVE"
+      },
+      "tbdVsTbd": "Da definire vs Da definire"
     }
   },
   "pl": {
