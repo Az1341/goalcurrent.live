@@ -12,6 +12,6 @@ Run `npm run verify:design` and confirm in the browser:
 - **Flags** — team rows show `/flags/4x3/*.svg` (not empty grey boxes)
 - **Photos** — hero uses `/images/football-hero-bg.jpg`; article/news cards show images
 - **Emojis** — match events (⚽ 🎯), language menu (🌐), stubs (🚧) render on Windows
-- **Language** — header `🌐 English ▾` (desktop) and More sheet → زبان (mobile)
+- **Language** — header `🌐 EN ▾` (desktop) and More sheet → زبان (mobile)
 
 Do **not** set `HOME_HERO_BG` to `null` or remove `image` fields from article hubs. Do not route `/flags`, `/images`, or `/icons` through the service-worker cache-first path.

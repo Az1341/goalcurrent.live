@@ -18,6 +18,8 @@
 
   color: var(--gc-text-primary);
 
+  padding-top: var(--gc-site-header-height, 56px);
+
 }
 
 .mainWithTabBar {

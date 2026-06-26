@@ -34,6 +34,7 @@
   --gc-text-on-accent: #ffffff;
 
   /* ── Chrome (header) ── */
+  --gc-site-header-height: 56px;
   --gc-header-from: #0a3470;
   --gc-header: #082b5f;
   --gc-chrome-text: #f8fafc;

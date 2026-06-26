@@ -3,7 +3,12 @@
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import NavLink from "@/components/nav/NavLink";
-import { LOCALE_META, LOCALES, LANGUAGE_MENU_ICON, type AppLocale } from "@/i18n/locales";
+import {
+  getLocaleShortLabel,
+  LOCALES,
+  LANGUAGE_MENU_ICON,
+  type AppLocale,
+} from "@/i18n/locales";
 import { useEffect, useState } from "react";
 import {
   MORE_SHEET_LEVEL1,
@@ -128,7 +133,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                           <span className={styles.sheetRowLabel}>
                             <span className={styles.sheetRowTitle}>{t(item.labelKey)}</span>
                             <span className={styles.sheetRowMeta}>
-                              {LOCALE_META[locale].label}
+                              {getLocaleShortLabel(locale)}
                             </span>
                           </span>
                         </span>
@@ -181,7 +186,6 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
             {activeSubmenu === "language" ? (
               <ul className={styles.sheetList} aria-label={t("language")}>
                 {LOCALES.map((code) => {
-                  const meta = LOCALE_META[code];
                   const isActive = locale === code;
                   return (
                     <li key={code}>
@@ -191,7 +195,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                       aria-current={isActive ? "true" : undefined}
                       onClick={() => handleLocaleChange(code)}
                     >
-                      <span className={styles.langLabel}>{meta.label}</span>
+                      <span className={styles.langLabel}>{getLocaleShortLabel(code)}</span>
                       {isActive ? (
                         <span className={styles.langCheck} aria-hidden="true">
                           ✓

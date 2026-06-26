@@ -1,8 +1,11 @@
 /* ── Master header (approved homepage chrome) ── */
 
 .chromeWrap {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 300;
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.14);
 }
@@ -161,9 +164,7 @@
 }
 
 .localeLabel {
-  max-width: 9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  letter-spacing: 0.04em;
 }
 
 .localeChevron {

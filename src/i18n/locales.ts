@@ -46,3 +46,8 @@ export function getDirection(locale: string): "ltr" | "rtl" {
 export function getDateLocale(locale: string): string {
   return LOCALE_META[locale as AppLocale]?.dateLocale ?? "en-GB";
 }
+
+/** Two-letter code shown in the header language selector (EN, FR, ES, …). */
+export function getLocaleShortLabel(locale: string): string {
+  return locale.toUpperCase();
+}

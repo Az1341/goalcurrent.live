@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import NavLink from "@/components/nav/NavLink";
@@ -25,9 +26,38 @@ export default function MasterHeader() {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const isHome = pathname === "/";
+  const chromeRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const chrome = chromeRef.current;
+    if (!chrome) {
+      return;
+    }
+
+    const syncHeaderHeight = () => {
+      document.documentElement.style.setProperty(
+        "--gc-site-header-height",
+        `${chrome.offsetHeight}px`,
+      );
+    };
+
+    syncHeaderHeight();
+    const observer = new ResizeObserver(syncHeaderHeight);
+    observer.observe(chrome);
+    window.addEventListener("resize", syncHeaderHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", syncHeaderHeight);
+    };
+  }, [isHome]);
 
   return (
-    <div className={styles.chromeWrap} data-gc-chrome="site-header">
+    <div
+      ref={chromeRef}
+      className={styles.chromeWrap}
+      data-gc-chrome="site-header"
+    >
       <header className={styles.masterHeader} role="banner">
         <div className={styles.bar}>
           <NavLink href="/" className={styles.brand}>

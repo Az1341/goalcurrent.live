@@ -4,8 +4,8 @@ import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import {
+  getLocaleShortLabel,
   LANGUAGE_MENU_ICON,
-  LOCALE_META,
   LOCALES,
   type AppLocale,
 } from "@/i18n/locales";
@@ -86,7 +86,7 @@ export default function HeaderLocaleDropdown() {
         <span className={styles.localeIcon} aria-hidden="true">
           {LANGUAGE_MENU_ICON}
         </span>
-        <span className={styles.localeLabel}>{LOCALE_META[locale].label}</span>
+        <span className={styles.localeLabel}>{getLocaleShortLabel(locale)}</span>
         <span className={styles.localeChevron} aria-hidden="true">
           ▾
         </span>
@@ -114,7 +114,7 @@ export default function HeaderLocaleDropdown() {
               aria-current={locale === code ? "true" : undefined}
               onClick={() => handleSelect(code)}
             >
-              {LOCALE_META[code].label}
+              {getLocaleShortLabel(code)}
             </button>
           ))}
         </div>
