@@ -1,58 +1,59 @@
 "use client";
 
-import type { ReactNode } from "react";
 import Link from "next/link";
+import { WC26_TOURNAMENT } from "@/data/wc26";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useLiveScores } from "@/lib/use-live-scores";
 import {
   buildHomepageMatchView,
-  isLiveMatchStatus,
   selectFeaturedFixture,
   selectHomepageFixtures,
-  selectUpcomingHomepageFixtures,
   type HomepageMatchClass,
   type HomepageMatchView,
 } from "@/lib/wc26-live";
-import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import TeamFlag from "@/components/TeamFlag";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
 import { SITE_NAME } from "@/lib/site-url";
 import AdSenseUnit from "@/components/AdSenseUnit";
-import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
-import LiveRibbon from "@/components/layout/LiveRibbon";
-import HomeArticlesSection from "@/components/home/HomeArticlesSection";
-import HomeFavouritesStrip from "@/components/home/HomeFavouritesStrip";
-import HomeNewsSection from "@/components/home/HomeNewsSection";
-import HomePlSection from "@/components/home/HomePlSection";
-import HomeWc26StandingsPreview from "@/components/home/HomeWc26StandingsPreview";
 import styles from "@/app/page.module.css";
 
+
+
 const FEATURED_FLAG = 64;
-const LIST_FLAG = 22;
+
+const HOME_NEWS = [
+  {
+    category: "World Cup 2026",
+    headline: "Tournament news, groups and daily round-ups",
+    href: "/news",
+    editorial: false,
+  },
+  {
+    category: "GoalCurrent Editorial",
+    headline: "Football Is Inspiring Canada's Next Generation",
+    href: "/news/articles/football-inspiring-canadas-next-generation",
+    editorial: true,
+  },
+  {
+    category: "GoalCurrent Editorial",
+    headline: "World Cup 2026 — The Complete Fan Guide",
+    href: "/news/articles/world-cup-2026-complete-guide",
+    editorial: true,
+  },
+] as const;
+
+const WC26_NAV = [
+  { href: "/worldcup2026/fixtures", label: "Fixtures", note: "Full schedule" },
+  { href: "/worldcup2026/groups", label: "Groups", note: "All 12 groups" },
+  { href: "/worldcup2026/standings", label: "Standings", note: "Tables & points" },
+  { href: "/worldcup2026", label: "Tournament hub", note: "World Cup 2026" },
+] as const;
 
 function formatScore(match: HomepageMatchView) {
   if (!match.score) return null;
   return `${match.score.home}–${match.score.away}`;
-}
-
-function normalizeStatus(status: string) {
-  return status.trim().toLowerCase();
-}
-
-function formatHalfIndicator(fixture: EffectiveFixture): string | null {
-  if (!isLiveMatchStatus(fixture.status)) return null;
-  const status = normalizeStatus(String(fixture.status));
-  if (status === "ht" || status === "halftime" || status === "half-time") {
-    return "HT";
-  }
-  if (status === "2h") return "2nd H";
-  if (status === "1h") return "1st H";
-  if (fixture.elapsed != null) {
-    return fixture.elapsed > 45 ? "2nd H" : "1st H";
-  }
-  return "1st H";
 }
 
 function statusPillClass(status: HomepageMatchClass) {
@@ -132,79 +133,73 @@ function FeaturedMatchHero({ match }: { match: HomepageMatchView }) {
   );
 }
 
-function CompactMatchList({
-  matches,
-  showHalf,
-  fixtureById,
-}: {
-  matches: readonly HomepageMatchView[];
-  showHalf: boolean;
-  fixtureById: Map<string, EffectiveFixture>;
-}) {
-  if (matches.length === 0) {
-    return null;
-  }
+function MatchListRow({ match }: { match: HomepageMatchView }) {
+  const score = formatScore(match);
+  const matchLabel = `${match.homeName} vs ${match.awayName}`;
 
   return (
-    <ul className={styles.compactList}>
-      {matches.map((match) => {
-        const score = formatScore(match);
-        const fixture = fixtureById.get(match.fixtureId);
-        const half = fixture ? formatHalfIndicator(fixture) : null;
-        const isLive = match.matchClass === "live";
-
-        return (
-          <li key={match.fixtureId}>
-            <Link href={matchHref(match.fixtureId)} className={styles.compactRow}>
-              <TeamFlag teamId={match.homeTeamId} size={LIST_FLAG} />
-              <span className={styles.compactTeam}>{match.homeName}</span>
-              <span
-                className={`${styles.compactScore} ${isLive ? styles.compactScoreLive : ""}`}
-              >
-                {score ?? "–"}
-              </span>
-              <span className={styles.compactTeam}>{match.awayName}</span>
-              <TeamFlag teamId={match.awayTeamId} size={LIST_FLAG} />
-              <span className={styles.compactMeta}>
-                {showHalf && half
-                  ? half
-                  : match.matchClass === "ft"
-                    ? "FT"
-                    : match.statusLabel}
-                {isLive && match.elapsed != null ? ` · ${match.elapsed}'` : ""}
-              </span>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+    <div className={styles.matchRow}>
+      <span className={`${styles.statusPill} ${statusPillClass(match.matchClass)}`}>
+        {match.matchClass === "live" ? (
+          <span className={styles.liveDot} aria-hidden="true" />
+        ) : null}
+        {match.statusLabel}
+      </span>
+      <span className={styles.colHome}>
+        <TeamFlag teamId={match.homeTeamId} size={26} />
+        <span>{match.homeName}</span>
+      </span>
+      <span className={styles.colScore}>
+        {score ?? "vs"}
+      </span>
+      <span className={styles.colAway}>
+        <TeamFlag teamId={match.awayTeamId} size={26} />
+        <span>{match.awayName}</span>
+      </span>
+      <FavouriteMatchButton matchId={match.fixtureId} label={matchLabel} />
+    </div>
   );
 }
 
-function ColumnCard({
+function MatchListSection({
+  id,
   title,
-  children,
-  footerHref,
-  footerLabel,
+  matches,
   emptyMessage,
-  isEmpty,
+  moreHref,
+  moreLabel,
+  isResults = false,
 }: {
+  id: string;
   title: string;
-  children: ReactNode;
-  footerHref: string;
-  footerLabel: string;
+  matches: readonly HomepageMatchView[];
   emptyMessage: string;
-  isEmpty: boolean;
+  moreHref: string;
+  moreLabel: string;
+  isResults?: boolean;
 }) {
   return (
-    <section className={styles.columnCard}>
-      <h2 className={styles.columnCardTitle}>{title}</h2>
-      <div className={styles.columnCardBody}>
-        {isEmpty ? <p className={styles.columnEmpty}>{emptyMessage}</p> : children}
+    <section className={styles.sectionBlock} aria-labelledby={id}>
+      <div className={styles.sectionHeader}>
+        <h2 id={id} className={styles.sectionTitle}>
+          {title}
+        </h2>
+        <Link href={moreHref} className={styles.sectionLink}>
+          {moreLabel}
+        </Link>
       </div>
-      <Link href={footerHref} className={styles.columnCardFooter}>
-        {footerLabel} →
-      </Link>
+      <div className={`${styles.matchCard} ${isResults ? styles.matchCardResults : ""}`}>
+        {matches.length === 0 ? (
+          <p className={styles.matchCardEmpty}>{emptyMessage}</p>
+        ) : (
+          matches.map((match) => (
+            <MatchListRow key={match.fixtureId} match={match} />
+          ))
+        )}
+        <Link href={moreHref} className={styles.matchLink}>
+          {moreLabel} →
+        </Link>
+      </div>
     </section>
   );
 }
@@ -212,25 +207,20 @@ function ColumnCard({
 export default function Home() {
   useLiveScores();
   const fixtures = useEffectiveFixtures();
-  const fixtureById = new Map(fixtures.map((f) => [f.id, f]));
   const featuredFixture = selectFeaturedFixture(fixtures);
   const featured = featuredFixture
     ? buildHomepageMatchView(featuredFixture)
     : undefined;
 
-  const pool = selectHomepageFixtures(fixtures, featured?.fixtureId, 16);
-  const liveMatches = fixtures
-    .filter((f) => isLiveMatchStatus(f.status))
-    .map(buildHomepageMatchView)
-    .slice(0, 4);
-  const latestResults = pool.filter((m) => m.matchClass === "ft").slice(0, 4);
-  const upcomingMatches = selectUpcomingHomepageFixtures(
-    fixtures,
-    featured?.fixtureId,
-    6,
-  );
+  const pool = selectHomepageFixtures(fixtures, featured?.fixtureId, 12);
+  const liveMatches = pool.filter((m) => m.matchClass === "live").slice(0, 3);
+  const upcomingMatches = pool.filter((m) => m.matchClass === "upcoming").slice(0, 3);
+  const latestResults = pool.filter((m) => m.matchClass === "ft").slice(0, 3);
+  // Show upcoming matches when no live games
+  const liveOrUpcoming = liveMatches.length > 0 ? liveMatches : upcomingMatches;
 
   const { gamesPlayed, gamesLeft } = useTournamentStats();
+  const totalMatches = WC26_TOURNAMENT.fixtureCount;
 
   return (
     <div className={styles.homeRoot}>
@@ -258,90 +248,90 @@ export default function Home() {
           )}
         </section>
 
-        <HomeFavouritesStrip />
-
-        <div className={styles.homeTickerWrap}>
-          <LiveRibbon embedded />
+        <div className={styles.sectionBlock}>
+          <AdSenseUnit slot="3579579514" className={styles.adUnit} />
         </div>
 
-        <div className={styles.threeCol}>
-          <ColumnCard
-            title="Live Now"
-            footerHref="/live"
-            footerLabel="View All Live Matches"
-            emptyMessage="No live matches right now."
-            isEmpty={liveMatches.length === 0}
-          >
-            <CompactMatchList
-              matches={liveMatches}
-              showHalf
-              fixtureById={fixtureById}
-            />
-          </ColumnCard>
+        <MatchListSection
+          id="live-matches-heading"
+          title={liveMatches.length > 0 ? "Live matches" : "Next up"}
+          matches={liveOrUpcoming}
+          emptyMessage="No upcoming matches available. Check the full fixtures for the schedule."
+          moreHref="/live"
+          moreLabel={liveMatches.length > 0 ? "Open live scores" : "View all fixtures"}
+        />
 
-          <ColumnCard
-            title="Latest Results"
-            footerHref="/live"
-            footerLabel="View All Results"
-            emptyMessage="No recent full-time results."
-            isEmpty={latestResults.length === 0}
-          >
-            <CompactMatchList
-              matches={latestResults}
-              showHalf={false}
-              fixtureById={fixtureById}
-            />
-          </ColumnCard>
-
-          <ColumnCard
-            title="Upcoming Fixtures"
-            footerHref="/worldcup2026/fixtures"
-            footerLabel="View All Fixtures"
-            emptyMessage="No upcoming fixtures scheduled."
-            isEmpty={upcomingMatches.length === 0}
-          >
-            <CompactMatchList
-              matches={upcomingMatches}
-              showHalf={false}
-              fixtureById={fixtureById}
-            />
-          </ColumnCard>
-        </div>
-
-        <HomeWc26StandingsPreview />
-
-        <HomePlSection />
+        <MatchListSection
+          id="latest-results-heading"
+          title="Latest results"
+          matches={latestResults}
+          emptyMessage="No recent full-time results. Check back after matches finish."
+          moreHref="/live"
+          moreLabel="View all results"
+          isResults={true}
+        />
 
         <div className={styles.sectionBlock}>
-          <AdSenseUnit slot={ADSENSE_SLOTS.homeMid} className={styles.adUnit} />
+          <AdSenseUnit slot="6285703719" className={styles.adUnit} />
         </div>
 
-        <section className={styles.sectionBlock} aria-labelledby="wc26-heading">
+        <section className={styles.sectionBlock} aria-labelledby="wc26-nav-heading">
           <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitleRow}>
-              <span className={styles.sectionBar} aria-hidden="true" />
-              <h2 id="wc26-heading" className={styles.sectionTitle}>
-                World Cup 2026
-              </h2>
-            </div>
+            <h2 id="wc26-nav-heading" className={styles.sectionTitle}>
+              World Cup 2026
+            </h2>
             <Link href="/worldcup2026" className={styles.sectionLink}>
-              View All →
+              Tournament hub
             </Link>
           </div>
-          <p className={styles.wc26Summary}>
-            USA · Mexico · Canada · 11 Jun – 19 Jul 2026 ·{" "}
-            <strong>{gamesPlayed}</strong> played · <strong>{gamesLeft}</strong>{" "}
-            remaining
+          <p className={styles.sectionNote}>
+            {WC26_TOURNAMENT.hosts.join(" · ")} · 11 Jun – 19 Jul 2026
+          </p>
+          <div className={styles.wcNav}>
+            {WC26_NAV.map((item) => (
+              <Link key={item.href} href={item.href} className={styles.wcNavLink}>
+                <strong>{item.label}</strong>
+                <span>{item.note}</span>
+              </Link>
+            ))}
+          </div>
+          <p className={styles.wcStats}>
+            <span>
+              <strong>{totalMatches}</strong> matches
+            </span>
+            <span>
+              <strong>{gamesPlayed}</strong> played
+            </span>
+            <span>
+              <strong>{gamesLeft}</strong> remaining
+            </span>
           </p>
         </section>
 
-        <HomeNewsSection />
-
-        <HomeArticlesSection />
-
-        <div className={styles.sectionBlock}>
-          <AdSenseUnit slot={ADSENSE_SLOTS.homeLower} className={styles.adUnit} />
-        </div>
+        <section className={styles.sectionBlock} aria-labelledby="news-heading">
+          <div className={styles.sectionHeader}>
+            <h2 id="news-heading" className={styles.sectionTitle}>
+              Latest news
+            </h2>
+            <Link href="/news" className={styles.sectionLink}>
+              All football news
+            </Link>
+          </div>
+          <div className={styles.newsGrid}>
+            {HOME_NEWS.map((item) => (
+              <Link key={item.category} href={item.href} className={styles.newsItem}>
+                <div
+                  className={`${styles.newsTag} ${item.editorial ? styles.newsTagEditorial : ""}`}
+                >
+                  {item.category}
+                </div>
+                <div className={styles.newsBody}>
+                  <div className={styles.newsHeadline}>{item.headline}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );
