@@ -1,6 +1,6 @@
 # GoalCurrent.live
 
-Next.js app for **https://goalcurrent.live** —  fixtures, live centre, standings, and match detail.
+Next.js app for **https://goalcurrent.live** — fixtures, live centre, standings, and match detail.
 
 ## Quick start
 
@@ -17,7 +17,7 @@ Open [http://localhost:3000](http://localhost:3000).
 See **[docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)** for:
 
 - `API_FOOTBALL_KEY` (server-side, optional locally)
-- Vercel environment setup
+- Vercel environment setup on project **`goalcurrent.live`**
 - API smoke tests
 
 ## Build
@@ -31,12 +31,17 @@ Prebuild syncs WC26 flag SVGs (`scripts/sync-wc26-flags.mjs`).
 
 ## Deploy
 
-**Canonical setup:** see **[docs/DEPLOY.md](docs/DEPLOY.md)**.
+**This is the only live repo.** Production deploys from **`main`** to Vercel project **`goalcurrent.live`** → https://goalcurrent.live
 
-- **Repo:** `Az1341/goalcurrent-live-nextjs`
-- **Branch:** `main` → auto-deploys **www.goalcurrent.live**
-- **Vercel project:** `goalcurrent-live-nextjs` only
+Full guide: **[docs/DEPLOY.md](docs/DEPLOY.md)**
 
-Set `API_FOOTBALL_KEY` in Vercel Production and Preview before expecting live scores.
+| What | Where |
+|------|--------|
+| GitHub | `Az1341/goalcurrent.live` |
+| Production branch | `main` |
+| Vercel project | `goalcurrent.live` |
+| Domain | `goalcurrent.live` |
+
+Push to `main` → Vercel auto-deploys. Set `API_FOOTBALL_KEY`, `YOUTUBE_API_KEY`, `FOOTBALL_DATA_KEY`, and `CRON_SECRET` in the **`goalcurrent.live`** Vercel project (Production + Preview).
 
 **Do not** commit `.env.local` or real API keys.

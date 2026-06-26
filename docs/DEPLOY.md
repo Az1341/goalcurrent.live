@@ -1,30 +1,77 @@
-# GoalCurrent.live — deployment (single source of truth)
+# GoalCurrent.live — deployment
 
-Use this doc only. Ignore older notes about `goalcurrent-live-nextjs-v2`, duplicate repos, or `live-promotion-prep` as production.
+**Plan #003 — 26 June 2026** · Single repo · Single Vercel project · Single domain.
 
 ## Canonical setup
 
 | Item | Value |
 |------|--------|
-| **GitHub repo** | https://github.com/Az1341/goalcurrent-live-nextjs |
+| **GitHub repo** | https://github.com/Az1341/goalcurrent.live |
 | **Production branch** | `main` |
-| **Vercel project** | `goalcurrent-live-nextjs` |
-| **Production URL** | https://www.goalcurrent.live |
-| **Local folder** | This repo (`goalcurrent-live-nextjs`) |
+| **Vercel project** | `goalcurrent.live` |
+| **Production URL** | https://goalcurrent.live |
+| **Local folder** | `goalcurrent.live` |
+
+Update local remote after cloning or renaming:
+
+```bash
+git remote set-url origin https://github.com/Az1341/goalcurrent.live.git
+```
+
+## Rules
+
+- **Only `main` deploys to production.**
+- **Only this repo** (`goalcurrent.live`) is the live codebase.
+- **Only the Vercel project `goalcurrent.live`** serves https://goalcurrent.live.
+- **Only that project** runs the daily content cron.
 
 ## Workflow
 
-1. Work on a feature branch from `main`, or commit directly to `main` when approved.
+1. Branch from `main`, or commit directly to `main` when approved.
 2. `git push origin main`
-3. Vercel builds and deploys **production** automatically (no manual promote, no second repo).
+3. Vercel project **`goalcurrent.live`** builds and deploys production automatically.
 
-Preview deployments are created for other branches and pull requests.
+Other branches and pull requests get Preview deployments only.
 
-## Do not use
+## Vercel configuration
 
-- **`AZafarani/goalcurrent-live-nextjs-v2`** — not connected to production; causes confusion.
-- **Vercel project `goalcurrent.live`** — legacy duplicate; disconnected from Git. Do not reconnect.
-- **`live-promotion-prep`** — merged into `main`; do not treat as production anymore.
+| Setting | Value |
+|---------|--------|
+| Git repository | `goalcurrent.live` |
+| Production branch | `main` |
+| Production domain | `goalcurrent.live` |
+
+### Environment variables (Production + Preview)
+
+Set these on the **`goalcurrent.live`** Vercel project:
+
+| Variable | Purpose |
+|----------|---------|
+| `API_FOOTBALL_KEY` | Live scores, lineups, statistics |
+| `YOUTUBE_API_KEY` | Video hub ingestion |
+| `FOOTBALL_DATA_KEY` | Secondary football data |
+| `CRON_SECRET` | Authorizes `/api/cron/refresh-content` |
+
+Redeploy after adding or changing variables.
+
+### Cron
+
+`vercel.json` registers:
+
+- **Path:** `/api/cron/refresh-content`
+- **Schedule:** `0 6 * * *` (06:00 UTC daily)
+- **Auth:** `Authorization: Bearer <CRON_SECRET>`
+
+## Content cache warm
+
+PowerShell:
+
+```powershell
+Invoke-RestMethod -Uri "https://goalcurrent.live/api/cron/refresh-content" `
+  -Headers @{ Authorization = "Bearer YOUR_CRON_SECRET" }
+```
+
+Healthy response includes `debug.youtubeKeyPresent: true` and `sources.videos` containing `"YouTube"`.
 
 ## Emergency CLI deploy
 
@@ -34,8 +81,8 @@ Only if Git deploy is broken:
 npx vercel deploy --prod --yes
 ```
 
-Requires Vercel CLI login and `.vercel/project.json` linked to `goalcurrent-live-nextjs`.
+Requires Vercel CLI login and `.vercel/project.json` linked to **`goalcurrent.live`**.
 
-## Environment
+## Related
 
-Set `API_FOOTBALL_KEY` in Vercel → Project → Settings → Environment Variables (Production + Preview). See [ENVIRONMENT.md](./ENVIRONMENT.md).
+- [ENVIRONMENT.md](./ENVIRONMENT.md) — local `.env.local` and API smoke tests

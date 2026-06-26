@@ -1,7 +1,11 @@
 {
-  "name": "goalcurrent-next",
+  "name": "goalcurrent.live",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Az1341/goalcurrent.live.git"
+  },
   "scripts": {
     "sync:flags": "node scripts/sync-wc26-flags.mjs",
     "prebuild": "node scripts/sync-wc26-flags.mjs",

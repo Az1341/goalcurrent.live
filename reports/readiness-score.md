@@ -1,7 +1,7 @@
 # GoalCurrent.live — Readiness Score
 
 **Updated:** 2026-06-24 · **Branch:** `main` @ `bdae9c1` · **Tag:** `v1.0.0`  
-**Production:** https://www.goalcurrent.live
+**Production:** https://goalcurrent.live
 
 ## Overall score: **88 / 100**
 

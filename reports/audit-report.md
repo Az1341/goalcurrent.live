@@ -12,13 +12,15 @@ Full reports saved to:
 
 ## One source of truth
 
+> **Updated 26 Jun 2026 (Plan #003):** see **[docs/DEPLOY.md](../docs/DEPLOY.md)** for current setup. Table below is the audit snapshot from 24 Jun.
+
 | Item | Value |
 |------|--------|
 | **What** | GoalCurrent.live website |
-| **GitHub** | `Az1341/goalcurrent-live-nextjs` |
+| **GitHub** | `Az1341/goalcurrent.live` |
 | **Branch** | `main` |
-| **Vercel** | `goalcurrent-live-nextjs` |
-| **Live site** | https://www.goalcurrent.live |
+| **Vercel** | `goalcurrent.live` |
+| **Live site** | https://goalcurrent.live |
 | **Deploy** | `git push origin main` → Vercel auto production build |
 
 ---

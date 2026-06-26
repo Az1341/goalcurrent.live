@@ -1,32 +1,42 @@
-# GoalCurrent.online — environment setup
+# GoalCurrent.live — environment setup
 
 ## Overview
 
-GoalCurrent.online is a Next.js 16 app. World Cup 2026 **fixture metadata** (teams, groups, venues, kickoffs) lives in `src/data/wc26/` and is the single source of truth.
+GoalCurrent.live is a Next.js 16 app deployed from **`main`** on Vercel project **`goalcurrent.live`**.
+
+World Cup 2026 **fixture metadata** (teams, groups, venues, kickoffs) lives in `src/data/wc26/` and is the single source of truth.
 
 **Live scores, match events, lineups, and statistics** are fetched server-side from [api-football](https://www.api-football.com/) when `API_FOOTBALL_KEY` is set. Without the key, the site runs in an honest scheduled state — no hardcoded results.
 
 ---
 
-## Required variables
+## Required variables (production)
 
-| Variable | Scope | Environments | Description |
-|----------|-------|--------------|-------------|
-| `API_FOOTBALL_KEY` | **Server only** | Production, Preview (recommended for testing) | api-sports.io key for `/api/wc26/scores` and `/api/wc26/match/[fixtureId]` |
+Set on Vercel project **`goalcurrent.live`** (Production + Preview):
 
-**Security:** never use `NEXT_PUBLIC_API_FOOTBALL_KEY`. The key must only be read in `src/lib/server/*` and API routes.
-
----
+| Variable | Scope | Description |
+|----------|-------|-------------|
+| `API_FOOTBALL_KEY` | Server only | api-sports.io key for live scores and match detail |
+| `YOUTUBE_API_KEY` | Server only | YouTube Data API v3 for video ingestion |
+| `CRON_SECRET` | Server only | Bearer token for `/api/cron/refresh-content` |
 
 ## Optional variables
 
-None are required today. See `.env.example` for the template.
+| Variable | Scope | Description |
+|----------|-------|-------------|
+| `FOOTBALL_DATA_KEY` | Server only | Secondary football data source |
+| `GNEWS_API_KEY` | Server only | Secondary news source (skipped when unset) |
+| `SCOREBAT_API_TOKEN` | Server only | ScoreBat video highlights |
+
+See `.env.example` for the full template including AdSense and Sentry.
+
+**Security:** never prefix API keys with `NEXT_PUBLIC_`. Keys must only be read in server code and API routes.
 
 ---
 
 ## Local development
 
-1. Clone the repo and install dependencies:
+1. Clone **https://github.com/Az1341/goalcurrent.live** and install:
 
    ```bash
    npm install
@@ -38,10 +48,11 @@ None are required today. See `.env.example` for the template.
    cp .env.example .env.local
    ```
 
-3. Add your api-football key to `.env.local` (optional for local work):
+3. Add keys to `.env.local` as needed (all optional locally):
 
    ```
    API_FOOTBALL_KEY=your_key_here
+   YOUTUBE_API_KEY=your_key_here
    ```
 
 4. Start the dev server:
@@ -50,46 +61,41 @@ None are required today. See `.env.example` for the template.
    npm run dev
    ```
 
-5. Verify API (when key is set):
+5. Verify API (when `API_FOOTBALL_KEY` is set):
 
    - `http://localhost:3000/api/wc26/scores?results=wc` → `"configured": true`
-   - `http://localhost:3000/api/wc26/match/fixture-001` → JSON payload (events may be empty pre-tournament)
+   - `http://localhost:3000/api/wc26/match/fixture-001` → JSON payload
 
-Without a key, both endpoints return `configured: false` and empty data — expected behaviour.
+Without a key, endpoints return `configured: false` — expected behaviour.
 
 ---
 
 ## Vercel setup
 
-1. Link the project to Vercel (if not already linked).
-2. Open **Project → Settings → Environment Variables**.
-3. Add:
-
-   | Name | Value | Environments |
-   |------|-------|--------------|
-   | `API_FOOTBALL_KEY` | Your api-football key | Production, Preview |
-
-4. Redeploy after adding or changing the variable.
+1. Open Vercel project **`goalcurrent.live`**.
+2. Confirm **Settings → Git → Production Branch** is **`main`**.
+3. **Settings → Environment Variables** — add keys for Production and Preview.
+4. Redeploy after changes.
 
 ### Smoke tests (Preview or Production)
 
 | Check | Expected |
 |-------|----------|
 | `GET /api/wc26/scores?results=wc` | `200`, `configured: true` when key set |
-| `GET /api/wc26/scores?live=true` | `200`, `phase: "pre-tournament"` before 11 Jun 2026 UTC kickoff |
-| Homepage / Live Centre | Scheduled fixtures; scores only when overlay has API data |
-| Match detail | Honest empty states when no events yet |
+| `GET /api/news` | `200`, articles returned |
+| `GET /api/videos` | `200`, videos returned |
+| `GET /api/cron/refresh-content` (with Bearer token) | `200`, `ok: true` |
 
 ---
 
 ## Build notes
 
-- `npm run prebuild` syncs 48 WC26 flag SVGs from lipis/flag-icons (requires network at build time).
-- Production build generates **148 static routes** including 72 match and 48 team pages.
+- `npm run prebuild` syncs WC26 flag SVGs from lipis/flag-icons (requires network at build time).
 
 ---
 
 ## Related docs
 
-- `docs/SITEMAP-ROUTES.md` — route inventory for SEO audit
+- [DEPLOY.md](./DEPLOY.md) — production branch, cron, and deploy workflow
+- [SITEMAP-ROUTES.md](./SITEMAP-ROUTES.md) — route inventory for SEO audit
 - `src/data/wc26/DATA_VERIFICATION.md` — WC26 data SSOT rules
