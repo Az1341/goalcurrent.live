@@ -582,6 +582,9 @@
   margin: 0 auto;
   max-width: 28rem;
   width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 0.75rem;
 }
 
 .lineupBenchGrid {

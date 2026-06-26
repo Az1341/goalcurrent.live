@@ -69,8 +69,8 @@ function gridToPercent(
   const left = ((grid.col - 0.5) / colsInRow) * 100;
   const rowSpan = Math.max(maxRow - 1, 1);
   const rowProgress = (grid.row - 1) / rowSpan;
-  const homeTop = 12 + rowProgress * 30;
-  const awayTop = 88 - rowProgress * 30;
+  const homeTop = 16 + rowProgress * 28;
+  const awayTop = 84 - rowProgress * 28;
   const top = side === "home" ? homeTop : awayTop;
   return { left, top };
 }
@@ -114,21 +114,17 @@ function PlayerAvatar({ name, photo }: { name: string; photo?: string | null }) 
 
 function PlayerMarker({
   player,
-  index,
-  players,
   side,
   rowMaxCols,
   maxRow,
+  grid,
 }: {
   player: MatchLineupPlayer;
-  index: number;
-  players: readonly MatchLineupPlayer[];
   side: "home" | "away";
   rowMaxCols: Map<number, number>;
   maxRow: number;
+  grid: GridCoord;
 }) {
-  const grid =
-    parseGridPosition(player.grid_position) ?? fallbackGrid(player, index, players);
   const { left, top } = gridToPercent(grid, maxRow, rowMaxCols, side);
 
   return (
@@ -158,6 +154,22 @@ function PlayerMarker({
   );
 }
 
+function spreadDuplicateGrid(
+  grid: GridCoord,
+  seen: Map<string, number>,
+): GridCoord {
+  const key = `${grid.row}:${grid.col}`;
+  const duplicates = seen.get(key) ?? 0;
+  seen.set(key, duplicates + 1);
+  if (duplicates === 0) {
+    return grid;
+  }
+  return {
+    row: grid.row,
+    col: grid.col + duplicates * 0.22,
+  };
+}
+
 function TeamMarkers({
   players,
   side,
@@ -167,20 +179,27 @@ function TeamMarkers({
 }) {
   const rowMaxCols = buildRowMaxCols(players);
   const maxRow = getMaxRow(rowMaxCols);
+  const seenGrids = new Map<string, number>();
 
   return (
     <>
-      {players.map((player, index) => (
-        <PlayerMarker
-          key={`${side}-${player.number ?? "na"}-${player.name}`}
-          player={player}
-          index={index}
-          players={players}
-          side={side}
-          rowMaxCols={rowMaxCols}
-          maxRow={maxRow}
-        />
-      ))}
+      {players.map((player, index) => {
+        const baseGrid =
+          parseGridPosition(player.grid_position) ??
+          fallbackGrid(player, index, players);
+        const grid = spreadDuplicateGrid(baseGrid, seenGrids);
+
+        return (
+          <PlayerMarker
+            key={`${side}-${player.number ?? "na"}-${player.name}`}
+            player={player}
+            side={side}
+            rowMaxCols={rowMaxCols}
+            maxRow={maxRow}
+            grid={grid}
+          />
+        );
+      })}
     </>
   );
 }

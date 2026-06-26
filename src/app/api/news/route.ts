@@ -3,7 +3,7 @@ import { captureRouteError } from "@/lib/log";
 import {
   fetchNewsFeed,
   parseNewsFeedCategory,
-} from "@/lib/news-rss";
+} from "@/content/readers";
 import type { NewsApiResponse } from "@/types/news";
 
 export async function GET(request: Request): Promise<NextResponse<NewsApiResponse>> {
@@ -14,7 +14,7 @@ export async function GET(request: Request): Promise<NextResponse<NewsApiRespons
     const payload = await fetchNewsFeed(category);
     return NextResponse.json(payload, {
       headers: {
-        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=600",
+        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=3600",
       },
     });
   } catch (error) {

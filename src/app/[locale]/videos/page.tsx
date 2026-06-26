@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import VideoHub from "@/components/videos/VideoHub";
 import { withVideoFallback } from "@/components/videos/videos-fallback";
-import { fetchYouTubeVideos } from "@/lib/youtube-videos";
+import { fetchCachedVideos } from "@/content/readers";
 import { buildPageMetadata } from "@/lib/page-metadata";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Video & Audio | GoalCurrent.live",
@@ -15,7 +15,7 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default async function VideosHubPage() {
-  const { videos } = await fetchYouTubeVideos("all", 4);
+  const { videos } = await fetchCachedVideos(4);
 
   return <VideoHub latestVideos={withVideoFallback(videos, 4)} />;
 }

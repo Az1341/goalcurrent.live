@@ -62,7 +62,7 @@
   position: relative;
   aspect-ratio: 2 / 3;
   width: 100%;
-  overflow: visible;
+  overflow: hidden;
   border-radius: 0.75rem;
   border: 2px solid rgb(255 255 255 / 0.9);
   background: linear-gradient(180deg, #047857 0%, #065f46 50%, #047857 100%);
@@ -180,17 +180,20 @@
 
 .markers {
   position: absolute;
-  inset: 8px 4px;
+  inset: 14px 8px;
+  overflow: hidden;
 }
 
 .marker {
   position: absolute;
   z-index: 1;
   display: flex;
-  width: 5rem;
+  width: 4.5rem;
+  max-width: 22%;
   transform: translate(-50%, -50%);
   flex-direction: column;
   align-items: center;
+  pointer-events: none;
 }
 
 .avatarWrap {

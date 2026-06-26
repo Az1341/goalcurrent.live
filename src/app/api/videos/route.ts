@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { captureRouteError } from "@/lib/log";
-import {
-  fetchYouTubeVideos,
-  parseVideoFeedCategory,
-} from "@/lib/youtube-videos";
+import { fetchCachedVideos } from "@/content/readers";
+import { parseVideoFeedCategory } from "@/lib/youtube-videos";
 import type { VideosApiResponse } from "@/types/video";
 
 export async function GET(request: Request): Promise<NextResponse<VideosApiResponse>> {
@@ -19,11 +17,11 @@ export async function GET(request: Request): Promise<NextResponse<VideosApiRespo
         : 12;
 
   try {
-    const payload = await fetchYouTubeVideos(category, maxResults);
+    const payload = await fetchCachedVideos(maxResults);
 
     return NextResponse.json(payload, {
       headers: {
-        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300",
+        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=3600",
       },
     });
   } catch (error) {

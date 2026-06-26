@@ -1,0 +1,50 @@
+{
+  "items": [
+    {
+      "id": "c-ur3c6h",
+      "title": "FIFA World Cup 2026 — Match Highlights Hub",
+      "description": "Follow every goal and big moment on GoalCurrent.live.",
+      "url": "https://www.youtube.com/results?search_query=FIFA+World+Cup+2026+highlights",
+      "thumbnail": "/images/football-hero-bg.jpg",
+      "publishedAt": "2026-06-01T00:00:00.000Z",
+      "source": "GoalCurrent.live",
+      "kind": "video",
+      "embedUrl": "https://www.youtube.com/results?search_query=FIFA+World+Cup+2026+highlights"
+    },
+    {
+      "id": "c-ur3c6h",
+      "title": "Premier League 2026/27 — Latest Highlights",
+      "description": "PL goals and analysis on GoalCurrent.live.",
+      "url": "https://www.youtube.com/results?search_query=Premier+League+2026+highlights",
+      "thumbnail": "/images/hero-home.png",
+      "publishedAt": "2026-06-01T00:00:00.000Z",
+      "source": "GoalCurrent.live",
+      "kind": "video",
+      "embedUrl": "https://www.youtube.com/results?search_query=Premier+League+2026+highlights"
+    },
+    {
+      "id": "c-6yre1r",
+      "title": "World Cup 2026 — Group Stage Previews",
+      "description": "Team-by-team previews for all 12 groups.",
+      "url": "https://www.youtube.com/@FIFA",
+      "thumbnail": "/images/football-hero-bg.jpg",
+      "publishedAt": "2026-06-01T00:00:00.000Z",
+      "source": "FIFA",
+      "kind": "video",
+      "embedUrl": "https://www.youtube.com/@FIFA"
+    },
+    {
+      "id": "c-rtj8b",
+      "title": "Live Scores and Lineups — GoalCurrent",
+      "description": "Watch live with tactical lineups on match pages.",
+      "url": "/live",
+      "thumbnail": "/images/hero-home.png",
+      "publishedAt": "2026-06-01T00:00:00.000Z",
+      "source": "GoalCurrent.live",
+      "kind": "video",
+      "embedUrl": "/live"
+    }
+  ],
+  "sources": ["GoalCurrent.live"],
+  "fetchedAt": "2026-06-01T00:00:00.000Z"
+}

@@ -21,5 +21,11 @@
         { "key": "Cache-Control", "value": "no-cache" }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/refresh-content",
+      "schedule": "0 6 * * *"
+    }
   ]
 }

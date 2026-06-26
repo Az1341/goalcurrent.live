@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import ArticleCard from "@/components/articles/ArticleCard";
 import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles/ArticleAuthorLine";
+import { fetchSyndicatedArticles } from "@/content/readers";
 import { ARTICLE_INDEX, ARTICLES, EXTERNAL_ARTICLE_CARDS, articleHref } from "@/data/articles";
 import { getArticleCardImage, isArticleCardImageUnoptimized } from "@/lib/article-hub";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { toIsoDate } from "@/lib/seo/dates";
 import { EDITORIAL_AUTHOR, EDITORIAL_PUBLISHER } from "@/lib/seo/constants";
 import styles from "./article.module.css";
+
+export const revalidate = 86400;
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Football Articles & Analysis",
@@ -23,7 +27,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   editorial: "✍️ Editorial",
 };
 
-export default function ArticlesIndexPage() {
+export default async function ArticlesIndexPage() {
+  const syndicatedArticles = await fetchSyndicatedArticles();
   const sortedIndex = [...ARTICLE_INDEX].sort((a, b) =>
     toIsoDate(b.date).localeCompare(toIsoDate(a.date)),
   );
@@ -93,6 +98,9 @@ export default function ArticlesIndexPage() {
               <p>{article.excerpt}</p>
               <span className={styles.readMore}>Read on MSN ↗</span>
             </a>
+          ))}
+          {syndicatedArticles.map((article) => (
+            <ArticleCard key={article.id} article={article} />
           ))}
           {sortedArticles.filter((a) => !indexSlugs.has(a.slug)).map((a) => (
             <Link
