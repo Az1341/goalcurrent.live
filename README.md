@@ -2,6 +2,8 @@
 
 Next.js app for **https://goalcurrent.live** — fixtures, live centre, standings, and match detail.
 
+**Repository:** [github.com/Az1341/goalcurrent.live](https://github.com/Az1341/goalcurrent.live) · **Vercel:** `goalcurrent.live` · **Branch:** `main`
+
 ## Quick start
 
 ```bash

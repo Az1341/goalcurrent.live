@@ -1,6 +1,6 @@
 # GoalCurrent.live — deployment
 
-**Plan #003 — 26 June 2026** · Single repo · Single Vercel project · Single domain.
+**Plan #005 — 26 June 2026** · Post-rename · Vercel reconnect ready.
 
 ## Canonical setup
 
@@ -16,7 +16,17 @@ Update local remote after cloning or renaming:
 
 ```bash
 git remote set-url origin https://github.com/Az1341/goalcurrent.live.git
+git remote -v   # confirm fetch/push point at goalcurrent.live
 ```
+
+## Vercel reconnect (after GitHub rename)
+
+1. Vercel → project **`goalcurrent.live`** → **Settings → Git**
+2. Connect repository **`goalcurrent.live`** (GitHub redirects the old name automatically)
+3. Set **Production Branch** to **`main`**
+4. **Settings → Domains** → `goalcurrent.live`
+5. **Settings → Environment Variables** → confirm keys on this project only
+6. Redeploy from `main` and warm cron (see below)
 
 ## Rules
 

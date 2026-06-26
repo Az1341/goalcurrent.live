@@ -6,6 +6,7 @@
     "type": "git",
     "url": "https://github.com/Az1341/goalcurrent.live.git"
   },
+  "homepage": "https://goalcurrent.live",
   "scripts": {
     "sync:flags": "node scripts/sync-wc26-flags.mjs",
     "prebuild": "node scripts/sync-wc26-flags.mjs",
