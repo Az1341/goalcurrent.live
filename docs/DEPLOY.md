@@ -1,6 +1,14 @@
 # GoalCurrent.live — deployment
 
-**Plan #005 — 26 June 2026** · Post-rename · Vercel reconnect ready.
+**Plan #006 — 26 June 2026** · Pre-rename validated · Vercel reconnect ready.
+
+## Pre-rename checklist
+
+- [ ] `npm run verify:design` passes
+- [ ] GitHub repo renamed to `goalcurrent.live`
+- [ ] `git remote set-url origin https://github.com/Az1341/goalcurrent.live.git`
+- [ ] Vercel project `goalcurrent.live` linked to repo `goalcurrent.live`
+- [ ] Production branch = `main`
 
 ## Canonical setup
 
