@@ -303,5 +303,18 @@
     "siteDescription": "{siteName} - live scores, fixtures, groups, teams and standings for FIFA World Cup 2026.",
     "matchDescription": "World Cup 2026 match — {title}. Live centre, timeline, statistics and lineups on {siteName}.",
     "titleTemplate": "{title} - {siteName}"
+  },
+  "auth": {
+    "account": "Account",
+    "signIn": "Accedi",
+    "signOut": "Esci",
+    "continueWithGoogle": "Continua con Google",
+    "continueWithApple": "Continua con Apple",
+    "signedInAs": "Accesso come {name}",
+    "enableNotifications": "Attiva notifiche",
+    "notificationsEnabled": "Notifiche attive",
+    "notificationsBlocked": "Notifiche bloccate nel browser",
+    "signInError": "Accesso non riuscito. Riprova.",
+    "loading": "Caricamento…"
   }
 }

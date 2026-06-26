@@ -265,6 +265,21 @@
   flex-shrink: 0;
 }
 
+.sheetAccount {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem 0.25rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.sheetAccountTitle {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
 [dir="rtl"] .panelHidden {
   transform: translateX(-100%);
 }

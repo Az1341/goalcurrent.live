@@ -1,0 +1,105 @@
+.headerWrap {
+  position: relative;
+}
+
+.sheetWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.signInTrigger,
+.signOutButton,
+.sheetButton,
+.pushButton {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signInTrigger:hover,
+.signOutButton:hover,
+.sheetButton:hover,
+.pushButton:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 40;
+  min-width: 12rem;
+  padding: 0.35rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #1a1a1a;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.5rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: #f3f4f6;
+}
+
+.signedInBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.signedInLabel {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.sheetWrap .signedInLabel {
+  color: #333;
+}
+
+.sheetProviders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sheetWrap .sheetButton,
+.sheetWrap .pushButton,
+.sheetWrap .signOutButton {
+  width: 100%;
+  border-color: #d1d5db;
+  background: #fff;
+  color: #111;
+}
+
+.loading,
+.error {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.error {
+  color: #fecaca;
+}
+
+.sheetWrap .error {
+  color: #b91c1c;
+}

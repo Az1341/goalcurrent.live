@@ -7,6 +7,7 @@
   right: 0;
   width: 100%;
   z-index: 300;
+  padding-top: env(safe-area-inset-top, 0px);
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.14);
 }
 
@@ -514,5 +515,29 @@
     display: none;
     overflow-x: visible;
     white-space: normal;
+  }
+
+  .bar {
+    padding: 0 12px;
+    gap: 8px;
+    min-height: 48px;
+  }
+
+  .brandLogoWrap img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .brandName {
+    font-size: 1rem;
+  }
+
+  .headerSubscribe {
+    display: none;
+  }
+
+  .localeBtn {
+    padding: 6px 10px;
+    font-size: 0.8125rem;
   }
 }

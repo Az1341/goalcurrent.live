@@ -8,6 +8,10 @@ declare global {
     __gc_onesignal_init?: boolean;
     __gc_sw_registered?: boolean;
     __gc_adsense_slots_pushed?: Set<string>;
+    AndroidBridge?: {
+      onAuthStateChanged?: (payload: string) => void;
+      onFcmToken?: (token: string) => void;
+    };
     OneSignalDeferred?: Array<
       (oneSignal: {
         init: (options: { appId: string }) => Promise<void>;

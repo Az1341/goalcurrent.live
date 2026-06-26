@@ -55,8 +55,24 @@ export function mergeContentSources(
   return sortByPublishedDesc(merged).slice(0, limit);
 }
 
+export function plainTextFromHtml(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<a[^>]*>([\s\S]*?)<\/a>/gi, "$1")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function truncateDescription(text: string, max = 180): string {
-  const trimmed = text.trim();
+  const trimmed = plainTextFromHtml(text);
   if (trimmed.length <= max) {
     return trimmed;
   }

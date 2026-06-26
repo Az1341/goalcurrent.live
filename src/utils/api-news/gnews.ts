@@ -1,5 +1,5 @@
 import type { ContentItem } from "@/content/types";
-import { contentIdFromUrl, truncateDescription } from "@/content/merge";
+import { contentIdFromUrl, plainTextFromHtml, truncateDescription } from "@/content/merge";
 
 const GNEWS_BASE = "https://gnews.io/api/v4/search";
 
@@ -50,8 +50,9 @@ export async function fetchGNewsArticles(): Promise<ContentItem[]> {
         continue;
       }
 
-      const description =
-        article.description?.trim() || article.content?.trim() || "";
+      const description = plainTextFromHtml(
+        article.description?.trim() || article.content?.trim() || "",
+      );
 
       items.push({
         id: contentIdFromUrl(url),

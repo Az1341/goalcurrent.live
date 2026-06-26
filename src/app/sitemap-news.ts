@@ -1,6 +1,6 @@
 /**
  * Google News sitemap data and XML builder.
- * Served at `/sitemap-news.xml` via `src/app/sitemap-news.xml/route.ts`.
+ * Served at `/sitemap-news.xml` via rewrite to `/api/sitemap-news`.
  */
 export {
   buildNewsSitemapXml,

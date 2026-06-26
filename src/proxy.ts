@@ -13,13 +13,14 @@ const LOCALE_API =
 const LOCALE_PUBLIC_ASSET =
   /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(flags|images|icons)(\/.*)?$/;
 const LOCALE_PUBLIC_FILE =
-  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(logo\.svg|favicon\.ico|favicon\.svg|sw\.js|OneSignalSDKWorker\.js|OneSignalSDKUpdaterWorker\.js|manifest\.json|ads\.txt)$/;
+  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(logo\.svg|favicon\.ico|favicon\.svg|sw\.js|firebase-messaging-sw\.js|OneSignalSDKWorker\.js|OneSignalSDKUpdaterWorker\.js|manifest\.json|ads\.txt)$/;
 
 const PUBLIC_STATIC_FILES = new Set([
   "/logo.svg",
   "/favicon.ico",
   "/favicon.svg",
   "/sw.js",
+  "/firebase-messaging-sw.js",
   "/OneSignalSDKWorker.js",
   "/OneSignalSDKUpdaterWorker.js",
   "/manifest.json",
@@ -123,6 +124,24 @@ export function proxy(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  if (pathname === "/sitemap.xml") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/api/sitemap";
+    return NextResponse.rewrite(url);
+  }
+
+  if (pathname === "/sitemap-news.xml") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/api/sitemap-news";
+    return NextResponse.rewrite(url);
+  }
+
+  if (pathname === "/robots.txt") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/api/robots";
+    return NextResponse.rewrite(url);
+  }
+
   // Client navigations sometimes request /{locale}/_next/* — rewrite to /_next/*
   const localeAsset = LOCALE_NEXT_ASSET.exec(pathname);
   if (localeAsset) {
@@ -174,6 +193,9 @@ export function proxy(request: NextRequest) {
 export const proxyConfig = {
   matcher: [
     "/.well-known/assetlinks.json",
-    "/((?!api|_next|_vercel|favicon.ico|sw.js|OneSignalSDKWorker.js|manifest.json|ads.txt|.*\\..*).*)",
+    "/sitemap.xml",
+    "/sitemap-news.xml",
+    "/robots.txt",
+    "/((?!api|_next|_vercel|favicon.ico|sw.js|firebase-messaging-sw.js|OneSignalSDKWorker.js|manifest.json|ads.txt|.*\\..*).*)",
   ],
 };

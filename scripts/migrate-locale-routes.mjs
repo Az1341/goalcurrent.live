@@ -8,11 +8,8 @@ const keep = new Set([
   "[locale]",
   "layout.tsx",
   "globals.css",
-  "robots.ts",
-  "sitemap.ts",
   "sitemap-news.ts",
   "global-error.tsx",
-  "sitemap-news.xml",
 ]);
 
 mkdirSync(dest, { recursive: true });

@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@sentry/nextjs": "^10.60.0",
+    "firebase": "^12.15.0",
+    "firebase-admin": "^14.1.0",
     "next": "16.2.9",
     "next-axiom": "^1.10.0",
     "next-intl": "^4.13.0",

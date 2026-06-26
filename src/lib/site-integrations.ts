@@ -41,14 +41,19 @@ export function isAdSenseHost(hostname: string): boolean {
   return isProductionSiteHost(hostname);
 }
 
+/** Firebase is preferred for auth + FCM when configured; otherwise OneSignal remains. */
+export function isFirebaseHost(hostname: string): boolean {
+  return isProductionSiteHost(hostname);
+}
+
 /**
- * OneSignal app domain — confirm apex goalcurrent.live is allowed in the dashboard.
- * Loading on localhost/preview throws a runtime error.
+ * OneSignal app domain — registered for apex only in the OneSignal dashboard.
+ * Loading on www throws at runtime; skip until www is added in the dashboard.
  */
 export function isOneSignalHost(hostname: string): boolean {
   const host = normalizeHost(hostname);
   const domain = siteDomain();
-  return host === `www.${domain}` || host === domain;
+  return host === domain;
 }
 
 /** @deprecated Use isAnalyticsHost — kept for any legacy imports */

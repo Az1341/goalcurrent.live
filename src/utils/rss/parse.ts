@@ -12,12 +12,15 @@ export type ParsedRssItem = {
 
 function decodeHtml(text: string): string {
   return text
-    .replace(/<[^>]+>/g, "")
+    .replace(/<a[^>]*>([\s\S]*?)<\/a>/gi, "$1")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
@@ -45,13 +48,15 @@ export function extractYouTubeVideoId(url: string): string | null {
 
 export function parseRssItemXml(itemXml: string): ParsedRssItem | null {
   const titleMatch =
-    itemXml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) ||
-    itemXml.match(/<title>(.*?)<\/title>/);
+    itemXml.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/i) ||
+    itemXml.match(/<title>([\s\S]*?)<\/title>/i);
   const linkMatch =
-    itemXml.match(/<link>(.*?)<\/link>/) || itemXml.match(/<guid>(.*?)<\/guid>/);
+    itemXml.match(/<link>([\s\S]*?)<\/link>/i) ||
+    itemXml.match(/<guid>([\s\S]*?)<\/guid>/i);
   const descMatch =
-    itemXml.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/) ||
-    itemXml.match(/<description>(.*?)<\/description>/);
+    itemXml.match(/<content:encoded><!\[CDATA\[([\s\S]*?)\]\]><\/content:encoded>/i) ||
+    itemXml.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/i) ||
+    itemXml.match(/<description>([\s\S]*?)<\/description>/i);
   const pubDateMatch = itemXml.match(/<pubDate>(.*?)<\/pubDate>/);
   const imgMatch =
     itemXml.match(/<media:thumbnail[^>]+url="([^"]+)"/) ||

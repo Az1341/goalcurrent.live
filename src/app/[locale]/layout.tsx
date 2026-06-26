@@ -7,7 +7,9 @@ import { notFound } from "next/navigation";
 import { AdSenseScript } from "@/components/ads/AdSenseScript";
 import { GA } from "@/components/analytics/GA";
 import Layout from "@/components/layout/Layout";
+import { FirebaseRoot } from "@/components/firebase/FirebaseRoot";
 import { OneSignalInit } from "@/components/push/OneSignalInit";
+import { isFirebaseConfigured } from "@/lib/firebase/config";
 import SiteJsonLd from "@/components/seo/SiteJsonLd";
 import { routing } from "@/i18n/routing";
 import { getDirection } from "@/i18n/locales";
@@ -155,7 +157,7 @@ export default async function LocaleLayout({
           <SiteJsonLd locale={locale} />
           <Layout>{children}</Layout>
           <GA />
-          <OneSignalInit />
+          {isFirebaseConfigured() ? <FirebaseRoot /> : <OneSignalInit />}
           <AdSenseScript />
         </NextIntlClientProvider>
       </body>

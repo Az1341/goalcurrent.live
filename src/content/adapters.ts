@@ -1,4 +1,5 @@
 import type { ContentItem, VideoItem } from "@/content/types";
+import { plainTextFromHtml } from "@/content/merge";
 import type { NewsArticle, NewsTag } from "@/types/news";
 import type { YouTubeVideo } from "@/types/video";
 
@@ -49,13 +50,30 @@ function tagFromText(text: string): NewsTag {
   return "NEWS";
 }
 
+export function formatNewsSource(source: string): string {
+  const trimmed = source.trim();
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  try {
+    const host = new URL(trimmed).hostname.replace(/^www\./, "");
+    if (host.includes("bbc.co")) return "BBC Sport";
+    if (host.includes("theguardian")) return "The Guardian";
+    if (host.includes("espn")) return "ESPN";
+    return host;
+  } catch {
+    return trimmed;
+  }
+}
+
 export function contentItemToNewsArticle(item: ContentItem): NewsArticle {
   return {
-    title: item.title,
+    title: plainTextFromHtml(item.title),
     link: item.url,
-    excerpt: item.description,
+    excerpt: plainTextFromHtml(item.description),
     date: item.publishedAt,
-    source: item.source,
+    source: formatNewsSource(item.source),
     tag: tagFromText(`${item.title} ${item.description}`),
     ...(item.thumbnail ? { image: item.thumbnail } : {}),
   };

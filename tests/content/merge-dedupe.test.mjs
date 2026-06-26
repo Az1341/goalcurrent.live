@@ -61,3 +61,13 @@ test("mergeContentSources prefers primary RSS items and dedupes API duplicates",
   assert.equal(merged[1].url, "https://news.example/a");
   assert.equal(merged[1].source, "BBC Sport");
 });
+
+test("plainTextFromHtml strips tags and keeps link text", async () => {
+  const { plainTextFromHtml } = await import("../../src/content/merge.ts");
+  const raw =
+    '<p>⚽ Latest news | <a href="https://www.theguardian.com/football/example">Haaland v Mbappé</a> …</p>';
+  const plain = plainTextFromHtml(raw);
+  assert.match(plain, /Haaland v Mbappé/);
+  assert.doesNotMatch(plain, /href=/);
+  assert.doesNotMatch(plain, /<p>/);
+});

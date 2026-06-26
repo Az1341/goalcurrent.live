@@ -9,6 +9,10 @@ import { routing } from "@/i18n/routing";
 import { localizedUrl } from "@/lib/i18n/urls";
 import { NEWS_PUBLICATION_NAME } from "@/lib/seo/constants";
 import { toNewsPublicationDate } from "@/lib/seo/dates";
+import { escapeXml } from "@/lib/seo/xml";
+
+/** Google News sitemaps must only list articles from the last 48 hours. */
+const NEWS_WINDOW_MS = 48 * 60 * 60 * 1000;
 
 export type NewsSitemapEntry = {
   loc: string;
@@ -82,18 +86,20 @@ export function getNewsSitemapEntries(): NewsSitemapEntry[] {
     );
   }
 
-  return [...byLoc.values()].sort(
-    (a, b) => Date.parse(b.publicationDate) - Date.parse(a.publicationDate),
-  );
+  const now = Date.now();
+  return [...byLoc.values()]
+    .filter((entry) => isWithinNewsWindow(entry.publicationDate, now))
+    .sort(
+      (a, b) => Date.parse(b.publicationDate) - Date.parse(a.publicationDate),
+    );
 }
 
-function escapeXml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+function isWithinNewsWindow(publicationDate: string, now: number): boolean {
+  const publishedAt = Date.parse(publicationDate);
+  if (Number.isNaN(publishedAt)) {
+    return false;
+  }
+  return now - publishedAt <= NEWS_WINDOW_MS;
 }
 
 export function buildNewsSitemapXml(): string {

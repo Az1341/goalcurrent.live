@@ -76,6 +76,18 @@ const nextConfig: NextConfig = {
         source: "/.well-known/assetlinks.json",
         destination: "/api/well-known/assetlinks",
       },
+      {
+        source: "/sitemap.xml",
+        destination: "/api/sitemap",
+      },
+      {
+        source: "/sitemap-news.xml",
+        destination: "/api/sitemap-news",
+      },
+      {
+        source: "/robots.txt",
+        destination: "/api/robots",
+      },
     ];
   },
   async headers() {
@@ -90,6 +102,17 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/sw.js",
+        headers: [
+          { key: "Service-Worker-Allowed", value: "/" },
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          { key: "Content-Type", value: "application/javascript" },
+        ],
+      },
+      {
+        source: "/firebase-messaging-sw.js",
         headers: [
           { key: "Service-Worker-Allowed", value: "/" },
           {

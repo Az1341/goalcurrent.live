@@ -17,6 +17,7 @@ import {
   type MoreSheetSubmenuId,
   isMoreSheetLinkActive,
 } from "@/lib/nav";
+import AuthMenu from "@/components/firebase/AuthMenu";
 import styles from "./MoreBottomSheet.module.css";
 
 type MoreBottomSheetProps = {
@@ -29,6 +30,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
   const router = useRouter();
   const locale = useLocale() as AppLocale;
   const t = useTranslations("nav");
+  const tAuth = useTranslations("auth");
   const [submenu, setSubmenu] = useState<MoreSheetSubmenuId | null>(null);
   const activeSubmenu = open ? submenu : null;
 
@@ -177,6 +179,10 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
                 );
               })}
             </nav>
+            <div className={styles.sheetAccount}>
+              <h3 className={styles.sheetAccountTitle}>{tAuth("account")}</h3>
+              <AuthMenu variant="sheet" onAction={handleNavigate} />
+            </div>
           </div>
 
           <div

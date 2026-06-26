@@ -15,6 +15,7 @@ import {
 import HeaderNavDropdown from "./HeaderNavDropdown";
 import LiveRibbon from "./LiveRibbon";
 import HeaderLocaleDropdown from "./HeaderLocaleDropdown";
+import AuthMenu from "@/components/firebase/AuthMenu";
 import styles from "./master-chrome.module.css";
 
 function openSubscribeDialog() {
@@ -102,6 +103,7 @@ export default function MasterHeader() {
 
           <div className={styles.headerActions}>
             <HeaderLocaleDropdown />
+            <AuthMenu />
             <button
               type="button"
               className={styles.headerSubscribe}
