@@ -15,7 +15,7 @@ import {
   type TimelineEventSide,
 } from "./timeline-event-badge";
 import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
-import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
+import { useIsClientMounted, useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import styles from "./match.module.css";
 import MatchLineupPitchSection from "./MatchLineupPitchSection";
 import {
@@ -56,22 +56,30 @@ type MatchDetailHeaderProps = {
 };
 
 export function MatchDetailHeader({ header, detail, loading }: MatchDetailHeaderProps) {
+  const mounted = useIsClientMounted();
   const isLive = header.matchClass === "live";
   const isUpcoming = header.matchClass === "upcoming";
   const isFinishedOrLive = header.matchClass === "live" || header.matchClass === "ft";
+  const showLiveSnapshot = !isLive || mounted;
   const kickoffTime = useLocalizedKickoffTime(header.kickoffUtc);
-  const scoreText = header.score
-    ? `${header.score.home} – ${header.score.away}`
-    : "vs";
+  const scoreText =
+    showLiveSnapshot && header.score
+      ? `${header.score.home} – ${header.score.away}`
+      : isLive
+        ? "vs"
+        : header.score
+          ? `${header.score.home} – ${header.score.away}`
+          : "vs";
 
   const goalSummary =
-    !loading && isFinishedOrLive
+    showLiveSnapshot && !loading && isFinishedOrLive
       ? extractMatchGoalSummary(
           detail.events,
           header.homeName,
           header.awayName,
           detail.lineups.home?.teamName ?? null,
           detail.lineups.away?.teamName ?? null,
+          isLive ? header.elapsed : null,
         )
       : null;
 
@@ -120,7 +128,7 @@ export function MatchDetailHeader({ header, detail, loading }: MatchDetailHeader
             <div className={styles.scoreMain}>{scoreText}</div>
             <div className={styles.scoreSub}>
               {isUpcoming ? kickoffTime : header.statusLabel}
-              {header.elapsed != null && isLive ? (
+              {header.elapsed != null && isLive && showLiveSnapshot ? (
                 <span className={styles.scoreElapsed}>{header.elapsed}&apos;</span>
               ) : null}
             </div>

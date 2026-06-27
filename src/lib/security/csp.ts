@@ -22,6 +22,7 @@ const SCRIPT_SRC = [
   "https://pagead2.googlesyndication.com",
   "https://googleads.g.doubleclick.net",
   "https://fundingchoicesmessages.google.com",
+  "https://vercel.live",
 ] as const;
 
 const STYLE_SRC = [

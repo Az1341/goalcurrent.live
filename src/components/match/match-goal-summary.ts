@@ -33,12 +33,22 @@ export function extractMatchGoalSummary(
   awayTeamName: string,
   lineupHomeName?: string | null,
   lineupAwayName?: string | null,
+  maxElapsedMinute?: number | null,
 ): MatchGoalSummary | null {
   const home: GoalScorerLine[] = [];
   const away: GoalScorerLine[] = [];
+  const seen = new Set<string>();
 
   for (const event of [...events].sort(compareTimelineEvents)) {
     if (!isCountableGoal(event)) {
+      continue;
+    }
+
+    if (
+      maxElapsedMinute != null &&
+      event.minute != null &&
+      event.minute > maxElapsedMinute
+    ) {
       continue;
     }
 
@@ -49,16 +59,27 @@ export function extractMatchGoalSummary(
       lineupHomeName,
       lineupAwayName,
     );
+    if (side !== "home" && side !== "away") {
+      continue;
+    }
+
     const meta = goalScorerMeta(event);
+    const minute = formatEventMinute(event.minute, event.extra);
+    const dedupeKey = `${side}-${minute}-${meta.playerName}`;
+    if (seen.has(dedupeKey)) {
+      continue;
+    }
+    seen.add(dedupeKey);
+
     const line: GoalScorerLine = {
-      minute: formatEventMinute(event.minute, event.extra),
+      minute,
       playerName: meta.playerName,
       symbol: meta.symbol,
     };
 
     if (side === "home") {
       home.push(line);
-    } else if (side === "away") {
+    } else {
       away.push(line);
     }
   }
