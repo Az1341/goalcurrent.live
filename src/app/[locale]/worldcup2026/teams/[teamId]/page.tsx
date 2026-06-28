@@ -47,7 +47,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
           name: team.name,
           url: absoluteUrl(path),
           memberOfName: "FIFA World Cup 2026",
-          memberOfType: "SportsEvent",
+          memberOfType: "SportsOrganization",
         }}
         breadcrumbs={[
           { name: "World Cup 2026", path: "/worldcup2026" },
