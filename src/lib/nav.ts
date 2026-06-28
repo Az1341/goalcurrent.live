@@ -291,14 +291,9 @@ export function isMoreSheetLinkActive(pathname: string, href: string): boolean {
   return pathname === path || pathname.startsWith(`${path}/`);
 }
 
-/** Mobile bottom-tab landing pages — no header back affordance. */
-const MOBILE_TAB_LANDING_PATHS = new Set([
-  "/",
-  "/live",
-  "/favourites",
-  "/premier-league",
-  "/worldcup2026",
-]);
+export function shouldShowMobileBack(pathname: string): boolean {
+  return pathname !== "/";
+}
 
 const MOBILE_BACK_PARENT_RULES: Array<{ match: RegExp; parent: string }> = [
   { match: /^\/match\/.+/, parent: "/worldcup2026/fixtures" },
@@ -317,10 +312,6 @@ const MOBILE_BACK_PARENT_RULES: Array<{ match: RegExp; parent: string }> = [
   { match: /^\/favourites\/[^/]+$/, parent: "/favourites" },
   { match: /^\/premier-league\/2025-26\/[^/]+$/, parent: "/premier-league/table" },
 ];
-
-export function shouldShowMobileBack(pathname: string): boolean {
-  return !MOBILE_TAB_LANDING_PATHS.has(pathname);
-}
 
 export function getMobileBackFallback(pathname: string): string {
   for (const rule of MOBILE_BACK_PARENT_RULES) {
