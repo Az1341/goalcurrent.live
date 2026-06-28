@@ -83,6 +83,22 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
       "FIFA Article 13 now ranks head-to-head results before goal difference. It does not auto-eliminate teams after two defeats — but it can seal group fates earlier.",
     date: "25 June 2026",
   },
+  {
+    slug: "world-cup-2026-teams-already-out",
+    category: "Analysis",
+    title: "Gone Before the Final Whistle — The World Cup 2026 Teams Already Out",
+    excerpt:
+      "Panama and Jordan are eliminated before matchday three. Uzbekistan are all but gone. How FIFA Article 13 and the 48-team format turned two defeats into an early flight home.",
+    date: "28 June 2026",
+  },
+  {
+    slug: "premier-league-2026-27-new-season",
+    category: "Preview",
+    title: "The New Season Starts Now — Premier League 2026/27 Preview After the World Cup",
+    excerpt:
+      "Arsenal defend their title on a compressed calendar. City, Liverpool and Chelsea chase them as the Premier League returns in mid-August after North America 2026.",
+    date: "28 June 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {
