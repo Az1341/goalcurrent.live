@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useSyncExternalStore } from "react";
-import { NEWS_FALLBACK_ARTICLES } from "@/components/news/news-fallback";
+import { useSyncExternalStore } from "react";
 import type { NewsApiResponse, NewsArticle } from "@/types/news";
 
 const REFRESH_MS = 3_600_000;
@@ -9,19 +8,19 @@ const REFRESH_MS = 3_600_000;
 type NewsSnapshot = {
   readonly articles: readonly NewsArticle[];
   readonly loading: boolean;
-  readonly usingFallback: boolean;
+  readonly error: boolean;
 };
 
 const serverSnapshot: NewsSnapshot = {
   articles: [],
   loading: true,
-  usingFallback: false,
+  error: false,
 };
 
 let clientSnapshot: NewsSnapshot = {
   articles: [],
   loading: true,
-  usingFallback: false,
+  error: false,
 };
 
 const listeners = new Set<() => void>();
@@ -68,7 +67,7 @@ async function fetchNews(): Promise<void> {
     setSnapshot({
       articles: data.articles,
       loading: false,
-      usingFallback: false,
+      error: false,
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
@@ -76,9 +75,9 @@ async function fetchNews(): Promise<void> {
     }
 
     setSnapshot({
-      articles: NEWS_FALLBACK_ARTICLES,
+      articles: [],
       loading: false,
-      usingFallback: true,
+      error: true,
     });
   } finally {
     fetchInFlight = false;

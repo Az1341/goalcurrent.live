@@ -1,8 +1,9 @@
 "use client";
 
-import useSWR, { type SWRConfiguration } from "swr";
+import useSWR from "swr";
 import {
   fetcher,
+  LIVE_MATCH_FETCH_SWR_OPTIONS,
   LIVE_POLL_HUB_MS,
   LIVE_POLL_MATCH_MS,
   visibilityAwareRefreshInterval,
@@ -21,30 +22,29 @@ export const LIVE_API_PATHS = {
 type UseLiveApiOptions = {
   /** Poll interval in ms; omit for hub default (75s). Pass 30_000 for live match pages. */
   refreshInterval?: number;
+  /** Use LIVE_MATCH_FETCH_SWR_OPTIONS — no stale data flash on live/home match sections. */
+  fresh?: boolean;
 };
 
 export function useLiveApi<T = unknown>(
   path: string | null,
   options?: UseLiveApiOptions,
 ) {
+  if (options?.fresh) {
+    return useSWR<T>(path, fetcher, LIVE_MATCH_FETCH_SWR_OPTIONS);
+  }
+
   const pollMs =
     options?.refreshInterval !== undefined
       ? options.refreshInterval
       : LIVE_POLL_HUB_MS;
 
-  const swrOptions: SWRConfiguration = {
+  return useSWR<T>(path, fetcher, {
     refreshInterval: () => visibilityAwareRefreshInterval(pollMs),
     dedupingInterval: pollMs > 0 ? pollMs : LIVE_POLL_HUB_MS,
     revalidateOnFocus: false,
     revalidateOnReconnect: true,
-    onSuccess: () => {
-      if (path) {
-        console.info("Unified SWR:", path);
-      }
-    },
-  };
-
-  return useSWR<T>(path, fetcher, swrOptions);
+  });
 }
 
 export { LIVE_POLL_MATCH_MS, LIVE_POLL_HUB_MS };

@@ -93,6 +93,58 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/(|live|news|news/world-cup|articles)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate",
+          },
+          {
+            key: "CDN-Cache-Control",
+            value: "no-store",
+          },
+          {
+            key: "Vercel-CDN-Cache-Control",
+            value: "no-store",
+          },
+        ],
+      },
+      {
+        source:
+          "/:locale(ar|de|en|es|fa|fr|it|nl|pt)/:path(live|news|articles|news/world-cup)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate",
+          },
+          {
+            key: "CDN-Cache-Control",
+            value: "no-store",
+          },
+          {
+            key: "Vercel-CDN-Cache-Control",
+            value: "no-store",
+          },
+        ],
+      },
+      {
+        source: "/:locale(ar|de|en|es|fa|fr|it|nl|pt)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate",
+          },
+          {
+            key: "CDN-Cache-Control",
+            value: "no-store",
+          },
+          {
+            key: "Vercel-CDN-Cache-Control",
+            value: "no-store",
+          },
+        ],
+      },
+      {
         source: "/.well-known/assetlinks.json",
         headers: [
           { key: "Content-Type", value: "application/json" },

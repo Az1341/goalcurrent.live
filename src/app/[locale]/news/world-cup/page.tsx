@@ -1,11 +1,11 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 300;
+
 import type { Metadata } from "next";
 import NewsCategoryFeed from "@/components/news/NewsCategoryFeed";
-import { withNewsFallback } from "@/lib/content-fallback";
 import { fetchNewsFeed } from "@/lib/news-rss";
 import { mergeWc26NewsFeed } from "@/lib/editorial-news";
 import { buildPageMetadata } from "@/lib/page-metadata";
-
-export const revalidate = 3600;
 
 export const metadata: Metadata = buildPageMetadata({
   title: "World Cup 2026 News | GoalCurrent.live",
@@ -17,13 +17,24 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default async function WorldCupNewsPage() {
   const { articles, sources } = await fetchNewsFeed("wc26");
+  const merged = mergeWc26NewsFeed(articles);
+
+  if (!merged.length) {
+    return (
+      <main>
+        <p className="text-center text-gray-400 py-4">
+          Unable to load data. Please try again shortly.
+        </p>
+      </main>
+    );
+  }
 
   return (
     <NewsCategoryFeed
       heading="World Cup 2026"
       headingAccent="News"
       intro="World Cup 2026 headlines from BBC Sport and ESPN — refreshed hourly."
-      articles={withNewsFallback(mergeWc26NewsFeed(articles))}
+      articles={merged}
       sources={sources}
       emptyMessage="No World Cup news available right now. Check back soon."
     />

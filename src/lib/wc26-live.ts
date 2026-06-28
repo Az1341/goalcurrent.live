@@ -1,11 +1,19 @@
 import type { Fixture, FixtureStatus } from "@/types/fixture";
 import type { TeamId } from "@/types/team";
 import { getTeamById, getVenueById, groupLabel } from "@/data/wc26";
+import { isKnockoutPlaceholderTeam } from "@/data/wc26/knockout-fixtures";
 import {
+  getEffectiveFixtures,
   getFixtureScore,
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
+import { FIFA_ROUND_OF_32_TEMPLATES } from "@/lib/wc26/fifa-bracket-mapping";
+import {
+  buildKnockoutBracketRounds,
+  resolveBracketMatch,
+  teamDisplayName,
+} from "@/lib/wc26-standings";
 import {
   formatVisitorKickoff,
   formatVisitorKickoffTime,
@@ -194,21 +202,93 @@ function homepageStatusLabel(fixture: EffectiveFixture, matchClass: HomepageMatc
   return formatVisitorKickoffTime(fixture.kickoffUtc);
 }
 
-export function buildHomepageMatchView(fixture: EffectiveFixture): HomepageMatchView {
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
+export type ResolvedFixtureParticipant = {
+  readonly label: string;
+  readonly teamId: TeamId;
+};
+
+/** Resolved display label and team id for flags — bracket slots use real id when known. */
+export function resolveFixtureParticipant(
+  fixture: EffectiveFixture,
+  side: "home" | "away",
+  allFixtures: readonly EffectiveFixture[],
+): ResolvedFixtureParticipant {
+  const fallbackId = side === "home" ? fixture.homeTeamId : fixture.awayTeamId;
+
+  if (!isKnockoutPlaceholderTeam(fallbackId)) {
+    const name = getTeamById(fallbackId)?.name?.trim();
+    if (name) {
+      return { label: name, teamId: fallbackId };
+    }
+  }
+
+  if (fixture.stage !== "group" && fixture.matchNumber) {
+    const ro32Template = FIFA_ROUND_OF_32_TEMPLATES.find(
+      (template) => template.matchNumber === fixture.matchNumber,
+    );
+    if (ro32Template) {
+      const resolved = resolveBracketMatch(ro32Template, allFixtures);
+      const slot = side === "home" ? resolved.home : resolved.away;
+      if (slot.label.trim()) {
+        return { label: slot.label, teamId: slot.teamId ?? fallbackId };
+      }
+    }
+
+    for (const round of buildKnockoutBracketRounds(allFixtures)) {
+      const match = round.matches.find(
+        (entry) => entry.matchNumber === fixture.matchNumber,
+      );
+      if (match) {
+        const slot = side === "home" ? match.home : match.away;
+        if (slot.label.trim()) {
+          return { label: slot.label, teamId: slot.teamId ?? fallbackId };
+        }
+      }
+    }
+
+    if (isKnockoutPlaceholderTeam(fallbackId)) {
+      return {
+        label: `Winner Match ${fixture.matchNumber}`,
+        teamId: fallbackId,
+      };
+    }
+  }
+
+  if (isKnockoutPlaceholderTeam(fallbackId)) {
+    return { label: "TBD", teamId: fallbackId };
+  }
+
+  return { label: teamDisplayName(fallbackId), teamId: fallbackId };
+}
+
+/** Human-readable team label — never blank for unconfirmed knockout slots. */
+export function resolveFixtureParticipantLabel(
+  fixture: EffectiveFixture,
+  side: "home" | "away",
+  allFixtures: readonly EffectiveFixture[],
+): string {
+  return resolveFixtureParticipant(fixture, side, allFixtures).label;
+}
+
+export function buildHomepageMatchView(
+  fixture: EffectiveFixture,
+  allFixtures: readonly EffectiveFixture[] = getEffectiveFixtures(),
+): HomepageMatchView {
   const venue = getVenueById(fixture.venueId);
   const matchClass = classifyHomepageMatch(fixture);
   const roundLabel = fixture.groupId
     ? groupLabel(fixture.groupId)
     : fixture.stage.replace(/-/g, " ");
 
+  const home = resolveFixtureParticipant(fixture, "home", allFixtures);
+  const away = resolveFixtureParticipant(fixture, "away", allFixtures);
+
   return {
     fixtureId: fixture.id,
-    homeTeamId: fixture.homeTeamId,
-    awayTeamId: fixture.awayTeamId,
-    homeName: home?.name ?? fixture.homeTeamId,
-    awayName: away?.name ?? fixture.awayTeamId,
+    homeTeamId: home.teamId,
+    awayTeamId: away.teamId,
+    homeName: home.label,
+    awayName: away.label,
     matchClass,
     statusLabel: homepageStatusLabel(fixture, matchClass),
     score: getFixtureScore(fixture),
@@ -310,7 +390,7 @@ export function selectHomepageFixtures(
       continue;
     }
     seen.add(fixture.id);
-    views.push(buildHomepageMatchView(fixture));
+    views.push(buildHomepageMatchView(fixture, fixtures));
     if (views.length >= limit) {
       break;
     }
@@ -334,7 +414,7 @@ export function selectUpcomingHomepageFixtures(
     if (exclude.has(fixture.id)) {
       continue;
     }
-    views.push(buildHomepageMatchView(fixture));
+    views.push(buildHomepageMatchView(fixture, fixtures));
     if (views.length >= limit) {
       break;
     }
@@ -364,7 +444,7 @@ export function selectRibbonFixtures(
       continue;
     }
     seen.add(fixture.id);
-    views.push(buildHomepageMatchView(fixture));
+    views.push(buildHomepageMatchView(fixture, fixtures));
     if (views.length >= limit) {
       break;
     }

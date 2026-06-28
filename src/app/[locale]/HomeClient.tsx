@@ -9,6 +9,7 @@ import {
 } from "@/lib/client/use-local-kickoff";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
+import { useLiveScores } from "@/lib/client/useLiveScores";
 import {
   buildHomepageMatchView,
   isLiveMatchStatus,
@@ -300,17 +301,20 @@ function ColumnCard({
 }
 
 export default function Home() {
+  const { data: liveScores, error: liveScoresError } = useLiveScores();
   const fixtures = useEffectiveFixtures();
   const fixtureById = new Map(fixtures.map((f) => [f.id, f]));
   const featuredSelection = selectFeaturedFixtures(fixtures);
   const featuredIds = featuredSelection.fixtures.map((fixture) => fixture.id);
-  const featuredMatches = featuredSelection.fixtures.map(buildHomepageMatchView);
+  const featuredMatches = featuredSelection.fixtures.map((fixture) =>
+    buildHomepageMatchView(fixture, fixtures),
+  );
   const featured = featuredMatches[0];
 
   const pool = selectHomepageFixtures(fixtures, featuredIds, 16);
   const liveMatches = fixtures
     .filter((f) => isLiveMatchStatus(f.status))
-    .map(buildHomepageMatchView)
+    .map((fixture) => buildHomepageMatchView(fixture, fixtures))
     .slice(0, 4);
   const latestResults = pool.filter((m) => m.matchClass === "ft").slice(0, 4);
   const upcomingMatches = selectUpcomingHomepageFixtures(fixtures, featuredIds, 6);
@@ -318,6 +322,7 @@ export default function Home() {
   const { gamesPlayed, gamesLeft } = useTournamentStats();
 
   const t = useTranslations("home");
+  const matchDataLoading = !liveScores && !liveScoresError;
 
   return (
     <div className={styles.homeRoot} data-gc-shell>
@@ -335,7 +340,9 @@ export default function Home() {
           <h2 id="featured-match-heading" className={styles.sectionTitle} data-gc-text>
             {t("featuredMatch")}
           </h2>
-          {featuredSelection.mode === "simultaneous" && featuredMatches.length >= 2 ? (
+          {matchDataLoading ? (
+            <div>Loading...</div>
+          ) : featuredSelection.mode === "simultaneous" && featuredMatches.length >= 2 ? (
             <FeaturedSimultaneousDecider matches={featuredMatches} />
           ) : featured ? (
             <FeaturedMatchHero match={featured} />
@@ -353,6 +360,10 @@ export default function Home() {
         <AdSlot slot={ADSENSE_SLOTS.homeMid} className={styles.adUnit} />
 
         <div className={styles.threeCol}>
+          {matchDataLoading ? (
+            <div>Loading...</div>
+          ) : (
+            <>
           <ColumnCard
             title={t("liveNow")}
             footerHref="/live"
@@ -394,6 +405,8 @@ export default function Home() {
               fixtureById={fixtureById}
             />
           </ColumnCard>
+            </>
+          )}
         </div>
 
         <HomeWc26StandingsPreview />

@@ -104,15 +104,11 @@
 }
 
 .emptyState {
-  padding: 20px 16px;
+  padding: 1rem 0;
   text-align: center;
   color: var(--gc-text-muted);
   font-size: 0.875rem;
   line-height: var(--gc-line-height);
-  background: #fff;
-  border: 1px solid var(--gc-border);
-  border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .matchPanel {

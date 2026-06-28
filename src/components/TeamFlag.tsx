@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { TeamId } from "@/types/team";
+import { isKnockoutPlaceholderTeam } from "@/data/wc26/knockout-fixtures";
 import { getTeamFlagAlt, getTeamFlagSrc } from "@/lib/teamFlag";
 import { resolveTeamId } from "@/lib/teamIdentity";
 
@@ -18,9 +19,23 @@ export default function TeamFlag({
   size = 28,
   className,
 }: TeamFlagProps) {
+  const resolvedFromName =
+    teamName && (!teamId || isKnockoutPlaceholderTeam(teamId))
+      ? (resolveTeamId(teamName) as TeamId | undefined)
+      : undefined;
   const id =
-    teamId ?? (teamName ? (resolveTeamId(teamName) as TeamId | undefined) : undefined);
-  const src = id ? getTeamFlagSrc(id) : undefined;
+    teamId && !isKnockoutPlaceholderTeam(teamId)
+      ? teamId
+      : (resolvedFromName ??
+        teamId ??
+        (teamName ? (resolveTeamId(teamName) as TeamId | undefined) : undefined));
+  let src = id ? getTeamFlagSrc(id) : undefined;
+  if (!src && teamName) {
+    const fromName = resolveTeamId(teamName) as TeamId | undefined;
+    if (fromName) {
+      src = getTeamFlagSrc(fromName);
+    }
+  }
   const alt = id
     ? `${getTeamFlagAlt(id)} flag`
     : teamName

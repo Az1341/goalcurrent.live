@@ -1,7 +1,7 @@
 import { mutate } from "swr";
 
 export const fetcher = (url: string) =>
-  fetch(url).then((res) => res.json());
+  fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 /** Active live match centre / match detail polling. */
 export const LIVE_POLL_MATCH_MS = 30_000;
@@ -34,6 +34,17 @@ export const LIVE_SWR_OPTIONS = buildLiveSwrOptions(LIVE_POLL_HUB_MS);
 
 /** Live match pages — 30s cadence, visibility-aware. */
 export const LIVE_MATCH_SWR_OPTIONS = buildLiveSwrOptions(LIVE_POLL_MATCH_MS);
+
+/** SWR options for live match surfaces — no stale cache flash on mount. */
+export const LIVE_MATCH_FETCH_SWR_OPTIONS = {
+  revalidateOnMount: true,
+  revalidateOnFocus: false,
+  fallbackData: undefined,
+  keepPreviousData: false,
+  refreshInterval: () => visibilityAwareRefreshInterval(LIVE_POLL_MATCH_MS),
+  dedupingInterval: LIVE_POLL_MATCH_MS,
+  revalidateOnReconnect: true,
+} as const;
 
 function registerVisibilityPollingControl(): void {
   if (typeof document === "undefined") {

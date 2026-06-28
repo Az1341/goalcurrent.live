@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 300;
+
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,8 +13,6 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import { toIsoDate } from "@/lib/seo/dates";
 import { EDITORIAL_AUTHOR, EDITORIAL_PUBLISHER } from "@/lib/seo/constants";
 import styles from "./article.module.css";
-
-export const revalidate = 86400;
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Football Articles & Analysis",
@@ -28,12 +29,45 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export default async function ArticlesIndexPage() {
-  const syndicatedArticles = await fetchSyndicatedArticles();
+  let syndicatedArticles: Awaited<ReturnType<typeof fetchSyndicatedArticles>> = [];
+
+  try {
+    syndicatedArticles = await fetchSyndicatedArticles();
+    if (process.env.NODE_ENV === "development") {
+      console.log("[articles] syndicated response:", {
+        count: syndicatedArticles.length,
+        sample: syndicatedArticles.slice(0, 2),
+      });
+    }
+  } catch {
+    return (
+      <main className={styles.articlePage}>
+        <p className="text-center text-gray-400 py-4">
+          Unable to load data. Please try again shortly.
+        </p>
+      </main>
+    );
+  }
+
   const sortedIndex = [...ARTICLE_INDEX].sort((a, b) =>
     toIsoDate(b.date).localeCompare(toIsoDate(a.date)),
   );
   const sortedArticles = [...ARTICLES].sort((a, b) => b.date.localeCompare(a.date));
   const indexSlugs = new Set(sortedIndex.map((a) => a.slug));
+
+  if (
+    !sortedIndex.length &&
+    !sortedArticles.length &&
+    !syndicatedArticles.length
+  ) {
+    return (
+      <main className={styles.articlePage}>
+        <p className="text-center text-gray-400 py-4">
+          Unable to load data. Please try again shortly.
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main className={styles.articlePage}>

@@ -82,8 +82,22 @@ function NewsSkeleton() {
 }
 
 export default function HomeNewsSection() {
-  const { articles, loading } = useNewsFeed();
+  const { articles, loading, error } = useNewsFeed();
   const latest = useMemo(() => articles.slice(0, HOME_NEWS_LIMIT), [articles]);
+
+  if (error && !latest.length && !loading) {
+    return (
+      <section className={styles.sectionBlock} aria-labelledby="home-news-heading">
+        <p className="text-center text-gray-400 py-4">
+          Unable to load data. Please try again shortly.
+        </p>
+      </section>
+    );
+  }
+
+  if (!loading && !latest.length) {
+    return null;
+  }
 
   return (
     <section className={styles.sectionBlock} aria-labelledby="home-news-heading">
@@ -101,11 +115,6 @@ export default function HomeNewsSection() {
 
       {loading ? (
         <NewsSkeleton />
-      ) : latest.length === 0 ? (
-        <p className={styles.columnEmpty}>
-          No headlines available right now. Check back soon or visit the{" "}
-          <Link href="/news">news hub</Link>.
-        </p>
       ) : (
         <div className={styles.newsGrid}>
           {latest.map((article) => (

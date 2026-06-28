@@ -1,8 +1,10 @@
 "use client";
 
 import type { Fixture } from "@/types/fixture";
-import { getTeamById, getVenueById } from "@/data/wc26";
+import { getVenueById } from "@/data/wc26";
 import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
+import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import TeamFlag from "@/components/TeamFlag";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
@@ -17,6 +19,7 @@ type FixturesListProps = {
 
 export default function FixturesList({ fixtures }: FixturesListProps) {
   const { tvRegion } = useWc26TvRegion();
+  const effectiveFixtures = useEffectiveFixtures();
 
   if (fixtures.length === 0) {
     return (
@@ -27,10 +30,18 @@ export default function FixturesList({ fixtures }: FixturesListProps) {
   return (
     <ul className={styles.fixtureList}>
       {fixtures.map((fixture) => {
-        const home = getTeamById(fixture.homeTeamId);
-        const away = getTeamById(fixture.awayTeamId);
+        const home = resolveFixtureParticipant(
+          fixture,
+          "home",
+          effectiveFixtures,
+        );
+        const away = resolveFixtureParticipant(
+          fixture,
+          "away",
+          effectiveFixtures,
+        );
         const venue = getVenueById(fixture.venueId);
-        const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
+        const label = `${home.label} vs ${away.label}`;
 
         return (
           <li key={fixture.id} className={styles.fixtureRow}>
@@ -48,13 +59,13 @@ export default function FixturesList({ fixtures }: FixturesListProps) {
             </div>
             <div className={styles.fixtureMatchup}>
               <span className={styles.fixtureTeam}>
-                {home ? <TeamFlag teamId={home.id} size={24} /> : null}
-                <TeamLink teamId={fixture.homeTeamId}>{home?.name ?? fixture.homeTeamId}</TeamLink>
+                <TeamFlag teamId={home.teamId} teamName={home.label} size={24} />
+                <TeamLink teamId={home.teamId}>{home.label}</TeamLink>
               </span>
               <span className={styles.fixtureVs}>vs</span>
               <span className={styles.fixtureTeam}>
-                {away ? <TeamFlag teamId={away.id} size={24} /> : null}
-                <TeamLink teamId={fixture.awayTeamId}>{away?.name ?? fixture.awayTeamId}</TeamLink>
+                <TeamFlag teamId={away.teamId} teamName={away.label} size={24} />
+                <TeamLink teamId={away.teamId}>{away.label}</TeamLink>
               </span>
             </div>
             {venue ? (

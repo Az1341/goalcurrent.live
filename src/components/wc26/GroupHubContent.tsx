@@ -116,7 +116,7 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
   const { data: topScorersData, isLoading: topScorersLoading } =
     useLiveTopScorers();
   const scorers = topScorersData?.scorers ?? [];
-  const { articles, loading: newsLoading, usingFallback } = useNewsFeed();
+  const { articles, loading: newsLoading, error: newsError } = useNewsFeed();
   const { tvRegion } = useWc26TvRegion();
 
   const headerStats = useMemo(
@@ -354,7 +354,7 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
         </h2>
         <p className={styles.phaseNote}>
           Latest articles mentioning teams in {title} from BBC Sport and ESPN.
-          {usingFallback ? " Showing fallback feed while live sources refresh." : ""}
+          {newsError ? " Unable to load live news right now." : ""}
         </p>
         {newsLoading ? (
           <p className={styles.standingsEmpty}>Loading group news…</p>

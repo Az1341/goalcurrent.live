@@ -1,6 +1,10 @@
-import dynamic from "next/dynamic";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+import nextDynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
+import AutoRefresh from "@/components/AutoRefresh";
 import HomeFeaturedMatchJsonLd from "@/components/seo/HomeFeaturedMatchJsonLd";
 import { WC26_FIXTURES } from "@/data/wc26";
 import { HOME_HERO_BG } from "@/lib/critical-assets";
@@ -8,7 +12,7 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 import { selectFeaturedFixtures } from "@/lib/wc26-live";
 
-const HomeClient = dynamic(() => import("@/app/[locale]/HomeClient"), {
+const HomeClient = nextDynamic(() => import("@/app/[locale]/HomeClient"), {
   ssr: true,
 });
 
@@ -38,6 +42,7 @@ export default async function HomePage() {
           locale={locale}
         />
       ))}
+      <AutoRefresh />
       <HomeClient />
     </>
   );

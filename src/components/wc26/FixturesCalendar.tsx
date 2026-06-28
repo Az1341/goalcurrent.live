@@ -9,7 +9,6 @@ import {
   WC26_TOURNAMENT,
   WC26_TEAM_COUNT,
   WC26_VENUE_COUNT,
-  getTeamById,
   getVenueById,
   groupLabel,
 } from "@/data/wc26";
@@ -21,6 +20,7 @@ import {
 } from "@/lib/wc26-fixture-overlay";
 import {
   formatFixtureStatusLabel,
+  resolveFixtureParticipant,
 } from "@/lib/wc26-live";
 import {
   buildCalendarDays,
@@ -63,15 +63,17 @@ function topStatusLabel(fixture: EffectiveFixture, matchClass: FixtureMatchClass
 function FixtureMatchCard({
   fixture,
   tvRegion,
+  allFixtures,
 }: {
   fixture: EffectiveFixture;
   tvRegion: Wc26TvRegionCode;
+  allFixtures: readonly EffectiveFixture[];
 }) {
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
+  const home = resolveFixtureParticipant(fixture, "home", allFixtures);
+  const away = resolveFixtureParticipant(fixture, "away", allFixtures);
   const venue = getVenueById(fixture.venueId);
   const matchClass = classifyFixtureMatch(fixture);
-  const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
+  const label = `${home.label} vs ${away.label}`;
   const groupPrefix = fixture.groupId ? `${groupLabel(fixture.groupId)} · ` : "";
   const score = getFixtureScore(fixture);
   const kickoffLocal = <LocalizedKickoffTime iso={fixture.kickoffUtc} />;
@@ -126,12 +128,10 @@ function FixtureMatchCard({
       <div className={styles.fixTeams}>
         <div className={styles.fixTeam}>
           <div className={styles.fixFlag}>
-            {home ? <TeamFlag teamId={home.id} size={52} /> : null}
+            <TeamFlag teamId={home.teamId} teamName={home.label} size={52} />
           </div>
           <div className={styles.fixTeamName}>
-            <TeamLink teamId={fixture.homeTeamId}>
-              {home?.name ?? fixture.homeTeamId}
-            </TeamLink>
+            <TeamLink teamId={home.teamId}>{home.label}</TeamLink>
           </div>
         </div>
         <div className={styles.fixCentre}>
@@ -172,12 +172,10 @@ function FixtureMatchCard({
         </div>
         <div className={styles.fixTeam}>
           <div className={styles.fixFlag}>
-            {away ? <TeamFlag teamId={away.id} size={52} /> : null}
+            <TeamFlag teamId={away.teamId} teamName={away.label} size={52} />
           </div>
           <div className={styles.fixTeamName}>
-            <TeamLink teamId={fixture.awayTeamId}>
-              {away?.name ?? fixture.awayTeamId}
-            </TeamLink>
+            <TeamLink teamId={away.teamId}>{away.label}</TeamLink>
           </div>
         </div>
       </div>
@@ -477,6 +475,7 @@ export default function FixturesCalendar() {
                   key={fixture.id}
                   fixture={fixture}
                   tvRegion={tvRegion}
+                  allFixtures={fixtures}
                 />
               ))
             )}

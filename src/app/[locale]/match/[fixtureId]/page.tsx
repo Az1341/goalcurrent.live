@@ -65,6 +65,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
           homeTeamName: home.name,
           awayTeamName: away.name,
           venueName: venue?.name,
+          country: venue?.country,
+          competition: "FIFA World Cup 2026",
           eventStatus: sportsEventStatus(String(fixture.status)),
           description: `FIFA World Cup 2026 — ${home.name} vs ${away.name}`,
         }}

@@ -1,13 +1,12 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import JsonLdScript from "@/components/seo/JsonLdScript";
 import ApiFootballStatusBanner from "@/components/system/ApiFootballStatusBanner";
-import { getTeamById } from "@/data/wc26";
 import { useLiveScores } from "@/lib/client/useLiveScores";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { isLiveMatchStatus } from "@/lib/wc26-live";
+import { isLiveMatchStatus, resolveFixtureParticipantLabel } from "@/lib/wc26-live";
+import dynamic from "next/dynamic";
 
 const LiveMatchCentre = dynamic(
   () => import("@/components/live/LiveMatchCentre"),
@@ -16,7 +15,7 @@ const LiveMatchCentre = dynamic(
 
 /** Client shell for /live — subscribes to unified WC26 live-scores SWR cache. */
 export default function LivePageClient() {
-  const { data: liveScores } = useLiveScores();
+  const { data: liveScores, error } = useLiveScores();
   const fixtures = useEffectiveFixtures();
   const [coverageStartTime] = useState(() => new Date().toISOString());
 
@@ -32,18 +31,30 @@ export default function LivePageClient() {
       headline: "Live Football Scores",
       coverageStartTime,
       liveBlogUpdate: liveMatches.map((fixture) => {
-        const homeTeam = getTeamById(fixture.homeTeamId);
-        const awayTeam = getTeamById(fixture.awayTeamId);
+        const homeName = resolveFixtureParticipantLabel(fixture, "home", fixtures);
+        const awayName = resolveFixtureParticipantLabel(fixture, "away", fixtures);
 
         return {
           "@type": "BlogPosting",
-          headline: `${homeTeam?.name ?? fixture.homeTeamId} vs ${awayTeam?.name ?? fixture.awayTeamId}`,
+          headline: `${homeName} vs ${awayName}`,
           datePublished: fixture.kickoffUtc,
         };
       }),
     }),
-    [coverageStartTime, liveMatches],
+    [coverageStartTime, fixtures, liveMatches],
   );
+
+  if (!liveScores && !error) {
+    return <div>Loading...</div>;
+  }
+
+  if (error && !liveScores) {
+    return (
+      <p className="text-center text-gray-400 py-4">
+        Unable to load data. Please try again shortly.
+      </p>
+    );
+  }
 
   return (
     <>

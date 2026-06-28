@@ -34,7 +34,7 @@ export default function FixtureMatchRow({
     <div className={`${styles.fixtureRow} ${className ?? ""}`}>
       <div className={styles.homeCol}>
         <span className={styles.flag}>
-          <TeamFlag teamId={homeTeamId} size={flagSize} />
+          <TeamFlag teamId={homeTeamId} teamName={homeName} size={flagSize} />
         </span>
         <span className={styles.homeName}>{homeName}</span>
       </div>
@@ -53,7 +53,7 @@ export default function FixtureMatchRow({
       <div className={styles.awayCol}>
         <span className={styles.awayName}>{awayName}</span>
         <span className={styles.flag}>
-          <TeamFlag teamId={awayTeamId} size={flagSize} />
+          <TeamFlag teamId={awayTeamId} teamName={awayName} size={flagSize} />
         </span>
       </div>
     </div>

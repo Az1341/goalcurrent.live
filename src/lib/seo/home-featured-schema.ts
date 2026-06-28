@@ -23,6 +23,8 @@ export function buildHomeFeaturedSportsEventSchema(
     homeTeamName: homeName,
     awayTeamName: awayName,
     venueName: venue?.name,
+    country: venue?.country,
+    competition: "FIFA World Cup 2026",
     eventStatus: sportsEventStatus(String(fixture.status)),
     description: `FIFA World Cup 2026 — ${homeName} vs ${awayName}`,
   });

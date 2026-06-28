@@ -12,5 +12,9 @@ export default function HomeFeaturedMatchJsonLd({
   fixture,
   locale,
 }: HomeFeaturedMatchJsonLdProps) {
-  return <JsonLd data={buildHomeFeaturedSportsEventSchema(fixture, locale)} />;
+  const schema = buildHomeFeaturedSportsEventSchema(fixture, locale);
+  if (!schema) {
+    return null;
+  }
+  return <JsonLd data={schema} />;
 }

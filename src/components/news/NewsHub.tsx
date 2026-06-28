@@ -4,12 +4,9 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 import NewsCard, { FeaturedArticle } from "@/components/news/NewsCard";
-import { NEWS_FALLBACK_ARTICLES } from "@/components/news/news-fallback";
-import { withNewsFallback } from "@/lib/content-fallback";
 import type { NewsApiResponse, NewsArticle } from "@/types/news";
 import { mergeEditorialFirst } from "@/lib/editorial-news";
 import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
-import { SITE_NAME } from "@/lib/site-url";
 import { fetcher, visibilityAwareRefreshInterval } from "@/lib/client/fetcher";
 import styles from "./news.module.css";
 
@@ -57,10 +54,9 @@ export default function NewsHub({ initialData }: NewsHubProps) {
   );
 
   const articles = useMemo(() => {
-    const payload = data?.articles.length ? data : initialData;
+    const payload = data?.articles.length ? data : null;
     if (!payload?.articles.length) {
-      setUpdatedLabel("Showing fallback news · Live feed updating…");
-      return withNewsFallback(mergeEditorialFirst([...NEWS_FALLBACK_ARTICLES]));
+      return [] as NewsArticle[];
     }
     setUpdatedLabel(
       `Updated: ${new Date(payload.fetched).toLocaleTimeString("en-GB", {
@@ -68,16 +64,16 @@ export default function NewsHub({ initialData }: NewsHubProps) {
         minute: "2-digit",
       })} · ${payload.sources.join(" + ") || "BBC Sport + ESPN"}`,
     );
-    return withNewsFallback(mergeEditorialFirst(payload.articles));
-  }, [data, initialData]);
+    return mergeEditorialFirst(payload.articles);
+  }, [data]);
 
   const sources = useMemo(
-    () => data?.sources ?? initialData?.sources ?? [SITE_NAME],
-    [data?.sources, initialData?.sources],
+    () => data?.sources ?? [],
+    [data?.sources],
   );
-  const usingFallback =
-    (!data?.articles.length && !initialData?.articles.length) || !!error;
-  const showSkeleton = isLoading && !initialData?.articles.length;
+  const showSkeleton = isLoading && !data?.articles.length && !initialData?.articles.length;
+  const showError =
+    !!error && !data?.articles.length && !initialData?.articles.length;
   const featured = articles[0];
   const rest = articles.slice(1);
 
@@ -130,16 +126,18 @@ export default function NewsHub({ initialData }: NewsHubProps) {
 
       {showSkeleton ? <LoadingSkeleton /> : null}
 
-      {!showSkeleton && featured ? <FeaturedArticle article={featured} /> : null}
+      {showError ? (
+        <p className="text-center text-gray-400 py-4">
+          Unable to load data. Please try again shortly.
+        </p>
+      ) : null}
 
-      {!showSkeleton ? (
+      {!showSkeleton && !showError && featured ? (
+        <FeaturedArticle article={featured} />
+      ) : null}
+
+      {!showSkeleton && !showError ? (
         <>
-          {usingFallback ? (
-            <p className={styles.fallbackNote}>
-              Live news feed temporarily unavailable — showing {SITE_NAME}
-              fallback stories.
-            </p>
-          ) : null}
           <div className={styles.sectionLabel}>Latest World Cup 2026 News</div>
           <div className={styles.grid}>
             {rest.map((article: NewsArticle) => (
@@ -149,7 +147,7 @@ export default function NewsHub({ initialData }: NewsHubProps) {
               />
             ))}
           </div>
-          {!usingFallback && sources.length > 0 ? (
+          {sources.length > 0 ? (
             <p className={styles.fallbackNote}>
               Sources: {sources.join(", ")}
             </p>

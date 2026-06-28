@@ -72,6 +72,7 @@ export default async function PremierLeagueMatchPage({
             homeTeamName: fixture.homeTeamName,
             awayTeamName: fixture.awayTeamName,
             venueName: fixture.venue ?? undefined,
+            competition: "Premier League",
             eventStatus: plEventStatus(fixture.status),
             description: `Premier League — ${fixture.homeTeamName} vs ${fixture.awayTeamName}`,
           }}

@@ -30,6 +30,8 @@ export type SportsEventSchemaInput = {
   eventStatus?: string;
   description?: string;
   locale?: string;
+  country?: string;
+  competition?: string;
 };
 
 export type SportsTeamSchemaInput = {
@@ -49,8 +51,13 @@ function stripContext(node: SchemaNode): SchemaNode {
 }
 
 /** Combine multiple schema.org nodes without duplicate @context keys. */
-export function combineSchemaGraph(nodes: SchemaNode[]): SchemaNode {
-  const valid = nodes.filter((node) => Object.keys(node).length > 0);
+export function combineSchemaGraph(
+  nodes: (SchemaNode | null | undefined)[],
+): SchemaNode {
+  const valid = nodes.filter(
+    (node): node is SchemaNode =>
+      node != null && Object.keys(node).length > 0,
+  );
   if (valid.length === 0) {
     return { "@context": "https://schema.org" };
   }
@@ -137,39 +144,44 @@ export function newsArticleSchema(input: ArticleSchemaInput): SchemaNode {
   };
 }
 
-export function sportsEventSchema(input: SportsEventSchemaInput): SchemaNode {
+export function sportsEventSchema(
+  input: SportsEventSchemaInput,
+): SchemaNode | null {
+  const homeTeam = input.homeTeamName?.trim() ?? "";
+  const awayTeam = input.awayTeamName?.trim() ?? "";
+
+  if (!homeTeam && !awayTeam) {
+    return null;
+  }
+
   const locale = input.locale ?? routing.defaultLocale;
   const url = localizedUrl(input.path, locale);
+  const startDate = input.startDate || new Date().toISOString();
 
   return {
     "@context": "https://schema.org",
-    "@type": "SportsEvent",
+    "@type": "Event",
     "@id": url,
-    name: input.name,
-    description: input.description ?? input.name,
-    startDate: input.startDate,
     url,
-    inLanguage: locale,
+    name: `${homeTeam || "Home"} vs ${awayTeam || "Away"}`,
+    startDate,
     eventStatus: input.eventStatus ?? "https://schema.org/EventScheduled",
-    location: input.venueName
-      ? {
-          "@type": "Place",
-          name: input.venueName,
-        }
-      : undefined,
-    homeTeam: {
-      "@type": "SportsTeam",
-      name: input.homeTeamName,
-    },
-    awayTeam: {
-      "@type": "SportsTeam",
-      name: input.awayTeamName,
+    location: {
+      "@type": "Place",
+      name: input.venueName || "TBD",
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: input.country || "TBD",
+      },
     },
     performer: [
-      { "@type": "SportsTeam", name: input.homeTeamName },
-      { "@type": "SportsTeam", name: input.awayTeamName },
+      { "@type": "SportsTeam", name: homeTeam || "" },
+      { "@type": "SportsTeam", name: awayTeam || "" },
     ],
-    image: defaultOgImageUrl(),
+    organizer: {
+      "@type": "Organization",
+      name: input.competition || "Football",
+    },
   };
 }
 

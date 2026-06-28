@@ -1,14 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { getTeamById } from "@/data/wc26";
 import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
 import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
-import { formatFixtureStatusLabel, isLiveMatchStatus } from "@/lib/wc26-live";
+import {
+  formatFixtureStatusLabel,
+  isLiveMatchStatus,
+  resolveFixtureParticipant,
+} from "@/lib/wc26-live";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { matchHref } from "@/lib/wc26-match";
 import FixtureMatchRow from "@/components/match/FixtureMatchRow";
 import styles from "./live.module.css";
@@ -35,14 +39,15 @@ function statusColumnLabel(
 }
 
 export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
+  const fixtures = useEffectiveFixtures();
+  const home = resolveFixtureParticipant(fixture, "home", fixtures);
+  const away = resolveFixtureParticipant(fixture, "away", fixtures);
   const isLive = isLiveMatchStatus(fixture.status);
   const isCompleted = isEffectiveFixtureCompleted(fixture);
   const isScheduled = !isLive && !isCompleted;
   const kickoffTime = useLocalizedKickoffTime(fixture.kickoffUtc);
   const score = getFixtureScore(fixture);
-  const label = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
+  const label = `${home.label} vs ${away.label}`;
 
   const centrePrimary =
     isLive || isCompleted
@@ -65,10 +70,10 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
         }
       >
         <FixtureMatchRow
-          homeTeamId={fixture.homeTeamId}
-          awayTeamId={fixture.awayTeamId}
-          homeName={home?.name ?? fixture.homeTeamId}
-          awayName={away?.name ?? fixture.awayTeamId}
+          homeTeamId={home.teamId}
+          awayTeamId={away.teamId}
+          homeName={home.label}
+          awayName={away.label}
           centrePrimary={centrePrimary}
           centreSecondary={centreSecondary}
           flagSize={22}
