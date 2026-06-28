@@ -6,7 +6,7 @@ import { buildMatchDetailHeader } from "@/lib/wc26-match";
 import { groupHref } from "@/lib/wc26-groups";
 import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { useMatchDetail } from "@/lib/use-match-detail";
+import type { MatchDetailPayload } from "@/types/match-detail";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import MatchRelatedLinks from "@/components/match/MatchRelatedLinks";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
@@ -26,19 +26,22 @@ import styles from "@/components/match/match.module.css";
 
 type MatchDetailContentProps = {
   fixtureId: string;
+  detail: MatchDetailPayload;
+  loading: boolean;
   detailUnavailable?: boolean;
   scorebatEmbed?: string | null;
 };
 
 export default function MatchDetailContent({
   fixtureId,
+  detail,
+  loading,
   detailUnavailable = false,
   scorebatEmbed = null,
 }: MatchDetailContentProps) {
   const fixtures = useEffectiveFixtures();
   const fixture =
     fixtures.find((entry) => entry.id === fixtureId) ?? getFixtureById(fixtureId);
-  const { detail, loading } = useMatchDetail(fixtureId, true);
   const { tvRegion } = useWc26TvRegion();
 
   if (!fixture) {

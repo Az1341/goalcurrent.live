@@ -66,11 +66,26 @@ function scoresCacheTtlMs(phase?: string): number {
   return 300_000;
 }
 
+function registerScoresApiFixtureIds(
+  matches: Wc26ScoresApiResponse["matches"],
+): void {
+  registerWc26ApiFixtureIds(matches);
+  for (const match of matches) {
+    if (match.apiFixtureId != null && Number.isFinite(match.apiFixtureId)) {
+      setCached(
+        `wc26:api-fixture:${match.fixtureId}`,
+        match.apiFixtureId,
+        86_400_000,
+      );
+    }
+  }
+}
+
 function jsonScores(
   body: Wc26ScoresApiResponse,
   cacheKey: string,
 ): NextResponse {
-  registerWc26ApiFixtureIds(body.matches);
+  registerScoresApiFixtureIds(body.matches);
   const ttlMs = scoresCacheTtlMs(body.phase);
   setSuccessApiCache(cacheKey, body, ttlMs);
   setCached(cacheKey, body, ttlMs);
@@ -109,7 +124,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (cached) {
     logInfo(ROUTE, "CACHE HIT");
     const body = cached as Wc26ScoresApiResponse;
-    registerWc26ApiFixtureIds(body.matches);
+    registerScoresApiFixtureIds(body.matches);
     return NextResponse.json(body, {
       headers: { "Cache-Control": scoresCacheControl(body.phase) },
     });

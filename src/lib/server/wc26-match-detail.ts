@@ -6,6 +6,7 @@ import {
   type ApiFixtureLookupRow,
 } from "@/lib/server/wc26-api-fixture-id";
 import { getRegisteredWc26ApiFixtureId } from "@/lib/server/wc26-api-fixture-registry";
+import { getCached, setCached } from "@/lib/server/cache";
 import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { resolveTeamId } from "@/lib/teamIdentity";
@@ -101,6 +102,11 @@ async function findApiFootballFixtureId(
     return knownApiFixtureId;
   }
 
+  const cachedApiId = getCached(`wc26:api-fixture:${fixtureId}`);
+  if (typeof cachedApiId === "number" && Number.isFinite(cachedApiId)) {
+    return cachedApiId;
+  }
+
   const registered = getRegisteredWc26ApiFixtureId(fixtureId);
   if (registered != null) {
     return registered;
@@ -117,6 +123,7 @@ async function findApiFootballFixtureId(
     );
     const liveId = resolveApiFixtureIdForLocal(fixtureId, liveRows);
     if (liveId != null) {
+      setCached(`wc26:api-fixture:${fixtureId}`, liveId, 86_400_000);
       return liveId;
     }
   } catch {
@@ -135,6 +142,7 @@ async function findApiFootballFixtureId(
     );
     const resolved = resolveApiFixtureIdForLocal(fixtureId, rows);
     if (resolved != null) {
+      setCached(`wc26:api-fixture:${fixtureId}`, resolved, 86_400_000);
       return resolved;
     }
   }

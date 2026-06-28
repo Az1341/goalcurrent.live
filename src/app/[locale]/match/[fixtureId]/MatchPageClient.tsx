@@ -21,8 +21,7 @@ export default function MatchPageClient({
   scorebatEmbed = null,
 }: MatchPageClientProps) {
   useLiveScores();
-
-  const { detail } = useMatchDetail(fixtureId, true);
+  const { detail, loading } = useMatchDetail(fixtureId, true);
 
   return (
     <>
@@ -37,6 +36,8 @@ export default function MatchPageClient({
       />
       <MatchDetailContent
         fixtureId={fixtureId}
+        detail={detail}
+        loading={loading}
         detailUnavailable={Boolean(detail.error)}
         scorebatEmbed={scorebatEmbed}
       />
