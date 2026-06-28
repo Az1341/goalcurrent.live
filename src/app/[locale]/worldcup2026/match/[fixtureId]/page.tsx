@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import MatchDetailContent from "@/components/match/MatchDetailContent";
-import { WC26_FIXTURES, getFixtureById, getTeamById } from "@/data/wc26";
+import MatchPageClient from "@/app/[locale]/match/[fixtureId]/MatchPageClient";
+import { WC26_FIXTURES, getFixtureById } from "@/data/wc26";
 import { isKnownFixtureId } from "@/lib/wc26-match";
+import { resolveFixtureParticipantLabel } from "@/lib/wc26-live";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { getScoreBatEmbedForFixture } from "@/lib/scorebat/getScoreBatEmbed";
 import { absoluteUrl, SITE_NAME } from "@/lib/site-url";
@@ -32,9 +33,9 @@ export async function generateMetadata({
     return { title: "Match not found" };
   }
 
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
-  const title = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
+  const homeName = resolveFixtureParticipantLabel(fixture, "home", WC26_FIXTURES);
+  const awayName = resolveFixtureParticipantLabel(fixture, "away", WC26_FIXTURES);
+  const title = `${homeName} vs ${awayName}`;
 
   return {
     ...buildPageMetadata({
@@ -70,5 +71,5 @@ export default async function Wc26MatchPage({ params }: Wc26MatchPageProps) {
 
   const scorebatEmbed = await getScoreBatEmbedForFixture(fixtureId);
 
-  return <MatchDetailContent fixtureId={fixtureId} scorebatEmbed={scorebatEmbed} />;
+  return <MatchPageClient fixtureId={fixtureId} scorebatEmbed={scorebatEmbed} />;
 }
