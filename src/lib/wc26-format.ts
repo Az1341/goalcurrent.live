@@ -2,6 +2,7 @@ const kickoffDateFormatter = new Intl.DateTimeFormat("en-GB", {
   weekday: "short",
   day: "numeric",
   month: "short",
+  year: "numeric",
   timeZone: "UTC",
 });
 
@@ -24,6 +25,11 @@ function formatUtcKickoffDate(date: Date): string {
 /** Deterministic timezone abbreviation for hydration-safe rendering. */
 export function formatVisitorTimezone(): string {
   return "UTC";
+}
+
+/** Hydration-safe short kickoff date for fixture meta rows. */
+export function formatVisitorKickoffDate(iso: string): string {
+  return formatUtcKickoffDate(new Date(iso));
 }
 
 /** Hydration-safe kickoff time only (HH:MM) — compact labels e.g. live ribbon. */

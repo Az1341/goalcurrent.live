@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import {
   formatVisitorKickoff,
+  formatVisitorKickoffDate,
   formatVisitorKickoffTime,
 } from "@/lib/wc26-format";
 
@@ -51,12 +52,31 @@ export function useLocalizedKickoffTime(iso: string): string {
   );
 }
 
+/** Device-local short date for fixture meta rows. */
+export function formatDeviceKickoffDate(iso: string): string {
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(iso));
+}
+
 /** Same pattern for full kickoff labels (date + time). */
 export function useLocalizedKickoffLabel(iso: string): string {
   return useSyncExternalStore(
     noopSubscribe,
     () => formatDeviceKickoffLabel(iso),
     () => formatVisitorKickoff(iso),
+  );
+}
+
+/** Hydration-safe short date for fixture meta rows. */
+export function useLocalizedKickoffDate(iso: string): string {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => formatDeviceKickoffDate(iso),
+    () => formatVisitorKickoffDate(iso),
   );
 }
 

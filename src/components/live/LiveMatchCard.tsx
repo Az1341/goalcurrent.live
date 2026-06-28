@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { getVenueById } from "@/data/wc26";
 import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
-import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
+import {
+  useLocalizedKickoffDate,
+  useLocalizedKickoffTime,
+} from "@/lib/client/use-local-kickoff";
 import {
   formatFixtureStatusLabel,
   isLiveMatchStatus,
@@ -46,8 +50,18 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
   const isCompleted = isEffectiveFixtureCompleted(fixture);
   const isScheduled = !isLive && !isCompleted;
   const kickoffTime = useLocalizedKickoffTime(fixture.kickoffUtc);
+  const kickoffDate = useLocalizedKickoffDate(fixture.kickoffUtc);
+  const venue = getVenueById(fixture.venueId);
+  const venueLabel = venue
+    ? `${venue.name}${venue.city ? ` (${venue.city})` : ""}`
+    : null;
   const score = getFixtureScore(fixture);
   const label = `${home.label} vs ${away.label}`;
+
+  const scheduleMeta =
+    isScheduled && (kickoffDate || venueLabel)
+      ? [kickoffDate, venueLabel].filter(Boolean).join(" · ")
+      : null;
 
   const centrePrimary =
     isLive || isCompleted
@@ -65,7 +79,7 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
         className={`${styles.matchRowLink} ${isLive ? styles.matchRowLive : ""}`}
         aria-label={
           isScheduled
-            ? `${label} - ${kickoffTime}`
+            ? `${label} - ${scheduleMeta ?? kickoffTime}`
             : `${label} - ${centreSecondary ?? centrePrimary}`
         }
       >
@@ -79,6 +93,9 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
           flagSize={22}
           isLive={isLive}
         />
+        {scheduleMeta ? (
+          <p className={styles.matchRowMeta}>{scheduleMeta}</p>
+        ) : null}
       </Link>
     </li>
   );
