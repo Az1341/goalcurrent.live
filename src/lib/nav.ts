@@ -290,3 +290,50 @@ export function isMoreSheetLinkActive(pathname: string, href: string): boolean {
   if (path === "/") return pathname === "/";
   return pathname === path || pathname.startsWith(`${path}/`);
 }
+
+/** Mobile bottom-tab landing pages — no header back affordance. */
+const MOBILE_TAB_LANDING_PATHS = new Set([
+  "/",
+  "/live",
+  "/favourites",
+  "/premier-league",
+  "/worldcup2026",
+]);
+
+const MOBILE_BACK_PARENT_RULES: Array<{ match: RegExp; parent: string }> = [
+  { match: /^\/match\/.+/, parent: "/worldcup2026/fixtures" },
+  { match: /^\/premier-league\/match\/.+/, parent: "/premier-league/fixtures" },
+  { match: /^\/worldcup2026\/match\/.+/, parent: "/worldcup2026/fixtures" },
+  { match: /^\/worldcup2026\/groups\/[^/]+$/, parent: "/worldcup2026/groups" },
+  { match: /^\/worldcup2026\/teams\/[^/]+$/, parent: "/worldcup2026/teams" },
+  { match: /^\/premier-league\/clubs\/[^/]+$/, parent: "/premier-league/clubs" },
+  { match: /^\/articles\/[^/]+$/, parent: "/articles" },
+  { match: /^\/news\/articles\/[^/]+$/, parent: "/news/articles" },
+  { match: /^\/news\/[^/]+$/, parent: "/news" },
+  { match: /^\/videos\/[^/]+$/, parent: "/videos" },
+  { match: /^\/video\/[^/]+$/, parent: "/video" },
+  { match: /^\/statistics\/[^/]+$/, parent: "/statistics" },
+  { match: /^\/transfers\/[^/]+$/, parent: "/transfers" },
+  { match: /^\/favourites\/[^/]+$/, parent: "/favourites" },
+  { match: /^\/premier-league\/2025-26\/[^/]+$/, parent: "/premier-league/table" },
+];
+
+export function shouldShowMobileBack(pathname: string): boolean {
+  return !MOBILE_TAB_LANDING_PATHS.has(pathname);
+}
+
+export function getMobileBackFallback(pathname: string): string {
+  for (const rule of MOBILE_BACK_PARENT_RULES) {
+    if (rule.match.test(pathname)) {
+      return rule.parent;
+    }
+  }
+
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length <= 1) {
+    return "/";
+  }
+
+  segments.pop();
+  return `/${segments.join("/")}`;
+}

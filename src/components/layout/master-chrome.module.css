@@ -518,7 +518,8 @@
   }
 
   .bar {
-    padding: 0 12px;
+    padding: 0 max(12px, env(safe-area-inset-right, 0px)) 0
+      max(12px, env(safe-area-inset-left, 0px));
     gap: 8px;
     min-height: 48px;
   }
