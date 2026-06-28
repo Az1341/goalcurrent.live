@@ -2,8 +2,10 @@ import { getFixtureById, getTeamById, WC26_FIXTURES } from "@/data/wc26";
 import { apiFootballFetch } from "@/lib/api-football/client";
 import {
   resolveApiFixtureIdForLocal,
+  kickoffDateRange,
   type ApiFixtureLookupRow,
 } from "@/lib/server/wc26-api-fixture-id";
+import { getRegisteredWc26ApiFixtureId } from "@/lib/server/wc26-api-fixture-registry";
 import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { resolveTeamId } from "@/lib/teamIdentity";
@@ -99,6 +101,11 @@ async function findApiFootballFixtureId(
     return knownApiFixtureId;
   }
 
+  const registered = getRegisteredWc26ApiFixtureId(fixtureId);
+  if (registered != null) {
+    return registered;
+  }
+
   const fixture = getFixtureById(fixtureId);
   if (!fixture) {
     return null;
@@ -116,12 +123,23 @@ async function findApiFootballFixtureId(
     // Fall through to date-based lookup.
   }
 
-  const date = fixture.kickoffUtc.slice(0, 10);
-  const rows = await apiFetchResponse<ApiFixtureRow>(
-    `/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&date=${date}`,
-  );
+  const seenDates = new Set<string>();
+  for (const date of kickoffDateRange(fixture.kickoffUtc)) {
+    if (seenDates.has(date)) {
+      continue;
+    }
+    seenDates.add(date);
 
-  return resolveApiFixtureIdForLocal(fixtureId, rows);
+    const rows = await apiFetchResponse<ApiFixtureRow>(
+      `/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&date=${date}`,
+    );
+    const resolved = resolveApiFixtureIdForLocal(fixtureId, rows);
+    if (resolved != null) {
+      return resolved;
+    }
+  }
+
+  return null;
 }
 
 function mapEvents(rows: ApiEventRow[]): MatchEventItem[] {

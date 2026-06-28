@@ -2,11 +2,8 @@
 
 import dynamic from "next/dynamic";
 import ApiFootballStatusBanner from "@/components/system/ApiFootballStatusBanner";
-import { getFixtureById } from "@/data/wc26";
 import { useLiveScores } from "@/lib/client/useLiveScores";
 import { useMatchDetail } from "@/lib/use-match-detail";
-import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { isLiveMatchStatus } from "@/lib/wc26-live";
 
 const MatchDetailContent = dynamic(
   () => import("@/components/match/MatchDetailContent"),
@@ -25,13 +22,7 @@ export default function MatchPageClient({
 }: MatchPageClientProps) {
   useLiveScores();
 
-  const fixtures = useEffectiveFixtures();
-  const fixture =
-    fixtures.find((entry) => entry.id === fixtureId) ?? getFixtureById(fixtureId);
-  const { detail } = useMatchDetail(
-    fixtureId,
-    fixture ? isLiveMatchStatus(fixture.status) : false,
-  );
+  const { detail } = useMatchDetail(fixtureId, true);
 
   return (
     <>

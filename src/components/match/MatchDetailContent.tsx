@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getFixtureById, groupLabel } from "@/data/wc26";
 import { buildMatchDetailHeader } from "@/lib/wc26-match";
 import { groupHref } from "@/lib/wc26-groups";
-import { isLiveMatchStatus, resolveFixtureParticipant } from "@/lib/wc26-live";
+import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useMatchDetail } from "@/lib/use-match-detail";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
@@ -38,10 +38,7 @@ export default function MatchDetailContent({
   const fixtures = useEffectiveFixtures();
   const fixture =
     fixtures.find((entry) => entry.id === fixtureId) ?? getFixtureById(fixtureId);
-  const { detail, loading } = useMatchDetail(
-    fixtureId,
-    fixture ? isLiveMatchStatus(fixture.status) : false,
-  );
+  const { detail, loading } = useMatchDetail(fixtureId, true);
   const { tvRegion } = useWc26TvRegion();
 
   if (!fixture) {

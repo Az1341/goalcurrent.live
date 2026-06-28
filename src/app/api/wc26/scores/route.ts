@@ -8,6 +8,7 @@ import { getStaleApiCache, setSuccessApiCache } from "@/lib/api-football/cache";
 import { respondApiFootballFailure } from "@/lib/api-football/route-errors";
 import { logInfo } from "@/lib/log";
 import { getCached, setCached } from "@/lib/server/cache";
+import { registerWc26ApiFixtureIds } from "@/lib/server/wc26-api-fixture-registry";
 import {
   fetchFinishedWc26Matches,
   fetchLiveWc26Matches,
@@ -69,6 +70,7 @@ function jsonScores(
   body: Wc26ScoresApiResponse,
   cacheKey: string,
 ): NextResponse {
+  registerWc26ApiFixtureIds(body.matches);
   const ttlMs = scoresCacheTtlMs(body.phase);
   setSuccessApiCache(cacheKey, body, ttlMs);
   setCached(cacheKey, body, ttlMs);
@@ -107,6 +109,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (cached) {
     logInfo(ROUTE, "CACHE HIT");
     const body = cached as Wc26ScoresApiResponse;
+    registerWc26ApiFixtureIds(body.matches);
     return NextResponse.json(body, {
       headers: { "Cache-Control": scoresCacheControl(body.phase) },
     });

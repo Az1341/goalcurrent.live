@@ -68,3 +68,15 @@ export function resolveApiFixtureIdForLocal(
 
   return null;
 }
+
+export function kickoffDateRange(kickoffUtc: string): readonly string[] {
+  const base = kickoffUtc.slice(0, 10);
+  const dayMs = 24 * 60 * 60 * 1000;
+  const parsed = Date.parse(`${base}T00:00:00.000Z`);
+  if (!Number.isFinite(parsed)) {
+    return [base];
+  }
+  const prev = new Date(parsed - dayMs).toISOString().slice(0, 10);
+  const next = new Date(parsed + dayMs).toISOString().slice(0, 10);
+  return [prev, base, next];
+}

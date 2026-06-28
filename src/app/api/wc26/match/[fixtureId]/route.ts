@@ -4,6 +4,7 @@ import { getStaleApiCache, setSuccessApiCache } from "@/lib/api-football/cache";
 import { apiFootballErrorMessage } from "@/lib/api-football/errors";
 import { respondApiFootballFailure } from "@/lib/api-football/route-errors";
 import { fetchWc26MatchDetail } from "@/lib/server/wc26-match-detail";
+import { getRegisteredWc26ApiFixtureId } from "@/lib/server/wc26-api-fixture-registry";
 import { getCached, setCached } from "@/lib/server/cache";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
 import type { MatchDetailPayload } from "@/types/match-detail";
@@ -61,9 +62,10 @@ export async function GET(
 ): Promise<NextResponse> {
   const { fixtureId: rawId } = await params;
   const fixtureId = decodeURIComponent(rawId);
-  const knownApiFixtureId = parseOptionalApiFixtureId(
-    request.nextUrl.searchParams.get("apiFixtureId"),
-  );
+  const knownApiFixtureId =
+    parseOptionalApiFixtureId(
+      request.nextUrl.searchParams.get("apiFixtureId"),
+    ) ?? getRegisteredWc26ApiFixtureId(fixtureId);
   const liveHint = isLiveDetailRequest(fixtureId, knownApiFixtureId);
 
   if (!getFixtureById(fixtureId)) {
