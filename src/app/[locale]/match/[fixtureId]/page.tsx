@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import MatchPageClient from "@/app/[locale]/match/[fixtureId]/MatchPageClient";
 import MatchSeo from "@/components/seo/MatchSeo";
 import ErrorBoundary from "@/components/system/ErrorBoundary";
-import { WC26_FIXTURES, getFixtureById, getTeamById, getVenueById } from "@/data/wc26";
+import { WC26_FIXTURES, getFixtureById, getVenueById } from "@/data/wc26";
 import { isKnownFixtureId, matchHref } from "@/lib/wc26-match";
+import { resolveFixtureParticipantLabel } from "@/lib/wc26-live";
 import { buildMatchMetadata } from "@/lib/page-metadata";
 import { sportsEventStatus } from "@/lib/seo/sports-event-status";
 import { getScoreBatEmbedForFixture } from "@/lib/scorebat/getScoreBatEmbed";
@@ -29,9 +30,9 @@ export async function generateMetadata({ params }: MatchPageProps): Promise<Meta
     return { title: "Match not found" };
   }
 
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
-  const title = `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
+  const homeName = resolveFixtureParticipantLabel(fixture, "home", WC26_FIXTURES);
+  const awayName = resolveFixtureParticipantLabel(fixture, "away", WC26_FIXTURES);
+  const title = `${homeName} vs ${awayName}`;
 
   return buildMatchMetadata({
     title,
@@ -50,8 +51,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
   }
 
   const fixture = getFixtureById(fixtureId)!;
-  const home = getTeamById(fixture.homeTeamId)!;
-  const away = getTeamById(fixture.awayTeamId)!;
+  const homeName = resolveFixtureParticipantLabel(fixture, "home", WC26_FIXTURES);
+  const awayName = resolveFixtureParticipantLabel(fixture, "away", WC26_FIXTURES);
   const venue = getVenueById(fixture.venueId);
   const scorebatEmbed = await getScoreBatEmbedForFixture(fixtureId);
 
@@ -59,21 +60,21 @@ export default async function MatchPage({ params }: MatchPageProps) {
     <ErrorBoundary>
       <MatchSeo
         event={{
-          name: `${home.name} vs ${away.name}`,
+          name: `${homeName} vs ${awayName}`,
           startDate: fixture.kickoffUtc,
           path: matchHref(fixtureId),
-          homeTeamName: home.name,
-          awayTeamName: away.name,
+          homeTeamName: homeName,
+          awayTeamName: awayName,
           venueName: venue?.name,
           country: venue?.country,
           competition: "FIFA World Cup 2026",
           eventStatus: sportsEventStatus(String(fixture.status)),
-          description: `FIFA World Cup 2026 — ${home.name} vs ${away.name}`,
+          description: `FIFA World Cup 2026 — ${homeName} vs ${awayName}`,
         }}
         breadcrumbs={[
           { name: "World Cup 2026", path: "/worldcup2026" },
           { name: "Fixtures", path: "/worldcup2026/fixtures" },
-          { name: `${home.name} vs ${away.name}`, path: matchHref(fixtureId) },
+          { name: `${homeName} vs ${awayName}`, path: matchHref(fixtureId) },
         ]}
       />
       <MatchPageClient fixtureId={fixtureId} scorebatEmbed={scorebatEmbed} />

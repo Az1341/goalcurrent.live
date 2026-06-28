@@ -10,6 +10,7 @@ export type EffectiveFixture = Fixture & {
   readonly homeScore?: number;
   readonly awayScore?: number;
   readonly elapsed?: number | null;
+  readonly apiFixtureId?: number;
 };
 
 type OverlayState = Record<string, FixtureOverlayEntry>;
@@ -105,6 +106,7 @@ export function getEffectiveFixtures(): readonly EffectiveFixture[] {
       ...(entry.homeScore !== undefined ? { homeScore: entry.homeScore } : {}),
       ...(entry.awayScore !== undefined ? { awayScore: entry.awayScore } : {}),
       ...(entry.elapsed !== undefined ? { elapsed: entry.elapsed } : {}),
+      ...(entry.apiFixtureId !== undefined ? { apiFixtureId: entry.apiFixtureId } : {}),
     };
   });
 }

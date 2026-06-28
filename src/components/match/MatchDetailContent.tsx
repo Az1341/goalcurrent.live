@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getFixtureById, groupLabel } from "@/data/wc26";
 import { buildMatchDetailHeader } from "@/lib/wc26-match";
 import { groupHref } from "@/lib/wc26-groups";
-import { isLiveMatchStatus } from "@/lib/wc26-live";
+import { isLiveMatchStatus, resolveFixtureParticipant } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useMatchDetail } from "@/lib/use-match-detail";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
@@ -56,6 +56,8 @@ export default function MatchDetailContent({
   }
 
   const header = buildMatchDetailHeader(fixture);
+  const homeResolved = resolveFixtureParticipant(fixture, "home", fixtures);
+  const awayResolved = resolveFixtureParticipant(fixture, "away", fixtures);
   const groupTitle = fixture.groupId ? groupLabel(fixture.groupId) : "World Cup 2026";
 
   return (
@@ -110,8 +112,8 @@ export default function MatchDetailContent({
           <MatchLineups
             detail={detail}
             loading={loading}
-            homeTeamId={fixture.homeTeamId}
-            awayTeamId={fixture.awayTeamId}
+            homeTeamId={homeResolved.teamId}
+            awayTeamId={awayResolved.teamId}
             matchNumber={fixture.matchNumber}
             fixtureId={fixture.id}
           />

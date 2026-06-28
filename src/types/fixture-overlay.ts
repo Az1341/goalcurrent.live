@@ -4,6 +4,8 @@ export type FixtureOverlayEntry = {
   readonly homeScore?: number;
   readonly awayScore?: number;
   readonly elapsed?: number | null;
+  /** api-sports fixture id from live feed — used for match detail lookups. */
+  readonly apiFixtureId?: number;
 };
 
 /** Normalised match payload returned by /api/wc26/scores (fixture id resolved server-side). */

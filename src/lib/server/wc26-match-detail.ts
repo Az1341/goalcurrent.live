@@ -1,6 +1,11 @@
-import { getFixtureById, getTeamById } from "@/data/wc26";
+import { getFixtureById, getTeamById, WC26_FIXTURES } from "@/data/wc26";
 import { apiFootballFetch } from "@/lib/api-football/client";
-import { findFixtureIdByTeamNames } from "@/lib/wc26-fixture-match";
+import {
+  resolveApiFixtureIdForLocal,
+  type ApiFixtureLookupRow,
+} from "@/lib/server/wc26-api-fixture-id";
+import { resolveFixtureParticipant } from "@/lib/wc26-live";
+import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import type {
   MatchDetailPayload,
@@ -31,10 +36,7 @@ async function apiFetchResponse<T>(path: string): Promise<T[]> {
   return data;
 }
 
-type ApiFixtureRow = {
-  fixture: { id: number; date: string };
-  teams: { home: { name: string }; away: { name: string } };
-};
+type ApiFixtureRow = ApiFixtureLookupRow;
 
 type ApiEventRow = {
   time: { elapsed: number | null; extra: number | null };
@@ -89,10 +91,29 @@ function emptyPayload(fixtureId: string): MatchDetailPayload {
   };
 }
 
-async function findApiFootballFixtureId(fixtureId: string): Promise<number | null> {
+async function findApiFootballFixtureId(
+  fixtureId: string,
+  knownApiFixtureId?: number | null,
+): Promise<number | null> {
+  if (knownApiFixtureId != null && Number.isFinite(knownApiFixtureId)) {
+    return knownApiFixtureId;
+  }
+
   const fixture = getFixtureById(fixtureId);
   if (!fixture) {
     return null;
+  }
+
+  try {
+    const liveRows = await apiFetchResponse<ApiFixtureRow>(
+      `/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&live=all`,
+    );
+    const liveId = resolveApiFixtureIdForLocal(fixtureId, liveRows);
+    if (liveId != null) {
+      return liveId;
+    }
+  } catch {
+    // Fall through to date-based lookup.
   }
 
   const date = fixture.kickoffUtc.slice(0, 10);
@@ -100,14 +121,7 @@ async function findApiFootballFixtureId(fixtureId: string): Promise<number | nul
     `/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&date=${date}`,
   );
 
-  for (const row of rows) {
-    const localId = findFixtureIdByTeamNames(row.teams.home.name, row.teams.away.name);
-    if (localId === fixtureId) {
-      return row.fixture.id;
-    }
-  }
-
-  return null;
+  return resolveApiFixtureIdForLocal(fixtureId, rows);
 }
 
 function mapEvents(rows: ApiEventRow[]): MatchEventItem[] {
@@ -256,15 +270,26 @@ function resolveLineupSides(
     return { home: null, away: null };
   }
 
+  const resolvedHome = resolveFixtureParticipant(
+    fixture as EffectiveFixture,
+    "home",
+    WC26_FIXTURES,
+  );
+  const resolvedAway = resolveFixtureParticipant(
+    fixture as EffectiveFixture,
+    "away",
+    WC26_FIXTURES,
+  );
+
   let home: MatchLineupSide | null = null;
   let away: MatchLineupSide | null = null;
 
   for (const row of rows) {
     const side = mapLineupSide(row, meta);
     const teamId = resolveTeamId(row.team.name);
-    if (teamId === fixture.homeTeamId) {
+    if (teamId === resolvedHome.teamId || teamId === fixture.homeTeamId) {
       home = side;
-    } else if (teamId === fixture.awayTeamId) {
+    } else if (teamId === resolvedAway.teamId || teamId === fixture.awayTeamId) {
       away = side;
     }
   }
@@ -296,13 +321,17 @@ export async function fetchWc26EventsForApiFixture(
 
 export async function fetchWc26MatchEvents(
   fixtureId: string,
+  knownApiFixtureId?: number | null,
 ): Promise<{ events: MatchEventItem[]; apiAvailable: boolean }> {
   if (!getFixtureById(fixtureId) || !isWc26ApiConfigured()) {
     return { events: [], apiAvailable: false };
   }
 
   try {
-    const apiFixtureId = await findApiFootballFixtureId(fixtureId);
+    const apiFixtureId = await findApiFootballFixtureId(
+      fixtureId,
+      knownApiFixtureId,
+    );
     if (!apiFixtureId) {
       return { events: [], apiAvailable: false };
     }
@@ -319,6 +348,7 @@ export async function fetchWc26MatchEvents(
 
 export async function fetchWc26MatchDetail(
   fixtureId: string,
+  knownApiFixtureId?: number | null,
 ): Promise<MatchDetailPayload> {
   if (!getFixtureById(fixtureId)) {
     return emptyPayload(fixtureId);
@@ -329,7 +359,10 @@ export async function fetchWc26MatchDetail(
   }
 
   try {
-    const apiFixtureId = await findApiFootballFixtureId(fixtureId);
+    const apiFixtureId = await findApiFootballFixtureId(
+      fixtureId,
+      knownApiFixtureId,
+    );
     if (!apiFixtureId) {
       return emptyPayload(fixtureId);
     }
@@ -343,8 +376,18 @@ export async function fetchWc26MatchDetail(
 
     const playerMeta = buildPlayerMetaMap(players);
     const fixture = getFixtureById(fixtureId)!;
-    const homeTeam = getTeamById(fixture.homeTeamId);
-    const awayTeam = getTeamById(fixture.awayTeamId);
+    const homeResolved = resolveFixtureParticipant(
+      fixture as EffectiveFixture,
+      "home",
+      WC26_FIXTURES,
+    );
+    const awayResolved = resolveFixtureParticipant(
+      fixture as EffectiveFixture,
+      "away",
+      WC26_FIXTURES,
+    );
+    const homeTeam = getTeamById(homeResolved.teamId);
+    const awayTeam = getTeamById(awayResolved.teamId);
 
     return {
       fixtureId,
@@ -355,8 +398,8 @@ export async function fetchWc26MatchDetail(
       lineups: resolveLineupSides(lineups, fixtureId, playerMeta),
       statistics: mapStatistics(
         statistics,
-        homeTeam?.name ?? fixture.homeTeamId,
-        awayTeam?.name ?? fixture.awayTeamId,
+        homeTeam?.name ?? homeResolved.label,
+        awayTeam?.name ?? awayResolved.label,
       ),
     };
   } catch (error) {

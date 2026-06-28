@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { LIVE_API_PATHS, useLiveApi } from "@/lib/client/live-data";
+import { LIVE_POLL_MATCH_MS } from "@/lib/client/fetcher";
 import { WC26_FIXTURES_UPDATED_EVENT } from "@/lib/wc26-fixture-overlay";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import type { MatchDetailPayload } from "@/types/match-detail";
 
-const POLL_MS = 30_000;
+const POLL_MS = LIVE_POLL_MATCH_MS;
 
 function emptyDetail(fixtureId: string): MatchDetailPayload {
   return {
@@ -27,8 +29,18 @@ export function useMatchDetail(
   loading: boolean;
   refresh: () => void;
 } {
-  const path = LIVE_API_PATHS.wc26Match(fixtureId);
+  const fixtures = useEffectiveFixtures();
+  const apiFixtureId = fixtures.find((entry) => entry.id === fixtureId)?.apiFixtureId;
+  const path = useMemo(() => {
+    const base = LIVE_API_PATHS.wc26Match(fixtureId);
+    if (apiFixtureId == null) {
+      return base;
+    }
+    return `${base}?apiFixtureId=${apiFixtureId}`;
+  }, [fixtureId, apiFixtureId]);
+
   const { data, isLoading, mutate } = useLiveApi<MatchDetailPayload>(path, {
+    fresh: poll,
     refreshInterval: poll ? POLL_MS : 0,
   });
 

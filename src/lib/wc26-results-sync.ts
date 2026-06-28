@@ -58,6 +58,7 @@ function overlayEntryFromApiMatch(match: Wc26ApiMatch): FixtureOverlayEntry {
   const entry: FixtureOverlayEntry = {
     status: match.status,
     elapsed: match.elapsed,
+    ...(match.apiFixtureId != null ? { apiFixtureId: match.apiFixtureId } : {}),
   };
 
   if (match.homeScore !== null && match.awayScore !== null) {
