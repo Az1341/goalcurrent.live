@@ -18,7 +18,7 @@ export const metadata: Metadata = buildPageMetadata({
 export default function LivePage() {
   return (
     <ErrorBoundary>
-      <AutoRefresh />
+      <AutoRefresh interval={15_000} />
       <LivePageClient />
     </ErrorBoundary>
   );

@@ -6,13 +6,12 @@ import LiveMatchCard from "@/components/live/LiveMatchCard";
 import { groupLabel } from "@/data/wc26";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { formatStageLabel } from "@/lib/wc26-fixtures-page";
-import { partitionFixturesForLiveCentre } from "@/lib/wc26-live";
+import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import MatchLineupPitchSection from "@/components/match/MatchLineupPitchSection";
 import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
-import { isLiveMatchStatus } from "@/lib/wc26-live";
 import { matchHref } from "@/lib/wc26-match";
 import styles from "./live.module.css";
 
@@ -152,19 +151,23 @@ export default function LiveMatchCentre() {
 
       {buckets.live.length > 0 ? (
         <div className={styles.livePitchStack}>
-          {buckets.live.map((fixture) => (
+          {buckets.live.map((fixture) => {
+            const home = resolveFixtureParticipant(fixture, "home", fixtures);
+            const away = resolveFixtureParticipant(fixture, "away", fixtures);
+            return (
             <div key={`pitch-${fixture.id}`} className={styles.livePitchCard}>
               <MatchLineupPitchSection
                 fixtureId={fixture.id}
                 matchNumber={fixture.matchNumber}
-                homeTeamId={fixture.homeTeamId}
-                awayTeamId={fixture.awayTeamId}
+                homeTeamId={home.teamId}
+                awayTeamId={away.teamId}
                 poll={isLiveMatchStatus(fixture.status)}
                 variant="embedded"
                 matchHref={matchHref(fixture.id)}
               />
             </div>
-          ))}
+            );
+          })}
         </div>
       ) : null}
 

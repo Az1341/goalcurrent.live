@@ -22,6 +22,9 @@ export const dynamic = "force-dynamic";
 
 const ROUTE = "/api/wc26/scores";
 
+/** In-memory TTL for live score responses — must stay below client poll interval. */
+const LIVE_SCORES_CACHE_TTL_MS = 15_000;
+
 /** Stable cache key — /api/scores re-exports this handler but must share cache. */
 function scoresCacheKey(request: NextRequest): string {
   return `${ROUTE}${request.nextUrl.search}`;
@@ -47,7 +50,7 @@ function emptyResponse(phase?: string): Wc26ScoresApiResponse {
 
 function scoresCacheControl(phase?: string): string {
   if (phase === "live") {
-    return "s-maxage=45, stale-while-revalidate=45";
+    return "s-maxage=10, stale-while-revalidate=5";
   }
   if (phase === "unconfigured" || phase === "rate-limited") {
     return "no-store";
@@ -55,12 +58,20 @@ function scoresCacheControl(phase?: string): string {
   return "s-maxage=300, stale-while-revalidate=60";
 }
 
+function scoresCacheTtlMs(phase?: string): number {
+  if (phase === "live") {
+    return LIVE_SCORES_CACHE_TTL_MS;
+  }
+  return 300_000;
+}
+
 function jsonScores(
   body: Wc26ScoresApiResponse,
   cacheKey: string,
 ): NextResponse {
-  setSuccessApiCache(cacheKey, body);
-  setCached(cacheKey, body);
+  const ttlMs = scoresCacheTtlMs(body.phase);
+  setSuccessApiCache(cacheKey, body, ttlMs);
+  setCached(cacheKey, body, ttlMs);
   return NextResponse.json(body, {
     headers: { "Cache-Control": scoresCacheControl(body.phase) },
   });

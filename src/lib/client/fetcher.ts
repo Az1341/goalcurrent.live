@@ -4,7 +4,7 @@ export const fetcher = (url: string) =>
   fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 /** Active live match centre / match detail polling. */
-export const LIVE_POLL_MATCH_MS = 30_000;
+export const LIVE_POLL_MATCH_MS = 15_000;
 
 /** Hub, home, and general scoreboard polling (60–90s window). */
 export const LIVE_POLL_HUB_MS = 75_000;

@@ -3,7 +3,6 @@
 import useSWR from "swr";
 import {
   fetcher,
-  LIVE_MATCH_FETCH_SWR_OPTIONS,
   LIVE_POLL_HUB_MS,
   LIVE_POLL_MATCH_MS,
   visibilityAwareRefreshInterval,
@@ -31,7 +30,16 @@ export function useLiveApi<T = unknown>(
   options?: UseLiveApiOptions,
 ) {
   if (options?.fresh) {
-    return useSWR<T>(path, fetcher, LIVE_MATCH_FETCH_SWR_OPTIONS);
+    const pollMs = options.refreshInterval ?? LIVE_POLL_MATCH_MS;
+    return useSWR<T>(path, fetcher, {
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      fallbackData: undefined,
+      keepPreviousData: false,
+      refreshInterval: () => visibilityAwareRefreshInterval(pollMs),
+      dedupingInterval: pollMs,
+      revalidateOnReconnect: true,
+    });
   }
 
   const pollMs =

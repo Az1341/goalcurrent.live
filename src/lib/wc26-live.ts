@@ -80,6 +80,10 @@ export function partitionFixturesForLiveCentre(
 
     if (isLiveMatchStatus(status)) {
       live.push(fixture);
+      const kickoffKey = localDateKey(fixture.kickoffUtc);
+      if (kickoffKey === todayKey) {
+        today.push(fixture);
+      }
       continue;
     }
 

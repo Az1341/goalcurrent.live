@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { LIVE_API_PATHS, useLiveApi } from "@/lib/client/live-data";
 import { useLiveScores } from "@/lib/client/useLiveScores";
-import { clearFixtureOverlay } from "@/lib/wc26-fixture-overlay";
 import { applyWc26ScoresToOverlay } from "@/lib/wc26-results-sync";
 import type { Wc26ScoresApiResponse } from "@/types/fixture-overlay";
 
@@ -14,10 +13,6 @@ export default function Wc26ResultsSync() {
     LIVE_API_PATHS.wc26Results,
     { fresh: true },
   );
-
-  useEffect(() => {
-    clearFixtureOverlay();
-  }, []);
 
   useEffect(() => {
     if (liveData) {
