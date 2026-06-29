@@ -7,6 +7,7 @@ import { isKnockoutPlaceholderTeam } from "@/data/wc26/knockout-fixtures";
 import {
   getEffectiveFixtures,
   getFixtureScore,
+  isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
@@ -566,7 +567,7 @@ function formatKnockoutMatchScore(
   const fixture = fixtures.find(
     (entry) => entry.matchNumber === matchNumber && entry.stage !== "group",
   );
-  if (!fixture || !isCompletedMatchStatus(fixture.status)) {
+  if (!fixture || !isEffectiveFixtureCompleted(fixture)) {
     return null;
   }
   const score = getFixtureScore(fixture);
@@ -601,7 +602,7 @@ export function resolveKnockoutMatchWinner(
   const fixture = fixtures.find(
     (entry) => entry.matchNumber === matchNumber && entry.stage !== "group",
   );
-  if (!fixture || !isCompletedMatchStatus(fixture.status)) {
+  if (!fixture || !isEffectiveFixtureCompleted(fixture)) {
     return null;
   }
 
@@ -641,7 +642,9 @@ function resolveKnockoutFeedSlot(
       };
     }
     const loserId =
-      fixture.homeTeamId === teamId ? fixture.awayTeamId : fixture.homeTeamId;
+      teamId === resolveKnockoutParticipantTeamId(fixture, "home")
+        ? resolveKnockoutParticipantTeamId(fixture, "away")
+        : resolveKnockoutParticipantTeamId(fixture, "home");
     return {
       teamId: loserId,
       label: teamDisplayName(loserId),

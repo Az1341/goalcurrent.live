@@ -1,6 +1,7 @@
 import { isKnockoutPlaceholderTeam } from "@/data/wc26";
 import {
   getFixtureScore,
+  isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
 import {
@@ -136,7 +137,7 @@ function resolveMatchStatus(
   if (isLiveMatchStatus(fixture.status)) {
     return "live";
   }
-  if (isCompletedMatchStatus(fixture.status)) {
+  if (isEffectiveFixtureCompleted(fixture)) {
     return "finished";
   }
   return "scheduled";
@@ -151,7 +152,7 @@ export function resolveBracketDisplayStatus(
   if (isLiveMatchStatus(fixture.status)) {
     return "live";
   }
-  if (isCompletedMatchStatus(fixture.status)) {
+  if (isEffectiveFixtureCompleted(fixture)) {
     return "ft";
   }
   return "forthcoming";

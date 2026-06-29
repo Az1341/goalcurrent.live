@@ -6,15 +6,15 @@ import { LIVE_POLL_MATCH_MS } from "@/lib/client/fetcher";
 import { applyWc26ScoresToOverlay } from "@/lib/wc26-results-sync";
 import type { Wc26ScoresApiResponse } from "@/types/fixture-overlay";
 
-/** Tighter SWR polling on the bracket page when knockout matches are live. */
+/** Poll live scores when knockout matches are in play; always merge results. */
 export default function BracketLivePolling({ enabled }: { enabled: boolean }) {
   const { data: liveData } = useLiveApi<Wc26ScoresApiResponse>(
     enabled ? LIVE_API_PATHS.wc26LiveScores : null,
-    { refreshInterval: LIVE_POLL_MATCH_MS },
+    { refreshInterval: enabled ? LIVE_POLL_MATCH_MS : undefined },
   );
   const { data: resultsData } = useLiveApi<Wc26ScoresApiResponse>(
     LIVE_API_PATHS.wc26Results,
-    { refreshInterval: enabled ? LIVE_POLL_MATCH_MS : undefined },
+    { refreshInterval: LIVE_POLL_MATCH_MS, fresh: true },
   );
 
   useEffect(() => {

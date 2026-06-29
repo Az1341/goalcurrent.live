@@ -3,7 +3,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import AutoRefresh from "@/components/AutoRefresh";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import { WC26_HUB_HREF } from "@/lib/wc26-sections";
 import { buildKnockoutBracketRounds } from "@/lib/wc26-standings";
@@ -82,7 +81,6 @@ export default function BracketPageClient() {
 
   return (
     <main className={bracketStyles.bracketPage}>
-      {liveKnockout ? <AutoRefresh interval={30_000} /> : null}
       <BracketLivePolling enabled={liveKnockout} />
 
       <Wc26Breadcrumb
