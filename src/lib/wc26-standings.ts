@@ -3,6 +3,7 @@ import {
   WC26_GROUPS,
   type Wc26GroupId,
 } from "@/data/wc26";
+import { isKnockoutPlaceholderTeam } from "@/data/wc26/knockout-fixtures";
 import {
   getEffectiveFixtures,
   getFixtureScore,
@@ -558,6 +559,19 @@ function formatKnockoutMatchScore(
   return `${score.home}–${score.away}`;
 }
 
+function resolveKnockoutParticipantTeamId(
+  fixture: EffectiveFixture,
+  side: "home" | "away",
+): TeamId {
+  const overlayId =
+    side === "home" ? fixture.overlayHomeTeamId : fixture.overlayAwayTeamId;
+  if (overlayId && !isKnockoutPlaceholderTeam(overlayId)) {
+    return overlayId;
+  }
+  const baseId = side === "home" ? fixture.homeTeamId : fixture.awayTeamId;
+  return baseId;
+}
+
 /** Winner of a completed knockout fixture by official match number. */
 export function resolveKnockoutMatchWinner(
   matchNumber: number,
@@ -575,11 +589,14 @@ export function resolveKnockoutMatchWinner(
     return null;
   }
 
+  const homeId = resolveKnockoutParticipantTeamId(fixture, "home");
+  const awayId = resolveKnockoutParticipantTeamId(fixture, "away");
+
   if (score.home > score.away) {
-    return fixture.homeTeamId;
+    return homeId;
   }
   if (score.away > score.home) {
-    return fixture.awayTeamId;
+    return awayId;
   }
 
   return null;

@@ -3,6 +3,8 @@ import BracketPageClient from "@/components/wc26/bracket/BracketPageClient";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = buildPageMetadata({
   title: `World Cup 2026 Bracket | Road to the Final — ${SITE_NAME}`,
   description:

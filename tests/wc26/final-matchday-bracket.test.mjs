@@ -34,7 +34,7 @@ test("knockout fixtures cover matches 73 through 104", () => {
   assert.equal(entries.length, 32);
 });
 
-test("bracket page client renders horizontal bracket grid", () => {
+test("bracket page client renders converging bracket view", () => {
   const pageRaw = readFileSync(
     join(root, "src/components/wc26/bracket/BracketPageClient.tsx"),
     "utf8",
@@ -43,9 +43,9 @@ test("bracket page client renders horizontal bracket grid", () => {
     join(root, "src/lib/wc26/bracket-view.ts"),
     "utf8",
   );
-  assert.match(pageRaw, /BracketGrid/);
-  assert.match(pageRaw, /buildBracketGridView/);
-  assert.match(viewRaw, /buildBracketGridView/);
+  assert.match(pageRaw, /BracketView/);
+  assert.match(pageRaw, /buildConvergingBracketView/);
+  assert.match(viewRaw, /buildConvergingBracketView/);
   assert.match(viewRaw, /BracketMatchCardView/);
 });
 

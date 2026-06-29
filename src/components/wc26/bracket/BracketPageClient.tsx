@@ -3,43 +3,71 @@
 import { useMemo, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import AutoRefresh from "@/components/AutoRefresh";
 import Wc26Breadcrumb from "@/components/wc26/Wc26Breadcrumb";
 import { WC26_HUB_HREF } from "@/lib/wc26-sections";
 import { buildKnockoutBracketRounds } from "@/lib/wc26-standings";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
+import { WC26_FIXTURES_UPDATED_EVENT } from "@/lib/wc26-fixture-overlay";
 import {
-  buildBracketGridView,
+  buildConvergingBracketView,
   hasLiveKnockoutMatch,
   pickNextKnockoutFixture,
 } from "@/lib/wc26/bracket-view";
 import BracketPageBand from "./BracketPageBand";
-import BracketGrid from "./BracketGrid";
-import BracketSkeleton from "./BracketSkeleton";
+import BracketView, { BracketViewSkeleton } from "./BracketView";
 import BracketDegradedBanner from "./BracketDegradedBanner";
 import BracketLivePolling from "./BracketLivePolling";
 import BracketLiveLineupBar from "./BracketLiveLineupBar";
 import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
-import styles from "./bracket.module.css";
+import bracketStyles from "./bracket.module.css";
+import viewStyles from "./BracketView.module.css";
+
+function formatLastUpdated(date: Date, locale: string): string {
+  return date.toLocaleString(locale, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
 
 export default function BracketPageClient() {
   const t = useTranslations("wc26.bracket");
   const fixtures = useEffectiveFixtures();
   const syncStatus = useWc26SyncStatus();
   const [hydrated, setHydrated] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     setHydrated(true);
+    setLastUpdated(new Date());
+  }, []);
+
+  useEffect(() => {
+    const onUpdate = () => setLastUpdated(new Date());
+    window.addEventListener(WC26_FIXTURES_UPDATED_EVENT, onUpdate);
+    return () =>
+      window.removeEventListener(WC26_FIXTURES_UPDATED_EVENT, onUpdate);
   }, []);
 
   const rounds = useMemo(
     () => buildKnockoutBracketRounds(fixtures),
     [fixtures],
   );
-  const grid = useMemo(
-    () => buildBracketGridView(rounds, fixtures),
-    [rounds, fixtures],
+
+  const convergingView = useMemo(
+    () =>
+      buildConvergingBracketView(rounds, fixtures, {
+        r32: t("rounds.r32"),
+        r16: t("rounds.r16"),
+        qf: t("rounds.qf"),
+        sf: t("rounds.sf"),
+        third: t("rounds.3rd"),
+        final: t("rounds.final"),
+      }),
+    [rounds, fixtures, t],
   );
+
   const liveKnockout = useMemo(
     () => hasLiveKnockoutMatch(fixtures),
     [fixtures],
@@ -49,19 +77,11 @@ export default function BracketPageClient() {
     [fixtures],
   );
 
-  const roundLabels = {
-    r32: t("rounds.r32"),
-    r16: t("rounds.r16"),
-    qf: t("rounds.qf"),
-    sf: t("rounds.sf"),
-    third: t("rounds.3rd"),
-    final: t("rounds.final"),
-  };
-
   const showSkeleton = !hydrated;
 
   return (
-    <main className={styles.bracketPage}>
+    <main className={bracketStyles.bracketPage}>
+      {liveKnockout ? <AutoRefresh interval={30_000} /> : null}
       <BracketLivePolling enabled={liveKnockout} />
 
       <Wc26Breadcrumb
@@ -85,16 +105,23 @@ export default function BracketPageClient() {
         }}
       />
 
+      {lastUpdated ? (
+        <p className={viewStyles.lastUpdated}>
+          {t("lastUpdated", {
+            time: formatLastUpdated(lastUpdated, "en"),
+          })}
+        </p>
+      ) : null}
+
       {syncStatus === "degraded" ? (
         <BracketDegradedBanner message={t("degraded")} />
       ) : null}
 
       {showSkeleton ? (
-        <BracketSkeleton />
+        <BracketViewSkeleton />
       ) : (
-        <BracketGrid
-          grid={grid}
-          roundLabels={roundLabels}
+        <BracketView
+          view={convergingView}
           viewMatchCenterLabel={t("card.viewMatchCenter")}
           liveLabel={t("live.live")}
         />
@@ -109,12 +136,12 @@ export default function BracketPageClient() {
       ) : null}
 
       {!showSkeleton ? (
-        <div className={styles.topScorersBlock}>
+        <div className={bracketStyles.topScorersBlock}>
           <Wc26TopScorers />
         </div>
       ) : null}
 
-      <p className={styles.hubBack}>
+      <p className={bracketStyles.hubBack}>
         <Link href={WC26_HUB_HREF}>← {t("backToHub")}</Link>
       </p>
     </main>

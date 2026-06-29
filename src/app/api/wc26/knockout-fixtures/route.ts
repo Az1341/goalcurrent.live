@@ -42,14 +42,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const { fixtures, log } = await fetchWc26KnockoutRound(round);
       return NextResponse.json(
         { fixtures, logs: [log], source: "api-football" },
-        { headers: { "Cache-Control": "s-maxage=300, stale-while-revalidate=60" } },
+        { headers: { "Cache-Control": "no-store" } },
       );
     }
 
     const { fixtures, logs } = await fetchWc26KnockoutFixtures();
     return NextResponse.json(
       { fixtures, logs, source: "api-football" },
-      { headers: { "Cache-Control": "s-maxage=300, stale-while-revalidate=60" } },
+      { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
     if (
