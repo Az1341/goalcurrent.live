@@ -8,13 +8,17 @@ import {
   DEMO_RSA_LINEUP,
   isRsaKorDemoFixture,
 } from "@/data/wc26/demo-lineups-rsa-kor";
-import { getTeamById } from "@/data/wc26";
 import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
 } from "@/lib/wc26-fixture-overlay";
-import { buildHomepageMatchView, isLiveMatchStatus } from "@/lib/wc26-live";
+import {
+  buildHomepageMatchView,
+  isLiveMatchStatus,
+  resolveFixtureParticipant,
+} from "@/lib/wc26-live";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import {
   formatVenueKickoffLabel,
   formatVenueKickoffTime,
@@ -29,9 +33,10 @@ type MatchCardFinalRoundProps = {
 };
 
 export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProps) {
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
-  const view = buildHomepageMatchView(fixture);
+  const allFixtures = useEffectiveFixtures();
+  const home = resolveFixtureParticipant(fixture, "home", allFixtures);
+  const away = resolveFixtureParticipant(fixture, "away", allFixtures);
+  const view = buildHomepageMatchView(fixture, allFixtures);
   const isLive = isLiveMatchStatus(fixture.status);
   const isCompleted = isEffectiveFixtureCompleted(fixture);
   const isUpcoming = !isLive && !isCompleted;
@@ -77,8 +82,8 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
 
       <div className={styles.finalRoundTeams}>
         <div className={styles.finalRoundSide}>
-          <TeamFlag teamId={fixture.homeTeamId} size={36} />
-          <strong>{home?.name ?? fixture.homeTeamId}</strong>
+          <TeamFlag teamId={home.teamId} teamName={home.label} size={36} />
+          <strong>{home.label}</strong>
         </div>
 
         <div className={styles.finalRoundCentre}>
@@ -93,8 +98,8 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
         </div>
 
         <div className={`${styles.finalRoundSide} ${styles.finalRoundSideAway}`}>
-          <strong>{away?.name ?? fixture.awayTeamId}</strong>
-          <TeamFlag teamId={fixture.awayTeamId} size={36} />
+          <strong>{away.label}</strong>
+          <TeamFlag teamId={away.teamId} teamName={away.label} size={36} />
         </div>
       </div>
 
@@ -104,8 +109,8 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
         <p className={styles.finalRoundLineupNote}>Loading lineups…</p>
       ) : hasLineup ? (
         <div className={styles.finalRoundPlayerRows}>
-          <PlayerRow label={home?.name ?? fixture.homeTeamId} players={homeLineup} />
-          <PlayerRow label={away?.name ?? fixture.awayTeamId} players={awayLineup} />
+          <PlayerRow label={home.label} players={homeLineup} />
+          <PlayerRow label={away.label} players={awayLineup} />
         </div>
       ) : (
         <p className={styles.finalRoundLineupNote}>

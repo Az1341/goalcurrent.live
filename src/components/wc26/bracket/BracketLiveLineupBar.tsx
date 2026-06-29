@@ -2,11 +2,11 @@
 
 import { Link } from "@/i18n/navigation";
 import MatchLineupField from "@/components/match/MatchLineupField";
-import { getTeamById } from "@/data/wc26";
 import { useMatchDetail } from "@/lib/use-match-detail";
-import { isLiveMatchStatus } from "@/lib/wc26-live";
+import { isLiveMatchStatus, resolveFixtureParticipant } from "@/lib/wc26-live";
 import { matchHref } from "@/lib/wc26-match";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
+import { getEffectiveFixtures } from "@/lib/wc26-fixture-overlay";
 import { formatCountdown, useCountdown } from "./useCountdown";
 import styles from "./bracket.module.css";
 
@@ -29,9 +29,10 @@ function LineupCell({
   const { detail } = useMatchDetail(fixture.id, isLive);
   const countdown = useCountdown(isLive ? null : fixture.kickoffUtc);
   const countdownLabel = formatCountdown(countdown);
+  const allFixtures = getEffectiveFixtures();
+  const home = resolveFixtureParticipant(fixture, "home", allFixtures);
+  const away = resolveFixtureParticipant(fixture, "away", allFixtures);
 
-  const homeTeam = getTeamById(fixture.homeTeamId);
-  const awayTeam = getTeamById(fixture.awayTeamId);
   const homeXi = detail.lineups.home?.startXI ?? [];
   const awayXi = detail.lineups.away?.startXI ?? [];
 
@@ -40,8 +41,8 @@ function LineupCell({
       <MatchLineupField
         home={homeXi}
         away={awayXi}
-        homeTeamName={homeTeam?.name ?? fixture.homeTeamId}
-        awayTeamName={awayTeam?.name ?? fixture.awayTeamId}
+        homeTeamName={home.label}
+        awayTeamName={away.label}
         homeFormation={detail.lineups.home?.formation}
         awayFormation={detail.lineups.away?.formation}
         variant="embedded"

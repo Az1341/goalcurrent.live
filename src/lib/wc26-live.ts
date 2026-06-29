@@ -24,6 +24,7 @@ import {
   isSimultaneousFinalMatchdayFixture,
 } from "@/lib/wc26-final-matchday";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
+import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
 import type { Wc26GroupId } from "@/types/group";
 const LIVE_STATUSES = new Set([
   "live",
@@ -214,6 +215,36 @@ export type ResolvedFixtureParticipant = {
   readonly teamId: TeamId;
 };
 
+function participantFromTeamId(teamId: TeamId): ResolvedFixtureParticipant {
+  const name = getTeamById(teamId)?.name?.trim();
+  return {
+    label: name || teamDisplayName(teamId),
+    teamId,
+  };
+}
+
+function isBracketPlaceholderLabel(label: string): boolean {
+  const trimmed = label.trim();
+  return (
+    trimmed === "TBD" ||
+    trimmed.startsWith("Winner Match") ||
+    trimmed.startsWith("Loser Match") ||
+    trimmed.startsWith("Winner Group") ||
+    trimmed.startsWith("Runner-up Group") ||
+    trimmed.startsWith("Best 3rd")
+  );
+}
+
+function knockoutFixtureHasApiTruth(fixture: EffectiveFixture): boolean {
+  return (
+    isLiveMatchStatus(fixture.status) ||
+    isCompletedMatchStatus(fixture.status) ||
+    getFixtureScore(fixture) !== null ||
+    fixture.apiFixtureId != null ||
+    Boolean(fixture.overlayHomeTeamId && fixture.overlayAwayTeamId)
+  );
+}
+
 /** Resolved display label and team id for flags — bracket slots use real id when known. */
 export function resolveFixtureParticipant(
   fixture: EffectiveFixture,
@@ -223,22 +254,26 @@ export function resolveFixtureParticipant(
   const overlayTeamId =
     side === "home" ? fixture.overlayHomeTeamId : fixture.overlayAwayTeamId;
   if (overlayTeamId) {
-    const name = getTeamById(overlayTeamId)?.name?.trim();
-    if (name) {
-      return { label: name, teamId: overlayTeamId };
-    }
+    return participantFromTeamId(overlayTeamId);
+  }
+
+  const confirmed = getConfirmedKnockoutPairingByFixtureId(fixture.id);
+  if (confirmed) {
+    const teamId =
+      side === "home" ? confirmed.homeTeamId : confirmed.awayTeamId;
+    return participantFromTeamId(teamId);
   }
 
   const fallbackId = side === "home" ? fixture.homeTeamId : fixture.awayTeamId;
 
   if (!isKnockoutPlaceholderTeam(fallbackId)) {
-    const name = getTeamById(fallbackId)?.name?.trim();
-    if (name) {
-      return { label: name, teamId: fallbackId };
-    }
+    return participantFromTeamId(fallbackId);
   }
 
-  if (fixture.stage !== "group" && fixture.matchNumber) {
+  const skipBracketTemplate =
+    fixture.stage !== "group" && knockoutFixtureHasApiTruth(fixture);
+
+  if (fixture.stage !== "group" && fixture.matchNumber && !skipBracketTemplate) {
     const ro32Template = FIFA_ROUND_OF_32_TEMPLATES.find(
       (template) => template.matchNumber === fixture.matchNumber,
     );
@@ -268,6 +303,10 @@ export function resolveFixtureParticipant(
         teamId: fallbackId,
       };
     }
+  }
+
+  if (skipBracketTemplate) {
+    return { label: "TBD", teamId: fallbackId };
   }
 
   if (isKnockoutPlaceholderTeam(fallbackId)) {
@@ -351,6 +390,7 @@ function dedupeFeaturedFixtures(
 ): readonly EffectiveFixture[] {
   const seenIds = new Set<string>();
   const seenTeamPairs = new Set<string>();
+  const seenLabelPairs = new Set<string>();
   const unique: EffectiveFixture[] = [];
 
   for (const fixture of fixtures) {
@@ -361,12 +401,17 @@ function dedupeFeaturedFixtures(
     const home = resolveFixtureParticipant(fixture, "home", allFixtures);
     const away = resolveFixtureParticipant(fixture, "away", allFixtures);
     const pairKey = [home.teamId, away.teamId].sort().join("|");
-    if (seenTeamPairs.has(pairKey)) {
+    const labelKey = [home.label, away.label]
+      .map((label) => label.trim().toLowerCase())
+      .sort()
+      .join("|");
+    if (seenTeamPairs.has(pairKey) || seenLabelPairs.has(labelKey)) {
       continue;
     }
 
     seenIds.add(fixture.id);
     seenTeamPairs.add(pairKey);
+    seenLabelPairs.add(labelKey);
     unique.push(fixture);
   }
 
@@ -418,13 +463,30 @@ export function selectFeaturedFixtures(
   return { mode: "single", fixtures: [seed] };
 }
 
+function featuredLivePriority(fixture: EffectiveFixture): number {
+  if (getConfirmedKnockoutPairingByFixtureId(fixture.id)) {
+    return 2;
+  }
+  if (fixture.overlayHomeTeamId && fixture.overlayAwayTeamId) {
+    return 1;
+  }
+  return 0;
+}
+
 /** Featured: first live, else next kickoff today/upcoming, else latest result. */
 export function selectFeaturedFixture(
   fixtures: readonly EffectiveFixture[],
 ): EffectiveFixture | undefined {
   const buckets = partitionFixturesForLiveCentre(fixtures);
-  if (buckets.live[0]) {
-    return buckets.live[0];
+  if (buckets.live.length > 0) {
+    const sorted = [...buckets.live].sort((left, right) => {
+      const priorityDelta = featuredLivePriority(right) - featuredLivePriority(left);
+      if (priorityDelta !== 0) {
+        return priorityDelta;
+      }
+      return sortByKickoffAsc(left, right);
+    });
+    return sorted[0];
   }
   if (buckets.today[0]) {
     return buckets.today[0];
@@ -504,6 +566,7 @@ export function selectRibbonFixtures(
   const ordered = [...buckets.live, ...buckets.completed];
 
   const seen = new Set<string>();
+  const seenLabelPairs = new Set<string>();
   const views: HomepageMatchView[] = [];
 
   for (const fixture of ordered) {
@@ -512,21 +575,32 @@ export function selectRibbonFixtures(
     }
 
     const view = buildHomepageMatchView(fixture, fixtures);
+    const labelKey = [view.homeName, view.awayName]
+      .map((label) => label.trim().toLowerCase())
+      .sort()
+      .join("|");
+    if (seenLabelPairs.has(labelKey)) {
+      continue;
+    }
+    if (
+      view.homeName === "TBD" ||
+      view.awayName === "TBD" ||
+      view.homeName.startsWith("Winner Match") ||
+      view.awayName.startsWith("Winner Match") ||
+      isBracketPlaceholderLabel(view.homeName) ||
+      isBracketPlaceholderLabel(view.awayName)
+    ) {
+      continue;
+    }
+
     if (view.matchClass === "ft") {
       if (!view.score) {
-        continue;
-      }
-      if (
-        view.homeName === "TBD" ||
-        view.awayName === "TBD" ||
-        view.homeName.startsWith("Winner Match") ||
-        view.awayName.startsWith("Winner Match")
-      ) {
         continue;
       }
     }
 
     seen.add(fixture.id);
+    seenLabelPairs.add(labelKey);
     views.push(view);
     if (views.length >= limit) {
       break;

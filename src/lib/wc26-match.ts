@@ -23,8 +23,9 @@ export function isKnownFixtureId(fixtureId: string): boolean {
 /** Header view for match detail — merges overlay fields when present. */
 export function buildMatchDetailHeader(
   fixture: EffectiveFixture,
+  allFixtures?: readonly EffectiveFixture[],
 ): HomepageMatchView {
-  return buildHomepageMatchView(fixture);
+  return buildHomepageMatchView(fixture, allFixtures);
 }
 
 export const MATCH_STAT_LABELS: Record<string, string> = {

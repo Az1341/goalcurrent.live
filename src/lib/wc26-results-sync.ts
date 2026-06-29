@@ -2,6 +2,7 @@ import {
   mergeFixtureOverlay,
   replaceLiveFixtureOverlay,
 } from "@/lib/wc26-fixture-overlay";
+import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
 import type {
   FixtureOverlayEntry,
   Wc26ApiMatch,
@@ -58,12 +59,16 @@ type FetchScoresOutcome =
   | { status: "unconfigured" };
 
 function overlayEntryFromApiMatch(match: Wc26ApiMatch): FixtureOverlayEntry {
+  const confirmed = getConfirmedKnockoutPairingByFixtureId(match.fixtureId);
+  const homeTeamId = match.homeTeamId ?? confirmed?.homeTeamId;
+  const awayTeamId = match.awayTeamId ?? confirmed?.awayTeamId;
+
   const entry: FixtureOverlayEntry = {
     status: match.status,
     elapsed: match.elapsed,
     ...(match.apiFixtureId != null ? { apiFixtureId: match.apiFixtureId } : {}),
-    ...(match.homeTeamId ? { homeTeamId: match.homeTeamId } : {}),
-    ...(match.awayTeamId ? { awayTeamId: match.awayTeamId } : {}),
+    ...(homeTeamId ? { homeTeamId } : {}),
+    ...(awayTeamId ? { awayTeamId } : {}),
   };
 
   if (match.homeScore !== null && match.awayScore !== null) {

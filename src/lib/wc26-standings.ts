@@ -14,6 +14,11 @@ import type { BracketMatchTemplate, BracketSlotRef, KnockoutFeedSlot } from "@/l
 import { FIFA_KNOCKOUT_ROUND_TEMPLATES, FIFA_ROUND_OF_32_TEMPLATES } from "@/lib/wc26/fifa-bracket-mapping";
 import { resolveBracketMatchSchedule } from "@/data/wc26/knockout-schedule";
 import { WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
+import {
+  isWc26GroupStageComplete,
+  WC26_FINAL_GROUP_STANDINGS,
+} from "@/lib/wc26-final-standings";
+import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import { getTeamById } from "@/lib/teamIdentity";
 import type { GroupStandings, StandingRow } from "@/types/standing";
@@ -226,6 +231,15 @@ export function computeGroupStandings(
   groupId: Wc26GroupId,
   fixtures: readonly EffectiveFixture[] = getEffectiveFixtures(),
 ): GroupStandings {
+  if (isWc26GroupStageComplete()) {
+    const finalTable = WC26_FINAL_GROUP_STANDINGS.find(
+      (table) => table.groupId === groupId,
+    );
+    if (finalTable) {
+      return finalTable;
+    }
+  }
+
   const rows = buildEmptyRows(groupId);
 
   for (const fixture of fixtures) {
@@ -285,6 +299,9 @@ export function isGroupComplete(
   groupId: Wc26GroupId,
   fixtures: readonly EffectiveFixture[] = getEffectiveFixtures(),
 ): boolean {
+  if (isWc26GroupStageComplete()) {
+    return true;
+  }
   const matches = groupStageFixtures(groupId, fixtures);
   if (matches.length === 0) {
     return false;
@@ -567,6 +584,10 @@ function resolveKnockoutParticipantTeamId(
     side === "home" ? fixture.overlayHomeTeamId : fixture.overlayAwayTeamId;
   if (overlayId && !isKnockoutPlaceholderTeam(overlayId)) {
     return overlayId;
+  }
+  const confirmed = getConfirmedKnockoutPairingByFixtureId(fixture.id);
+  if (confirmed) {
+    return side === "home" ? confirmed.homeTeamId : confirmed.awayTeamId;
   }
   const baseId = side === "home" ? fixture.homeTeamId : fixture.awayTeamId;
   return baseId;

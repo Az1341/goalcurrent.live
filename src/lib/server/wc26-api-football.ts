@@ -13,7 +13,7 @@ import {
   findFixtureIdByTeamNames,
   mapApiStatusShort,
 } from "@/lib/wc26-fixture-match";
-import { resolveFixtureParticipant } from "@/lib/wc26-live";
+import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
 import type { FixtureStatus } from "@/types/fixture";
@@ -114,27 +114,30 @@ function orientScoresForLocalFixture(
   awayName: string,
   goalsHome: number | null,
   goalsAway: number | null,
-  fixtures: readonly EffectiveFixture[],
 ): { homeScore: number | null; awayScore: number | null } {
   if (goalsHome === null || goalsAway === null) {
     return { homeScore: goalsHome, awayScore: goalsAway };
   }
 
-  const fixture = getFixtureById(fixtureId);
   const apiHome = resolveTeamId(homeName);
   const apiAway = resolveTeamId(awayName);
-  if (!fixture || !apiHome || !apiAway) {
+  if (!apiHome || !apiAway) {
     return { homeScore: goalsHome, awayScore: goalsAway };
   }
 
-  const localHome = resolveFixtureParticipant(fixture, "home", fixtures);
-  const localAway = resolveFixtureParticipant(fixture, "away", fixtures);
-
-  if (apiHome === localHome.teamId && apiAway === localAway.teamId) {
-    return { homeScore: goalsHome, awayScore: goalsAway };
+  const confirmed = getConfirmedKnockoutPairingByFixtureId(fixtureId);
+  if (confirmed) {
+    if (apiHome === confirmed.homeTeamId && apiAway === confirmed.awayTeamId) {
+      return { homeScore: goalsHome, awayScore: goalsAway };
+    }
+    if (apiHome === confirmed.awayTeamId && apiAway === confirmed.homeTeamId) {
+      return { homeScore: goalsAway, awayScore: goalsHome };
+    }
   }
-  if (apiHome === localAway.teamId && apiAway === localHome.teamId) {
-    return { homeScore: goalsAway, awayScore: goalsHome };
+
+  const fixture = getFixtureById(fixtureId);
+  if (fixture && fixture.stage !== "group") {
+    return { homeScore: goalsHome, awayScore: goalsAway };
   }
 
   return { homeScore: goalsHome, awayScore: goalsAway };
@@ -170,6 +173,10 @@ function normalizeApiFixture(
     return null;
   }
 
+  const confirmed = getConfirmedKnockoutPairingByFixtureId(fixtureId);
+  const resolvedHomeTeamId = homeTeamId ?? confirmed?.homeTeamId;
+  const resolvedAwayTeamId = awayTeamId ?? confirmed?.awayTeamId;
+
   const isFinished = status === "ft" || status === "aet" || status === "pen";
   const { homeScore, awayScore } = orientScoresForLocalFixture(
     fixtureId,
@@ -177,7 +184,6 @@ function normalizeApiFixture(
     awayName,
     raw.goals.home,
     raw.goals.away,
-    fixtures,
   );
 
   if (isFinished && (homeScore === null || awayScore === null)) {
@@ -194,8 +200,8 @@ function normalizeApiFixture(
     awayScore,
     kickoffUtc: raw.fixture.date,
     apiFixtureId: raw.fixture.id,
-    ...(homeTeamId ? { homeTeamId } : {}),
-    ...(awayTeamId ? { awayTeamId } : {}),
+    ...(resolvedHomeTeamId ? { homeTeamId: resolvedHomeTeamId } : {}),
+    ...(resolvedAwayTeamId ? { awayTeamId: resolvedAwayTeamId } : {}),
   };
 }
 

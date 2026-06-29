@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import { getFixtureById, getTeamById } from "@/data/wc26";
 import { useLiveScores } from "@/lib/client/useLiveScores";
+import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
 import { isLiveOverlayStatus } from "@/lib/wc26-results-sync";
 import type { Wc26ApiMatch, Wc26LiveFixturePayload } from "@/types/fixture-overlay";
 import styles from "./wc26.module.css";
@@ -74,19 +75,24 @@ function mapLiveMatch(match: Wc26ApiMatch): Wc26LiveFixturePayload | null {
     return null;
   }
 
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
+  const confirmed = getConfirmedKnockoutPairingByFixtureId(match.fixtureId);
+  const homeTeamId =
+    match.homeTeamId ?? confirmed?.homeTeamId ?? fixture.homeTeamId;
+  const awayTeamId =
+    match.awayTeamId ?? confirmed?.awayTeamId ?? fixture.awayTeamId;
+  const home = getTeamById(homeTeamId);
+  const away = getTeamById(awayTeamId);
 
   return {
     fixtureId: match.fixtureId,
-    homeTeamId: fixture.homeTeamId,
-    awayTeamId: fixture.awayTeamId,
+    homeTeamId,
+    awayTeamId,
     home: {
-      name: home?.name ?? fixture.homeTeamId,
+      name: home?.name ?? homeTeamId,
       goals: match.homeScore ?? 0,
     },
     away: {
-      name: away?.name ?? fixture.awayTeamId,
+      name: away?.name ?? awayTeamId,
       goals: match.awayScore ?? 0,
     },
     fixture: {

@@ -55,7 +55,7 @@ export default function MatchDetailContent({
     );
   }
 
-  const header = buildMatchDetailHeader(fixture);
+  const header = buildMatchDetailHeader(fixture, fixtures);
   const homeResolved = resolveFixtureParticipant(fixture, "home", fixtures);
   const awayResolved = resolveFixtureParticipant(fixture, "away", fixtures);
   const groupTitle = fixture.groupId ? groupLabel(fixture.groupId) : "World Cup 2026";
