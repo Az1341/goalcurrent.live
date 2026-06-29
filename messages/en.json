@@ -221,7 +221,7 @@
       "eyebrow": "World Cup 2026 · Knockout Stage",
       "title": "World Cup 2026 · Knockout Bracket",
       "subtitle": "All 63 matches · Round of 32 to the Final",
-      "note": "All times shown in visitor local time. Dates and kick-off times subject to change.",
+      "note": "All kick-off times shown in your local timezone.",
       "lastUpdated": "Last updated {time}",
       "degraded": "Data may be delayed",
       "backToHub": "Back to World Cup 2026 hub",

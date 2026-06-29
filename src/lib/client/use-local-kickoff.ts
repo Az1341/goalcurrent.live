@@ -2,9 +2,11 @@
 
 import { useSyncExternalStore } from "react";
 import {
-  formatVisitorKickoff,
+  formatKickoffLocal,
+  formatKickoffLocalTime,
+} from "@/lib/formatKickoffLocal";
+import {
   formatVisitorKickoffDate,
-  formatVisitorKickoffTime,
 } from "@/lib/wc26-format";
 
 /** Device-local HH:MM (24h) using the visitor timezone. */
@@ -42,13 +44,13 @@ function deviceTimezoneLabel(): string {
 const noopSubscribe = () => () => {};
 
 /**
- * Hydration-safe kickoff time: SSR uses fixed UTC, first client render uses device locale.
+ * Hydration-safe kickoff time: SSR uses empty snapshot, client uses device locale.
  */
 export function useLocalizedKickoffTime(iso: string): string {
   return useSyncExternalStore(
     noopSubscribe,
-    () => formatDeviceKickoffTime(iso),
-    () => formatVisitorKickoffTime(iso),
+    () => formatKickoffLocalTime(iso),
+    () => "",
   );
 }
 
@@ -66,8 +68,8 @@ export function formatDeviceKickoffDate(iso: string): string {
 export function useLocalizedKickoffLabel(iso: string): string {
   return useSyncExternalStore(
     noopSubscribe,
-    () => formatDeviceKickoffLabel(iso),
-    () => formatVisitorKickoff(iso),
+    () => formatKickoffLocal(iso),
+    () => "",
   );
 }
 
@@ -85,7 +87,7 @@ export function useDeviceTimezoneLabel(): string {
   return useSyncExternalStore(
     noopSubscribe,
     deviceTimezoneLabel,
-    () => "UTC",
+    () => "",
   );
 }
 

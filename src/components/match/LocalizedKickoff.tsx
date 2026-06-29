@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  useLocalizedKickoffLabel,
-  useLocalizedKickoffTime,
-} from "@/lib/client/use-local-kickoff";
+import { KickoffTime } from "@/components/KickoffTime";
 
 export function LocalizedKickoffLabel({ iso }: { iso: string }) {
-  const label = useLocalizedKickoffLabel(iso);
-  return <>{label}</>;
+  return <KickoffTime utcDate={iso} variant="full" />;
 }
 
 export function LocalizedKickoffTime({ iso }: { iso: string }) {
-  const time = useLocalizedKickoffTime(iso);
-  return <>{time}</>;
+  return <KickoffTime utcDate={iso} variant="time" />;
 }

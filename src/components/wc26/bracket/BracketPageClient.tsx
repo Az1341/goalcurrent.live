@@ -77,7 +77,8 @@ export default function BracketPageClient() {
     [fixtures],
   );
 
-  const showSkeleton = !hydrated;
+  const hasMatches = convergingView.matchByNumber.size > 0;
+  const hasColumns = convergingView.columns.length > 0;
 
   return (
     <main className={bracketStyles.bracketPage}>
@@ -105,7 +106,7 @@ export default function BracketPageClient() {
         }}
       />
 
-      {lastUpdated ? (
+      {hydrated && lastUpdated ? (
         <p className={viewStyles.lastUpdated}>
           {t("lastUpdated", {
             time: formatLastUpdated(lastUpdated, "en"),
@@ -117,29 +118,30 @@ export default function BracketPageClient() {
         <BracketDegradedBanner message={t("degraded")} />
       ) : null}
 
-      {showSkeleton ? (
-        <BracketViewSkeleton />
-      ) : (
+      {!hasColumns ? (
+        <p>Could not load bracket data. Please refresh.</p>
+      ) : hasMatches ? (
         <BracketView
           view={convergingView}
           viewMatchCenterLabel={t("card.viewMatchCenter")}
           liveLabel={t("live.live")}
         />
+      ) : (
+        <>
+          <BracketViewSkeleton />
+          <p>Could not load bracket data. Please refresh.</p>
+        </>
       )}
 
-      {!showSkeleton ? (
-        <BracketLiveLineupBar
-          fixture={spotlightFixture}
-          lineupsBanner={t("live.lineupsBanner")}
-          matchCenterLabel={t("live.matchCenter")}
-        />
-      ) : null}
+      <BracketLiveLineupBar
+        fixture={spotlightFixture}
+        lineupsBanner={t("live.lineupsBanner")}
+        matchCenterLabel={t("live.matchCenter")}
+      />
 
-      {!showSkeleton ? (
-        <div className={bracketStyles.topScorersBlock}>
-          <Wc26TopScorers />
-        </div>
-      ) : null}
+      <div className={bracketStyles.topScorersBlock}>
+        <Wc26TopScorers />
+      </div>
 
       <p className={bracketStyles.hubBack}>
         <Link href={WC26_HUB_HREF}>← {t("backToHub")}</Link>
