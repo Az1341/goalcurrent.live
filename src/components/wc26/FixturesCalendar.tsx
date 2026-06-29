@@ -37,6 +37,11 @@ import {
   classifyFixtureMatch,
   type FixtureMatchClass,
 } from "@/lib/wc26-fixtures-page";
+import {
+  formatBstKickoffTime,
+  formatVenueKickoffTime,
+  formatVenueTimezoneAbbr,
+} from "@/lib/wc26/time-converter";
 import { LocalizedKickoffTime } from "@/components/match/LocalizedKickoff";
 import { useDeviceTimezoneLabel } from "@/lib/client/use-local-kickoff";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
@@ -77,6 +82,14 @@ function FixtureMatchCard({
   const groupPrefix = fixture.groupId ? `${groupLabel(fixture.groupId)} · ` : "";
   const score = getFixtureScore(fixture);
   const kickoffLocal = <LocalizedKickoffTime iso={fixture.kickoffUtc} />;
+  const isKnockout = fixture.stage !== "group";
+  const stadiumKickoff = isKnockout
+    ? formatVenueKickoffTime(fixture.kickoffUtc, fixture.venueId)
+    : null;
+  const stadiumTz = isKnockout
+    ? formatVenueTimezoneAbbr(fixture.venueId, fixture.kickoffUtc)
+    : null;
+  const bstKickoff = isKnockout ? formatBstKickoffTime(fixture.kickoffUtc) : null;
   const timezoneLabel = useDeviceTimezoneLabel();
 
   const cardStateClass =
@@ -165,8 +178,21 @@ function FixtureMatchCard({
             </>
           ) : (
             <>
-              <div className={styles.fixCentreKickoff}>{kickoffLocal}</div>
-              <div className={styles.fixCentreNote}>{timezoneLabel}</div>
+              {isKnockout ? (
+                <>
+                  <div className={styles.fixCentreKickoff}>
+                    {stadiumKickoff} {stadiumTz}
+                  </div>
+                  <div className={styles.fixCentreNote}>
+                    {bstKickoff} BST · stadium local
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.fixCentreKickoff}>{kickoffLocal}</div>
+                  <div className={styles.fixCentreNote}>{timezoneLabel}</div>
+                </>
+              )}
             </>
           )}
         </div>

@@ -19,9 +19,10 @@ export default function FixturesSection() {
 
 
       <p className={styles.phaseNote}>
-        Verified FIFA World Cup 2026 group-stage fixtures from local data.
-        Times display in your local timezone. Live scores and status updates
-        reflect real-time data when available.
+        Verified FIFA World Cup 2026 schedule from local data. Group-stage
+        times follow your local timezone; knockout rounds show official stadium
+        local kick-off plus BST (UK). Live scores update from API-Football when
+        available.
       </p>
 
 

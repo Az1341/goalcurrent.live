@@ -1,4 +1,5 @@
 import type { Fixture, FixtureStage } from "@/types/fixture";
+import { venueLocalDateKey } from "@/lib/wc26/time-converter";
 import type { Wc26GroupId } from "@/types/group";
 import { WC26_GROUP_IDS } from "@/types/group";
 import { getTeamById, getVenueById } from "@/data/wc26";
@@ -164,10 +165,18 @@ function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
 
-/** Local calendar date key (YYYY-MM-DD) for a UTC kickoff. */
+/** Local calendar date key (YYYY-MM-DD) for a UTC kickoff in the visitor timezone. */
 export function localDateKey(iso: string): string {
   const d = new Date(iso);
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+/** Calendar date for fixtures — knockout uses FIFA stadium-local date. */
+export function fixtureCalendarDateKey(fixture: Fixture): string {
+  if (fixture.stage === "group") {
+    return localDateKey(fixture.kickoffUtc);
+  }
+  return venueLocalDateKey(fixture.kickoffUtc, fixture.venueId);
 }
 
 export function formatLocalKickoff(iso: string): string {
@@ -270,7 +279,7 @@ export function buildCalendarDays(
 ): CalendarDay[] {
   const counts = new Map<string, number>();
   for (const fixture of fixtures) {
-    const key = localDateKey(fixture.kickoffUtc);
+    const key = fixtureCalendarDateKey(fixture);
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 
@@ -355,7 +364,7 @@ export function filterFixturesForPage(
   const query = filters.search.trim().toLowerCase();
 
   return fixtures.filter((fixture) => {
-    if (filters.dateKey && localDateKey(fixture.kickoffUtc) !== filters.dateKey) {
+    if (filters.dateKey && fixtureCalendarDateKey(fixture) !== filters.dateKey) {
       return false;
     }
 
@@ -389,11 +398,15 @@ export function filterFixturesForPage(
 }
 
 export function sortFixturesByKickoff(fixtures: readonly Fixture[]): Fixture[] {
-  return [...fixtures].sort(
-    (a, b) =>
+  return [...fixtures].sort((a, b) => {
+    if (a.stage !== "group" && b.stage !== "group") {
+      return a.matchNumber - b.matchNumber;
+    }
+    return (
       new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime() ||
-      a.matchNumber - b.matchNumber,
-  );
+      a.matchNumber - b.matchNumber
+    );
+  });
 }
 
 export function isWc26GroupFilter(value: string): value is Wc26GroupId {
