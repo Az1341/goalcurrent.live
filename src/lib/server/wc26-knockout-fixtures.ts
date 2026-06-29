@@ -4,6 +4,7 @@ import { ApiFootballAuthError } from "@/lib/api-football/errors";
 import { isMissingApiKeyError } from "@/lib/server/wc26-api-football";
 import {
   findFixtureIdByKickoffUtc,
+  findFixtureIdByKnockoutTeamPairOverride,
   findFixtureIdByMatchNumber,
   findFixtureIdByTeamNames,
 } from "@/lib/wc26-fixture-match";
@@ -85,8 +86,12 @@ function mapApiRowToLocalFixture(
     row.teams.home.name,
     row.teams.away.name,
   );
+  const byOverride = findFixtureIdByKnockoutTeamPairOverride(
+    row.teams.home.name,
+    row.teams.away.name,
+  );
   const byKickoff = findFixtureIdByKickoffUtc(kickoffUtc);
-  const fixtureId = byTeams ?? byKickoff;
+  const fixtureId = byTeams ?? byOverride ?? byKickoff;
   if (!fixtureId) {
     return null;
   }

@@ -2,6 +2,7 @@ import { WC26_FIXTURES, getFixtureById } from "@/data/wc26";
 import { isKnockoutPlaceholderTeam } from "@/data/wc26/knockout-fixtures";
 import {
   findFixtureIdByKickoffUtc,
+  findFixtureIdByKnockoutTeamPairOverride,
   findFixtureIdByTeamNames,
 } from "@/lib/wc26-fixture-match";
 import { resolveFixtureParticipant } from "@/lib/wc26-live";
@@ -29,6 +30,13 @@ export function resolveApiFixtureIdForLocal(
       row.teams.away.name,
     );
     if (byTeams === localFixtureId) {
+      return row.fixture.id;
+    }
+    const byOverride = findFixtureIdByKnockoutTeamPairOverride(
+      row.teams.home.name,
+      row.teams.away.name,
+    );
+    if (byOverride === localFixtureId) {
       return row.fixture.id;
     }
   }

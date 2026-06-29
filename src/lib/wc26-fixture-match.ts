@@ -25,6 +25,34 @@ function teamPairKey(homeTeamId: TeamId, awayTeamId: TeamId): string {
   return `${homeTeamId}|${awayTeamId}`;
 }
 
+function sortedTeamPairKey(left: TeamId, right: TeamId): string {
+  return [left, right].sort().join("|");
+}
+
+/**
+ * Confirmed round-of-32 API pairings → local fixture id (order-independent).
+ * Overrides kickoff/standings heuristics that collide on matches 75 vs 76.
+ */
+const KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID: Readonly<Record<string, string>> = {
+  "bra|jpn": "fixture-075",
+  "mar|ned": "fixture-076",
+};
+
+/** Resolve a knockout fixture id from a known API team pairing. */
+export function findFixtureIdByKnockoutTeamPairOverride(
+  homeName: string,
+  awayName: string,
+): string | undefined {
+  const homeTeamId = resolveTeamId(homeName);
+  const awayTeamId = resolveTeamId(awayName);
+  if (!homeTeamId || !awayTeamId) {
+    return undefined;
+  }
+  return KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID[
+    sortedTeamPairKey(homeTeamId, awayTeamId)
+  ];
+}
+
 /** Knockout kickoff fallback — tight window to avoid cross-slot collisions. */
 const KICKOFF_MATCH_TOLERANCE_MS = 90 * 60 * 1000;
 

@@ -8,6 +8,7 @@ import {
   findFixtureIdByKickoffUtc,
   findFixtureIdByGroupsCfPair,
   findFixtureIdByKnockoutFeederGroups,
+  findFixtureIdByKnockoutTeamPairOverride,
   findFixtureIdByKnockoutTeams,
   findFixtureIdByTeamNames,
   mapApiStatusShort,
@@ -149,6 +150,7 @@ function normalizeApiFixture(
   const awayTeamId = resolveTeamId(awayName);
   const fixtureId =
     findFixtureIdByTeamNames(homeName, awayName) ??
+    findFixtureIdByKnockoutTeamPairOverride(homeName, awayName) ??
     findFixtureIdByKnockoutTeams(homeName, awayName, fixtures, raw.fixture.date) ??
     findFixtureIdByGroupsCfPair(homeName, awayName, fixtures) ??
     findFixtureIdByKnockoutFeederGroups(homeName, awayName, raw.fixture.date) ??
