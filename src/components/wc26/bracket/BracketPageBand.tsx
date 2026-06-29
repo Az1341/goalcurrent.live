@@ -22,7 +22,7 @@ const TAB_LINKS = [
   { key: "schedule" as const, href: "/worldcup2026/fixtures", active: false },
   { key: "results" as const, href: "/worldcup2026/fixtures", active: false },
   { key: "groups" as const, href: "/worldcup2026/groups", active: false },
-  { key: "stats" as const, href: "/worldcup2026/standings", active: false },
+  { key: "stats" as const, href: "/worldcup2026/bracket#top-scorers", active: false },
 ];
 
 export default function BracketPageBand({

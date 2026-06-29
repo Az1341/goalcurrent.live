@@ -386,6 +386,11 @@
   font-size: 0.875rem;
 }
 
+.topScorersBlock {
+  margin-top: 32px;
+  max-width: 720px;
+}
+
 .hubBack a {
   color: var(--wc26-accent, #475569);
   font-weight: var(--gc-weight-nav);

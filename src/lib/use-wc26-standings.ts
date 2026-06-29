@@ -1,46 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import {
-  getEffectiveFixtures,
-  WC26_FIXTURES_UPDATED_EVENT,
-} from "@/lib/wc26-fixture-overlay";
-import {
-  computeAllGroupStandings,
-  computeGroupStandings,
-} from "@/lib/wc26-standings";
+import { WC26_FINAL_GROUP_STANDINGS } from "@/lib/wc26-final-standings";
 import type { Wc26GroupId } from "@/types/group";
 import type { GroupStandings } from "@/types/standing";
 
-function computeAll(): readonly GroupStandings[] {
-  return computeAllGroupStandings(getEffectiveFixtures());
-}
-
-/** Reactive standings for all WC26 groups. */
+/** Final group-stage standings (hardcoded — group stage complete). */
 export function useWc26Standings(): readonly GroupStandings[] {
-  const [standings, setStandings] = useState<readonly GroupStandings[]>(() =>
-    computeAll(),
-  );
-
-  const refresh = useCallback(() => {
-    setStandings(computeAll());
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener(WC26_FIXTURES_UPDATED_EVENT, refresh);
-    return () => window.removeEventListener(WC26_FIXTURES_UPDATED_EVENT, refresh);
-  }, [refresh]);
-
-  return standings;
+  return WC26_FINAL_GROUP_STANDINGS;
 }
 
-/** Reactive standings for a single group. */
-export function useWc26GroupStandings(
-  groupId: Wc26GroupId,
-): GroupStandings {
-  const all = useWc26Standings();
+/** Final standings for a single group. */
+export function useWc26GroupStandings(groupId: Wc26GroupId): GroupStandings {
   return (
-    all.find((table) => table.groupId === groupId) ??
-    computeGroupStandings(groupId, getEffectiveFixtures())
+    WC26_FINAL_GROUP_STANDINGS.find((table) => table.groupId === groupId) ?? {
+      groupId,
+      rows: [],
+    }
   );
 }

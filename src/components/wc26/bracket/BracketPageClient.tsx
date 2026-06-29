@@ -19,6 +19,7 @@ import BracketSkeleton from "./BracketSkeleton";
 import BracketDegradedBanner from "./BracketDegradedBanner";
 import BracketLivePolling from "./BracketLivePolling";
 import BracketLiveLineupBar from "./BracketLiveLineupBar";
+import Wc26TopScorers from "@/components/wc26/Wc26TopScorers";
 import styles from "./bracket.module.css";
 
 export default function BracketPageClient() {
@@ -105,6 +106,12 @@ export default function BracketPageClient() {
           lineupsBanner={t("live.lineupsBanner")}
           matchCenterLabel={t("live.matchCenter")}
         />
+      ) : null}
+
+      {!showSkeleton ? (
+        <div className={styles.topScorersBlock}>
+          <Wc26TopScorers />
+        </div>
       ) : null}
 
       <p className={styles.hubBack}>

@@ -38,7 +38,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Standings",
     titleHighlight: "Standings",
     description:
-      "Live group tables for all twelve groups — P, W, D, L, GF, GA, GD and Pts updated from verified match results.",
+      "Final group stage standings for all 12 groups at FIFA World Cup 2026 — all 48 teams, full P, W, D, L, GF, GA, GD and Pts.",
     hubDescription: "Group tables for all twelve groups (A–L).",
   },
   {

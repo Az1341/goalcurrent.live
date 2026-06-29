@@ -467,6 +467,12 @@ a.standingsHead:hover {
   background: #f0fdf4;
 }
 
+.standingsRowThirdQualified {
+  background: rgba(34, 139, 34, 0.06);
+  outline: 1px solid rgba(34, 139, 34, 0.35);
+  outline-offset: -1px;
+}
+
 .standingsRowEliminated {
   opacity: 0.72;
 }
@@ -476,6 +482,14 @@ a.standingsHead:hover {
   font-size: 0.6875rem;
   font-weight: 600;
   color: #15803d;
+  white-space: nowrap;
+}
+
+.standingsThirdAdvanced {
+  margin-left: 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #1a7f37;
   white-space: nowrap;
 }
 

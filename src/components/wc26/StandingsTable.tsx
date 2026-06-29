@@ -1,3 +1,4 @@
+import type { Wc26QualificationStatus } from "@/data/wc26Standings";
 import type { GroupStandings } from "@/types/standing";
 import { getTeamById } from "@/data/wc26";
 import { isQualifyingStandingPosition } from "@/lib/wc26-standings";
@@ -25,7 +26,33 @@ type StandingsTableProps = {
   qualifyingSpots?: number;
   formByTeamId?: ReadonlyMap<TeamId, readonly GroupFormResult[]>;
   groupComplete?: boolean;
+  /** When set, overrides index-based qualification (final hardcoded standings). */
+  qualificationByTeamId?: ReadonlyMap<TeamId, Wc26QualificationStatus>;
 };
+
+function rowClassForQualification(
+  qualification: Wc26QualificationStatus | undefined,
+  legacyQualified: boolean,
+  legacyEliminated: boolean,
+): string | undefined {
+  if (qualification) {
+    if (qualification === "winner" || qualification === "runner-up") {
+      return styles.standingsRowQualified;
+    }
+    if (qualification === "third-qualified") {
+      return styles.standingsRowThirdQualified;
+    }
+    return styles.standingsRowEliminated;
+  }
+
+  if (legacyQualified) {
+    return styles.standingsRowQualified;
+  }
+  if (legacyEliminated) {
+    return styles.standingsRowEliminated;
+  }
+  return undefined;
+}
 
 function FormBadges({ form }: { form: readonly GroupFormResult[] }) {
   if (form.length === 0) {
@@ -58,6 +85,7 @@ export default function StandingsTable({
   qualifyingSpots = 0,
   formByTeamId,
   groupComplete = false,
+  qualificationByTeamId,
 }: StandingsTableProps) {
   const showForm = Boolean(formByTeamId);
   return (
@@ -91,28 +119,36 @@ export default function StandingsTable({
         <tbody>
           {standings.rows.map((row, index) => {
             const team = getTeamById(row.teamId);
-            const qualified =
+            const finalQualification = qualificationByTeamId?.get(row.teamId);
+            const legacyQualified =
               qualifyingSpots > 0 &&
               isQualifyingStandingPosition(index, qualifyingSpots);
+            const legacyEliminated =
+              groupComplete && qualifyingSpots > 0 && !legacyQualified;
+            const showFinalBadges = Boolean(qualificationByTeamId) || groupComplete;
+            const qualified =
+              finalQualification === "winner" ||
+              finalQualification === "runner-up" ||
+              (!finalQualification && legacyQualified);
+            const thirdQualified = finalQualification === "third-qualified";
             const eliminated =
-              groupComplete &&
-              qualifyingSpots > 0 &&
-              !qualified;
+              finalQualification === "eliminated" ||
+              (!finalQualification && legacyEliminated);
 
             return (
               <tr
                 key={row.teamId}
-                className={
-                  groupComplete && qualified
-                    ? styles.standingsRowQualified
-                    : groupComplete && eliminated
-                      ? styles.standingsRowEliminated
-                      : undefined
-                }
+                className={rowClassForQualification(
+                  finalQualification,
+                  groupComplete && legacyQualified,
+                  legacyEliminated,
+                )}
                 aria-label={
                   qualified && team
                     ? `${team.name} — qualification zone`
-                    : undefined
+                    : thirdQualified && team
+                      ? `${team.name} — advanced as third place`
+                      : undefined
                 }
               >
                 <td className={styles.colTeam}>
@@ -123,10 +159,13 @@ export default function StandingsTable({
                     ) : (
                       <span>{row.teamId}</span>
                     )}
-                    {groupComplete && qualified ? (
+                    {showFinalBadges && qualified ? (
                       <span className={styles.standingsQualAfter}>[Qualified]</span>
                     ) : null}
-                    {eliminated ? (
+                    {showFinalBadges && thirdQualified ? (
+                      <span className={styles.standingsThirdAdvanced}>✓ Advanced</span>
+                    ) : null}
+                    {showFinalBadges && eliminated ? (
                       <span className={styles.standingsEliminated}>[Eliminated]</span>
                     ) : null}
                   </span>

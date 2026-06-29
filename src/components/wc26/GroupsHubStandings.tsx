@@ -2,22 +2,19 @@
 
 import StandingsTable from "@/components/wc26/StandingsTable";
 import { useWc26Standings } from "@/lib/use-wc26-standings";
-import { isGroupComplete } from "@/lib/wc26-standings";
-import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
+import { getWc26FinalQualificationMap } from "@/lib/wc26-final-standings";
 import styles from "./wc26.module.css";
 
 export default function GroupsHubStandings() {
   const standings = useWc26Standings();
-  const fixtures = useEffectiveFixtures();
 
   return (
     <section aria-labelledby="groups-hub-standings-heading">
       <h2 id="groups-hub-standings-heading" className={styles.sectionTitle}>
-        Live group standings
+        Final group standings
       </h2>
       <p className={styles.phaseNote}>
-        All twelve groups update automatically when results enter the overlay.
+        Group stage complete — final tables for all twelve groups (A–L).
       </p>
       <div className={styles.standingsGrid}>
         {standings.map((table) => (
@@ -25,8 +22,8 @@ export default function GroupsHubStandings() {
             key={table.groupId}
             standings={table}
             title={`Group ${table.groupId.toUpperCase()}`}
-            qualifyingSpots={WC26_QUALIFYING_SPOTS}
-            groupComplete={isGroupComplete(table.groupId, fixtures)}
+            groupComplete
+            qualificationByTeamId={getWc26FinalQualificationMap(table.groupId)}
           />
         ))}
       </div>

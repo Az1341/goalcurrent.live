@@ -99,6 +99,24 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
       "Arsenal defend their title on a compressed calendar. City, Liverpool and Chelsea chase them as the Premier League returns in mid-August after North America 2026.",
     date: "28 June 2026",
   },
+  {
+    slug: "world-cup-2026-june-27-recap",
+    category: "Match Recap",
+    title:
+      "Belgium Rout New Zealand, England Top Panama — World Cup 2026 Matchday Recap, 27 June",
+    excerpt:
+      "Belgium hammer New Zealand 5–1, Iran denied by VAR against Egypt, Spain beat Uruguay, England beat Panama, Croatia edge Ghana, Colombia draw Portugal, Congo DR advance, Messi strikes again.",
+    date: "28 June 2026",
+  },
+  {
+    slug: "world-cup-2026-june-27-group-stage-finale",
+    category: "Analysis",
+    title:
+      "Messi, Kane and Cabo Verde — The Stories That Closed the World Cup 2026 Group Stage",
+    excerpt:
+      "Lionel Messi scores in a seventh straight World Cup game. Harry Kane passes Gary Lineker. Cabo Verde reach the Round of 32. Iran, Panama and Uzbekistan go home.",
+    date: "28 June 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {

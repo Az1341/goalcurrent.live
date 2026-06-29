@@ -4,9 +4,8 @@ import Link from "next/link";
 import { getTeamById } from "@/data/wc26";
 import TeamFlag from "@/components/TeamFlag";
 import { useWc26Standings } from "@/lib/use-wc26-standings";
-import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { isGroupComplete, isQualifyingStandingPosition } from "@/lib/wc26-standings";
-import { groupHref, WC26_QUALIFYING_SPOTS } from "@/lib/wc26-groups";
+import { getWc26FinalQualificationMap } from "@/lib/wc26-final-standings";
+import { groupHref } from "@/lib/wc26-groups";
 import type { Wc26GroupId } from "@/types/group";
 import wc26Styles from "@/components/wc26/wc26.module.css";
 import styles from "@/app/[locale]/page.module.css";
@@ -15,7 +14,6 @@ const PREVIEW_GROUPS: readonly Wc26GroupId[] = ["a", "b", "c", "d"];
 
 export default function HomeWc26StandingsPreview() {
   const allStandings = useWc26Standings();
-  const fixtures = useEffectiveFixtures();
 
   return (
     <section className={styles.sectionBlock} aria-labelledby="wc-standings-preview">
@@ -54,11 +52,12 @@ export default function HomeWc26StandingsPreview() {
                 <tbody>
                   {table.rows.map((row, index) => {
                     const team = getTeamById(row.teamId);
-                    const qualified = isQualifyingStandingPosition(
-                      index,
-                      WC26_QUALIFYING_SPOTS,
+                    const qualification = getWc26FinalQualificationMap(groupId).get(
+                      row.teamId,
                     );
-                    const groupComplete = isGroupComplete(groupId, fixtures);
+                    const qualified =
+                      qualification === "winner" || qualification === "runner-up";
+                    const thirdQualified = qualification === "third-qualified";
                     return (
                       <tr key={row.teamId}>
                         <td>{index + 1}</td>
@@ -66,9 +65,14 @@ export default function HomeWc26StandingsPreview() {
                           <span className={styles.wcGroupMiniTeam}>
                             {team ? <TeamFlag teamId={team.id} size={16} /> : null}
                             <span>{team?.name ?? row.teamId}</span>
-                            {groupComplete && qualified ? (
+                            {qualified ? (
                               <span className={styles.wcGroupMiniQualAfter}>
                                 [Qualified]
+                              </span>
+                            ) : null}
+                            {thirdQualified ? (
+                              <span className={styles.wcGroupMiniQualAfter}>
+                                ✓
                               </span>
                             ) : null}
                           </span>

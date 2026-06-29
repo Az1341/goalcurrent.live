@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import TeamFlag from "@/components/TeamFlag";
+import { WC26_TOP_SCORERS_FALLBACK } from "@/data/wc26Standings";
 import { useLiveTopScorers } from "@/lib/client/useLiveTopScorers";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import {
@@ -34,6 +35,8 @@ function formatFreshnessLabel(fetchedAtIso: string): string {
 type Wc26TopScorersProps = {
   /** When true, omit outer section title (parent supplies heading). */
   embedded?: boolean;
+  /** Optional anchor id for in-page links (e.g. bracket page). */
+  sectionId?: string;
   /** When set, use unified top scorers data from parent (e.g. group hub). */
   scorers?: readonly TopScorerRow[];
   loading?: boolean;
@@ -71,6 +74,7 @@ function ScorerTableRow({
 
 export default function Wc26TopScorers({
   embedded = false,
+  sectionId = "top-scorers",
   scorers: scorersProp,
   loading: loadingProp,
   fetchedAt: fetchedAtProp,
@@ -80,10 +84,27 @@ export default function Wc26TopScorers({
 
   const [expanded, setExpanded] = useState(false);
 
+  const fallbackScorers = useMemo(
+    () =>
+      WC26_TOP_SCORERS_FALLBACK.map((row) => ({
+        ...row,
+        ownGoals: 0,
+      })),
+    [],
+  );
+
   const loading = loadingProp ?? (shouldFetch ? isLoading && !data : false);
-  const scorers = scorersProp ?? data?.scorers ?? [];
+  const apiScorers = scorersProp ?? data?.scorers ?? [];
+  const scorers =
+    apiScorers.length > 0
+      ? apiScorers
+      : loading
+        ? []
+        : fallbackScorers;
+  const usingFallback = apiScorers.length === 0 && !loading;
   const fetchedAt = fetchedAtProp ?? data?.fetchedAt;
-  const freshnessLabel = fetchedAt ? formatFreshnessLabel(fetchedAt) : null;
+  const freshnessLabel =
+    !usingFallback && fetchedAt ? formatFreshnessLabel(fetchedAt) : null;
   const hasScorers = scorers.length > 0;
   const hasMoreScorers = scorers.length > TOP_SCORERS_VISIBLE;
   const visibleScorers = expanded
@@ -92,6 +113,7 @@ export default function Wc26TopScorers({
 
   return (
     <section
+      id={sectionId}
       className={styles.topScorersSection}
       aria-labelledby={embedded ? undefined : "top-scorers-heading"}
     >
