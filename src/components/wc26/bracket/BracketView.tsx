@@ -22,13 +22,36 @@ type ConnectorLine = {
   y2: number;
 };
 
-const COLUMN_WIDTH = 180;
-const COLUMN_GAP = 28;
-const ROW_HEIGHT = 52;
-const HEADER_OFFSET = 24;
+const COLUMN_WIDTH = 172;
+const COLUMN_GAP = 24;
+const CENTER_COLUMN_WIDTH = 196;
+const ROW_HEIGHT = 78;
+const HEADER_OFFSET = 28;
 
-function columnCenterX(columnIndex: number): number {
-  return columnIndex * (COLUMN_WIDTH + COLUMN_GAP) + COLUMN_WIDTH / 2;
+const BRACKET_GRID_COLUMNS = `repeat(4, minmax(${COLUMN_WIDTH}px, 1fr)) minmax(${CENTER_COLUMN_WIDTH}px, 1.1fr) repeat(4, minmax(${COLUMN_WIDTH}px, 1fr))`;
+
+function bracketWidth(): number {
+  return (
+    4 * (COLUMN_WIDTH + COLUMN_GAP) +
+    CENTER_COLUMN_WIDTH +
+    COLUMN_GAP +
+    4 * (COLUMN_WIDTH + COLUMN_GAP)
+  );
+}
+
+function columnEdgeX(columnIndex: number, side: "left" | "right"): number {
+  if (columnIndex <= 3) {
+    const left = columnIndex * (COLUMN_WIDTH + COLUMN_GAP);
+    return side === "left" ? left : left + COLUMN_WIDTH;
+  }
+  if (columnIndex === 4) {
+    const left = 4 * (COLUMN_WIDTH + COLUMN_GAP);
+    return side === "left" ? left : left + CENTER_COLUMN_WIDTH;
+  }
+  const leftWidth =
+    4 * (COLUMN_WIDTH + COLUMN_GAP) + CENTER_COLUMN_WIDTH + COLUMN_GAP;
+  const colLeft = leftWidth + (columnIndex - 5) * (COLUMN_WIDTH + COLUMN_GAP);
+  return side === "left" ? colLeft : colLeft + COLUMN_WIDTH;
 }
 
 function rowCenterY(gridRow: number): number {
@@ -71,7 +94,8 @@ function buildParentChildConnectors(view: BracketConvergingView): ConnectorLine[
     { children: [91, 92], parent: 99, childColumn: 7, parentColumn: 6 },
     { children: [95, 96], parent: 100, childColumn: 7, parentColumn: 6 },
     { children: [99, 100], parent: 102, childColumn: 6, parentColumn: 5 },
-    { children: [101, 102], parent: 104, childColumn: 3, parentColumn: 4 },
+    { children: [101], parent: 104, childColumn: 3, parentColumn: 4 },
+    { children: [102], parent: 104, childColumn: 5, parentColumn: 4 },
   ];
 
   for (const { children, parent, childColumn, parentColumn } of pairs) {
@@ -90,15 +114,15 @@ function buildParentChildConnectors(view: BracketConvergingView): ConnectorLine[
     const parentY = rowCenterY(parentPos.gridRow);
     const parentX =
       parentColumn < childColumn
-        ? columnCenterX(parentColumn) + COLUMN_WIDTH / 2
-        : columnCenterX(parentColumn) - COLUMN_WIDTH / 2;
+        ? columnEdgeX(parentColumn, "right")
+        : columnEdgeX(parentColumn, "left");
 
     for (const child of childPositions) {
       const childY = rowCenterY(child.gridRow);
       const childX =
         childColumn < parentColumn
-          ? columnCenterX(childColumn) + COLUMN_WIDTH / 2
-          : columnCenterX(childColumn) - COLUMN_WIDTH / 2;
+          ? columnEdgeX(childColumn, "right")
+          : columnEdgeX(childColumn, "left");
       const midX = (childX + parentX) / 2;
 
       lines.push({ x1: childX, y1: childY, x2: midX, y2: childY });
@@ -111,8 +135,8 @@ function buildParentChildConnectors(view: BracketConvergingView): ConnectorLine[
       const y2 = rowCenterY(childPositions[1]!.gridRow);
       const joinX =
         childColumn < parentColumn
-          ? columnCenterX(childColumn) + COLUMN_WIDTH / 2 + 14
-          : columnCenterX(childColumn) - COLUMN_WIDTH / 2 - 14;
+          ? columnEdgeX(childColumn, "right") + 12
+          : columnEdgeX(childColumn, "left") - 12;
       lines.push({ x1: joinX, y1, x2: joinX, y2 });
     }
   }
@@ -122,7 +146,7 @@ function buildParentChildConnectors(view: BracketConvergingView): ConnectorLine[
 
 function BracketConnectors({ view }: { view: BracketConvergingView }) {
   const lines = useMemo(() => buildParentChildConnectors(view), [view]);
-  const width = 9 * COLUMN_WIDTH + 8 * COLUMN_GAP;
+  const width = bracketWidth();
   const height = HEADER_OFFSET + view.rowCount * ROW_HEIGHT;
 
   return (
@@ -182,7 +206,13 @@ export function BracketViewSkeleton() {
   return (
     <div className={styles.scrollWrap}>
       <div className={styles.skeletonShell} aria-hidden="true">
-        <div className={styles.skeletonGrid}>
+        <div
+          className={styles.skeletonGrid}
+          style={{
+            gridTemplateColumns: BRACKET_GRID_COLUMNS,
+            gridTemplateRows: `28px repeat(16, ${ROW_HEIGHT}px)`,
+          }}
+        >
           {Array.from({ length: 9 }, (_, index) => (
             <div
               key={`label-${index}`}
@@ -216,12 +246,13 @@ export default function BracketView({
 
   return (
     <div className={styles.scrollWrap}>
-      <div className={styles.bracketShell}>
+      <div className={styles.bracketShell} style={{ minWidth: bracketWidth() }}>
         {ready ? <BracketConnectors view={view} /> : null}
         <div
           className={styles.bracketGrid}
           style={{
-            gridTemplateRows: `24px repeat(${view.rowCount}, ${ROW_HEIGHT}px)`,
+            gridTemplateColumns: BRACKET_GRID_COLUMNS,
+            gridTemplateRows: `28px repeat(${view.rowCount}, ${ROW_HEIGHT}px)`,
           }}
         >
           {view.columns.map((column) => (
@@ -242,7 +273,9 @@ export default function BracketView({
                 <div
                   key={match.matchNumber}
                   className={
-                    match.isFinal ? styles.matchSlotFinal : styles.matchSlot
+                    match.isFinal || match.isThirdPlace
+                      ? styles.matchSlotFinal
+                      : styles.matchSlot
                   }
                   style={{
                     gridColumn: column.columnIndex + 1,

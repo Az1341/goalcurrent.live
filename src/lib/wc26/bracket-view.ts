@@ -249,7 +249,7 @@ export function mapResolvedMatchToCardView(
     status,
     displayStatus,
     elapsed: fixture?.elapsed ?? null,
-    kickoffUtc: match.kickoffUtc,
+    kickoffUtc: fixture?.kickoffUtc ?? match.kickoffUtc,
     venueId: match.venueId,
     isFinal: roundKey === "final",
     isThirdPlace: roundKey === "third",
@@ -368,7 +368,7 @@ export function buildConvergingBracketView(
           ? [
               {
                 ...matchByNumber.get(layout.center.third)!,
-                gridRow: 6,
+                gridRow: 5,
               },
             ]
           : []),
@@ -376,7 +376,7 @@ export function buildConvergingBracketView(
           ? [
               {
                 ...matchByNumber.get(layout.center.final)!,
-                gridRow: 10,
+                gridRow: 11,
               },
             ]
           : []),

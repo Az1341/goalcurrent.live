@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import TeamFlag from "@/components/TeamFlag";
 import TeamLink from "@/components/wc26/TeamLink";
-import { useLocalizedKickoffLabel } from "@/lib/client/use-local-kickoff";
+import { KickoffTime } from "@/components/KickoffTime";
 import { matchHref } from "@/lib/wc26-match";
 import type { BracketMatchCardView } from "@/lib/wc26/bracket-view";
 import styles from "./BracketView.module.css";
@@ -81,15 +81,46 @@ function StatusBadge({
   return <div className={styles.statusForthcoming}>Forthcoming</div>;
 }
 
+function KickoffMeta({
+  kickoffUtc,
+  matchNumber,
+  isSpecialRound,
+}: {
+  kickoffUtc: string | null;
+  matchNumber: number;
+  isSpecialRound: boolean;
+}) {
+  if (!kickoffUtc) {
+    return !isSpecialRound ? <span>Match {matchNumber}</span> : null;
+  }
+
+  if (isSpecialRound) {
+    return (
+      <time className={styles.cardKickoffFull} dateTime={kickoffUtc}>
+        <KickoffTime utcDate={kickoffUtc} />
+      </time>
+    );
+  }
+
+  return (
+    <>
+      <span>Match {matchNumber}</span>
+      <time className={styles.cardKickoff} dateTime={kickoffUtc}>
+        <KickoffTime utcDate={kickoffUtc} />
+      </time>
+    </>
+  );
+}
+
 export default function BracketMatchNode({
   match,
   viewMatchCenterLabel,
   liveLabel,
 }: BracketMatchNodeProps) {
-  const kickoffLabel = useLocalizedKickoffLabel(match.kickoffUtc ?? "");
   const showScore =
     match.displayStatus === "live" || match.displayStatus === "ft";
   const isLive = match.displayStatus === "live";
+  const isSpecialRound = match.isFinal || match.isThirdPlace;
 
   const cardClass = match.isFinal
     ? styles.cardFinal
@@ -108,17 +139,11 @@ export default function BracketMatchNode({
       ) : null}
 
       <div className={styles.cardHead}>
-        <span>
-          {match.isFinal || match.isThirdPlace
-            ? kickoffLabel
-            : `Match ${match.matchNumber}`}
-        </span>
-        {!match.isFinal && !match.isThirdPlace && match.kickoffUtc ? (
-          <time dateTime={match.kickoffUtc}>{kickoffLabel}</time>
-        ) : null}
-        {(match.isFinal || match.isThirdPlace) && match.kickoffUtc ? (
-          <time dateTime={match.kickoffUtc}>{kickoffLabel}</time>
-        ) : null}
+        <KickoffMeta
+          kickoffUtc={match.kickoffUtc}
+          matchNumber={match.matchNumber}
+          isSpecialRound={isSpecialRound}
+        />
       </div>
 
       <TeamRow
