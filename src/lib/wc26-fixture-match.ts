@@ -1,4 +1,10 @@
-import { WC26_FIXTURES } from "@/data/wc26";
+import { WC26_FIXTURES, getGroupById } from "@/data/wc26";
+import { isKnockoutPlaceholderTeam } from "@/data/wc26/knockout-fixtures";
+import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
+import type { BracketSlotRef } from "@/lib/wc26/bracket-types";
+import { FIFA_ROUND_OF_32_TEMPLATES } from "@/lib/wc26/fifa-bracket-mapping";
+import { computeGroupStandings } from "@/lib/wc26-standings";
+import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import type { TeamId } from "@/types/team";
 
@@ -19,7 +25,8 @@ function teamPairKey(homeTeamId: TeamId, awayTeamId: TeamId): string {
   return `${homeTeamId}|${awayTeamId}`;
 }
 
-const KICKOFF_MATCH_TOLERANCE_MS = 3 * 60 * 60 * 1000;
+/** Knockout kickoff fallback — tight window to avoid cross-slot collisions. */
+const KICKOFF_MATCH_TOLERANCE_MS = 90 * 60 * 1000;
 
 /** Resolve a local WC26 fixture id from API team names. */
 export function findFixtureIdByTeamNames(
@@ -32,6 +39,201 @@ export function findFixtureIdByTeamNames(
     return undefined;
   }
   return fixtureIdByTeamPair.get(teamPairKey(homeTeamId, awayTeamId));
+}
+
+function slotAcceptsTeam(slot: BracketSlotRef, teamId: TeamId): boolean {
+  if (slot.kind === "group-winner" || slot.kind === "group-runner-up") {
+    return getGroupById(slot.groupId)?.teamIds.includes(teamId) ?? false;
+  }
+  if (slot.kind === "third-place") {
+    return slot.groups.some(
+      (groupId) => getGroupById(groupId)?.teamIds.includes(teamId) ?? false,
+    );
+  }
+  return false;
+}
+
+/**
+ * Map API teams to a round-of-32 slot via FIFA feeder groups (not standings).
+ * Picks the closest scheduled kickoff when multiple templates match.
+ */
+export function findFixtureIdByKnockoutFeederGroups(
+  homeName: string,
+  awayName: string,
+  apiKickoffUtc?: string,
+): string | undefined {
+  const apiHome = resolveTeamId(homeName);
+  const apiAway = resolveTeamId(awayName);
+  if (!apiHome || !apiAway) {
+    return undefined;
+  }
+
+  const apiKickoffMs = apiKickoffUtc ? Date.parse(apiKickoffUtc) : Number.NaN;
+  const kickoffAware = Number.isFinite(apiKickoffMs);
+
+  type Candidate = { id: string; aligned: boolean; delta: number };
+  const candidates: Candidate[] = [];
+
+  for (const template of FIFA_ROUND_OF_32_TEMPLATES) {
+    const fixtureId = `fixture-${String(template.matchNumber).padStart(3, "0")}`;
+    const aligned =
+      slotAcceptsTeam(template.home, apiHome) &&
+      slotAcceptsTeam(template.away, apiAway);
+    const swapped =
+      slotAcceptsTeam(template.home, apiAway) &&
+      slotAcceptsTeam(template.away, apiHome);
+    if (!aligned && !swapped) {
+      continue;
+    }
+
+    const scheduledMs = fixtureKickoffMs.get(fixtureId);
+    const delta =
+      kickoffAware && scheduledMs !== undefined
+        ? Math.abs(scheduledMs - apiKickoffMs)
+        : Number.POSITIVE_INFINITY;
+
+    candidates.push({ id: fixtureId, aligned, delta });
+  }
+
+  if (candidates.length === 0) {
+    return undefined;
+  }
+
+  candidates.sort((left, right) => {
+    if (left.aligned !== right.aligned) {
+      return left.aligned ? -1 : 1;
+    }
+    return left.delta - right.delta;
+  });
+
+  const best = candidates[0];
+  if (!kickoffAware) {
+    return best.id;
+  }
+  if (best.delta <= KICKOFF_MATCH_TOLERANCE_MS) {
+    return best.id;
+  }
+  if (candidates.length === 1) {
+    return best.id;
+  }
+  return undefined;
+}
+
+/**
+ * Disambiguate round-of-32 matches 75 vs 76 (groups C and F) using standings.
+ * Only returns a slot when API teams match the computed participants.
+ */
+export function findFixtureIdByGroupsCfPair(
+  homeName: string,
+  awayName: string,
+  fixtures: readonly EffectiveFixture[] = WC26_FIXTURES,
+): string | undefined {
+  const apiHome = resolveTeamId(homeName);
+  const apiAway = resolveTeamId(awayName);
+  if (!apiHome || !apiAway) {
+    return undefined;
+  }
+
+  const cTeams = getGroupById("c")?.teamIds ?? [];
+  const fTeams = getGroupById("f")?.teamIds ?? [];
+  const inC = (teamId: TeamId) => cTeams.includes(teamId);
+  const inF = (teamId: TeamId) => fTeams.includes(teamId);
+  const isCfPair =
+    (inC(apiHome) && inF(apiAway)) || (inC(apiAway) && inF(apiHome));
+  if (!isCfPair) {
+    return undefined;
+  }
+
+  const cRows = computeGroupStandings("c", fixtures).rows;
+  const fRows = computeGroupStandings("f", fixtures).rows;
+  if (cRows.length < 2 || fRows.length < 2) {
+    return undefined;
+  }
+
+  const cWinner = cRows[0]?.teamId;
+  const cRunner = cRows[1]?.teamId;
+  const fWinner = fRows[0]?.teamId;
+  const fRunner = fRows[1]?.teamId;
+  if (!cWinner || !cRunner || !fWinner || !fRunner) {
+    return undefined;
+  }
+
+  const apiSet = new Set([apiHome, apiAway]);
+  if (apiSet.has(fWinner) && apiSet.has(cRunner)) {
+    return "fixture-075";
+  }
+  if (apiSet.has(cWinner) && apiSet.has(fRunner)) {
+    return "fixture-076";
+  }
+
+  return undefined;
+}
+
+/**
+ * Resolve a knockout fixture id from API team names using bracket slots.
+ * When several knockout slots share the same pairing, pick the closest kickoff.
+ */
+export function findFixtureIdByKnockoutTeams(
+  homeName: string,
+  awayName: string,
+  fixtures: readonly EffectiveFixture[] = WC26_FIXTURES,
+  apiKickoffUtc?: string,
+): string | undefined {
+  const apiHome = resolveTeamId(homeName);
+  const apiAway = resolveTeamId(awayName);
+  if (!apiHome || !apiAway) {
+    return undefined;
+  }
+
+  const apiKickoffMs = apiKickoffUtc ? Date.parse(apiKickoffUtc) : Number.NaN;
+  const kickoffAware = Number.isFinite(apiKickoffMs);
+
+  let bestId: string | undefined;
+  let bestDelta = Number.POSITIVE_INFINITY;
+
+  for (const fixture of fixtures) {
+    if (fixture.stage === "group" || fixture.matchNumber == null) {
+      continue;
+    }
+
+    const home = resolveFixtureParticipant(fixture, "home", fixtures);
+    const away = resolveFixtureParticipant(fixture, "away", fixtures);
+    if (
+      isKnockoutPlaceholderTeam(home.teamId) ||
+      isKnockoutPlaceholderTeam(away.teamId)
+    ) {
+      continue;
+    }
+
+    const teamsMatch =
+      (apiHome === home.teamId && apiAway === away.teamId) ||
+      (apiHome === away.teamId && apiAway === home.teamId);
+    if (!teamsMatch) {
+      continue;
+    }
+
+    if (!kickoffAware) {
+      return fixture.id;
+    }
+
+    const scheduledMs = fixtureKickoffMs.get(fixture.id);
+    if (scheduledMs === undefined) {
+      continue;
+    }
+    const delta = Math.abs(scheduledMs - apiKickoffMs);
+    if (delta < bestDelta) {
+      bestDelta = delta;
+      bestId = fixture.id;
+    }
+  }
+
+  if (!bestId) {
+    return undefined;
+  }
+  if (!kickoffAware) {
+    return bestId;
+  }
+  return bestDelta <= KICKOFF_MATCH_TOLERANCE_MS ? bestId : undefined;
 }
 
 /** Fallback when API team names are TBD — match by kickoff time. */

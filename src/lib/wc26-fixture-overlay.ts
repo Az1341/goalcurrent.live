@@ -2,6 +2,7 @@ import { WC26_FIXTURES } from "@/data/wc26";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import type { Fixture, FixtureStatus } from "@/types/fixture";
 import type { FixtureOverlayEntry } from "@/types/fixture-overlay";
+import type { TeamId } from "@/types/team";
 
 export const WC26_FIXTURES_UPDATED_EVENT = "wc26:fixtures-updated";
 
@@ -11,6 +12,9 @@ export type EffectiveFixture = Fixture & {
   readonly awayScore?: number;
   readonly elapsed?: number | null;
   readonly apiFixtureId?: number;
+  /** API-synced participants — used instead of bracket labels when present. */
+  readonly overlayHomeTeamId?: TeamId;
+  readonly overlayAwayTeamId?: TeamId;
 };
 
 type OverlayState = Record<string, FixtureOverlayEntry>;
@@ -49,6 +53,31 @@ export function setFixtureOverlay(next: OverlayState): void {
 /** Merge partial overlay updates from API sync. */
 export function mergeFixtureOverlay(partial: OverlayState): void {
   overlay = { ...overlay, ...partial };
+  notifyFixtureUpdate();
+}
+
+const LIVE_OVERLAY_STATUSES = new Set([
+  "live",
+  "1h",
+  "2h",
+  "ht",
+  "et",
+  "penalties",
+]);
+
+function isLiveOverlayEntry(entry: FixtureOverlayEntry): boolean {
+  return LIVE_OVERLAY_STATUSES.has(entry.status.trim().toLowerCase());
+}
+
+/** Replace live overlay entries — clears stale live slots before merging. */
+export function replaceLiveFixtureOverlay(partial: OverlayState): void {
+  const next: OverlayState = { ...overlay };
+  for (const [fixtureId, entry] of Object.entries(next)) {
+    if (isLiveOverlayEntry(entry)) {
+      delete next[fixtureId];
+    }
+  }
+  overlay = { ...next, ...partial };
   notifyFixtureUpdate();
 }
 
@@ -107,6 +136,12 @@ export function getEffectiveFixtures(): readonly EffectiveFixture[] {
       ...(entry.awayScore !== undefined ? { awayScore: entry.awayScore } : {}),
       ...(entry.elapsed !== undefined ? { elapsed: entry.elapsed } : {}),
       ...(entry.apiFixtureId !== undefined ? { apiFixtureId: entry.apiFixtureId } : {}),
+      ...(entry.homeTeamId !== undefined
+        ? { overlayHomeTeamId: entry.homeTeamId }
+        : {}),
+      ...(entry.awayTeamId !== undefined
+        ? { overlayAwayTeamId: entry.awayTeamId }
+        : {}),
     };
   });
 }

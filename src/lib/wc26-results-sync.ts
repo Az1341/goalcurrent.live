@@ -1,4 +1,7 @@
-import { mergeFixtureOverlay } from "@/lib/wc26-fixture-overlay";
+import {
+  mergeFixtureOverlay,
+  replaceLiveFixtureOverlay,
+} from "@/lib/wc26-fixture-overlay";
 import type {
   FixtureOverlayEntry,
   Wc26ApiMatch,
@@ -59,6 +62,8 @@ function overlayEntryFromApiMatch(match: Wc26ApiMatch): FixtureOverlayEntry {
     status: match.status,
     elapsed: match.elapsed,
     ...(match.apiFixtureId != null ? { apiFixtureId: match.apiFixtureId } : {}),
+    ...(match.homeTeamId ? { homeTeamId: match.homeTeamId } : {}),
+    ...(match.awayTeamId ? { awayTeamId: match.awayTeamId } : {}),
   };
 
   if (match.homeScore !== null && match.awayScore !== null) {
@@ -111,8 +116,19 @@ export function applyWc26ScoresToOverlay(data: Wc26ScoresApiResponse): void {
   if (data.error) {
     setSyncStatus("degraded");
     if (data.matches.length > 0) {
-      mergeFixtureOverlay(overlayFromMatches(data.matches));
+      const partial = overlayFromMatches(data.matches);
+      if (data.phase === "live") {
+        replaceLiveFixtureOverlay(partial);
+      } else {
+        mergeFixtureOverlay(partial);
+      }
     }
+    return;
+  }
+
+  if (data.phase === "live") {
+    setSyncStatus("synced");
+    replaceLiveFixtureOverlay(overlayFromMatches(data.matches));
     return;
   }
 

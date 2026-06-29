@@ -19,7 +19,10 @@ import {
   formatVisitorKickoffTime,
 } from "@/lib/wc26-format";
 import { localDateKey } from "@/lib/wc26-fixtures-page";
-import { findLiveSimultaneousFinalRoundGroup } from "@/lib/wc26-final-matchday";
+import {
+  findLiveSimultaneousFinalRoundGroup,
+  isSimultaneousFinalMatchdayFixture,
+} from "@/lib/wc26-final-matchday";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import type { Wc26GroupId } from "@/types/group";
 const LIVE_STATUSES = new Set([
@@ -217,6 +220,15 @@ export function resolveFixtureParticipant(
   side: "home" | "away",
   allFixtures: readonly EffectiveFixture[],
 ): ResolvedFixtureParticipant {
+  const overlayTeamId =
+    side === "home" ? fixture.overlayHomeTeamId : fixture.overlayAwayTeamId;
+  if (overlayTeamId) {
+    const name = getTeamById(overlayTeamId)?.name?.trim();
+    if (name) {
+      return { label: name, teamId: overlayTeamId };
+    }
+  }
+
   const fallbackId = side === "home" ? fixture.homeTeamId : fixture.awayTeamId;
 
   if (!isKnockoutPlaceholderTeam(fallbackId)) {
@@ -333,17 +345,51 @@ function findSimultaneousKickoffPeers(
   return [...peers].sort(sortByKickoffAsc);
 }
 
+function dedupeFeaturedFixtures(
+  fixtures: readonly EffectiveFixture[],
+  allFixtures: readonly EffectiveFixture[],
+): readonly EffectiveFixture[] {
+  const seenIds = new Set<string>();
+  const seenTeamPairs = new Set<string>();
+  const unique: EffectiveFixture[] = [];
+
+  for (const fixture of fixtures) {
+    if (seenIds.has(fixture.id)) {
+      continue;
+    }
+
+    const home = resolveFixtureParticipant(fixture, "home", allFixtures);
+    const away = resolveFixtureParticipant(fixture, "away", allFixtures);
+    const pairKey = [home.teamId, away.teamId].sort().join("|");
+    if (seenTeamPairs.has(pairKey)) {
+      continue;
+    }
+
+    seenIds.add(fixture.id);
+    seenTeamPairs.add(pairKey);
+    unique.push(fixture);
+  }
+
+  return unique;
+}
+
 /** Featured: simultaneous kickoff slots (2+), else first live/today/upcoming. */
 export function selectFeaturedFixtures(
   fixtures: readonly EffectiveFixture[],
 ): FeaturedFixtureSelection {
   const liveFinal = findLiveSimultaneousFinalRoundGroup(fixtures);
   if (liveFinal) {
-    return {
-      mode: "simultaneous",
-      fixtures: liveFinal.fixtures,
-      groupId: liveFinal.groupId,
-    };
+    const deduped = dedupeFeaturedFixtures(liveFinal.fixtures, fixtures);
+    if (deduped.length >= 2) {
+      return {
+        mode: "simultaneous",
+        fixtures: deduped,
+        groupId: liveFinal.groupId,
+      };
+    }
+    if (deduped.length === 1) {
+      return { mode: "single", fixtures: deduped };
+    }
   }
 
   const seed = selectFeaturedFixture(fixtures);
@@ -351,24 +397,42 @@ export function selectFeaturedFixtures(
     return { mode: "single", fixtures: [] };
   }
 
-  const peers = findSimultaneousKickoffPeers(fixtures, seed);
-  if (peers.length >= 2) {
-    return {
-      mode: "simultaneous",
-      fixtures: peers,
-      groupId: seed.groupId,
-    };
+  if (
+    seed.stage === "group" &&
+    seed.groupId &&
+    isSimultaneousFinalMatchdayFixture(seed, fixtures)
+  ) {
+    const peers = dedupeFeaturedFixtures(
+      findSimultaneousKickoffPeers(fixtures, seed),
+      fixtures,
+    );
+    if (peers.length >= 2) {
+      return {
+        mode: "simultaneous",
+        fixtures: peers,
+        groupId: seed.groupId,
+      };
+    }
   }
 
   return { mode: "single", fixtures: [seed] };
 }
 
-/** Featured: first live, else first today, else next upcoming. */
+/** Featured: first live, else next kickoff today/upcoming, else latest result. */
 export function selectFeaturedFixture(
   fixtures: readonly EffectiveFixture[],
 ): EffectiveFixture | undefined {
   const buckets = partitionFixturesForLiveCentre(fixtures);
-  return buckets.live[0] ?? buckets.today[0] ?? buckets.upcoming[0];
+  if (buckets.live[0]) {
+    return buckets.live[0];
+  }
+  if (buckets.today[0]) {
+    return buckets.today[0];
+  }
+  if (buckets.upcoming[0]) {
+    return buckets.upcoming[0];
+  }
+  return buckets.completed[0];
 }
 
 /** Homepage live football rows — live, recent FT, then upcoming (excludes featured). */
@@ -393,8 +457,12 @@ export function selectHomepageFixtures(
     if (exclude.has(fixture.id) || seen.has(fixture.id)) {
       continue;
     }
+    const view = buildHomepageMatchView(fixture, fixtures);
+    if (view.matchClass === "ft" && !view.score) {
+      continue;
+    }
     seen.add(fixture.id);
-    views.push(buildHomepageMatchView(fixture, fixtures));
+    views.push(view);
     if (views.length >= limit) {
       break;
     }
@@ -427,18 +495,13 @@ export function selectUpcomingHomepageFixtures(
   return views;
 }
 
-/** Header ribbon ticker — live + recent results + next kickoffs. */
+/** Header ribbon ticker — live + recent full-time results only. */
 export function selectRibbonFixtures(
   fixtures: readonly EffectiveFixture[],
   limit = 8,
 ): readonly HomepageMatchView[] {
   const buckets = partitionFixturesForLiveCentre(fixtures);
-  const ordered = [
-    ...buckets.live,
-    ...buckets.completed.slice(0, 4),
-    ...buckets.today,
-    ...buckets.upcoming,
-  ];
+  const ordered = [...buckets.live, ...buckets.completed];
 
   const seen = new Set<string>();
   const views: HomepageMatchView[] = [];
@@ -447,8 +510,24 @@ export function selectRibbonFixtures(
     if (seen.has(fixture.id)) {
       continue;
     }
+
+    const view = buildHomepageMatchView(fixture, fixtures);
+    if (view.matchClass === "ft") {
+      if (!view.score) {
+        continue;
+      }
+      if (
+        view.homeName === "TBD" ||
+        view.awayName === "TBD" ||
+        view.homeName.startsWith("Winner Match") ||
+        view.awayName.startsWith("Winner Match")
+      ) {
+        continue;
+      }
+    }
+
     seen.add(fixture.id);
-    views.push(buildHomepageMatchView(fixture, fixtures));
+    views.push(view);
     if (views.length >= limit) {
       break;
     }

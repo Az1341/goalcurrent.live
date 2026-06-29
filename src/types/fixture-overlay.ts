@@ -1,3 +1,5 @@
+import type { TeamId } from "@/types/team";
+
 /** Runtime overlay entry for a WC26 fixture — never stored in SSOT data files. */
 export type FixtureOverlayEntry = {
   readonly status: string;
@@ -6,6 +8,9 @@ export type FixtureOverlayEntry = {
   readonly elapsed?: number | null;
   /** api-sports fixture id from live feed — used for match detail lookups. */
   readonly apiFixtureId?: number;
+  /** Actual home/away from API — overrides knockout bracket labels when set. */
+  readonly homeTeamId?: TeamId;
+  readonly awayTeamId?: TeamId;
 };
 
 /** Normalised match payload returned by /api/wc26/scores (fixture id resolved server-side). */
@@ -20,6 +25,8 @@ export type Wc26ApiMatch = {
   readonly kickoffUtc: string;
   /** api-sports fixture id — present when row comes from the live API feed. */
   readonly apiFixtureId?: number;
+  readonly homeTeamId?: TeamId;
+  readonly awayTeamId?: TeamId;
 };
 
 import type { ApiFootballErrorCode } from "@/lib/api-football/errors";
