@@ -142,6 +142,7 @@ export function getEffectiveFixtures(): readonly EffectiveFixture[] {
       ...(entry.awayTeamId !== undefined
         ? { overlayAwayTeamId: entry.awayTeamId }
         : {}),
+      ...(entry.kickoffUtc !== undefined ? { kickoffUtc: entry.kickoffUtc } : {}),
     };
   });
 }

@@ -11,6 +11,8 @@ export type FixtureOverlayEntry = {
   /** Actual home/away from API — overrides knockout bracket labels when set. */
   readonly homeTeamId?: TeamId;
   readonly awayTeamId?: TeamId;
+  /** API kickoff when it differs from the static FIFA schedule slot. */
+  readonly kickoffUtc?: string;
 };
 
 /** Normalised match payload returned by /api/wc26/scores (fixture id resolved server-side). */

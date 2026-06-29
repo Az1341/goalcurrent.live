@@ -13,6 +13,7 @@ import {
   findFixtureIdByTeamNames,
   mapApiStatusShort,
 } from "@/lib/wc26-fixture-match";
+import { normalizeWc26MatchStatus } from "@/lib/wc26-match-status";
 import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
@@ -168,10 +169,14 @@ function normalizeApiFixture(
   }
 
   const statusShort = raw.fixture.status.short;
-  const status = mapApiStatusShort(statusShort);
-  if (!status) {
+  const mappedStatus = mapApiStatusShort(statusShort);
+  if (!mappedStatus) {
     return null;
   }
+  const status = normalizeWc26MatchStatus(
+    mappedStatus,
+    raw.fixture.status.elapsed,
+  );
 
   const confirmed = getConfirmedKnockoutPairingByFixtureId(fixtureId);
   const resolvedHomeTeamId = homeTeamId ?? confirmed?.homeTeamId;
@@ -190,7 +195,7 @@ function normalizeApiFixture(
     return null;
   }
 
-  return {
+  const base: Wc26ApiMatch = {
     fixtureId,
     matchNumber: fixture.matchNumber,
     status,
@@ -200,6 +205,18 @@ function normalizeApiFixture(
     awayScore,
     kickoffUtc: raw.fixture.date,
     apiFixtureId: raw.fixture.id,
+  };
+
+  if (confirmed) {
+    return {
+      ...base,
+      homeTeamId: resolvedHomeTeamId ?? confirmed.homeTeamId,
+      awayTeamId: resolvedAwayTeamId ?? confirmed.awayTeamId,
+    };
+  }
+
+  return {
+    ...base,
     ...(resolvedHomeTeamId ? { homeTeamId: resolvedHomeTeamId } : {}),
     ...(resolvedAwayTeamId ? { awayTeamId: resolvedAwayTeamId } : {}),
   };
