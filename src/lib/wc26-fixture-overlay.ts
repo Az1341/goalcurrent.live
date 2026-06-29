@@ -168,7 +168,12 @@ export function isEffectiveFixtureCompleted(
     return true;
   }
   const score = getFixtureScore(fixture);
-  return (
-    score !== null && new Date(fixture.kickoffUtc).getTime() <= now.getTime()
-  );
+  if (score === null) {
+    return false;
+  }
+  // Knockout with API scores — static FIFA kickoff may be a later slot than the real match.
+  if (fixture.apiFixtureId != null && fixture.stage !== "group") {
+    return true;
+  }
+  return new Date(fixture.kickoffUtc).getTime() <= now.getTime();
 }

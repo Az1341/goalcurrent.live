@@ -548,7 +548,11 @@ export function selectUpcomingHomepageFixtures(
     if (exclude.has(fixture.id)) {
       continue;
     }
-    views.push(buildHomepageMatchView(fixture, fixtures));
+    const view = buildHomepageMatchView(fixture, fixtures);
+    if (view.matchClass !== "upcoming") {
+      continue;
+    }
+    views.push(view);
     if (views.length >= limit) {
       break;
     }
