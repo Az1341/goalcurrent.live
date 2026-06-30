@@ -23,6 +23,7 @@
   margin: 0 auto;
   padding: 20px 24px 32px;
   background: var(--bracket-bg);
+  overflow-x: hidden;
 }
 
 .breadcrumb {

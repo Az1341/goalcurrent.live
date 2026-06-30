@@ -1,14 +1,13 @@
 .fitStage {
   width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
-.fitInner {
+.scrollRail {
+  position: relative;
   width: 100%;
-  overflow: hidden;
-}
-
-.fitScaled {
-  transform-origin: top center;
+  max-width: 100%;
 }
 
 .scrollHint {
@@ -19,11 +18,97 @@
 }
 
 .scrollWrap {
-  overflow-x: auto;
+  overflow-x: scroll;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  margin: 0 -8px;
-  padding: 0 8px 16px;
+  overscroll-behavior-x: contain;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 0 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #b8b8b8 #ececea;
+  scroll-behavior: smooth;
+}
+
+.scrollWrap:focus-visible {
+  outline: 2px solid #7b0d1e;
+  outline-offset: 2px;
+}
+
+.scrollWrap::-webkit-scrollbar {
+  height: 12px;
+}
+
+.scrollWrap::-webkit-scrollbar-track {
+  background: #ececea;
+  border-radius: 6px;
+}
+
+.scrollWrap::-webkit-scrollbar-thumb {
+  background: #b8b8b8;
+  border-radius: 6px;
+  border: 2px solid #ececea;
+}
+
+.scrollWrap::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+.scrollAffordance {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 48px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  color: #333333;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  display: none;
+}
+
+.scrollAffordanceLeft {
+  left: 4px;
+}
+
+.scrollAffordanceRight {
+  right: 4px;
+}
+
+.scrollRail::before,
+.scrollRail::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 12px;
+  width: 28px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.scrollRail::before {
+  left: 0;
+  background: linear-gradient(to right, #f5f4f0 30%, transparent);
+}
+
+.scrollRail::after {
+  right: 0;
+  background: linear-gradient(to left, #f5f4f0 30%, transparent);
+}
+
+.scrollRailShowLeft::before {
+  opacity: 1;
+}
+
+.scrollRailShowRight::after {
+  opacity: 1;
 }
 
 .bracketShell {
@@ -350,5 +435,13 @@
 
   .bracketShell {
     padding-bottom: 4px;
+  }
+}
+
+@media (min-width: 768px) {
+  .scrollAffordance {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }

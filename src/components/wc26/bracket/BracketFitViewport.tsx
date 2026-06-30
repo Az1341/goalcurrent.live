@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  type ReactNode,
+} from "react";
 import styles from "./BracketView.module.css";
 
-const FIT_SCALE_MIN = 0.72;
+const SCROLL_STEP = 320;
 
 type BracketFitViewportProps = {
   naturalWidth: number;
@@ -16,74 +22,104 @@ export default function BracketFitViewport({
   naturalHeight,
   children,
 }: BracketFitViewportProps) {
-  const stageRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [layout, setLayout] = useState<"fit" | "scroll">("fit");
-  const [scale, setScale] = useState(1);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const measure = useCallback(() => {
-    const stage = stageRef.current;
-    if (!stage) {
+  const updateAffordance = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
       return;
     }
-    const available = stage.clientWidth;
-    if (available <= 0) {
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 1) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
       return;
     }
-    const nextScale = Math.min(1, available / naturalWidth);
-    if (nextScale < FIT_SCALE_MIN) {
-      setLayout("scroll");
-      setScale(1);
-      return;
-    }
-    setLayout("fit");
-    setScale(nextScale);
-  }, [naturalWidth]);
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < maxScroll - 4);
+  }, []);
+
+  const scrollBy = useCallback((delta: number) => {
+    scrollRef.current?.scrollBy({ left: delta, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
-    measure();
-    const stage = stageRef.current;
-    if (!stage) {
+    updateAffordance();
+    const el = scrollRef.current;
+    if (!el) {
       return;
     }
-    const observer = new ResizeObserver(measure);
-    observer.observe(stage);
-    window.addEventListener("resize", measure);
+
+    const onScroll = () => updateAffordance();
+    el.addEventListener("scroll", onScroll, { passive: true });
+
+    const observer = new ResizeObserver(updateAffordance);
+    observer.observe(el);
+
+    window.addEventListener("resize", updateAffordance);
     return () => {
+      el.removeEventListener("scroll", onScroll);
       observer.disconnect();
-      window.removeEventListener("resize", measure);
+      window.removeEventListener("resize", updateAffordance);
     };
-  }, [measure]);
+  }, [naturalWidth, naturalHeight, updateAffordance]);
 
   useEffect(() => {
-    if (layout === "scroll" && scrollRef.current) {
+    if (scrollRef.current) {
       scrollRef.current.scrollLeft = 0;
+      updateAffordance();
     }
-  }, [layout, naturalWidth]);
-
-  if (layout === "scroll") {
-    return (
-      <div ref={stageRef} className={styles.fitStage}>
-        <p className={styles.scrollHint} aria-hidden="true">
-          Scroll horizontally to see the full bracket
-        </p>
-        <div ref={scrollRef} className={styles.scrollWrap}>
-          <div className={styles.bracketShell} style={{ width: naturalWidth }}>
-            {children}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  }, [naturalWidth, naturalHeight, updateAffordance]);
 
   return (
-    <div ref={stageRef} className={styles.fitStage}>
-      <div className={styles.fitInner} style={{ height: naturalHeight * scale }}>
+    <div className={styles.fitStage}>
+      <p className={styles.scrollHint}>
+        Scroll horizontally to see the full bracket
+      </p>
+      <div
+        className={[
+          styles.scrollRail,
+          canScrollLeft ? styles.scrollRailShowLeft : "",
+          canScrollRight ? styles.scrollRailShowRight : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        {canScrollLeft ? (
+          <button
+            type="button"
+            className={`${styles.scrollAffordance} ${styles.scrollAffordanceLeft}`}
+            onClick={() => scrollBy(-SCROLL_STEP)}
+            aria-label="Scroll bracket left"
+          >
+            ‹
+          </button>
+        ) : null}
+        {canScrollRight ? (
+          <button
+            type="button"
+            className={`${styles.scrollAffordance} ${styles.scrollAffordanceRight}`}
+            onClick={() => scrollBy(SCROLL_STEP)}
+            aria-label="Scroll bracket right"
+          >
+            ›
+          </button>
+        ) : null}
         <div
-          className={styles.fitScaled}
-          style={{ width: naturalWidth, transform: `scale(${scale})` }}
+          ref={scrollRef}
+          className={styles.scrollWrap}
+          tabIndex={0}
+          role="region"
+          aria-label="Knockout bracket"
         >
-          <div className={styles.bracketShell} style={{ width: naturalWidth }}>
+          <div
+            className={styles.bracketShell}
+            style={{ width: naturalWidth, minHeight: naturalHeight }}
+          >
             {children}
           </div>
         </div>

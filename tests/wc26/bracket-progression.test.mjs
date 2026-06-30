@@ -47,6 +47,28 @@ test("bracket cards show venue match number penalties and compact header", () =>
   assert.match(raw, /M\{match\.matchNumber\}/);
 });
 
+test("bracket viewport always uses horizontal scroll rail", () => {
+  const fitRaw = readFileSync(
+    join(root, "src/components/wc26/bracket/BracketFitViewport.tsx"),
+    "utf8",
+  );
+  const cssRaw = readFileSync(
+    join(root, "src/components/wc26/bracket/BracketView.module.css"),
+    "utf8",
+  );
+  const pageRaw = readFileSync(
+    join(root, "src/components/wc26/bracket/bracket.module.css"),
+    "utf8",
+  );
+  assert.match(fitRaw, /scrollRail/);
+  assert.match(fitRaw, /scrollAffordance/);
+  assert.doesNotMatch(fitRaw, /FIT_SCALE_MIN/);
+  assert.doesNotMatch(fitRaw, /layout === "fit"/);
+  assert.match(cssRaw, /overflow-x:\s*scroll/);
+  assert.match(cssRaw, /overscroll-behavior-x:\s*contain/);
+  assert.match(pageRaw, /overflow-x:\s*hidden/);
+});
+
 test("bracket layout uses wider columns and row height", () => {
   const raw = readFileSync(
     join(root, "src/components/wc26/bracket/BracketView.tsx"),
