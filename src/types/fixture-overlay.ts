@@ -13,6 +13,9 @@ export type FixtureOverlayEntry = {
   readonly awayTeamId?: TeamId;
   /** API kickoff when it differs from the static FIFA schedule slot. */
   readonly kickoffUtc?: string;
+  /** Penalty shootout score (when match decided on pens). */
+  readonly penaltiesHome?: number;
+  readonly penaltiesAway?: number;
 };
 
 /** Normalised match payload returned by /api/wc26/scores (fixture id resolved server-side). */
@@ -29,6 +32,8 @@ export type Wc26ApiMatch = {
   readonly apiFixtureId?: number;
   readonly homeTeamId?: TeamId;
   readonly awayTeamId?: TeamId;
+  readonly penaltiesHome?: number;
+  readonly penaltiesAway?: number;
 };
 
 import type { ApiFootballErrorCode } from "@/lib/api-football/errors";

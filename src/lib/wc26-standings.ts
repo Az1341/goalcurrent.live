@@ -20,6 +20,10 @@ import {
   WC26_FINAL_GROUP_STANDINGS,
 } from "@/lib/wc26-final-standings";
 import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
+import {
+  getConfirmedKnockoutResult,
+  getConfirmedKnockoutWinner,
+} from "@/lib/wc26/knockout-confirmed-results";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import { getTeamById } from "@/lib/teamIdentity";
 import type { GroupStandings, StandingRow } from "@/types/standing";
@@ -594,6 +598,31 @@ function resolveKnockoutParticipantTeamId(
   return baseId;
 }
 
+function resolvePenaltyShootoutWinner(
+  fixture: EffectiveFixture,
+  homeId: TeamId,
+  awayId: TeamId,
+): TeamId | null {
+  if (
+    typeof fixture.penaltiesHome === "number" &&
+    typeof fixture.penaltiesAway === "number" &&
+    fixture.penaltiesHome !== fixture.penaltiesAway
+  ) {
+    return fixture.penaltiesHome > fixture.penaltiesAway ? homeId : awayId;
+  }
+
+  const confirmed = getConfirmedKnockoutResult(fixture.matchNumber);
+  if (
+    confirmed?.penaltiesHome !== undefined &&
+    confirmed.penaltiesAway !== undefined &&
+    confirmed.penaltiesHome !== confirmed.penaltiesAway
+  ) {
+    return confirmed.penaltiesHome > confirmed.penaltiesAway ? homeId : awayId;
+  }
+
+  return null;
+}
+
 /** Winner of a completed knockout fixture by official match number. */
 export function resolveKnockoutMatchWinner(
   matchNumber: number,
@@ -608,7 +637,8 @@ export function resolveKnockoutMatchWinner(
 
   const score = getFixtureScore(fixture);
   if (!score) {
-    return null;
+    const confirmedWinner = getConfirmedKnockoutWinner(matchNumber);
+    return confirmedWinner ?? null;
   }
 
   const homeId = resolveKnockoutParticipantTeamId(fixture, "home");
@@ -621,7 +651,12 @@ export function resolveKnockoutMatchWinner(
     return awayId;
   }
 
-  return null;
+  const penaltyWinner = resolvePenaltyShootoutWinner(fixture, homeId, awayId);
+  if (penaltyWinner) {
+    return penaltyWinner;
+  }
+
+  return getConfirmedKnockoutWinner(matchNumber) ?? null;
 }
 
 function resolveKnockoutFeedSlot(

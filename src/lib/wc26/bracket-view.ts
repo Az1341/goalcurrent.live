@@ -1,4 +1,4 @@
-import { isKnockoutPlaceholderTeam } from "@/data/wc26";
+import { isKnockoutPlaceholderTeam, getVenueById } from "@/data/wc26";
 import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
@@ -16,6 +16,7 @@ import type {
   ResolvedBracketSide,
 } from "@/lib/wc26-standings";
 import { findFixtureIdByMatchNumber } from "@/lib/wc26-fixture-match";
+import { getConfirmedPenaltyShootout } from "@/lib/wc26/knockout-confirmed-results";
 import type { VenueId } from "@/types/venue";
 
 export type BracketRoundKey =
@@ -46,11 +47,13 @@ export type BracketMatchCardView = {
   readonly home: BracketTeamSlotView;
   readonly away: BracketTeamSlotView;
   readonly score: { readonly home: number; readonly away: number } | null;
+  readonly penalties: { readonly home: number; readonly away: number } | null;
   readonly status: BracketMatchStatus;
   readonly displayStatus: BracketDisplayStatus;
   readonly elapsed: number | null;
   readonly kickoffUtc: string | null;
   readonly venueId: VenueId | null;
+  readonly venueLabel: string | null;
   readonly isFinal: boolean;
   readonly isThirdPlace: boolean;
 };
@@ -189,6 +192,20 @@ function scoreForMatch(
   return parseScoreString(match.score);
 }
 
+function penaltiesForMatch(
+  fixture: EffectiveFixture | undefined,
+  matchNumber: number,
+): { home: number; away: number } | null {
+  if (
+    fixture &&
+    typeof fixture.penaltiesHome === "number" &&
+    typeof fixture.penaltiesAway === "number"
+  ) {
+    return { home: fixture.penaltiesHome, away: fixture.penaltiesAway };
+  }
+  return getConfirmedPenaltyShootout(matchNumber);
+}
+
 function mapSide(
   side: ResolvedBracketSide,
   winnerTeamId: string | null,
@@ -196,6 +213,18 @@ function mapSide(
   participantSide: "home" | "away",
   fixtures: readonly EffectiveFixture[],
 ): BracketTeamSlotView {
+  const standingsTeamId =
+    side.teamId && !isKnockoutPlaceholderTeam(side.teamId) ? side.teamId : null;
+
+  if (standingsTeamId) {
+    return {
+      teamId: standingsTeamId,
+      label: side.label.replace(/ ✓$/, ""),
+      pending: false,
+      isWinner: Boolean(winnerTeamId && winnerTeamId === standingsTeamId),
+    };
+  }
+
   if (fixture) {
     const resolved = resolveFixtureParticipant(fixture, participantSide, fixtures);
     const teamId = isKnockoutPlaceholderTeam(resolved.teamId)
@@ -237,6 +266,8 @@ export function mapResolvedMatchToCardView(
   const roundKey = roundKeyFromLabel(match.round);
   const status = resolveMatchStatus(fixture);
   const displayStatus = resolveBracketDisplayStatus(fixture);
+  const venueId = match.venueId ?? fixture?.venueId ?? null;
+  const venue = venueId ? getVenueById(venueId) : undefined;
 
   return {
     fixtureId,
@@ -246,11 +277,13 @@ export function mapResolvedMatchToCardView(
     home: mapSide(match.home, match.winnerTeamId, fixture, "home", fixtures),
     away: mapSide(match.away, match.winnerTeamId, fixture, "away", fixtures),
     score: scoreForMatch(match, fixture),
+    penalties: penaltiesForMatch(fixture, match.matchNumber),
     status,
     displayStatus,
     elapsed: fixture?.elapsed ?? null,
     kickoffUtc: fixture?.kickoffUtc ?? match.kickoffUtc,
-    venueId: match.venueId,
+    venueId,
+    venueLabel: venue ? `${venue.city}` : null,
     isFinal: roundKey === "final",
     isThirdPlace: roundKey === "third",
   };

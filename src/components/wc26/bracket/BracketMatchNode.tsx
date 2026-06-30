@@ -66,19 +66,19 @@ function StatusBadge({
 }) {
   if (match.displayStatus === "live") {
     return (
-      <div className={styles.statusLive}>
+      <span className={styles.statusLive}>
         <span className={styles.liveDot} aria-hidden="true" />
         <span>
           {liveLabel}
           {match.elapsed != null ? ` ${match.elapsed}'` : ""}
         </span>
-      </div>
+      </span>
     );
   }
   if (match.displayStatus === "ft") {
-    return <div className={styles.statusFt}>FT</div>;
+    return <span className={styles.statusFt}>FT</span>;
   }
-  return <div className={styles.statusForthcoming}>Forthcoming</div>;
+  return <span className={styles.statusForthcoming}>Forthcoming</span>;
 }
 
 function KickoffMeta({
@@ -91,7 +91,7 @@ function KickoffMeta({
   isSpecialRound: boolean;
 }) {
   if (!kickoffUtc) {
-    return !isSpecialRound ? <span>Match {matchNumber}</span> : null;
+    return null;
   }
 
   if (isSpecialRound) {
@@ -103,12 +103,9 @@ function KickoffMeta({
   }
 
   return (
-    <>
-      <span>Match {matchNumber}</span>
-      <time className={styles.cardKickoff} dateTime={kickoffUtc}>
-        <KickoffTime utcDate={kickoffUtc} />
-      </time>
-    </>
+    <time className={styles.cardKickoff} dateTime={kickoffUtc}>
+      <KickoffTime utcDate={kickoffUtc} />
+    </time>
   );
 }
 
@@ -121,6 +118,11 @@ export default function BracketMatchNode({
     match.displayStatus === "live" || match.displayStatus === "ft";
   const isLive = match.displayStatus === "live";
   const isSpecialRound = match.isFinal || match.isThirdPlace;
+  const showPenalties =
+    showScore &&
+    match.penalties &&
+    match.score &&
+    match.score.home === match.score.away;
 
   const cardClass = match.isFinal
     ? styles.cardFinal
@@ -139,11 +141,20 @@ export default function BracketMatchNode({
       ) : null}
 
       <div className={styles.cardHead}>
-        <KickoffMeta
-          kickoffUtc={match.kickoffUtc}
-          matchNumber={match.matchNumber}
-          isSpecialRound={isSpecialRound}
-        />
+        <div className={styles.cardMetaLeft}>
+          <span className={styles.matchNumber}>M{match.matchNumber}</span>
+          {match.venueLabel ? (
+            <span className={styles.venueLabel}>{match.venueLabel}</span>
+          ) : null}
+        </div>
+        <div className={styles.cardMetaRight}>
+          <StatusBadge match={match} liveLabel={liveLabel} />
+          <KickoffMeta
+            kickoffUtc={match.kickoffUtc}
+            matchNumber={match.matchNumber}
+            isSpecialRound={isSpecialRound}
+          />
+        </div>
       </div>
 
       <TeamRow
@@ -159,7 +170,11 @@ export default function BracketMatchNode({
         live={isLive}
       />
 
-      <StatusBadge match={match} liveLabel={liveLabel} />
+      {showPenalties ? (
+        <p className={styles.penaltiesLine}>
+          Pens {match.penalties!.home}–{match.penalties!.away}
+        </p>
+      ) : null}
 
       {match.fixtureId ? (
         <Link href={matchHref(match.fixtureId)} className={styles.matchLink}>

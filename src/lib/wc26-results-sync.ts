@@ -82,6 +82,8 @@ function overlayEntryFromApiMatch(match: Wc26ApiMatch): FixtureOverlayEntry {
       ...entry,
       homeScore: match.homeScore,
       awayScore: match.awayScore,
+      ...(match.penaltiesHome != null ? { penaltiesHome: match.penaltiesHome } : {}),
+      ...(match.penaltiesAway != null ? { penaltiesAway: match.penaltiesAway } : {}),
     };
   }
 

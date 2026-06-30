@@ -15,6 +15,7 @@ import {
 } from "@/lib/wc26-fixture-match";
 import { normalizeWc26MatchStatus } from "@/lib/wc26-match-status";
 import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
+import { applyConfirmedKnockoutResults } from "@/lib/wc26/knockout-confirmed-results";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
 import type { FixtureStatus } from "@/types/fixture";
@@ -36,6 +37,12 @@ type ApiFootballFixture = {
   goals: {
     home: number | null;
     away: number | null;
+  };
+  score?: {
+    penalty?: {
+      home: number | null;
+      away: number | null;
+    };
   };
 };
 
@@ -82,7 +89,7 @@ function applyOverlayEntries(
   entries: readonly Wc26ApiMatch[],
 ): readonly EffectiveFixture[] {
   if (entries.length === 0) {
-    return WC26_FIXTURES;
+    return applyConfirmedKnockoutResults(WC26_FIXTURES);
   }
 
   const overlay = new Map<string, Wc26ApiMatch>();
@@ -90,7 +97,8 @@ function applyOverlayEntries(
     overlay.set(entry.fixtureId, entry);
   }
 
-  return WC26_FIXTURES.map((fixture) => {
+  return applyConfirmedKnockoutResults(
+    WC26_FIXTURES.map((fixture) => {
     const entry = overlay.get(fixture.id);
     if (!entry) {
       return fixture;
@@ -105,8 +113,11 @@ function applyOverlayEntries(
       apiFixtureId: entry.apiFixtureId,
       overlayHomeTeamId: entry.homeTeamId,
       overlayAwayTeamId: entry.awayTeamId,
+      penaltiesHome: entry.penaltiesHome,
+      penaltiesAway: entry.penaltiesAway,
     };
-  });
+  }),
+  );
 }
 
 function orientScoresForLocalFixture(
@@ -205,6 +216,12 @@ function normalizeApiFixture(
     awayScore,
     kickoffUtc: raw.fixture.date,
     apiFixtureId: raw.fixture.id,
+    ...(raw.score?.penalty?.home != null && raw.score?.penalty?.away != null
+      ? {
+          penaltiesHome: raw.score.penalty.home,
+          penaltiesAway: raw.score.penalty.away,
+        }
+      : {}),
   };
 
   if (confirmed) {

@@ -34,7 +34,7 @@
 
 .bracketGrid {
   display: grid;
-  column-gap: 10px;
+  column-gap: 12px;
   position: relative;
   z-index: 1;
   width: max-content;
@@ -76,9 +76,9 @@
 
 .connectors {
   position: absolute;
-  inset: 26px 0 0;
+  inset: 28px 0 0;
   width: 100%;
-  height: calc(100% - 26px);
+  height: calc(100% - 28px);
   pointer-events: none;
   z-index: 0;
 }
@@ -117,11 +117,37 @@
 .cardHead {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 8px;
   margin-bottom: 8px;
   font-size: 0.6875rem;
   color: #888888;
+}
+
+.cardMetaLeft,
+.cardMetaRight {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cardMetaRight {
+  align-items: flex-end;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.matchNumber {
+  font-weight: 600;
+  color: #666666;
+}
+
+.venueLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .cardKickoff,
@@ -207,13 +233,18 @@
 .statusLive,
 .statusFt,
 .statusForthcoming {
-  margin-top: 8px;
-  padding-top: 6px;
-  border-top: 1px solid #f0f0f0;
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.penaltiesLine {
+  margin: 6px 0 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #666666;
+  text-align: center;
 }
 
 .statusLive {

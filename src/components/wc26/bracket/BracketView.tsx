@@ -23,11 +23,11 @@ type ConnectorLine = {
   y2: number;
 };
 
-const COLUMN_WIDTH = 132;
-const COLUMN_GAP = 10;
-const CENTER_COLUMN_WIDTH = 148;
-const ROW_HEIGHT = 68;
-const HEADER_OFFSET = 26;
+const COLUMN_WIDTH = 168;
+const COLUMN_GAP = 12;
+const CENTER_COLUMN_WIDTH = 176;
+const ROW_HEIGHT = 108;
+const HEADER_OFFSET = 28;
 
 const BRACKET_GRID_COLUMNS = `repeat(4, ${COLUMN_WIDTH}px) ${CENTER_COLUMN_WIDTH}px repeat(4, ${COLUMN_WIDTH}px)`;
 
@@ -218,7 +218,7 @@ export function BracketViewSkeleton() {
           className={styles.skeletonGrid}
           style={{
             gridTemplateColumns: BRACKET_GRID_COLUMNS,
-            gridTemplateRows: `26px repeat(16, ${ROW_HEIGHT}px)`,
+            gridTemplateRows: `28px repeat(16, ${ROW_HEIGHT}px)`,
           }}
         >
           {Array.from({ length: 9 }, (_, index) => (

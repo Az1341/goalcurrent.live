@@ -1,4 +1,5 @@
 import { WC26_FIXTURES } from "@/data/wc26";
+import { applyConfirmedKnockoutResults } from "@/lib/wc26/knockout-confirmed-results";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import type { Fixture, FixtureStatus } from "@/types/fixture";
 import type { FixtureOverlayEntry } from "@/types/fixture-overlay";
@@ -15,6 +16,8 @@ export type EffectiveFixture = Fixture & {
   /** API-synced participants — used instead of bracket labels when present. */
   readonly overlayHomeTeamId?: TeamId;
   readonly overlayAwayTeamId?: TeamId;
+  readonly penaltiesHome?: number;
+  readonly penaltiesAway?: number;
 };
 
 type OverlayState = Record<string, FixtureOverlayEntry>;
@@ -119,11 +122,10 @@ export function getFixtureOverlaySnapshot(): Readonly<OverlayState> {
 
 /** WC26 fixtures with runtime overlay applied — status and optional scores. */
 export function getEffectiveFixtures(): readonly EffectiveFixture[] {
-  if (Object.keys(overlay).length === 0) {
-    return WC26_FIXTURES;
-  }
-
-  return WC26_FIXTURES.map((fixture) => {
+  const merged =
+    Object.keys(overlay).length === 0
+      ? WC26_FIXTURES
+      : WC26_FIXTURES.map((fixture) => {
     const entry = overlay[fixture.id];
     if (!entry) {
       return fixture;
@@ -143,8 +145,12 @@ export function getEffectiveFixtures(): readonly EffectiveFixture[] {
         ? { overlayAwayTeamId: entry.awayTeamId }
         : {}),
       ...(entry.kickoffUtc !== undefined ? { kickoffUtc: entry.kickoffUtc } : {}),
+      ...(entry.penaltiesHome !== undefined ? { penaltiesHome: entry.penaltiesHome } : {}),
+      ...(entry.penaltiesAway !== undefined ? { penaltiesAway: entry.penaltiesAway } : {}),
     };
   });
+
+  return applyConfirmedKnockoutResults(merged);
 }
 
 export function getFixtureScore(
