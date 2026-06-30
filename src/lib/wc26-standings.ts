@@ -19,7 +19,7 @@ import {
   isWc26GroupStageComplete,
   WC26_FINAL_GROUP_STANDINGS,
 } from "@/lib/wc26-final-standings";
-import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
+import { getConfirmedKnockoutPairingByFixtureId, getConfirmedKnockoutPairingByMatchNumber } from "@/lib/wc26/knockout-confirmed-pairings";
 import {
   getConfirmedKnockoutResult,
   getConfirmedKnockoutWinner,
@@ -515,6 +515,14 @@ function resolveBracketSlot(
   };
 }
 
+function sideFromConfirmedTeam(teamId: TeamId): ResolvedBracketSide {
+  return {
+    teamId,
+    label: teamDisplayName(teamId),
+    pending: false,
+  };
+}
+
 export function resolveBracketMatch(
   template: BracketMatchTemplate,
   fixtures: readonly EffectiveFixture[],
@@ -522,18 +530,25 @@ export function resolveBracketMatch(
     fixtures,
   ),
 ): ResolvedBracketMatch {
-  const home = resolveBracketSlot(
-    template.home,
-    fixtures,
-    thirdPlaceMap,
-    `${template.matchNumber}-home`,
+  const confirmedPairing = getConfirmedKnockoutPairingByMatchNumber(
+    template.matchNumber,
   );
-  const away = resolveBracketSlot(
-    template.away,
-    fixtures,
-    thirdPlaceMap,
-    `${template.matchNumber}-away`,
-  );
+  const home = confirmedPairing
+    ? sideFromConfirmedTeam(confirmedPairing.homeTeamId)
+    : resolveBracketSlot(
+        template.home,
+        fixtures,
+        thirdPlaceMap,
+        `${template.matchNumber}-home`,
+      );
+  const away = confirmedPairing
+    ? sideFromConfirmedTeam(confirmedPairing.awayTeamId)
+    : resolveBracketSlot(
+        template.away,
+        fixtures,
+        thirdPlaceMap,
+        `${template.matchNumber}-away`,
+      );
   const winnerTeamId = resolveKnockoutMatchWinner(template.matchNumber, fixtures);
   const score = formatKnockoutMatchScore(template.matchNumber, fixtures);
   const schedule = resolveBracketMatchSchedule(template.matchNumber, fixtures);

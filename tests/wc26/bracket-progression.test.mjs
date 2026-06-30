@@ -56,6 +56,12 @@ test("bracket layout uses wider columns and row height", () => {
   assert.match(raw, /ROW_HEIGHT = 108/);
 });
 
+test("resolveBracketMatch uses confirmed pairings for known R32 slots", () => {
+  const raw = readFileSync(join(root, "src/lib/wc26-standings.ts"), "utf8");
+  assert.match(raw, /getConfirmedKnockoutPairingByMatchNumber/);
+  assert.match(raw, /sideFromConfirmedTeam/);
+});
+
 test("API football maps penalty shootout scores into overlay", () => {
   const raw = readFileSync(
     join(root, "src/lib/server/wc26-api-football.ts"),
