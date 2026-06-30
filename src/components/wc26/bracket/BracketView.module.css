@@ -1,3 +1,23 @@
+.fitStage {
+  width: 100%;
+}
+
+.fitInner {
+  width: 100%;
+  overflow: hidden;
+}
+
+.fitScaled {
+  transform-origin: top center;
+}
+
+.scrollHint {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  color: #888888;
+  text-align: center;
+}
+
 .scrollWrap {
   overflow-x: auto;
   overflow-y: hidden;
@@ -14,7 +34,7 @@
 
 .bracketGrid {
   display: grid;
-  column-gap: 24px;
+  column-gap: 10px;
   position: relative;
   z-index: 1;
   width: max-content;
@@ -56,9 +76,9 @@
 
 .connectors {
   position: absolute;
-  inset: 28px 0 0;
+  inset: 26px 0 0;
   width: 100%;
-  height: calc(100% - 28px);
+  height: calc(100% - 26px);
   pointer-events: none;
   z-index: 0;
 }
@@ -251,7 +271,7 @@
 
 .skeletonGrid {
   display: grid;
-  column-gap: 24px;
+  column-gap: 10px;
   width: max-content;
   min-width: 100%;
 }

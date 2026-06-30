@@ -7,6 +7,7 @@ import type {
   BracketPositionedMatch,
 } from "@/lib/wc26/bracket-view";
 import BracketMatchNode from "./BracketMatchNode";
+import BracketFitViewport from "./BracketFitViewport";
 import styles from "./BracketView.module.css";
 
 type BracketViewProps = {
@@ -22,13 +23,13 @@ type ConnectorLine = {
   y2: number;
 };
 
-const COLUMN_WIDTH = 172;
-const COLUMN_GAP = 24;
-const CENTER_COLUMN_WIDTH = 196;
-const ROW_HEIGHT = 78;
-const HEADER_OFFSET = 28;
+const COLUMN_WIDTH = 132;
+const COLUMN_GAP = 10;
+const CENTER_COLUMN_WIDTH = 148;
+const ROW_HEIGHT = 68;
+const HEADER_OFFSET = 26;
 
-const BRACKET_GRID_COLUMNS = `repeat(4, minmax(${COLUMN_WIDTH}px, 1fr)) minmax(${CENTER_COLUMN_WIDTH}px, 1.1fr) repeat(4, minmax(${COLUMN_WIDTH}px, 1fr))`;
+const BRACKET_GRID_COLUMNS = `repeat(4, ${COLUMN_WIDTH}px) ${CENTER_COLUMN_WIDTH}px repeat(4, ${COLUMN_WIDTH}px)`;
 
 function bracketWidth(): number {
   return (
@@ -52,6 +53,10 @@ function columnEdgeX(columnIndex: number, side: "left" | "right"): number {
     4 * (COLUMN_WIDTH + COLUMN_GAP) + CENTER_COLUMN_WIDTH + COLUMN_GAP;
   const colLeft = leftWidth + (columnIndex - 5) * (COLUMN_WIDTH + COLUMN_GAP);
   return side === "left" ? colLeft : colLeft + COLUMN_WIDTH;
+}
+
+function bracketHeight(rowCount: number): number {
+  return HEADER_OFFSET + rowCount * ROW_HEIGHT;
 }
 
 function rowCenterY(gridRow: number): number {
@@ -203,14 +208,17 @@ export function BracketViewSkeleton() {
     { col: 9, row: 14 },
   ];
 
+  const width = bracketWidth();
+  const height = bracketHeight(16);
+
   return (
-    <div className={styles.scrollWrap}>
+    <BracketFitViewport naturalWidth={width} naturalHeight={height}>
       <div className={styles.skeletonShell} aria-hidden="true">
         <div
           className={styles.skeletonGrid}
           style={{
             gridTemplateColumns: BRACKET_GRID_COLUMNS,
-            gridTemplateRows: `28px repeat(16, ${ROW_HEIGHT}px)`,
+            gridTemplateRows: `26px repeat(16, ${ROW_HEIGHT}px)`,
           }}
         >
           {Array.from({ length: 9 }, (_, index) => (
@@ -229,7 +237,7 @@ export function BracketViewSkeleton() {
           ))}
         </div>
       </div>
-    </div>
+    </BracketFitViewport>
   );
 }
 
@@ -244,55 +252,56 @@ export default function BracketView({
     setReady(true);
   }, []);
 
+  const width = bracketWidth();
+  const height = bracketHeight(view.rowCount);
+
   return (
-    <div className={styles.scrollWrap}>
-      <div className={styles.bracketShell} style={{ minWidth: bracketWidth() }}>
-        {ready ? <BracketConnectors view={view} /> : null}
-        <div
-          className={styles.bracketGrid}
-          style={{
-            gridTemplateColumns: BRACKET_GRID_COLUMNS,
-            gridTemplateRows: `28px repeat(${view.rowCount}, ${ROW_HEIGHT}px)`,
-          }}
-        >
-          {view.columns.map((column) => (
-            <div
-              key={`${column.side}-${column.roundKey}-${column.columnIndex}`}
-              className={styles.column}
+    <BracketFitViewport naturalWidth={width} naturalHeight={height}>
+      {ready ? <BracketConnectors view={view} /> : null}
+      <div
+        className={styles.bracketGrid}
+        style={{
+          gridTemplateColumns: BRACKET_GRID_COLUMNS,
+          gridTemplateRows: `26px repeat(${view.rowCount}, ${ROW_HEIGHT}px)`,
+        }}
+      >
+        {view.columns.map((column) => (
+          <div
+            key={`${column.side}-${column.roundKey}-${column.columnIndex}`}
+            className={styles.column}
+          >
+            <h2
+              className={columnLabelClass(column)}
+              style={{
+                gridColumn: column.columnIndex + 1,
+                gridRow: 1,
+              }}
             >
-              <h2
-                className={columnLabelClass(column)}
+              {column.roundLabel}
+            </h2>
+            {column.matches.map((match) => (
+              <div
+                key={match.matchNumber}
+                className={
+                  match.isFinal || match.isThirdPlace
+                    ? styles.matchSlotFinal
+                    : styles.matchSlot
+                }
                 style={{
                   gridColumn: column.columnIndex + 1,
-                  gridRow: 1,
+                  gridRow: match.gridRow + 1,
                 }}
               >
-                {column.roundLabel}
-              </h2>
-              {column.matches.map((match) => (
-                <div
-                  key={match.matchNumber}
-                  className={
-                    match.isFinal || match.isThirdPlace
-                      ? styles.matchSlotFinal
-                      : styles.matchSlot
-                  }
-                  style={{
-                    gridColumn: column.columnIndex + 1,
-                    gridRow: match.gridRow + 1,
-                  }}
-                >
-                  <BracketMatchNode
-                    match={match}
-                    viewMatchCenterLabel={viewMatchCenterLabel}
-                    liveLabel={liveLabel}
-                  />
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
+                <BracketMatchNode
+                  match={match}
+                  viewMatchCenterLabel={viewMatchCenterLabel}
+                  liveLabel={liveLabel}
+                />
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
-    </div>
+    </BracketFitViewport>
   );
 }
