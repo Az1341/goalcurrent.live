@@ -4,9 +4,9 @@ import type { Wc26GroupId } from "@/types/group";
 import { WC26_GROUP_IDS } from "@/types/group";
 import { getTeamById, getVenueById } from "@/data/wc26";
 import {
-  formatVisitorKickoffTime,
-  formatVisitorTimezone as formatVisitorTimezoneFromFormat,
-} from "@/lib/wc26-format";
+  formatKickoffLocalTime,
+  formatDeviceTimezoneShort,
+} from "@/lib/formatKickoffLocal";
 import {
   formatFixtureStatusLabel,
   isLiveMatchStatus,
@@ -180,11 +180,11 @@ export function fixtureCalendarDateKey(fixture: Fixture): string {
 }
 
 export function formatLocalKickoff(iso: string): string {
-  return formatVisitorKickoffTime(iso);
+  return formatKickoffLocalTime(iso);
 }
 
 export function formatVisitorTimezone(): string {
-  return formatVisitorTimezoneFromFormat();
+  return formatDeviceTimezoneShort();
 }
 
 const calendarDateFormatter = new Intl.DateTimeFormat("en-GB", {

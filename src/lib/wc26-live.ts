@@ -15,9 +15,9 @@ import {
   teamDisplayName,
 } from "@/lib/wc26-standings";
 import {
-  formatVisitorKickoff,
-  formatVisitorKickoffTime,
-} from "@/lib/wc26-format";
+  formatKickoffLocal,
+  formatKickoffLocalTime,
+} from "@/lib/formatKickoffLocal";
 import { localDateKey } from "@/lib/wc26-fixtures-page";
 import {
   findLiveSimultaneousFinalRoundGroup,
@@ -207,7 +207,7 @@ function homepageStatusLabel(fixture: EffectiveFixture, matchClass: HomepageMatc
   if (matchClass === "ft") {
     return formatFixtureStatusLabel(fixture.status);
   }
-  return formatVisitorKickoffTime(fixture.kickoffUtc);
+  return formatKickoffLocalTime(fixture.kickoffUtc);
 }
 
 export type ResolvedFixtureParticipant = {
@@ -348,7 +348,7 @@ export function buildHomepageMatchView(
     statusLabel: homepageStatusLabel(fixture, matchClass),
     score: getFixtureScore(fixture),
     kickoffUtc: fixture.kickoffUtc,
-    kickoffLabel: formatVisitorKickoff(fixture.kickoffUtc),
+    kickoffLabel: formatKickoffLocal(fixture.kickoffUtc),
     venueLabel: venue ? `${venue.name}, ${venue.city}` : "",
     roundLabel,
     elapsed: fixture.elapsed ?? null,

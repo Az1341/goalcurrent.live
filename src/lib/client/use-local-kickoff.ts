@@ -2,50 +2,26 @@
 
 import { useSyncExternalStore } from "react";
 import {
+  formatDeviceKickoffDate as formatDeviceKickoffDateCanonical,
+  formatDeviceKickoffLabel as formatDeviceKickoffLabelCanonical,
+  formatDeviceKickoffTime as formatDeviceKickoffTimeCanonical,
+  formatDeviceTimezoneShort,
   formatKickoffLocal,
   formatKickoffLocalTime,
 } from "@/lib/formatKickoffLocal";
-import {
-  formatVisitorKickoffDate,
-} from "@/lib/wc26-format";
+import { formatVisitorKickoffDate } from "@/lib/wc26-format";
 
-/** Device-local HH:MM (24h) using the visitor timezone. */
-export function formatDeviceKickoffTime(iso: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(new Date(iso));
-}
-
-/** Device-local kickoff label for featured meta rows. */
-export function formatDeviceKickoffLabel(iso: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(new Date(iso));
-}
-
-function deviceTimezoneLabel(): string {
-  try {
-    const parts = new Intl.DateTimeFormat(undefined, {
-      timeZoneName: "short",
-    }).formatToParts(new Date());
-    return parts.find((part) => part.type === "timeZoneName")?.value ?? "local";
-  } catch {
-    return "local";
-  }
-}
+export {
+  formatKickoffLocal,
+  formatKickoffLocalTime,
+  formatDeviceKickoffDateCanonical as formatDeviceKickoffDate,
+  formatDeviceKickoffLabelCanonical as formatDeviceKickoffLabel,
+  formatDeviceKickoffTimeCanonical as formatDeviceKickoffTime,
+};
 
 const noopSubscribe = () => () => {};
 
-/**
- * Hydration-safe kickoff time: SSR uses empty snapshot, client uses device locale.
- */
+/** Hydration-safe kickoff time: SSR uses empty snapshot, client uses device locale. */
 export function useLocalizedKickoffTime(iso: string): string {
   return useSyncExternalStore(
     noopSubscribe,
@@ -54,17 +30,7 @@ export function useLocalizedKickoffTime(iso: string): string {
   );
 }
 
-/** Device-local short date for fixture meta rows. */
-export function formatDeviceKickoffDate(iso: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(iso));
-}
-
-/** Same pattern for full kickoff labels (date + time). */
+/** Same pattern for full kickoff labels (date + time + TZ). */
 export function useLocalizedKickoffLabel(iso: string): string {
   return useSyncExternalStore(
     noopSubscribe,
@@ -77,16 +43,16 @@ export function useLocalizedKickoffLabel(iso: string): string {
 export function useLocalizedKickoffDate(iso: string): string {
   return useSyncExternalStore(
     noopSubscribe,
-    () => formatDeviceKickoffDate(iso),
+    () => formatDeviceKickoffDateCanonical(iso),
     () => formatVisitorKickoffDate(iso),
   );
 }
 
-/** Short timezone label for fixture cards (e.g. BST, PDT). */
+/** Short timezone label for fixture cards (e.g. BST, CET). */
 export function useDeviceTimezoneLabel(): string {
   return useSyncExternalStore(
     noopSubscribe,
-    deviceTimezoneLabel,
+    () => formatDeviceTimezoneShort(),
     () => "",
   );
 }

@@ -1,5 +1,12 @@
 import { getVenueById } from "@/data/wc26";
-import { formatVisitorKickoffTime } from "@/lib/wc26-format";
+function formatUtcKickoffTime(kickoffUtc: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "UTC",
+  }).format(new Date(kickoffUtc));
+}
 
 const BST_TIMEZONE = "Europe/London";
 
@@ -93,7 +100,7 @@ export function formatVenueKickoffTime(
       timeZone,
     }).format(new Date(kickoffUtc));
   } catch {
-    return formatVisitorKickoffTime(kickoffUtc);
+    return formatUtcKickoffTime(kickoffUtc);
   }
 }
 
@@ -107,7 +114,7 @@ export function formatBstKickoffTime(kickoffUtc: string): string {
       timeZone: BST_TIMEZONE,
     }).format(new Date(kickoffUtc));
   } catch {
-    return formatVisitorKickoffTime(kickoffUtc);
+    return formatUtcKickoffTime(kickoffUtc);
   }
 }
 

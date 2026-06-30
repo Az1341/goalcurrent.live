@@ -19,11 +19,8 @@ import {
   resolveFixtureParticipant,
 } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import {
-  formatVenueKickoffLabel,
-  formatVenueKickoffTime,
-  formatVenueTimezoneAbbr,
-} from "@/lib/wc26/time-converter";
+import { useLocalizedKickoffTime, useDeviceTimezoneLabel } from "@/lib/client/use-local-kickoff";
+import { formatVenueKickoffLabel } from "@/lib/wc26/time-converter";
 import { useMatchDetail } from "@/lib/use-match-detail";
 import { matchHref } from "@/lib/wc26-match";
 import styles from "./wc26.module.css";
@@ -43,8 +40,8 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
   const score = getFixtureScore(fixture);
   const { detail, loading } = useMatchDetail(fixture.id, isLive);
   const useDemoLineup = isRsaKorDemoFixture(fixture.matchNumber);
-  const venueTime = formatVenueKickoffTime(fixture.kickoffUtc, fixture.venueId);
-  const venueTz = formatVenueTimezoneAbbr(fixture.venueId);
+  const kickoffTime = useLocalizedKickoffTime(fixture.kickoffUtc);
+  const timezoneLabel = useDeviceTimezoneLabel();
   const venueLabel = formatVenueKickoffLabel(fixture.kickoffUtc, fixture.venueId);
 
   const centreScore =
@@ -76,7 +73,7 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
           {isLive ? <span className={styles.finalRoundLiveDot} aria-hidden="true" /> : null}
         </span>
         <span className={styles.finalRoundCardTime}>
-          {venueTime} {venueTz}
+          {kickoffTime} {timezoneLabel}
         </span>
       </div>
 
@@ -93,7 +90,7 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
             <span className={styles.finalRoundVs}>vs</span>
           )}
           <span className={styles.finalRoundStatus}>
-            {isUpcoming ? `${venueTime} ${venueTz}` : view.statusLabel}
+            {isUpcoming ? `${kickoffTime} ${timezoneLabel}` : view.statusLabel}
           </span>
         </div>
 

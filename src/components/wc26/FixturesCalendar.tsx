@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
 import TeamFlag from "@/components/TeamFlag";
 import TeamLink from "@/components/wc26/TeamLink";
@@ -49,6 +49,7 @@ import TvRegionSelect from "@/components/wc26/TvRegionSelect";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import { useIsClient } from "@/lib/use-is-client";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
+import { usePathname } from "@/i18n/navigation";
 import type { Wc26GroupId } from "@/types/group";
 import { WC26_GROUP_IDS } from "@/types/group";
 import Wc26GamesProgress from "./Wc26GamesProgress";
@@ -178,21 +179,17 @@ function FixtureMatchCard({
             </>
           ) : (
             <>
-              {isKnockout ? (
-                <>
-                  <div className={styles.fixCentreKickoff}>
-                    {stadiumKickoff} {stadiumTz}
-                  </div>
-                  <div className={styles.fixCentreNote}>
-                    {bstKickoff} BST · stadium local
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className={styles.fixCentreKickoff}>{kickoffLocal}</div>
-                  <div className={styles.fixCentreNote}>{timezoneLabel}</div>
-                </>
-              )}
+              <div className={styles.fixCentreKickoff}>{kickoffLocal}</div>
+              <div className={styles.fixCentreNote}>
+                {timezoneLabel}
+                {isKnockout && stadiumKickoff ? (
+                  <>
+                    {" "}
+                    · {stadiumKickoff} {stadiumTz} stadium
+                    {bstKickoff ? ` · ${bstKickoff} BST UK` : ""}
+                  </>
+                ) : null}
+              </div>
             </>
           )}
         </div>
@@ -220,6 +217,26 @@ function FixtureMatchCard({
   );
 }
 
+const CALENDAR_SCROLL_MAX_RAF_RETRIES = 4;
+
+function centerCalendarDay(
+  container: HTMLDivElement,
+  day: HTMLButtonElement,
+  behavior: ScrollBehavior,
+): boolean {
+  if (container.clientWidth <= 0 || day.offsetWidth <= 0) {
+    return false;
+  }
+  const dayCenter = day.offsetLeft + day.offsetWidth / 2;
+  const target = dayCenter - container.clientWidth / 2;
+  const maxScroll = Math.max(0, container.scrollWidth - container.clientWidth);
+  container.scrollTo({
+    left: Math.min(maxScroll, Math.max(0, target)),
+    behavior,
+  });
+  return true;
+}
+
 export default function FixturesCalendar() {
   const timezoneLabel = useDeviceTimezoneLabel();
   const [fixtures, setFixtures] = useState<readonly EffectiveFixture[]>(() =>
@@ -231,33 +248,42 @@ export default function FixturesCalendar() {
   const [status, setStatus] = useState<FixturePageFilters["status"]>("");
   const { tvRegion, setTvRegion, ready: tvReady } = useWc26TvRegion();
   const clientReady = useIsClient();
-  const todayKey = useMemo(
-    () => (clientReady ? localDateKey(new Date().toISOString()) : ""),
-    [clientReady],
-  );
+  const pathname = usePathname();
+  const [todayKey, setTodayKey] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const syncStatus = useWc26SyncStatus();
   const calRowRef = useRef<HTMLDivElement>(null);
   const dayButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const initialScrollDone = useRef(false);
+  const activeDateKeyRef = useRef("");
 
   const scrollActiveDayIntoView = useCallback(
-    (dateKey: string, behavior: ScrollBehavior = "smooth") => {
+    (dateKey: string, behavior: ScrollBehavior = "smooth"): boolean => {
       const container = calRowRef.current;
       const day = dayButtonRefs.current.get(dateKey);
       if (!container || !day) {
-        return;
+        return false;
       }
-      const containerWidth = container.offsetWidth;
-      const dayOffset = day.offsetLeft + day.offsetWidth / 2;
-      const scrollPosition = dayOffset - containerWidth / 2;
-      container.scrollTo({
-        left: Math.max(0, scrollPosition),
-        behavior,
-      });
+      return centerCalendarDay(container, day, behavior);
     },
     [],
   );
+
+  useEffect(() => {
+    if (!clientReady) {
+      return;
+    }
+    const refreshTodayKey = () => {
+      setTodayKey(localDateKey(new Date().toISOString()));
+    };
+    refreshTodayKey();
+    window.addEventListener("visibilitychange", refreshTodayKey);
+    return () => window.removeEventListener("visibilitychange", refreshTodayKey);
+  }, [clientReady]);
+
+  useEffect(() => {
+    initialScrollDone.current = false;
+  }, [pathname]);
 
   useEffect(() => {
     if (clientReady && todayKey) {
@@ -306,17 +332,57 @@ export default function FixturesCalendar() {
     [fixtures, search, groupId, stage, status, activeDateKey],
   );
 
-  useEffect(() => {
+  activeDateKeyRef.current = activeDateKey;
+
+  useLayoutEffect(() => {
     if (!activeDateKey || !clientReady) {
       return;
     }
+
+    let cancelled = false;
     const behavior: ScrollBehavior = initialScrollDone.current ? "smooth" : "instant";
-    const frame = requestAnimationFrame(() => {
-      scrollActiveDayIntoView(activeDateKey, behavior);
-      initialScrollDone.current = true;
-    });
-    return () => cancelAnimationFrame(frame);
+    const dateKey = activeDateKey;
+
+    const attempt = (retriesLeft: number) => {
+      if (cancelled) {
+        return;
+      }
+      if (scrollActiveDayIntoView(dateKey, behavior)) {
+        initialScrollDone.current = true;
+        return;
+      }
+      if (retriesLeft > 0) {
+        requestAnimationFrame(() => attempt(retriesLeft - 1));
+      }
+    };
+
+    attempt(CALENDAR_SCROLL_MAX_RAF_RETRIES);
+
+    return () => {
+      cancelled = true;
+    };
   }, [activeDateKey, clientReady, calendarDays.length, scrollActiveDayIntoView]);
+
+  useEffect(() => {
+    const container = calRowRef.current;
+    if (!container || !clientReady) {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      const dateKey = activeDateKeyRef.current;
+      if (!dateKey) {
+        return;
+      }
+      const behavior: ScrollBehavior = initialScrollDone.current ? "smooth" : "instant";
+      if (scrollActiveDayIntoView(dateKey, behavior)) {
+        initialScrollDone.current = true;
+      }
+    });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [clientReady, scrollActiveDayIntoView]);
 
   return (
     <section aria-labelledby="fixtures-calendar-heading" className={styles.fixturesCalendar}>
@@ -447,7 +513,12 @@ export default function FixturesCalendar() {
                 aria-selected={isSelected}
                 aria-current={isToday ? "date" : undefined}
                 className={`${styles.fixCalDay} ${isSelected ? styles.fixCalDayActive : ""} ${isToday ? styles.fixCalDayToday : ""}`}
-                onClick={() => setSelectedDate(day.dateKey)}
+                onClick={() => {
+                  setSelectedDate(day.dateKey);
+                  requestAnimationFrame(() => {
+                    scrollActiveDayIntoView(day.dateKey, "smooth");
+                  });
+                }}
               >
                 <span className={styles.fixCalDow}>{day.dow}</span>
                 <span className={styles.fixCalNum}>{day.dayNum}</span>
