@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import NavLink from "@/components/nav/NavLink";
@@ -8,8 +9,11 @@ import {
   MOBILE_BOTTOM_TABS,
   isMobileBottomTabActive,
 } from "@/lib/nav";
-import MoreBottomSheet from "./MoreBottomSheet";
 import styles from "./BottomTabBar.module.css";
+
+const MoreBottomSheet = dynamic(() => import("./MoreBottomSheet"), {
+  ssr: false,
+});
 
 function HomeIcon() {
   return (
@@ -138,7 +142,9 @@ export default function BottomTabBar() {
         </button>
       </nav>
 
-      <MoreBottomSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      {moreOpen ? (
+        <MoreBottomSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      ) : null}
     </>
   );
 }

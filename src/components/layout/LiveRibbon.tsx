@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import TeamFlag from "@/components/TeamFlag";
@@ -12,14 +11,14 @@ import {
 import {
   formatTickerMatchTitle,
   formatTickerTeamName,
-  getRibbonVisibleLimit,
 } from "@/lib/wc26-ticker-names";
 import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import styles from "./live-ribbon.module.css";
 
 const FIXTURES_HREF = "/worldcup2026/fixtures";
-const MOBILE_MAX_WIDTH = 767;
+/** Max matches in the desktop marquee loop (matches widest breakpoint). */
+const DESKTOP_MARQUEE_LIMIT = 4;
 
 function formatScore(match: HomepageMatchView): string | null {
   if (!match.score) {
@@ -99,20 +98,6 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
   const t = useTranslations("layout.liveRibbon");
   const fixtures = useEffectiveFixtures();
   const allMatches = selectRibbonFixtures(fixtures);
-  const [isMobile, setIsMobile] = useState(false);
-  const [visibleLimit, setVisibleLimit] = useState(3);
-
-  useEffect(() => {
-    function syncLayout() {
-      const width = window.innerWidth;
-      setIsMobile(width <= MOBILE_MAX_WIDTH);
-      setVisibleLimit(getRibbonVisibleLimit(width));
-    }
-
-    syncLayout();
-    window.addEventListener("resize", syncLayout);
-    return () => window.removeEventListener("resize", syncLayout);
-  }, []);
 
   if (allMatches.length === 0) {
     return (
@@ -128,9 +113,9 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
   }
 
   const hasLive = allMatches.some((match) => match.matchClass === "live");
-  const desktopMatches = allMatches.slice(0, visibleLimit);
+  const desktopMatches = allMatches.slice(0, DESKTOP_MARQUEE_LIMIT);
   const desktopTrackMatches = [...desktopMatches, ...desktopMatches];
-  const hiddenCount = Math.max(0, allMatches.length - visibleLimit);
+  const hiddenCount = Math.max(0, allMatches.length - DESKTOP_MARQUEE_LIMIT);
 
   return (
     <div
@@ -142,24 +127,41 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
         {hasLive ? <span className={styles.liveDot} aria-hidden="true" /> : null}
         {hasLive ? t("liveNow") : t("latestResults")}
       </span>
-      <div className={styles.tickerScroll}>
+
+      <div className={styles.tickerScrollMobile}>
         <ul
-          className={`${styles.tickerTrack} ${styles.liveRibbonList}`}
+          className={`${styles.tickerTrack} ${styles.tickerTrackMobile} ${styles.liveRibbonList}`}
           aria-label={hasLive ? t("liveMatchesAria") : t("latestResultsAria")}
         >
-          {isMobile
-            ? allMatches.map((match) => (
-                <TickerMatchItem key={match.fixtureId} match={match} t={t} />
-              ))
-            : desktopTrackMatches.map((match, index) => (
-                <TickerMatchItem
-                  key={`${match.fixtureId}-loop-${index}`}
-                  match={match}
-                  t={t}
-                  keySuffix={`-loop-${index}`}
-                />
-              ))}
-          {!isMobile && hiddenCount > 0 ? (
+          {allMatches.map((match) => (
+            <TickerMatchItem key={match.fixtureId} match={match} t={t} />
+          ))}
+          <li className={styles.liveRibbonItem}>
+            <Link
+              href={FIXTURES_HREF}
+              className={styles.liveRibbonMore}
+              aria-label={t("viewAllFixturesAria")}
+            >
+              {t("allFixtures")}
+            </Link>
+          </li>
+        </ul>
+      </div>
+
+      <div className={styles.tickerScrollDesktop}>
+        <ul
+          className={`${styles.tickerTrack} ${styles.tickerTrackDesktop} ${styles.liveRibbonList}`}
+          aria-label={hasLive ? t("liveMatchesAria") : t("latestResultsAria")}
+        >
+          {desktopTrackMatches.map((match, index) => (
+            <TickerMatchItem
+              key={`${match.fixtureId}-loop-${index}`}
+              match={match}
+              t={t}
+              keySuffix={`-loop-${index}`}
+            />
+          ))}
+          {hiddenCount > 0 ? (
             <li className={styles.liveRibbonItem}>
               <Link
                 href={FIXTURES_HREF}
@@ -167,17 +169,6 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
                 aria-label={t("viewMoreMatchesAria", { count: hiddenCount })}
               >
                 {t("moreMatches", { count: hiddenCount })}
-              </Link>
-            </li>
-          ) : null}
-          {isMobile ? (
-            <li className={styles.liveRibbonItem}>
-              <Link
-                href={FIXTURES_HREF}
-                className={styles.liveRibbonMore}
-                aria-label={t("viewAllFixturesAria")}
-              >
-                {t("allFixtures")}
               </Link>
             </li>
           ) : null}

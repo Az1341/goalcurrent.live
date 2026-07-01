@@ -35,7 +35,7 @@ const robotoCondensed = Roboto_Condensed({
   display: "swap",
   variable: "--font-roboto-condensed",
   weight: ["400", "700"],
-  preload: true,
+  preload: false,
   adjustFontFallback: true,
 });
 

@@ -33,6 +33,7 @@ export default async function HomePage() {
         href={HOME_HERO_BG}
         as="image"
         fetchPriority="high"
+        media="(min-width: 768px)"
       />
       {featuredSelection.fixtures.map((fixture) => (
         <HomeFeaturedMatchJsonLd

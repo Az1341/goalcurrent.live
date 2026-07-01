@@ -46,10 +46,52 @@
   animation: gcPulse 1.4s infinite;
 }
 
-.tickerScroll {
+.tickerScrollMobile {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  cursor: grab;
+  white-space: nowrap;
+  touch-action: pan-x;
+}
+
+.tickerScrollMobile::-webkit-scrollbar {
+  display: none;
+}
+
+.tickerScrollMobile:active {
+  cursor: grabbing;
+}
+
+.tickerScrollDesktop {
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
+  display: none;
+}
+
+.tickerTrackMobile {
+  animation: none;
+  white-space: nowrap;
+  width: max-content;
+}
+
+.tickerTrackDesktop {
+  animation: tickerMarquee 42s linear infinite;
+}
+
+@keyframes tickerMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .tickerTrack {
@@ -61,16 +103,6 @@
   list-style: none;
   width: max-content;
   white-space: nowrap;
-  animation: tickerMarquee 42s linear infinite;
-}
-
-@keyframes tickerMarquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
 }
 
 .liveRibbonList {
@@ -174,33 +206,20 @@
 }
 
 @media (max-width: 767px) {
-  .tickerScroll {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    cursor: grab;
-    white-space: nowrap;
-    touch-action: pan-x;
-  }
-
-  .tickerScroll::-webkit-scrollbar {
+  .tickerScrollDesktop {
     display: none;
-  }
-
-  .tickerScroll:active {
-    cursor: grabbing;
-  }
-
-  .tickerTrack {
-    animation: none;
-    white-space: nowrap;
-    width: max-content;
   }
 }
 
 @media (min-width: 768px) {
+  .tickerScrollMobile {
+    display: none;
+  }
+
+  .tickerScrollDesktop {
+    display: block;
+  }
+
   .liveRibbon {
     gap: 16px;
     font-size: 0.875rem;
