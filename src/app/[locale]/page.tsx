@@ -4,7 +4,6 @@ export const revalidate = 0;
 import nextDynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
-import AutoRefresh from "@/components/AutoRefresh";
 import HomeFeaturedMatchJsonLd from "@/components/seo/HomeFeaturedMatchJsonLd";
 import { WC26_FIXTURES } from "@/data/wc26";
 import { HOME_HERO_BG } from "@/lib/critical-assets";
@@ -42,7 +41,6 @@ export default async function HomePage() {
           locale={locale}
         />
       ))}
-      <AutoRefresh />
       <HomeClient />
     </>
   );

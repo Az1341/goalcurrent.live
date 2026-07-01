@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -9,7 +10,6 @@ import {
 } from "@/lib/client/use-local-kickoff";
 import { useTournamentStats } from "@/lib/use-tournament-stats";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { useLiveScores } from "@/lib/client/useLiveScores";
 import {
   buildHomepageMatchView,
   isLiveMatchStatus,
@@ -28,12 +28,39 @@ import { SITE_NAME } from "@/lib/site-url";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import LiveRibbon from "@/components/layout/LiveRibbon";
-import HomeArticlesSection from "@/components/home/HomeArticlesSection";
 import HomeFavouritesStrip from "@/components/home/HomeFavouritesStrip";
-import HomeNewsSection from "@/components/home/HomeNewsSection";
-import HomePlSection from "@/components/home/HomePlSection";
-import HomeWc26StandingsPreview from "@/components/home/HomeWc26StandingsPreview";
 import styles from "@/app/[locale]/page.module.css";
+
+function SectionSkeleton({ tall = false }: { tall?: boolean }) {
+  return (
+    <div
+      className={`${styles.sectionSkeleton} ${
+        tall ? styles.sectionSkeletonTall : styles.sectionSkeletonMedium
+      }`}
+      aria-hidden="true"
+    />
+  );
+}
+
+const HomeWc26StandingsPreview = dynamic(
+  () => import("@/components/home/HomeWc26StandingsPreview"),
+  { ssr: false, loading: () => <SectionSkeleton tall /> },
+);
+
+const HomePlSection = dynamic(() => import("@/components/home/HomePlSection"), {
+  ssr: false,
+  loading: () => <SectionSkeleton tall />,
+});
+
+const HomeNewsSection = dynamic(() => import("@/components/home/HomeNewsSection"), {
+  ssr: false,
+  loading: () => <SectionSkeleton />,
+});
+
+const HomeArticlesSection = dynamic(
+  () => import("@/components/home/HomeArticlesSection"),
+  { ssr: false, loading: () => <SectionSkeleton /> },
+);
 
 const FEATURED_FLAG = 64;
 const LIST_FLAG = 22;
@@ -301,7 +328,6 @@ function ColumnCard({
 }
 
 export default function Home() {
-  const { data: liveScores, error: liveScoresError } = useLiveScores();
   const fixtures = useEffectiveFixtures();
   const fixtureById = new Map(fixtures.map((f) => [f.id, f]));
   const featuredSelection = selectFeaturedFixtures(fixtures);
@@ -322,7 +348,6 @@ export default function Home() {
   const { gamesPlayed, gamesLeft } = useTournamentStats();
 
   const t = useTranslations("home");
-  const matchDataLoading = !liveScores && !liveScoresError;
 
   return (
     <div className={styles.homeRoot} data-gc-shell>
@@ -340,9 +365,7 @@ export default function Home() {
           <h2 id="featured-match-heading" className={styles.sectionTitle} data-gc-text>
             {t("featuredMatch")}
           </h2>
-          {matchDataLoading ? (
-            <div>Loading...</div>
-          ) : featuredSelection.mode === "simultaneous" && featuredMatches.length >= 2 ? (
+          {featuredSelection.mode === "simultaneous" && featuredMatches.length >= 2 ? (
             <FeaturedSimultaneousDecider matches={featuredMatches} />
           ) : featured ? (
             <FeaturedMatchHero match={featured} />
@@ -360,10 +383,6 @@ export default function Home() {
         <AdSlot slot={ADSENSE_SLOTS.homeMid} className={styles.adUnit} />
 
         <div className={styles.threeCol}>
-          {matchDataLoading ? (
-            <div>Loading...</div>
-          ) : (
-            <>
           <ColumnCard
             title={t("liveNow")}
             footerHref="/live"
@@ -405,8 +424,6 @@ export default function Home() {
               fixtureById={fixtureById}
             />
           </ColumnCard>
-            </>
-          )}
         </div>
 
         <HomeWc26StandingsPreview />

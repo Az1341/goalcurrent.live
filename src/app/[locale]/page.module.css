@@ -108,13 +108,13 @@
 .homeBadge {
   display: inline-block;
   margin-top: 8px;
-  background: rgba(255,255,255,0.15);
-  color: #93c5fd;
+  background: rgba(15, 23, 42, 0.55);
+  color: #ffffff;
   font-weight: 700;
   font-size: 0.72rem;
   padding: 3px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.35);
 }
 
 /* ── Section spacing — tight ── */
@@ -123,7 +123,7 @@
 }
 
 .adUnit {
-  min-height: 0;
+  min-height: 120px;
   margin: 4px 0;
 }
 
@@ -346,7 +346,7 @@
 }
 .btnSecondary:hover { background: #f8fafc; }
 
-.favBtnOnDark { color: rgba(30,41,59,0.4) !important; }
+.favBtnOnDark { color: #64748b !important; }
 .favBtnOnDark:hover { color: var(--hp-accent) !important; }
 
 /* ── Status pills ── */
@@ -680,6 +680,23 @@
 
 .newsSkeletonLineShort {
   width: 65%;
+}
+
+.sectionSkeleton {
+  border-radius: 12px;
+  border: 1px solid var(--hp-border);
+  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+  background-size: 200% 100%;
+  animation: hpShimmer 1.2s ease-in-out infinite;
+  margin-bottom: 10px;
+}
+
+.sectionSkeletonTall {
+  min-height: 220px;
+}
+
+.sectionSkeletonMedium {
+  min-height: 160px;
 }
 
 /* ── Mobile ── */
