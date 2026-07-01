@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">Morocco vs Netherlands World Cup 2026 penalty shootout editorial graphic</title>
+  <desc id="heroDesc">Original GoalCurrent.live graphic for Morocco knocking out the Netherlands on penalties in the FIFA World Cup 2026 Round of 32</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1f3a"/>
+      <stop offset="45%" stop-color="#0d3b2e"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f5d76e"/>
+      <stop offset="100%" stop-color="#c9a227"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="1080" cy="120" r="160" fill="#ffffff" opacity="0.05"/>
+  <circle cx="200" cy="600" r="200" fill="#ffffff" opacity="0.04"/>
+  <g transform="translate(900 250)">
+    <ellipse cx="0" cy="150" rx="90" ry="18" fill="#000" opacity="0.25"/>
+    <circle cx="0" cy="0" r="72" fill="none" stroke="url(#gold)" stroke-width="6"/>
+    <circle cx="0" cy="0" r="52" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3"/>
+    <rect x="-8" y="-95" width="16" height="28" rx="4" fill="#f5f5f5"/>
+    <path d="M-42 40 L0 -20 L42 40" fill="none" stroke="#f5f5f5" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <rect x="72" y="88" width="14" height="14" fill="#c1272d"/>
+  <rect x="86" y="88" width="14" height="14" fill="#006233"/>
+  <rect x="100" y="88" width="14" height="14" fill="#21468b"/>
+  <rect x="114" y="88" width="14" height="14" fill="#ffffff"/>
+  <rect x="128" y="88" width="14" height="14" fill="#ae1c28"/>
+  <text x="72" y="150" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="0.08em">WORLD CUP 2026 � MATCH REPORT</text>
+  <text x="72" y="240" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700">Morocco Knock Out</text>
+  <text x="72" y="310" fill="#f5d76e" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700">the Netherlands</text>
+  <text x="72" y="380" fill="rgba(255,255,255,0.85)" font-family="Segoe UI, Arial, sans-serif" font-size="26">Round of 32 � 11 after extra time � 32 on penalties</text>
+  <rect x="72" y="430" width="560" height="4" fill="#f5d76e" opacity="0.85"/>
+  <text x="72" y="480" fill="rgba(255,255,255,0.7)" font-family="Segoe UI, Arial, sans-serif" font-size="20">GoalCurrent.live editorial � 30 June 2026</text>
+</svg>

@@ -27,6 +27,24 @@ export const WC26_CONFIRMED_KNOCKOUT_PAIRINGS: readonly ConfirmedKnockoutPairing
       awayTeamId: "mar",
     },
     {
+      fixtureId: "fixture-077",
+      matchNumber: 77,
+      homeTeamId: "fra",
+      awayTeamId: "sco",
+    },
+    {
+      fixtureId: "fixture-078",
+      matchNumber: 78,
+      homeTeamId: "civ",
+      awayTeamId: "nor",
+    },
+    {
+      fixtureId: "fixture-079",
+      matchNumber: 79,
+      homeTeamId: "mex",
+      awayTeamId: "ecu",
+    },
+    {
       fixtureId: "fixture-080",
       matchNumber: 80,
       homeTeamId: "eng",

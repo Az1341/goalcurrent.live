@@ -14,6 +14,8 @@ export type ArticleIndexEntry = {
   title: string;
   excerpt: string;
   date: string;
+  /** When set, overrides default `/articles/{slug}` hub link. */
+  href?: string;
 };
 
 /** Canonical index for /articles — append-only; do not remove existing entries. */
@@ -116,6 +118,34 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
     excerpt:
       "Lionel Messi scores in a seventh straight World Cup game. Harry Kane passes Gary Lineker. Cabo Verde reach the Round of 32. Iran, Panama and Uzbekistan go home.",
     date: "28 June 2026",
+  },
+  {
+    slug: "morocco-knock-out-netherlands-on-penalties",
+    category: "Match Report",
+    title:
+      "Morocco Knock Out the Netherlands on Penalties After Dramatic World Cup Thriller",
+    excerpt:
+      "Morocco defeated the Netherlands on penalties after a dramatic 1-1 draw in the FIFA World Cup 2026 Round of 32. Full match report and analysis.",
+    date: "30 June 2026",
+    href: "/worldcup2026/news/morocco-knock-out-netherlands-on-penalties",
+  },
+  {
+    slug: "world-cup-2026-june-30-recap",
+    category: "Match Recap",
+    title:
+      "France Cruise, Norway Survive on Pens, Mexico Roar at the Azteca — World Cup 2026 Matchday Recap, 30 June",
+    excerpt:
+      "France beat Scotland 3–1 in New Jersey, Norway edged Ivory Coast on penalties in Texas, and Mexico defeated Ecuador 2–0 in Mexico City as the round of 32 heated up.",
+    date: "1 July 2026",
+  },
+  {
+    slug: "premier-league-2026-27-august-countdown",
+    category: "Preview",
+    title:
+      "Six Weeks to Kick-Off — Premier League 2026/27 Countdown While the World Cup Roars On",
+    excerpt:
+      "Arsenal defend their title on a compressed calendar as pre-season begins. City, Liverpool and Chelsea chase while World Cup stars stagger back from North America.",
+    date: "1 July 2026",
   },
 ];
 

@@ -14,6 +14,8 @@ test("confirmed knockout results include Morocco penalty win for match 76", () =
   assert.match(raw, /matchNumber:\s*76[\s\S]*winnerTeamId:\s*"mar"/);
   assert.match(raw, /penaltiesHome:\s*2[\s\S]*penaltiesAway:\s*3/);
   assert.match(raw, /applyConfirmedKnockoutResults/);
+  assert.match(raw, /matchNumber:\s*79[\s\S]*winnerTeamId:\s*"mex"/);
+  assert.match(raw, /matchNumber:\s*79[\s\S]*homeScore:\s*2[\s\S]*awayScore:\s*0/);
 });
 
 test("fixture overlay merges confirmed results after API overlay", () => {

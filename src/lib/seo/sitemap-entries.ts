@@ -138,8 +138,9 @@ export function collectSitemapPathSpecs(fallback: Date): SitemapPathSpec[] {
   const canonicalArticleSlugs = new Set(getAllCanonicalArticleSlugs());
 
   for (const slug of canonicalArticleSlugs) {
+    const indexEntry = ARTICLE_INDEX.find((entry) => entry.slug === slug);
     specs.push({
-      path: articleHref(slug),
+      path: indexEntry?.href ?? articleHref(slug),
       lastModified: articleLastModified(slug, fallback),
       priority: 0.85,
       changeFrequency: "weekly",

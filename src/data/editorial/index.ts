@@ -1,7 +1,9 @@
 import type { EditorialArticle } from "@/types/editorial";
 import { BEIRANVAND_FEATURE } from "./beiranvand-feature";
+import { MOROCCO_NETHERLANDS_PENALTIES } from "./morocco-netherlands-penalties";
 
 export const EDITORIAL_ARTICLES: readonly EditorialArticle[] = [
+  MOROCCO_NETHERLANDS_PENALTIES,
   BEIRANVAND_FEATURE,
 ];
 

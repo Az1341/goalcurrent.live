@@ -10,6 +10,12 @@ export const ARTICLE_CARD_IMAGES: Record<string, string> = {
   "world-cup-2026-june-23-recap": "/images/football-hero-bg.jpg",
   "fifa-world-cup-2026-head-to-head-rule-early-elimination":
     "/images/news/fifa-world-cup-2026-head-to-head-rule-early-elimination/hero.svg",
+  "morocco-knock-out-netherlands-on-penalties":
+    "/images/news/morocco-knock-out-netherlands-on-penalties/hero.svg",
+  "world-cup-2026-june-30-recap":
+    "/images/news/world-cup-2026-june-30-recap/hero.svg",
+  "premier-league-2026-27-august-countdown":
+    "/images/news/premier-league-2026-27-august-countdown/hero.svg",
 };
 
 const DEFAULT_ARTICLE_CARD_IMAGE = "/images/football-hero-bg.jpg";
@@ -31,9 +37,7 @@ export function getEditorialNewsArticles(): NewsArticle[] {
     date: article.publishedAt,
     source: EDITORIAL_SOURCE_LABEL,
     tag: "FEATURE" as const,
-    image: getArticleCardImage(
-      article.path.replace(/^\/articles\//, "").replace(/\/$/, ""),
-    ),
+    image: getArticleCardImage(article.slug),
   }));
 }
 
@@ -59,7 +63,7 @@ export function getMatchRecapNewsArticles(): NewsArticle[] {
     .reverse()
     .map((article) => ({
       title: article.title,
-      link: articleHref(article.slug),
+      link: article.href ?? articleHref(article.slug),
       excerpt: article.excerpt,
       date: toIsoDate(article.date),
       source: EDITORIAL_SOURCE_LABEL,

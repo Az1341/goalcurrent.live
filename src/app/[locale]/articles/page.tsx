@@ -88,7 +88,7 @@ export default async function ArticlesIndexPage() {
             return (
             <Link
               key={a.slug}
-              href={articleHref(a.slug)}
+              href={a.href ?? articleHref(a.slug)}
               className={styles.articleIndexCard}
             >
               <div className={styles.articleIndexImageWrap}>

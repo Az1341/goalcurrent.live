@@ -2,6 +2,7 @@ import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
 import type { FixtureStatus } from "@/types/fixture";
 import type { TeamId } from "@/types/team";
+import { getConfirmedKnockoutPairingByMatchNumber } from "@/lib/wc26/knockout-confirmed-pairings";
 
 export type ConfirmedKnockoutResult = {
   readonly matchNumber: number;
@@ -14,12 +15,38 @@ export type ConfirmedKnockoutResult = {
 
 export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[] = [
   {
+    matchNumber: 75,
+    winnerTeamId: "bra",
+    homeScore: 2,
+    awayScore: 1,
+  },
+  {
     matchNumber: 76,
     winnerTeamId: "mar",
     homeScore: 1,
     awayScore: 1,
     penaltiesHome: 2,
     penaltiesAway: 3,
+  },
+  {
+    matchNumber: 77,
+    winnerTeamId: "fra",
+    homeScore: 3,
+    awayScore: 1,
+  },
+  {
+    matchNumber: 78,
+    winnerTeamId: "nor",
+    homeScore: 1,
+    awayScore: 1,
+    penaltiesHome: 3,
+    penaltiesAway: 4,
+  },
+  {
+    matchNumber: 79,
+    winnerTeamId: "mex",
+    homeScore: 2,
+    awayScore: 0,
   },
 ];
 
@@ -49,7 +76,7 @@ export function getConfirmedPenaltyShootout(
   return { home: entry.penaltiesHome, away: entry.penaltiesAway };
 }
 
-/** Merge confirmed knockout scores when API overlay is absent. */
+/** Merge confirmed knockout scores when API overlay is absent or stale. */
 export function applyConfirmedKnockoutResults(
   fixtures: readonly EffectiveFixture[],
 ): EffectiveFixture[] {
@@ -67,16 +94,7 @@ export function applyConfirmedKnockoutResults(
       return fixture;
     }
 
-    const hasOverlayScore =
-      typeof fixture.homeScore === "number" &&
-      typeof fixture.awayScore === "number";
-    if (hasOverlayScore) {
-      return {
-        ...fixture,
-        penaltiesHome: fixture.penaltiesHome ?? confirmed.penaltiesHome,
-        penaltiesAway: fixture.penaltiesAway ?? confirmed.penaltiesAway,
-      };
-    }
+    const pairing = getConfirmedKnockoutPairingByMatchNumber(fixture.matchNumber);
 
     return {
       ...fixture,
@@ -88,6 +106,12 @@ export function applyConfirmedKnockoutResults(
         : {}),
       ...(confirmed.penaltiesAway !== undefined
         ? { penaltiesAway: confirmed.penaltiesAway }
+        : {}),
+      ...(pairing
+        ? {
+            overlayHomeTeamId: pairing.homeTeamId,
+            overlayAwayTeamId: pairing.awayTeamId,
+          }
         : {}),
     };
   });

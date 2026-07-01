@@ -36,6 +36,8 @@ function sortedTeamPairKey(left: TeamId, right: TeamId): string {
 const KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID: Readonly<Record<string, string>> = {
   "bra|jpn": "fixture-075",
   "mar|ned": "fixture-076",
+  "ecu|mex": "fixture-079",
+  "civ|nor": "fixture-078",
 };
 
 /** Resolve a knockout fixture id from a known API team pairing. */

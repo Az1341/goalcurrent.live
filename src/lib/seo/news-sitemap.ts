@@ -59,7 +59,7 @@ export function getNewsSitemapEntries(): NewsSitemapEntry[] {
   for (const entry of ARTICLE_INDEX) {
     addLocalizedEntries(
       byLoc,
-      articleHref(entry.slug),
+      entry.href ?? articleHref(entry.slug),
       entry.title,
       toNewsPublicationDate(entry.date),
     );
