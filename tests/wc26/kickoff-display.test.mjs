@@ -82,6 +82,24 @@ test("match 81 USA vs Bosnia — 01:00 BST on 2 July (FIFA 8pm ET Santa Clara)",
   assert.equal(formatKickoffLocalTime(utc, { timeZone: "Europe/London" }), "01:00");
 });
 
+test("match 86 Argentina vs Cabo Verde — 23:00 BST on 3 July (FIFA 6pm ET Miami)", () => {
+  const utc = readKnockoutKickoffUtc(86);
+  assert.equal(utc, "2026-07-03T22:00:00.000Z");
+  assert.equal(formatKickoffLocalTime(utc, { timeZone: "Europe/London" }), "23:00");
+});
+
+test("match 87 Colombia vs Ghana — 03:30 BST on 4 July (FIFA 9:30pm ET Kansas City)", () => {
+  const utc = readKnockoutKickoffUtc(87);
+  assert.equal(utc, "2026-07-04T02:30:00.000Z");
+  assert.equal(formatKickoffLocalTime(utc, { timeZone: "Europe/London" }), "03:30");
+});
+
+test("match 88 Australia vs Egypt — 19:00 BST on 3 July (FIFA 2pm ET Dallas)", () => {
+  const utc = readKnockoutKickoffUtc(88);
+  assert.equal(utc, "2026-07-03T18:00:00.000Z");
+  assert.equal(formatKickoffLocalTime(utc, { timeZone: "Europe/London" }), "19:00");
+});
+
 test("every knockout schedule kickoffUtc matches venue-local stadium time", () => {
   const scheduleRaw = readFileSync(
     join(root, "src/data/wc26/knockout-schedule.ts"),

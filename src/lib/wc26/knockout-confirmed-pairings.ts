@@ -62,6 +62,24 @@ export const WC26_CONFIRMED_KNOCKOUT_PAIRINGS: readonly ConfirmedKnockoutPairing
       homeTeamId: "sui",
       awayTeamId: "alg",
     },
+    {
+      fixtureId: "fixture-086",
+      matchNumber: 86,
+      homeTeamId: "arg",
+      awayTeamId: "cpv",
+    },
+    {
+      fixtureId: "fixture-087",
+      matchNumber: 87,
+      homeTeamId: "col",
+      awayTeamId: "gha",
+    },
+    {
+      fixtureId: "fixture-088",
+      matchNumber: 88,
+      homeTeamId: "aus",
+      awayTeamId: "egy",
+    },
   ];
 
 const byFixtureId = new Map(
