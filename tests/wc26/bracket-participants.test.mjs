@@ -13,6 +13,8 @@ test("confirmed knockout pairings module exists for matches 75 and 76", () => {
   );
   assert.match(raw, /fixture-075[\s\S]*matchNumber:\s*75[\s\S]*homeTeamId:\s*"bra"/);
   assert.match(raw, /fixture-076[\s\S]*matchNumber:\s*76[\s\S]*homeTeamId:\s*"ned"/);
+  assert.match(raw, /fixture-081[\s\S]*homeTeamId:\s*"usa"[\s\S]*awayTeamId:\s*"bih"/);
+  assert.match(raw, /fixture-082[\s\S]*homeTeamId:\s*"bel"[\s\S]*awayTeamId:\s*"sen"/);
 });
 
 test("resolveFixtureParticipant prefers confirmed pairing over bracket template", () => {
@@ -39,6 +41,22 @@ test("standings engine uses final tables after group stage", () => {
   const raw = readFileSync(join(root, "src/lib/wc26-standings.ts"), "utf8");
   assert.match(raw, /isWc26GroupStageComplete\(\)/);
   assert.match(raw, /WC26_FINAL_GROUP_STANDINGS/);
+  assert.match(raw, /formatPendingWinnerFeederLabel/);
+});
+
+test("round of 16 feeder slots name participants before knockout is played", () => {
+  const standings = readFileSync(join(root, "src/lib/wc26-standings.ts"), "utf8");
+  const bracket = readFileSync(join(root, "src/lib/wc26/bracket-view.ts"), "utf8");
+  const pairings = readFileSync(
+    join(root, "src/lib/wc26/knockout-confirmed-pairings.ts"),
+    "utf8",
+  );
+  const fifa = readFileSync(join(root, "src/lib/wc26/fifa-bracket-mapping.ts"), "utf8");
+  assert.match(standings, /formatPendingWinnerFeederLabel/);
+  assert.match(bracket, /feederParticipantsLabel/);
+  assert.match(fifa, /matchNumber:\s*94[\s\S]*matchNumber:\s*81[\s\S]*matchNumber:\s*82/);
+  assert.match(pairings, /fixture-081[\s\S]*usa/);
+  assert.match(pairings, /fixture-082[\s\S]*bel/);
 });
 
 test("live scores orient knockout goals without bracket template labels", () => {

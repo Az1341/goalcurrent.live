@@ -26,6 +26,42 @@ export const WC26_CONFIRMED_KNOCKOUT_PAIRINGS: readonly ConfirmedKnockoutPairing
       homeTeamId: "ned",
       awayTeamId: "mar",
     },
+    {
+      fixtureId: "fixture-080",
+      matchNumber: 80,
+      homeTeamId: "eng",
+      awayTeamId: "cod",
+    },
+    {
+      fixtureId: "fixture-081",
+      matchNumber: 81,
+      homeTeamId: "usa",
+      awayTeamId: "bih",
+    },
+    {
+      fixtureId: "fixture-082",
+      matchNumber: 82,
+      homeTeamId: "bel",
+      awayTeamId: "sen",
+    },
+    {
+      fixtureId: "fixture-083",
+      matchNumber: 83,
+      homeTeamId: "por",
+      awayTeamId: "cro",
+    },
+    {
+      fixtureId: "fixture-084",
+      matchNumber: 84,
+      homeTeamId: "esp",
+      awayTeamId: "aut",
+    },
+    {
+      fixtureId: "fixture-085",
+      matchNumber: 85,
+      homeTeamId: "sui",
+      awayTeamId: "alg",
+    },
   ];
 
 const byFixtureId = new Map(

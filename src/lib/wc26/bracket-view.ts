@@ -230,9 +230,12 @@ function mapSide(
     const teamId = isKnockoutPlaceholderTeam(resolved.teamId)
       ? null
       : resolved.teamId;
+    const feederParticipantsLabel =
+      side.pending && side.label.includes(" / ") ? side.label : null;
     const pending =
       !teamId &&
       (side.pending ||
+        feederParticipantsLabel !== null ||
         resolved.label.startsWith("Winner Match") ||
         resolved.label.startsWith("Loser Match") ||
         resolved.label.startsWith("Winner Group") ||
@@ -240,7 +243,7 @@ function mapSide(
         resolved.label.startsWith("Best 3rd"));
     return {
       teamId,
-      label: resolved.label.replace(/ ✓$/, ""),
+      label: (feederParticipantsLabel ?? resolved.label).replace(/ ✓$/, ""),
       pending,
       isWinner: Boolean(winnerTeamId && teamId && winnerTeamId === teamId),
     };

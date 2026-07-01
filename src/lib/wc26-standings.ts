@@ -674,6 +674,30 @@ export function resolveKnockoutMatchWinner(
   return getConfirmedKnockoutWinner(matchNumber) ?? null;
 }
 
+function formatPendingWinnerFeederLabel(
+  sourceMatch: number,
+  fixtures: readonly EffectiveFixture[],
+): string {
+  const confirmed = getConfirmedKnockoutPairingByMatchNumber(sourceMatch);
+  if (confirmed) {
+    return `${teamDisplayName(confirmed.homeTeamId)} / ${teamDisplayName(confirmed.awayTeamId)}`;
+  }
+
+  const feeder = buildRoundOf32BracketView(fixtures).find(
+    (match) => match.matchNumber === sourceMatch,
+  );
+  if (
+    feeder?.home.teamId &&
+    feeder.away.teamId &&
+    !isKnockoutPlaceholderTeam(feeder.home.teamId) &&
+    !isKnockoutPlaceholderTeam(feeder.away.teamId)
+  ) {
+    return `${feeder.home.label} / ${feeder.away.label}`;
+  }
+
+  return `Winner Match ${sourceMatch}`;
+}
+
 function resolveKnockoutFeedSlot(
   slot: KnockoutFeedSlot,
   fixtures: readonly EffectiveFixture[],
@@ -704,7 +728,9 @@ function resolveKnockoutFeedSlot(
 
   return {
     teamId,
-    label: teamId ? teamDisplayName(teamId) : `Winner Match ${sourceMatch}`,
+    label: teamId
+      ? teamDisplayName(teamId)
+      : formatPendingWinnerFeederLabel(sourceMatch, fixtures),
     pending: !teamId,
   };
 }

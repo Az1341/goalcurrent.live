@@ -57,3 +57,89 @@ test("refresh-stable: same UTC input yields same formatted output", () => {
   const second = formatKickoffLocalTime(UK_BST_EXAMPLE_UTC, { timeZone: "Europe/London" });
   assert.equal(first, second);
 });
+
+function readKnockoutKickoffUtc(matchNumber) {
+  const scheduleRaw = readFileSync(
+    join(root, "src/data/wc26/knockout-schedule.ts"),
+    "utf8",
+  );
+  const re = new RegExp(
+    `matchNumber:\\s*${matchNumber}[^}]*kickoffUtc:\\s*"([^"]+)"`,
+  );
+  const hit = scheduleRaw.match(re);
+  return hit?.[1] ?? null;
+}
+
+test("match 82 Belgium vs Senegal — 21:00 BST on 1 July (FIFA 4pm ET Seattle)", () => {
+  const utc = readKnockoutKickoffUtc(82);
+  assert.equal(utc, "2026-07-01T20:00:00.000Z");
+  assert.equal(formatKickoffLocalTime(utc, { timeZone: "Europe/London" }), "21:00");
+});
+
+test("match 81 USA vs Bosnia — 01:00 BST on 2 July (FIFA 8pm ET Santa Clara)", () => {
+  const utc = readKnockoutKickoffUtc(81);
+  assert.equal(utc, "2026-07-02T00:00:00.000Z");
+  assert.equal(formatKickoffLocalTime(utc, { timeZone: "Europe/London" }), "01:00");
+});
+
+test("every knockout schedule kickoffUtc matches venue-local stadium time", () => {
+  const scheduleRaw = readFileSync(
+    join(root, "src/data/wc26/knockout-schedule.ts"),
+    "utf8",
+  );
+  const venuesRaw = readFileSync(join(root, "src/data/wc26/venues.ts"), "utf8");
+  const venueTz = new Map();
+  for (const match of venuesRaw.matchAll(/id:\s*"([^"]+)"[\s\S]*?timezone:\s*"([^"]+)"/g)) {
+    venueTz.set(match[1], match[2]);
+  }
+
+  function stadiumLocalTimeToUtcIso(venueId, dateYmd, hour, minute) {
+    const timeZone = venueTz.get(venueId) ?? "UTC";
+    const [year, month, day] = dateYmd.split("-").map(Number);
+    const guessMs = Date.UTC(year, month - 1, day, hour, minute);
+    for (let offsetHours = -16; offsetHours <= 16; offsetHours += 1) {
+      const candidate = new Date(guessMs + offsetHours * 3_600_000);
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).formatToParts(candidate);
+      const read = (type) =>
+        Number(parts.find((part) => part.type === type)?.value ?? "0");
+      if (
+        read("year") === year &&
+        read("month") === month &&
+        read("day") === day &&
+        read("hour") === hour &&
+        read("minute") === minute
+      ) {
+        return candidate.toISOString();
+      }
+    }
+    return new Date(guessMs).toISOString();
+  }
+
+  const entryRe =
+    /matchNumber:\s*(\d+)[\s\S]*?venueId:\s*"([^"]+)"[\s\S]*?localDate:\s*"([^"]+)"[\s\S]*?localHour:\s*(\d+)[\s\S]*?localMinute:\s*(\d+)[\s\S]*?kickoffUtc:\s*"([^"]+)"/g;
+  const entries = [...scheduleRaw.matchAll(entryRe)];
+  assert.equal(entries.length, 32);
+  for (const match of entries) {
+    const [, matchNumber, venueId, localDate, localHour, localMinute, kickoffUtc] =
+      match;
+    const computed = stadiumLocalTimeToUtcIso(
+      venueId,
+      localDate,
+      Number(localHour),
+      Number(localMinute),
+    );
+    assert.equal(
+      computed,
+      kickoffUtc,
+      `match ${matchNumber} kickoffUtc must match venue local time`,
+    );
+  }
+});
