@@ -23,15 +23,21 @@ export type ArticleSchemaInput = {
 export type SportsEventSchemaInput = {
   name: string;
   startDate: string;
+  endDate?: string;
   path: string;
   homeTeamName: string;
   awayTeamName: string;
   venueName?: string;
+  city?: string;
   eventStatus?: string;
   description?: string;
+  image?: string;
   locale?: string;
   country?: string;
   competition?: string;
+  organizerUrl?: string;
+  /** Minutes after kickoff for default endDate when endDate is omitted. */
+  durationMinutes?: number;
 };
 
 export type SportsTeamSchemaInput = {
@@ -144,43 +150,105 @@ export function newsArticleSchema(input: ArticleSchemaInput): SchemaNode {
   };
 }
 
+function hostCountryIso(country?: string): string | undefined {
+  if (!country) {
+    return undefined;
+  }
+  if (country === "USA") {
+    return "US";
+  }
+  if (country === "Mexico") {
+    return "MX";
+  }
+  if (country === "Canada") {
+    return "CA";
+  }
+  return country;
+}
+
+function eventEndDateIso(startDate: string, durationMinutes: number): string {
+  const startMs = Date.parse(startDate);
+  if (!Number.isFinite(startMs)) {
+    return startDate;
+  }
+  return new Date(startMs + durationMinutes * 60_000).toISOString();
+}
+
+function isPlaceholderTeamName(name: string): boolean {
+  const trimmed = name.trim();
+  return (
+    trimmed === "" ||
+    trimmed === "TBD" ||
+    trimmed.startsWith("Winner Match") ||
+    trimmed.startsWith("Best 3rd")
+  );
+}
+
 export function sportsEventSchema(
   input: SportsEventSchemaInput,
 ): SchemaNode | null {
   const homeTeam = input.homeTeamName?.trim() ?? "";
   const awayTeam = input.awayTeamName?.trim() ?? "";
 
-  if (!homeTeam && !awayTeam) {
+  if (isPlaceholderTeamName(homeTeam) && isPlaceholderTeamName(awayTeam)) {
     return null;
   }
 
   const locale = input.locale ?? routing.defaultLocale;
   const url = localizedUrl(input.path, locale);
   const startDate = input.startDate || new Date().toISOString();
+  const durationMinutes = input.durationMinutes ?? 120;
+  const endDate = input.endDate ?? eventEndDateIso(startDate, durationMinutes);
+  const countryCode = hostCountryIso(input.country);
+  const organizerName = input.competition || "Football";
+  const organizerUrl = input.organizerUrl ?? SITE_URL;
+  const description =
+    input.description?.trim() ||
+    `${organizerName} — ${homeTeam || "Home"} vs ${awayTeam || "Away"}. Live scores, lineups and statistics on ${SITE_NAME}.`;
+
+  const performers = [
+    !isPlaceholderTeamName(homeTeam)
+      ? { "@type": "SportsTeam" as const, name: homeTeam }
+      : null,
+    !isPlaceholderTeamName(awayTeam)
+      ? { "@type": "SportsTeam" as const, name: awayTeam }
+      : null,
+  ].filter((entry): entry is { "@type": "SportsTeam"; name: string } => entry != null);
 
   return {
     "@context": "https://schema.org",
-    "@type": "Event",
+    "@type": "SportsEvent",
     "@id": url,
     url,
-    name: `${homeTeam || "Home"} vs ${awayTeam || "Away"}`,
+    name: input.name?.trim() || `${homeTeam || "Home"} vs ${awayTeam || "Away"}`,
+    description,
+    image: [input.image ?? defaultOgImageUrl()],
     startDate,
+    endDate,
     eventStatus: input.eventStatus ?? "https://schema.org/EventScheduled",
     location: {
       "@type": "Place",
-      name: input.venueName || "TBD",
+      name: input.venueName || input.city || "TBD",
       address: {
         "@type": "PostalAddress",
-        addressCountry: input.country || "TBD",
+        ...(input.city ? { addressLocality: input.city } : {}),
+        ...(countryCode ? { addressCountry: countryCode } : {}),
       },
     },
-    performer: [
-      { "@type": "SportsTeam", name: homeTeam || "" },
-      { "@type": "SportsTeam", name: awayTeam || "" },
-    ],
+    ...(performers.length > 0 ? { performer: performers } : {}),
     organizer: {
       "@type": "Organization",
-      name: input.competition || "Football",
+      name: organizerName,
+      url: organizerUrl,
+    },
+    offers: {
+      "@type": "Offer",
+      name: "Free live match centre",
+      url,
+      price: "0",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      validFrom: startDate,
     },
   };
 }

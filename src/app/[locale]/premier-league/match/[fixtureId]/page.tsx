@@ -73,8 +73,9 @@ export default async function PremierLeagueMatchPage({
             awayTeamName: fixture.awayTeamName,
             venueName: fixture.venue ?? undefined,
             competition: "Premier League",
+            organizerUrl: "https://www.premierleague.com",
             eventStatus: plEventStatus(fixture.status),
-            description: `Premier League — ${fixture.homeTeamName} vs ${fixture.awayTeamName}`,
+            description: `Premier League — ${fixture.homeTeamName} vs ${fixture.awayTeamName}. Live match centre on ${SITE_NAME}.`,
           }}
           breadcrumbs={[
             { name: "Premier League", path: "/premier-league" },

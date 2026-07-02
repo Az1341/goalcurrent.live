@@ -6,6 +6,7 @@ import ErrorBoundary from "@/components/system/ErrorBoundary";
 import { WC26_FIXTURES, getFixtureById, getVenueById } from "@/data/wc26";
 import { isKnownFixtureId, matchHref } from "@/lib/wc26-match";
 import { resolveFixtureParticipantLabel } from "@/lib/wc26-live";
+import { getSeoEffectiveFixtures } from "@/lib/wc26/seo-fixtures";
 import { buildMatchMetadata } from "@/lib/page-metadata";
 import { sportsEventStatus } from "@/lib/seo/sports-event-status";
 import { getScoreBatEmbedForFixture } from "@/lib/scorebat/getScoreBatEmbed";
@@ -30,8 +31,9 @@ export async function generateMetadata({ params }: MatchPageProps): Promise<Meta
     return { title: "Match not found" };
   }
 
-  const homeName = resolveFixtureParticipantLabel(fixture, "home", WC26_FIXTURES);
-  const awayName = resolveFixtureParticipantLabel(fixture, "away", WC26_FIXTURES);
+  const seoFixtures = getSeoEffectiveFixtures();
+  const homeName = resolveFixtureParticipantLabel(fixture, "home", seoFixtures);
+  const awayName = resolveFixtureParticipantLabel(fixture, "away", seoFixtures);
   const title = `${homeName} vs ${awayName}`;
 
   return buildMatchMetadata({
@@ -51,8 +53,9 @@ export default async function MatchPage({ params }: MatchPageProps) {
   }
 
   const fixture = getFixtureById(fixtureId)!;
-  const homeName = resolveFixtureParticipantLabel(fixture, "home", WC26_FIXTURES);
-  const awayName = resolveFixtureParticipantLabel(fixture, "away", WC26_FIXTURES);
+  const seoFixtures = getSeoEffectiveFixtures();
+  const homeName = resolveFixtureParticipantLabel(fixture, "home", seoFixtures);
+  const awayName = resolveFixtureParticipantLabel(fixture, "away", seoFixtures);
   const venue = getVenueById(fixture.venueId);
   const scorebatEmbed = await getScoreBatEmbedForFixture(fixtureId);
 
@@ -66,10 +69,13 @@ export default async function MatchPage({ params }: MatchPageProps) {
           homeTeamName: homeName,
           awayTeamName: awayName,
           venueName: venue?.name,
+          city: venue?.city,
           country: venue?.country,
           competition: "FIFA World Cup 2026",
+          organizerUrl: "https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026",
           eventStatus: sportsEventStatus(String(fixture.status)),
-          description: `FIFA World Cup 2026 — ${homeName} vs ${awayName}`,
+          description: `FIFA World Cup 2026 — ${homeName} vs ${awayName}. Live scores, lineups and statistics on ${SITE_NAME}.`,
+          image: absoluteUrl("/icons/screenshot-desktop.png"),
         }}
         breadcrumbs={[
           { name: "World Cup 2026", path: "/worldcup2026" },
