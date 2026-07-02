@@ -54,20 +54,20 @@ export default function ArticleJuly1Recap() {
               vs Mexico collision locked in for Mexico City on Saturday.
             </p>
 
-            <h2>England 3–1 DR Congo — Atlanta Stadium, Atlanta</h2>
+            <h2>England 2–1 DR Congo — Atlanta Stadium, Atlanta</h2>
             <h3>Kane and Bellingham ease the Three Lions past the Leopards</h3>
             <div className={styles.scoreBadge}>
               <span className={styles.scoreTeam}>England</span>
-              <span className={styles.scoreNum}>3 – 1</span>
+              <span className={styles.scoreNum}>2 – 1</span>
               <span className={styles.scoreTeam}>DR Congo</span>
             </div>
             <p>
               England, Group L winners, were always favourites against DR Congo — the African
               side who had thrilled neutrals by reaching the knockout stage for the first time — but
               favourites still have to perform under a humid Atlanta sun. Harry Kane answered with
-              two goals that reminded everyone why he remains the tournament&apos;s most reliable
-              finisher, and Jude Bellingham added a third with a driving run from midfield that
-              carried the ball 30 yards before he found the far corner.
+              a penalty after Bukayo Saka was brought down, and Jude Bellingham delivered the
+              decisive strike in the second half with a driving run from midfield that carried the
+              ball 30 yards before he found the far corner.
             </p>
             <p>
               DR Congo, to their credit, refused to disappear. Yoane Wissa halved the deficit with a

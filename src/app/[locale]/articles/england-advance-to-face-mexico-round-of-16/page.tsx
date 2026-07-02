@@ -45,7 +45,7 @@ export default function ArticleEnglandMexicoRoundOf16() {
           <article className={styles.bodyCard}>
             <p>
               England&apos;s World Cup 2026 campaign found its next chapter in Atlanta — and its next
-              opponent in Mexico City. The Three Lions beat DR Congo 3–1 on Tuesday afternoon at
+              opponent in Mexico City. The Three Lions beat DR Congo 2–1 on Tuesday afternoon at
               Atlanta Stadium to reach the round of 16, where they will meet co-hosts Mexico at the
               Estadio Azteca on Saturday 5 July. It is the tie the tournament has been building
               towards: European pedigree against Azteca noise, Harry Kane against a nation that
@@ -55,7 +55,7 @@ export default function ArticleEnglandMexicoRoundOf16() {
             <h2>How England won in Atlanta</h2>
             <div className={styles.scoreBadge}>
               <span className={styles.scoreTeam}>England</span>
-              <span className={styles.scoreNum}>3 – 1</span>
+              <span className={styles.scoreNum}>2 – 1</span>
               <span className={styles.scoreTeam}>DR Congo</span>
             </div>
             <p>
@@ -67,8 +67,8 @@ export default function ArticleEnglandMexicoRoundOf16() {
             </p>
             <p>
               The second half belonged to Jude Bellingham. The Real Madrid midfielder scored with a
-              solo run that began inside his own half and ended with a low shot beyond Lionel Mpasi,
-              then set up Kane&apos;s second with a cushioned header across the six-yard box. England
+              solo run that began inside his own half and ended with a low shot beyond Lionel Mpasi.
+              England
               managed the closing stages with the maturity of a side that has learned from previous
               knockout heartbreaks — Rice and his midfield partner kept Wissa isolated, and Jordan
               Pickford was rarely troubled after the hour mark.

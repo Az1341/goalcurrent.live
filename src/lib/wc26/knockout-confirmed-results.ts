@@ -51,7 +51,7 @@ export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[]
   {
     matchNumber: 80,
     winnerTeamId: "eng",
-    homeScore: 3,
+    homeScore: 2,
     awayScore: 1,
   },
   {
