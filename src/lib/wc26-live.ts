@@ -253,7 +253,7 @@ export function resolveFixtureParticipant(
 ): ResolvedFixtureParticipant {
   const overlayTeamId =
     side === "home" ? fixture.overlayHomeTeamId : fixture.overlayAwayTeamId;
-  if (overlayTeamId) {
+  if (overlayTeamId && !isKnockoutPlaceholderTeam(overlayTeamId)) {
     return participantFromTeamId(overlayTeamId);
   }
 
@@ -306,6 +306,12 @@ export function resolveFixtureParticipant(
   }
 
   if (skipBracketTemplate) {
+    const latePairing = getConfirmedKnockoutPairingByFixtureId(fixture.id);
+    if (latePairing) {
+      const teamId =
+        side === "home" ? latePairing.homeTeamId : latePairing.awayTeamId;
+      return participantFromTeamId(teamId);
+    }
     return { label: "TBD", teamId: fallbackId };
   }
 

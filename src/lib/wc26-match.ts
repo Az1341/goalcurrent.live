@@ -6,6 +6,8 @@ import {
 } from "@/data/wc26";
 import type { Fixture } from "@/types/fixture";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
+import { resolveFixtureParticipant } from "@/lib/wc26-live";
+import { getSeoEffectiveFixtures } from "@/lib/wc26/seo-fixtures";
 import {
   buildHomepageMatchView,
   type HomepageMatchView,
@@ -131,7 +133,8 @@ export function getSameGroupFixtures(fixtureId: string): readonly Fixture[] {
 }
 
 export function formatFixtureNavLabel(fixture: EffectiveFixture | Fixture): string {
-  const home = getTeamById(fixture.homeTeamId);
-  const away = getTeamById(fixture.awayTeamId);
-  return `${home?.name ?? fixture.homeTeamId} vs ${away?.name ?? fixture.awayTeamId}`;
+  const seoFixtures = getSeoEffectiveFixtures();
+  const home = resolveFixtureParticipant(fixture as EffectiveFixture, "home", seoFixtures);
+  const away = resolveFixtureParticipant(fixture as EffectiveFixture, "away", seoFixtures);
+  return `${home.label} vs ${away.label}`;
 }

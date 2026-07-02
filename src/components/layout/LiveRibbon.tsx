@@ -71,7 +71,7 @@ function TickerMatchItem({
         className={styles.liveMatch}
         title={matchTitle}
       >
-        <TeamFlag teamId={match.homeTeamId} size={16} />
+        <TeamFlag teamId={match.homeTeamId} teamName={match.homeName} size={16} />
         <span className={styles.liveMatchTeams}>{homeName}</span>
         <span
           className={`${styles.liveMatchScore} ${tickerStatusClass(match.matchClass)}`}
@@ -79,7 +79,7 @@ function TickerMatchItem({
           {score ?? (isLive ? t("live") : t("vs"))}
         </span>
         <span className={styles.liveMatchTeams}>{awayName}</span>
-        <TeamFlag teamId={match.awayTeamId} size={16} />
+        <TeamFlag teamId={match.awayTeamId} teamName={match.awayName} size={16} />
         <span
           className={`${styles.liveMatchStatus} ${tickerStatusClass(match.matchClass)}`}
         >

@@ -115,7 +115,7 @@ function FeaturedMatchBody({ match }: { match: HomepageMatchView }) {
     <>
       <div className={styles.featuredRow}>
         <div className={`${styles.featuredSide} ${styles.featuredSideHome}`}>
-          <TeamFlag teamId={match.homeTeamId} size={FEATURED_FLAG} />
+          <TeamFlag teamId={match.homeTeamId} teamName={match.homeName} size={FEATURED_FLAG} />
           <span className={styles.featuredTeamName}>{match.homeName}</span>
         </div>
 
@@ -130,7 +130,7 @@ function FeaturedMatchBody({ match }: { match: HomepageMatchView }) {
 
         <div className={`${styles.featuredSide} ${styles.featuredSideAway}`}>
           <span className={styles.featuredTeamName}>{match.awayName}</span>
-          <TeamFlag teamId={match.awayTeamId} size={FEATURED_FLAG} />
+          <TeamFlag teamId={match.awayTeamId} teamName={match.awayName} size={FEATURED_FLAG} />
         </div>
       </div>
 

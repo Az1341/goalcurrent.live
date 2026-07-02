@@ -18,6 +18,8 @@ import {
   groupLabel,
 } from "@/data/wc26";
 import { resolveFixtureParticipant } from "@/lib/wc26-live";
+import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
+import { getSeoEffectiveFixtures, mergeFavouriteMatchFixture } from "@/lib/wc26/seo-fixtures";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import { SITE_NAME } from "@/lib/site-url";
@@ -32,6 +34,7 @@ export default function FavouritesPageContent() {
   const { teams, matches, competitions } = useFavourites();
   const { tvRegion } = useWc26TvRegion();
   const effectiveFixtures = useEffectiveFixtures();
+  const seoFixtures = getSeoEffectiveFixtures();
   const hasAny =
     teams.length > 0 || matches.length > 0 || competitions.length > 0;
 
@@ -101,18 +104,19 @@ export default function FavouritesPageContent() {
             {matches.map((matchId) => {
               const wc26Fixture = getFixtureById(matchId);
               if (wc26Fixture) {
-                const live =
-                  effectiveFixtures.find((fixture) => fixture.id === matchId) ??
+                const live: EffectiveFixture =
+                  mergeFavouriteMatchFixture(matchId, effectiveFixtures) ??
+                  seoFixtures.find((entry) => entry.id === matchId) ??
                   wc26Fixture;
                 const homeResolved = resolveFixtureParticipant(
                   live,
                   "home",
-                  effectiveFixtures,
+                  seoFixtures,
                 );
                 const awayResolved = resolveFixtureParticipant(
                   live,
                   "away",
-                  effectiveFixtures,
+                  seoFixtures,
                 );
                 return (
                   <li key={matchId} style={{ listStyle: "none", marginBottom: 10 }}>
@@ -174,11 +178,6 @@ export default function FavouritesPageContent() {
                               </div>
                             </>
                           )}
-                          {!scoreText ? (
-                            <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
-                              <LocalizedKickoffLabel iso={live.kickoffUtc} />
-                            </div>
-                          ) : null}
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-start" }}>
                           <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{awayResolved.label}</span>

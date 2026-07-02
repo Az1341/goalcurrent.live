@@ -10,6 +10,7 @@ import { FAVOURITES_HREF } from "@/lib/nav";
 import { useFavourites } from "@/lib/use-favourites";
 import { useIsClient } from "@/lib/use-is-client";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
+import { getSeoEffectiveFixtures, mergeFavouriteMatchFixture } from "@/lib/wc26/seo-fixtures";
 import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
@@ -22,6 +23,7 @@ export default function HomeFavouritesStrip() {
   const mounted = useIsClient();
   const { teams, matches } = useFavourites();
   const effectiveFixtures = useEffectiveFixtures();
+  const seoFixtures = getSeoEffectiveFixtures();
 
   const favouriteMatches = useMemo(
     () =>
@@ -32,9 +34,9 @@ export default function HomeFavouritesStrip() {
             return null;
           }
           const effective =
-            effectiveFixtures.find((entry) => entry.id === matchId) ?? fixture;
-          const home = resolveFixtureParticipant(effective, "home", effectiveFixtures);
-          const away = resolveFixtureParticipant(effective, "away", effectiveFixtures);
+            mergeFavouriteMatchFixture(matchId, effectiveFixtures) ?? fixture;
+          const home = resolveFixtureParticipant(effective, "home", seoFixtures);
+          const away = resolveFixtureParticipant(effective, "away", seoFixtures);
           return {
             matchId,
             home,
@@ -44,7 +46,7 @@ export default function HomeFavouritesStrip() {
         })
         .filter((item): item is NonNullable<typeof item> => item != null)
         .slice(0, MAX_MATCHES),
-    [effectiveFixtures, matches],
+    [effectiveFixtures, matches, seoFixtures],
   );
 
   const favouriteTeams = useMemo(
