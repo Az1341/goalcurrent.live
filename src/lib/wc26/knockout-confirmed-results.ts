@@ -2,6 +2,7 @@ import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { isLiveMatchStatus } from "@/lib/wc26-live";
 import type { FixtureStatus } from "@/types/fixture";
 import type { TeamId } from "@/types/team";
+import type { Wc26ApiMatch } from "@/types/fixture-overlay";
 import { getConfirmedKnockoutPairingByMatchNumber } from "@/lib/wc26/knockout-confirmed-pairings";
 
 export type ConfirmedKnockoutResult = {
@@ -11,9 +12,26 @@ export type ConfirmedKnockoutResult = {
   readonly awayScore: number;
   readonly penaltiesHome?: number;
   readonly penaltiesAway?: number;
+  /** Finished status when not plain FT (e.g. after extra time). */
+  readonly matchStatus?: "ft" | "aet" | "pen";
 };
 
 export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[] = [
+  {
+    matchNumber: 73,
+    winnerTeamId: "can",
+    homeScore: 0,
+    awayScore: 1,
+  },
+  {
+    matchNumber: 74,
+    winnerTeamId: "par",
+    homeScore: 1,
+    awayScore: 1,
+    penaltiesHome: 3,
+    penaltiesAway: 4,
+    matchStatus: "pen",
+  },
   {
     matchNumber: 75,
     winnerTeamId: "bra",
@@ -27,20 +45,19 @@ export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[]
     awayScore: 1,
     penaltiesHome: 2,
     penaltiesAway: 3,
+    matchStatus: "pen",
   },
   {
     matchNumber: 77,
     winnerTeamId: "fra",
     homeScore: 3,
-    awayScore: 1,
+    awayScore: 0,
   },
   {
     matchNumber: 78,
     winnerTeamId: "nor",
     homeScore: 1,
-    awayScore: 1,
-    penaltiesHome: 3,
-    penaltiesAway: 4,
+    awayScore: 2,
   },
   {
     matchNumber: 79,
@@ -58,13 +75,14 @@ export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[]
     matchNumber: 81,
     winnerTeamId: "usa",
     homeScore: 2,
-    awayScore: 1,
+    awayScore: 0,
   },
   {
     matchNumber: 82,
     winnerTeamId: "bel",
-    homeScore: 1,
-    awayScore: 0,
+    homeScore: 3,
+    awayScore: 2,
+    matchStatus: "aet",
   },
 ];
 
@@ -94,43 +112,119 @@ export function getConfirmedPenaltyShootout(
   return { home: entry.penaltiesHome, away: entry.penaltiesAway };
 }
 
-/** Merge confirmed knockout scores when API overlay is absent or stale. */
+function resolvedConfirmedStatus(
+  confirmed: ConfirmedKnockoutResult,
+): "ft" | "aet" | "pen" {
+  if (confirmed.matchStatus) {
+    return confirmed.matchStatus;
+  }
+  if (
+    confirmed.penaltiesHome !== undefined &&
+    confirmed.penaltiesAway !== undefined
+  ) {
+    return "pen";
+  }
+  return "ft";
+}
+
+function confirmedStatusShort(status: "ft" | "aet" | "pen"): string {
+  if (status === "pen") return "PEN";
+  if (status === "aet") return "AET";
+  return "FT";
+}
+
+function confirmedElapsed(status: "ft" | "aet" | "pen"): number {
+  if (status === "aet") return 120;
+  if (status === "pen") return 120;
+  return 90;
+}
 export function applyConfirmedKnockoutResults(
   fixtures: readonly EffectiveFixture[],
 ): EffectiveFixture[] {
-  return fixtures.map((fixture) => {
-    if (fixture.stage === "group") {
-      return fixture;
+  return fixtures.map((fixture) => applyConfirmedKnockoutToFixture(fixture));
+}
+
+/** Apply editorial confirmed scores to API match rows (scores route / sync). */
+export function applyConfirmedKnockoutResultsToApiMatches(
+  matches: readonly Wc26ApiMatch[],
+): Wc26ApiMatch[] {
+  return matches.map((match) => {
+    const confirmed = getConfirmedKnockoutResult(match.matchNumber);
+    if (!confirmed || isLiveMatchStatus(match.status)) {
+      return match;
     }
 
-    const confirmed = getConfirmedKnockoutResult(fixture.matchNumber);
-    if (!confirmed) {
-      return fixture;
-    }
-
-    if (isLiveMatchStatus(fixture.status)) {
-      return fixture;
-    }
-
-    const pairing = getConfirmedKnockoutPairingByMatchNumber(fixture.matchNumber);
+    const pairing = getConfirmedKnockoutPairingByMatchNumber(match.matchNumber);
+    const status = resolvedConfirmedStatus(confirmed);
+    const hasPenalties =
+      confirmed.penaltiesHome !== undefined &&
+      confirmed.penaltiesAway !== undefined;
 
     return {
-      ...fixture,
-      status: "ft" as FixtureStatus,
+      ...match,
+      status,
+      statusShort: confirmedStatusShort(status),
+      elapsed: confirmedElapsed(status),
       homeScore: confirmed.homeScore,
       awayScore: confirmed.awayScore,
-      ...(confirmed.penaltiesHome !== undefined
-        ? { penaltiesHome: confirmed.penaltiesHome }
-        : {}),
-      ...(confirmed.penaltiesAway !== undefined
-        ? { penaltiesAway: confirmed.penaltiesAway }
-        : {}),
+      ...(hasPenalties
+        ? {
+            penaltiesHome: confirmed.penaltiesHome,
+            penaltiesAway: confirmed.penaltiesAway,
+          }
+        : {
+            penaltiesHome: undefined,
+            penaltiesAway: undefined,
+          }),
       ...(pairing
         ? {
-            overlayHomeTeamId: pairing.homeTeamId,
-            overlayAwayTeamId: pairing.awayTeamId,
+            homeTeamId: pairing.homeTeamId,
+            awayTeamId: pairing.awayTeamId,
           }
         : {}),
     };
   });
+}
+
+function applyConfirmedKnockoutToFixture(fixture: EffectiveFixture): EffectiveFixture {
+  if (fixture.stage === "group") {
+    return fixture;
+  }
+
+  const confirmed = getConfirmedKnockoutResult(fixture.matchNumber);
+  if (!confirmed) {
+    return fixture;
+  }
+
+  if (isLiveMatchStatus(fixture.status)) {
+    return fixture;
+  }
+
+  const pairing = getConfirmedKnockoutPairingByMatchNumber(fixture.matchNumber);
+  const status = resolvedConfirmedStatus(confirmed);
+  const hasPenalties =
+    confirmed.penaltiesHome !== undefined &&
+    confirmed.penaltiesAway !== undefined;
+
+  return {
+    ...fixture,
+    status: status as FixtureStatus,
+    homeScore: confirmed.homeScore,
+    awayScore: confirmed.awayScore,
+    ...(hasPenalties
+      ? {
+          penaltiesHome: confirmed.penaltiesHome,
+          penaltiesAway: confirmed.penaltiesAway,
+        }
+      : {
+          penaltiesHome: undefined,
+          penaltiesAway: undefined,
+        }),
+    ...(pairing
+      ? {
+          overlayHomeTeamId: pairing.homeTeamId,
+          overlayAwayTeamId: pairing.awayTeamId,
+        }
+      : {}),
+  };
 }

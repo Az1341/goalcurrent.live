@@ -15,6 +15,18 @@ export type ConfirmedKnockoutPairing = {
 export const WC26_CONFIRMED_KNOCKOUT_PAIRINGS: readonly ConfirmedKnockoutPairing[] =
   [
     {
+      fixtureId: "fixture-073",
+      matchNumber: 73,
+      homeTeamId: "rsa",
+      awayTeamId: "can",
+    },
+    {
+      fixtureId: "fixture-074",
+      matchNumber: 74,
+      homeTeamId: "ger",
+      awayTeamId: "par",
+    },
+    {
       fixtureId: "fixture-075",
       matchNumber: 75,
       homeTeamId: "bra",
@@ -30,7 +42,7 @@ export const WC26_CONFIRMED_KNOCKOUT_PAIRINGS: readonly ConfirmedKnockoutPairing
       fixtureId: "fixture-077",
       matchNumber: 77,
       homeTeamId: "fra",
-      awayTeamId: "sco",
+      awayTeamId: "swe",
     },
     {
       fixtureId: "fixture-078",

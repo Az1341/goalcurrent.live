@@ -17,6 +17,7 @@ import {
   isWc26ApiConfigured,
   MissingApiKeyError,
 } from "@/lib/server/wc26-api-football";
+import { applyConfirmedKnockoutResultsToApiMatches } from "@/lib/wc26/knockout-confirmed-results";
 import type { Wc26ScoresApiResponse } from "@/types/fixture-overlay";
 
 export const dynamic = "force-dynamic";
@@ -163,7 +164,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     if (wantsResults) {
-      const matches = await fetchFinishedWc26Matches();
+      const matches = applyConfirmedKnockoutResultsToApiMatches(
+        await fetchFinishedWc26Matches(),
+      );
       const body: Wc26ScoresApiResponse = {
         matches,
         fetchedAt: new Date().toISOString(),

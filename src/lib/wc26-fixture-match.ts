@@ -34,10 +34,16 @@ function sortedTeamPairKey(left: TeamId, right: TeamId): string {
  * Overrides kickoff/standings heuristics that collide on matches 75 vs 76.
  */
 const KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID: Readonly<Record<string, string>> = {
+  "can|rsa": "fixture-073",
+  "ger|par": "fixture-074",
   "bra|jpn": "fixture-075",
   "mar|ned": "fixture-076",
   "ecu|mex": "fixture-079",
   "civ|nor": "fixture-078",
+  "cod|eng": "fixture-080",
+  "fra|swe": "fixture-077",
+  "bih|usa": "fixture-081",
+  "bel|sen": "fixture-082",
 };
 
 /** Resolve a knockout fixture id from a known API team pairing. */
