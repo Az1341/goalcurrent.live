@@ -18,9 +18,9 @@ test("confirmed knockout pairings module exists for matches 75 and 76", () => {
   assert.match(raw, /fixture-086[\s\S]*homeTeamId:\s*"arg"[\s\S]*awayTeamId:\s*"cpv"/);
   assert.match(raw, /fixture-087[\s\S]*homeTeamId:\s*"col"[\s\S]*awayTeamId:\s*"gha"/);
   assert.match(raw, /fixture-088[\s\S]*homeTeamId:\s*"aus"[\s\S]*awayTeamId:\s*"egy"/);
-  assert.match(raw, /fixture-077[\s\S]*homeTeamId:\s*"fra"[\s\S]*awayTeamId:\s*"sco"/);
+  assert.match(raw, /fixture-077[\s\S]*homeTeamId:\s*"fra"[\s\S]*awayTeamId:\s*"swe"/);
   assert.match(raw, /fixture-078[\s\S]*homeTeamId:\s*"civ"[\s\S]*awayTeamId:\s*"nor"/);
-  assert.match(raw, /fixture-079[\s\S]*homeTeamId:\s*"mex"[\s\S]*awayTeamId:\s*"ecu"/);
+  assert.match(raw, /fixture-084[\s\S]*homeTeamId:\s*"esp"[\s\S]*awayTeamId:\s*"aut"/);
 });
 
 test("resolveFixtureParticipant prefers confirmed pairing over bracket template", () => {

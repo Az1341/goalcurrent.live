@@ -17,6 +17,7 @@ import {
   getTeamById,
   groupLabel,
 } from "@/data/wc26";
+import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import { SITE_NAME } from "@/lib/site-url";
@@ -100,21 +101,31 @@ export default function FavouritesPageContent() {
             {matches.map((matchId) => {
               const wc26Fixture = getFixtureById(matchId);
               if (wc26Fixture) {
-                const home = getTeamById(wc26Fixture.homeTeamId);
-                const away = getTeamById(wc26Fixture.awayTeamId);
-                const label = `${home?.name ?? wc26Fixture.homeTeamId} vs ${away?.name ?? wc26Fixture.awayTeamId}`;
+                const live =
+                  effectiveFixtures.find((fixture) => fixture.id === matchId) ??
+                  wc26Fixture;
+                const homeResolved = resolveFixtureParticipant(
+                  live,
+                  "home",
+                  effectiveFixtures,
+                );
+                const awayResolved = resolveFixtureParticipant(
+                  live,
+                  "away",
+                  effectiveFixtures,
+                );
                 return (
                   <li key={matchId} style={{ listStyle: "none", marginBottom: 10 }}>
                     {(() => {
-                      const live = effectiveFixtures.find(f => f.id === matchId);
-                      const hasScore = live && live.homeScore !== undefined && live.awayScore !== undefined;
-                      const liveStatus = (live?.status as string | undefined)?.toLowerCase();
+                      const hasScore =
+                        live.homeScore !== undefined && live.awayScore !== undefined;
+                      const liveStatus = (live.status as string | undefined)?.toLowerCase();
                       const isLive = liveStatus === "live" || liveStatus === "1h" || liveStatus === "2h" || liveStatus === "ht";
                       const isFT = liveStatus === "ft" || liveStatus === "aet" || liveStatus === "pen";
-                      const scoreText = hasScore ? `${live!.homeScore} – ${live!.awayScore}` : null;
+                      const scoreText = hasScore ? `${live.homeScore} – ${live.awayScore}` : null;
                       const halfLabel = liveStatus === "1h" ? "1st Half" : liveStatus === "2h" ? "2nd Half" : liveStatus === "ht" ? "Half Time" : "Live";
                       const statusLabel = isLive ? halfLabel : isFT ? "Full Time" : null;
-                      const elapsedLabel = isLive && live?.elapsed != null ? `${live.elapsed}'` : null;
+                      const elapsedLabel = isLive && live.elapsed != null ? `${live.elapsed}'` : null;
                       return (
                     <div style={{
                       background: "#fff",
@@ -149,8 +160,8 @@ export default function FavouritesPageContent() {
                         gap: 8,
                       }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-end" }}>
-                          {home ? <TeamFlag teamId={home.id} size={28} /> : null}
-                          <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{home?.name ?? "Home"}</span>
+                          <TeamFlag teamId={homeResolved.teamId} teamName={homeResolved.label} size={28} />
+                          <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{homeResolved.label}</span>
                         </div>
                         <div style={{ textAlign: "center", minWidth: 70 }}>
                           {scoreText ? (
@@ -159,15 +170,19 @@ export default function FavouritesPageContent() {
                             <>
                               <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>vs</div>
                               <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
-                                <LocalizedKickoffLabel iso={wc26Fixture.kickoffUtc} />
+                                <LocalizedKickoffLabel iso={live.kickoffUtc} />
                               </div>
                             </>
                           )}
-                          {!scoreText && <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}><LocalizedKickoffLabel iso={wc26Fixture.kickoffUtc} /></div>}
+                          {!scoreText ? (
+                            <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
+                              <LocalizedKickoffLabel iso={live.kickoffUtc} />
+                            </div>
+                          ) : null}
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-start" }}>
-                          <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{away?.name ?? "Away"}</span>
-                          {away ? <TeamFlag teamId={away.id} size={28} /> : null}
+                          <span style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{awayResolved.label}</span>
+                          <TeamFlag teamId={awayResolved.teamId} teamName={awayResolved.label} size={28} />
                         </div>
                       </div>
                       {/* TV broadcast */}

@@ -149,19 +149,27 @@ export function applyConfirmedKnockoutResultsToApiMatches(
   matches: readonly Wc26ApiMatch[],
 ): Wc26ApiMatch[] {
   return matches.map((match) => {
+    const pairing = getConfirmedKnockoutPairingByMatchNumber(match.matchNumber);
+    const withPairing = pairing
+      ? {
+          ...match,
+          homeTeamId: match.homeTeamId ?? pairing.homeTeamId,
+          awayTeamId: match.awayTeamId ?? pairing.awayTeamId,
+        }
+      : match;
+
     const confirmed = getConfirmedKnockoutResult(match.matchNumber);
-    if (!confirmed || isLiveMatchStatus(match.status)) {
-      return match;
+    if (!confirmed || isLiveMatchStatus(withPairing.status)) {
+      return withPairing;
     }
 
-    const pairing = getConfirmedKnockoutPairingByMatchNumber(match.matchNumber);
     const status = resolvedConfirmedStatus(confirmed);
     const hasPenalties =
       confirmed.penaltiesHome !== undefined &&
       confirmed.penaltiesAway !== undefined;
 
     return {
-      ...match,
+      ...withPairing,
       status,
       statusShort: confirmedStatusShort(status),
       elapsed: confirmedElapsed(status),
@@ -176,14 +184,23 @@ export function applyConfirmedKnockoutResultsToApiMatches(
             penaltiesHome: undefined,
             penaltiesAway: undefined,
           }),
-      ...(pairing
-        ? {
-            homeTeamId: pairing.homeTeamId,
-            awayTeamId: pairing.awayTeamId,
-          }
-        : {}),
     };
   });
+}
+
+function applyConfirmedKnockoutPairingOverlay(
+  fixture: EffectiveFixture,
+): EffectiveFixture {
+  const pairing = getConfirmedKnockoutPairingByMatchNumber(fixture.matchNumber);
+  if (!pairing) {
+    return fixture;
+  }
+
+  return {
+    ...fixture,
+    overlayHomeTeamId: fixture.overlayHomeTeamId ?? pairing.homeTeamId,
+    overlayAwayTeamId: fixture.overlayAwayTeamId ?? pairing.awayTeamId,
+  };
 }
 
 function applyConfirmedKnockoutToFixture(fixture: EffectiveFixture): EffectiveFixture {
@@ -191,23 +208,23 @@ function applyConfirmedKnockoutToFixture(fixture: EffectiveFixture): EffectiveFi
     return fixture;
   }
 
+  const withPairing = applyConfirmedKnockoutPairingOverlay(fixture);
   const confirmed = getConfirmedKnockoutResult(fixture.matchNumber);
   if (!confirmed) {
-    return fixture;
+    return withPairing;
   }
 
-  if (isLiveMatchStatus(fixture.status)) {
-    return fixture;
+  if (isLiveMatchStatus(withPairing.status)) {
+    return withPairing;
   }
 
-  const pairing = getConfirmedKnockoutPairingByMatchNumber(fixture.matchNumber);
   const status = resolvedConfirmedStatus(confirmed);
   const hasPenalties =
     confirmed.penaltiesHome !== undefined &&
     confirmed.penaltiesAway !== undefined;
 
   return {
-    ...fixture,
+    ...withPairing,
     status: status as FixtureStatus,
     homeScore: confirmed.homeScore,
     awayScore: confirmed.awayScore,
@@ -220,11 +237,5 @@ function applyConfirmedKnockoutToFixture(fixture: EffectiveFixture): EffectiveFi
           penaltiesHome: undefined,
           penaltiesAway: undefined,
         }),
-    ...(pairing
-      ? {
-          overlayHomeTeamId: pairing.homeTeamId,
-          overlayAwayTeamId: pairing.awayTeamId,
-        }
-      : {}),
   };
 }

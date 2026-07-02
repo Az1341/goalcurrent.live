@@ -5,9 +5,11 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import TeamFlag from "@/components/TeamFlag";
 import { getFixtureById, getTeamById, groupLabel } from "@/data/wc26";
+import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import { FAVOURITES_HREF } from "@/lib/nav";
 import { useFavourites } from "@/lib/use-favourites";
 import { useIsClient } from "@/lib/use-is-client";
+import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { LocalizedKickoffLabel } from "@/components/match/LocalizedKickoff";
 import { matchHref } from "@/lib/wc26-match";
 import { teamHref } from "@/lib/wc26-teams";
@@ -17,8 +19,9 @@ const MAX_TEAMS = 4;
 
 export default function HomeFavouritesStrip() {
   const t = useTranslations("favourites");
-  const tCommon = useTranslations("common");
-  const mounted = useIsClient();  const { teams, matches } = useFavourites();
+  const mounted = useIsClient();
+  const { teams, matches } = useFavourites();
+  const effectiveFixtures = useEffectiveFixtures();
 
   const favouriteMatches = useMemo(
     () =>
@@ -28,18 +31,20 @@ export default function HomeFavouritesStrip() {
           if (!fixture) {
             return null;
           }
-          const home = getTeamById(fixture.homeTeamId);
-          const away = getTeamById(fixture.awayTeamId);
+          const effective =
+            effectiveFixtures.find((entry) => entry.id === matchId) ?? fixture;
+          const home = resolveFixtureParticipant(effective, "home", effectiveFixtures);
+          const away = resolveFixtureParticipant(effective, "away", effectiveFixtures);
           return {
             matchId,
             home,
             away,
-            kickoffUtc: fixture.kickoffUtc,
+            kickoffUtc: effective.kickoffUtc,
           };
         })
         .filter((item): item is NonNullable<typeof item> => item != null)
         .slice(0, MAX_MATCHES),
-    [matches],
+    [effectiveFixtures, matches],
   );
 
   const favouriteTeams = useMemo(
@@ -75,9 +80,9 @@ export default function HomeFavouritesStrip() {
           {favouriteMatches.map(({ matchId, home, away, kickoffUtc }) => (
             <li key={`match-${matchId}`}>
               <Link href={matchHref(matchId)} className={styles.favouritesChip}>
-                {home ? <TeamFlag teamId={home.id} size={20} /> : null}
+                <TeamFlag teamId={home.teamId} teamName={home.label} size={20} />
                 <span className={styles.favouritesChipLabel}>
-                  {home?.name ?? tCommon("tbd")} vs {away?.name ?? tCommon("tbd")}
+                  {home.label} vs {away.label}
                 </span>
                 <span className={styles.favouritesChipMeta}>
                   <LocalizedKickoffLabel iso={kickoffUtc} />

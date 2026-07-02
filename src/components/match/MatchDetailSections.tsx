@@ -35,6 +35,10 @@ import type { HomepageMatchView } from "@/lib/wc26-live";
 const API_UNAVAILABLE_MESSAGE =
   "Unable to load match details from the API. Try refreshing the page.";
 
+function showSectionLoading(loading: boolean, hasContent: boolean): boolean {
+  return loading && !hasContent;
+}
+
 function detailEmptyMessage(
   detail: Pick<MatchDetailPayload, "configured" | "apiAvailable">,
   emptyConfigured: string,
@@ -280,7 +284,7 @@ export function MatchTimeline({
         Match timeline
       </h2>
       <div className={styles.panel}>
-        {loading ? (
+        {showSectionLoading(loading, sortedEvents.length > 0) ? (
           <p className={styles.emptyState}>Loading match events…</p>
         ) : detail.events.length === 0 ? (
           <p className={styles.emptyState}>
@@ -374,7 +378,7 @@ export function MatchMovement({ detail, loading }: MatchMovementProps) {
         Statistics
       </h2>
       <div className={styles.panel}>
-        {loading ? (
+        {showSectionLoading(loading, rows.length > 0) ? (
           <p className={styles.emptyState}>Loading statistics…</p>
         ) : rows.length === 0 ? (
           <p className={styles.emptyState}>
@@ -449,17 +453,15 @@ export function MatchPlayerStats({
 }: MatchPlayerStatsProps) {
   const rows = useMemo(
     () =>
-      loading
-        ? []
-        : aggregateMatchPlayerStats(
-            {
-              events: detail.events,
-              lineups: detail.lineups,
-            },
-            homeTeamName,
-            awayTeamName,
-          ),
-    [loading, detail.events, detail.lineups, homeTeamName, awayTeamName],
+      aggregateMatchPlayerStats(
+        {
+          events: detail.events,
+          lineups: detail.lineups,
+        },
+        homeTeamName,
+        awayTeamName,
+      ),
+    [detail.events, detail.lineups, homeTeamName, awayTeamName],
   );
 
   return (
@@ -468,7 +470,7 @@ export function MatchPlayerStats({
         Player stats
       </h2>
       <div className={styles.panel}>
-        {loading ? (
+        {showSectionLoading(loading, rows.length > 0) ? (
           <p className={styles.emptyState}>Loading player statistics…</p>
         ) : rows.length === 0 ? (
           <p className={styles.emptyState}>

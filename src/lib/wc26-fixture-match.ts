@@ -38,12 +38,18 @@ const KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID: Readonly<Record<string, string>> = {
   "ger|par": "fixture-074",
   "bra|jpn": "fixture-075",
   "mar|ned": "fixture-076",
-  "ecu|mex": "fixture-079",
-  "civ|nor": "fixture-078",
-  "cod|eng": "fixture-080",
   "fra|swe": "fixture-077",
+  "civ|nor": "fixture-078",
+  "ecu|mex": "fixture-079",
+  "cod|eng": "fixture-080",
   "bih|usa": "fixture-081",
   "bel|sen": "fixture-082",
+  "por|cro": "fixture-083",
+  "aut|esp": "fixture-084",
+  "alg|sui": "fixture-085",
+  "arg|cpv": "fixture-086",
+  "col|gha": "fixture-087",
+  "aus|egy": "fixture-088",
 };
 
 /** Resolve a knockout fixture id from a known API team pairing. */

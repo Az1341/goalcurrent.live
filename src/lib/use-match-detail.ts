@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getFixtureById } from "@/data/wc26";
-import { isKnockoutPlaceholderTeam } from "@/data/wc26/knockout-fixtures";
 import { LIVE_API_PATHS, useLiveApi } from "@/lib/client/live-data";
 import { useLiveScores } from "@/lib/client/useLiveScores";
 import { LIVE_POLL_MATCH_MS } from "@/lib/client/fetcher";
@@ -65,11 +63,7 @@ export function useMatchDetail(
   refresh: () => void;
 } {
   const fixtures = useEffectiveFixtures();
-  const { data: liveScores, isLoading: liveScoresLoading } = useLiveScores();
-  const staticFixture = useMemo(() => getFixtureById(fixtureId), [fixtureId]);
-  const needsApiFixtureId = staticFixture
-    ? isKnockoutPlaceholderTeam(staticFixture.homeTeamId)
-    : false;
+  const { data: liveScores } = useLiveScores();
 
   const [storedApiFixtureId, setStoredApiFixtureId] = useState<number | undefined>(
     () => readStoredApiFixtureId(fixtureId),
@@ -90,9 +84,8 @@ export function useMatchDetail(
   }, [apiFixtureId, fixtureId]);
 
   const liveScoresReady = liveScores !== undefined;
-  const waitingForApiFixtureId =
-    needsApiFixtureId && apiFixtureId == null && liveScoresLoading;
-  const fetchReady = !waitingForApiFixtureId;
+  // Knockout pages resolve api-sports ids server-side — do not block on live scores.
+  const fetchReady = true;
 
   const path = useMemo(() => {
     if (!fetchReady) {
@@ -138,8 +131,7 @@ export function useMatchDetail(
   }, [apiFixtureId, liveScoresReady, mutate, poll]);
 
   const detail = data ?? emptyDetail(fixtureId);
-  const loading =
-    waitingForApiFixtureId || (fetchReady && isLoading && !data);
+  const loading = isLoading && !data;
 
   const refresh = useCallback(() => {
     void mutate();

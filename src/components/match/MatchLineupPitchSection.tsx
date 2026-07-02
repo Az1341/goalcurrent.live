@@ -84,7 +84,7 @@ export default function MatchLineupPitchSection({
       ) : null}
 
       <div className={styles.panel}>
-        {loading ? (
+        {loading && !view.hasLineup ? (
           <p className={styles.emptyState}>Loading lineups…</p>
         ) : !view.hasLineup ? (
           <p className={styles.emptyState}>
