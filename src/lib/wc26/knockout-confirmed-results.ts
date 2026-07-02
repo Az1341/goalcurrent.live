@@ -48,6 +48,24 @@ export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[]
     homeScore: 2,
     awayScore: 0,
   },
+  {
+    matchNumber: 80,
+    winnerTeamId: "eng",
+    homeScore: 3,
+    awayScore: 1,
+  },
+  {
+    matchNumber: 81,
+    winnerTeamId: "usa",
+    homeScore: 2,
+    awayScore: 1,
+  },
+  {
+    matchNumber: 82,
+    winnerTeamId: "bel",
+    homeScore: 1,
+    awayScore: 0,
+  },
 ];
 
 const byMatchNumber = new Map(

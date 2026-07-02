@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">World Cup 2026 knockout matchday recap 1 July editorial graphic</title>
+  <desc id="heroDesc">Original GoalCurrent.live graphic for England, USA and Belgium advancing in the FIFA World Cup 2026 Round of 32 on 1 July</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="35%" stop-color="#1e3a5f"/>
+      <stop offset="65%" stop-color="#c8102e"/>
+      <stop offset="100%" stop-color="#002868"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="1080" cy="120" r="160" fill="#ffffff" opacity="0.05"/>
+  <circle cx="180" cy="600" r="200" fill="#ffffff" opacity="0.04"/>
+  <rect x="72" y="88" width="14" height="14" fill="#ffffff"/>
+  <rect x="86" y="88" width="14" height="14" fill="#c8102e"/>
+  <rect x="100" y="88" width="14" height="14" fill="#002868"/>
+  <rect x="114" y="88" width="14" height="14" fill="#ed2939"/>
+  <rect x="128" y="88" width="14" height="14" fill="#fcd116"/>
+  <text x="72" y="150" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="0.08em">WORLD CUP 2026 &#183; MATCH RECAP</text>
+  <text x="72" y="240" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="50" font-weight="700">Round of 32</text>
+  <text x="72" y="310" fill="#f5d76e" font-family="Segoe UI, Arial, sans-serif" font-size="50" font-weight="700">1 July 2026</text>
+  <text x="72" y="380" fill="rgba(255,255,255,0.85)" font-family="Segoe UI, Arial, sans-serif" font-size="24">England &#183; USA &#183; Belgium advance in North America</text>
+  <rect x="72" y="430" width="620" height="4" fill="#f5d76e" opacity="0.85"/>
+  <text x="72" y="480" fill="rgba(255,255,255,0.7)" font-family="Segoe UI, Arial, sans-serif" font-size="20">GoalCurrent.live editorial &#183; 2 July 2026</text>
+</svg>

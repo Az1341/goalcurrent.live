@@ -36,7 +36,7 @@ export function articleSeoFromSlug(slug: string): ArticleSchemaInput | null {
       description: indexEntry.excerpt,
       datePublished: indexEntry.date,
       dateModified: indexEntry.date,
-      author: EDITORIAL_AUTHOR,
+      author: indexEntry.author ?? EDITORIAL_AUTHOR,
     };
   }
 

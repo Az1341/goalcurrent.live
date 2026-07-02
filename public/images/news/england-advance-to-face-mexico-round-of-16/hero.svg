@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">England vs Mexico World Cup 2026 round of 16 preview editorial graphic</title>
+  <desc id="heroDesc">Original GoalCurrent.live graphic for England advancing to face Mexico in the FIFA World Cup 2026 Round of 16</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="40%" stop-color="#c8102e"/>
+      <stop offset="70%" stop-color="#006847"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="1050" cy="140" r="170" fill="#ffffff" opacity="0.05"/>
+  <text x="72" y="130" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="0.08em">WORLD CUP 2026 &#183; MATCH REPORT</text>
+  <text x="72" y="230" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="700">England advance</text>
+  <text x="72" y="300" fill="#f5d76e" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="700">Mexico await at the Azteca</text>
+  <text x="72" y="370" fill="rgba(255,255,255,0.85)" font-family="Segoe UI, Arial, sans-serif" font-size="24">Round of 16 &#183; Mexico City &#183; 5 July 2026</text>
+  <rect x="72" y="420" width="560" height="4" fill="#f5d76e" opacity="0.85"/>
+  <text x="72" y="470" fill="rgba(255,255,255,0.7)" font-family="Segoe UI, Arial, sans-serif" font-size="20">By Anoush Zafarani &#183; GoalCurrent.live</text>
+</svg>

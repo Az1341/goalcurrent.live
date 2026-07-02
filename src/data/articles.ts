@@ -16,6 +16,8 @@ export type ArticleIndexEntry = {
   date: string;
   /** When set, overrides default `/articles/{slug}` hub link. */
   href?: string;
+  /** When set, overrides default editorial author on byline and schema. */
+  author?: string;
 };
 
 /** Canonical index for /articles — append-only; do not remove existing entries. */
@@ -146,6 +148,25 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
     excerpt:
       "Arsenal defend their title on a compressed calendar as pre-season begins. City, Liverpool and Chelsea chase while World Cup stars stagger back from North America.",
     date: "1 July 2026",
+  },
+  {
+    slug: "world-cup-2026-july-1-recap",
+    category: "Match Recap",
+    title:
+      "England Cruise, USA Survive, Belgium Edge Senegal — World Cup 2026 Matchday Recap, 1 July",
+    excerpt:
+      "England beat DR Congo in Atlanta, the USA edged Bosnia in Santa Clara, and Belgium defeated Senegal in Seattle as the round of 32 continued across North America.",
+    date: "2 July 2026",
+  },
+  {
+    slug: "england-advance-to-face-mexico-round-of-16",
+    category: "Match Report",
+    title:
+      "England Beat DR Congo and Will Face Mexico in the Round of 16 at the Azteca",
+    excerpt:
+      "Harry Kane and Jude Bellingham sent England through in Atlanta. Mexico, co-hosts and conquerors of Ecuador, await in Mexico City on 5 July.",
+    date: "2 July 2026",
+    author: "Anoush Zafarani",
   },
 ];
 
