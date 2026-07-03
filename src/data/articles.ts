@@ -168,6 +168,15 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
     date: "2 July 2026",
     author: "Anoush Zafarani",
   },
+  {
+    slug: "world-cup-2026-july-3-recap",
+    category: "Match Recap",
+    title:
+      "Round of 32 Done, Round of 16 Underway — World Cup 2026 Recap & Golden Boot Predictions, 3 July",
+    excerpt:
+      "All ten round-of-32 ties decided as Spain, Argentina and Portugal enter the last 16. Messi and Kane lead the Golden Boot on six — our predictions for who wins it.",
+    date: "3 July 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {

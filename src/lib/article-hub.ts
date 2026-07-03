@@ -20,6 +20,8 @@ export const ARTICLE_CARD_IMAGES: Record<string, string> = {
     "/images/news/world-cup-2026-july-1-recap/hero.svg",
   "england-advance-to-face-mexico-round-of-16":
     "/images/news/england-advance-to-face-mexico-round-of-16/hero.svg",
+  "world-cup-2026-july-3-recap":
+    "/images/news/world-cup-2026-july-3-recap/hero.svg",
 };
 
 const DEFAULT_ARTICLE_CARD_IMAGE = "/images/football-hero-bg.jpg";

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">World Cup 2026 round of 16 and Golden Boot race editorial graphic</title>
+  <desc id="heroDesc">Original GoalCurrent.live graphic for the FIFA World Cup 2026 round of 16 opening and Golden Boot race on 3 July</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="40%" stop-color="#1a4d2e"/>
+      <stop offset="70%" stop-color="#c8102e"/>
+      <stop offset="100%" stop-color="#f5d76e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="1100" cy="140" r="150" fill="#ffffff" opacity="0.06"/>
+  <circle cx="160" cy="580" r="220" fill="#ffffff" opacity="0.04"/>
+  <text x="72" y="130" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="0.08em">WORLD CUP 2026 &#183; MATCH RECAP</text>
+  <text x="72" y="220" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="700">Round of 16 Opens</text>
+  <text x="72" y="290" fill="#f5d76e" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="700">Golden Boot Race</text>
+  <text x="72" y="360" fill="rgba(255,255,255,0.85)" font-family="Segoe UI, Arial, sans-serif" font-size="24">Spain &#183; Argentina &#183; Portugal &#183; Messi vs Kane at six goals</text>
+  <rect x="72" y="410" width="680" height="4" fill="#f5d76e" opacity="0.85"/>
+  <text x="72" y="460" fill="rgba(255,255,255,0.7)" font-family="Segoe UI, Arial, sans-serif" font-size="20">GoalCurrent.live editorial &#183; 3 July 2026</text>
+</svg>
