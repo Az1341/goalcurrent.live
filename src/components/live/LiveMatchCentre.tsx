@@ -119,9 +119,9 @@ export default function LiveMatchCentre() {
         Live Scores — <span>World Cup 2026</span>
       </h1>
       <p className={styles.pageIntro}>
-        World Cup 2026 fixtures from local schedule data. Status and scores update
-        when server API sync is active; otherwise fixtures show as scheduled with
-        honest empty states — no hardcoded results.
+        World Cup 2026 scores from confirmed results and live API sync. Finished
+        group and knockout matches show full-time scores; live matches update
+        every 15 seconds when the provider is active.
       </p>
 
       {syncStatus === "pending" || syncStatus === "degraded" ? (
@@ -193,7 +193,7 @@ export default function LiveMatchCentre() {
         id="completed-heading"
         title="Completed"
         fixtures={buckets.completed}
-        emptyMessage="No completed matches yet. Full-time results appear when API sync returns finished fixtures."
+        emptyMessage="No completed matches yet. Full-time results appear when matches finish."
         tone="completed"
       />
 

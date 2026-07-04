@@ -1,5 +1,5 @@
 import { WC26_FIXTURES } from "@/data/wc26";
-import { applyConfirmedKnockoutResults } from "@/lib/wc26/knockout-confirmed-results";
+import { applyAllConfirmedResults } from "@/lib/wc26/confirmed-results";
 import { isCompletedMatchStatus } from "@/lib/wc26-tournament-stats";
 import type { Fixture, FixtureStatus } from "@/types/fixture";
 import type { FixtureOverlayEntry } from "@/types/fixture-overlay";
@@ -150,7 +150,7 @@ export function getEffectiveFixtures(): readonly EffectiveFixture[] {
     };
   });
 
-  return applyConfirmedKnockoutResults(merged);
+  return applyAllConfirmedResults(merged);
 }
 
 export function getFixtureScore(

@@ -23,7 +23,27 @@ test("fixture overlay merges confirmed results after API overlay", () => {
     join(root, "src/lib/wc26-fixture-overlay.ts"),
     "utf8",
   );
-  assert.match(raw, /applyConfirmedKnockoutResults\(merged\)/);
+  assert.match(raw, /applyAllConfirmedResults\(merged\)/);
+});
+
+test("group confirmed results hardcode all 72 group-stage scores", () => {
+  const raw = readFileSync(
+    join(root, "src/lib/wc26/group-confirmed-results.ts"),
+    "utf8",
+  );
+  assert.match(raw, /WC26_CONFIRMED_GROUP_RESULTS/);
+  assert.match(raw, /matchNumber: 72/);
+  assert.match(raw, /isWc26GroupStageComplete/);
+});
+
+test("confirmed results unify group and knockout overlays", () => {
+  const raw = readFileSync(
+    join(root, "src/lib/wc26/confirmed-results.ts"),
+    "utf8",
+  );
+  assert.match(raw, /applyConfirmedGroupResults/);
+  assert.match(raw, /applyConfirmedKnockoutResults/);
+  assert.match(raw, /buildConfirmedStaticApiMatches/);
 });
 
 test("standings resolves penalty shootout winners on tied scores", () => {
@@ -114,4 +134,13 @@ test("knockout team pair map includes round-of-16 slots", () => {
   );
   assert.match(raw, /"bra\|can":\s*"fixture-089"/);
   assert.match(raw, /"fra\|par":\s*"fixture-090"/);
+});
+
+test("knockout confirmed pairings include round-of-16 slots", () => {
+  const raw = readFileSync(
+    join(root, "src/lib/wc26/knockout-confirmed-pairings.ts"),
+    "utf8",
+  );
+  assert.match(raw, /fixtureId: "fixture-089"[\s\S]*homeTeamId: "can"/);
+  assert.match(raw, /fixtureId: "fixture-090"[\s\S]*homeTeamId: "par"/);
 });

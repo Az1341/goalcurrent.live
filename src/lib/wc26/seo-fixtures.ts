@@ -1,11 +1,11 @@
 import { getFixtureById, WC26_FIXTURES } from "@/data/wc26";
 import { isKnockoutPlaceholderTeam } from "@/data/wc26/knockout-fixtures";
-import { applyConfirmedKnockoutResults } from "@/lib/wc26/knockout-confirmed-results";
+import { applyAllConfirmedResults } from "@/lib/wc26/confirmed-results";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 
 /** WC26 fixtures with confirmed knockout pairings — for SSR metadata and JSON-LD. */
 export function getSeoEffectiveFixtures(): readonly EffectiveFixture[] {
-  return applyConfirmedKnockoutResults(WC26_FIXTURES);
+  return applyAllConfirmedResults(WC26_FIXTURES);
 }
 
 /** Merge live overlay scores onto SEO fixtures so names stay resolved during live play. */

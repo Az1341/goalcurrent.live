@@ -44,26 +44,21 @@ export default function LivePageClient() {
     [coverageStartTime, fixtures, liveMatches],
   );
 
-  if (!liveScores && !error) {
-    return <div>Loading...</div>;
-  }
-
-  if (error && !liveScores) {
-    return (
-      <p className="text-center text-gray-400 py-4">
-        Unable to load data. Please try again shortly.
-      </p>
-    );
-  }
-
   return (
     <>
       <JsonLdScript data={jsonLd} />
-      <ApiFootballStatusBanner
-        errorCode={liveScores?.error}
-        message={liveScores?.message}
-        fetchedAt={liveScores?.stale ? liveScores.fetchedAt : undefined}
-      />
+      {liveScores ? (
+        <ApiFootballStatusBanner
+          errorCode={liveScores.error}
+          message={liveScores.message}
+          fetchedAt={liveScores.stale ? liveScores.fetchedAt : undefined}
+        />
+      ) : null}
+      {error && !liveScores ? (
+        <p className="text-center text-gray-400 py-4" role="status">
+          Live API sync is limited — showing confirmed results and schedule.
+        </p>
+      ) : null}
       <LiveMatchCentre />
     </>
   );

@@ -101,7 +101,10 @@ function overlayFromMatches(
 }
 
 function isUnconfiguredScoresResponse(data: Wc26ScoresApiResponse): boolean {
-  return data.configured === false || data.phase === "unconfigured";
+  return (
+    (data.configured === false && data.phase !== "confirmed-static") ||
+    data.phase === "unconfigured"
+  );
 }
 
 function applyScoresOutcome(outcome: FetchScoresOutcome): boolean {

@@ -110,6 +110,54 @@ export const WC26_CONFIRMED_KNOCKOUT_PAIRINGS: readonly ConfirmedKnockoutPairing
       homeTeamId: "aus",
       awayTeamId: "egy",
     },
+    {
+      fixtureId: "fixture-089",
+      matchNumber: 89,
+      homeTeamId: "can",
+      awayTeamId: "bra",
+    },
+    {
+      fixtureId: "fixture-090",
+      matchNumber: 90,
+      homeTeamId: "par",
+      awayTeamId: "fra",
+    },
+    {
+      fixtureId: "fixture-091",
+      matchNumber: 91,
+      homeTeamId: "mar",
+      awayTeamId: "nor",
+    },
+    {
+      fixtureId: "fixture-092",
+      matchNumber: 92,
+      homeTeamId: "mex",
+      awayTeamId: "eng",
+    },
+    {
+      fixtureId: "fixture-093",
+      matchNumber: 93,
+      homeTeamId: "por",
+      awayTeamId: "esp",
+    },
+    {
+      fixtureId: "fixture-094",
+      matchNumber: 94,
+      homeTeamId: "usa",
+      awayTeamId: "bel",
+    },
+    {
+      fixtureId: "fixture-095",
+      matchNumber: 95,
+      homeTeamId: "arg",
+      awayTeamId: "egy",
+    },
+    {
+      fixtureId: "fixture-096",
+      matchNumber: 96,
+      homeTeamId: "sui",
+      awayTeamId: "col",
+    },
   ];
 
 const byFixtureId = new Map(

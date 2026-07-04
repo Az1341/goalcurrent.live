@@ -15,7 +15,7 @@ import {
 } from "@/lib/wc26-fixture-match";
 import { normalizeWc26MatchStatus } from "@/lib/wc26-match-status";
 import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
-import { applyConfirmedKnockoutResults } from "@/lib/wc26/knockout-confirmed-results";
+import { applyAllConfirmedResults } from "@/lib/wc26/confirmed-results";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
 import type { FixtureStatus } from "@/types/fixture";
@@ -89,7 +89,7 @@ function applyOverlayEntries(
   entries: readonly Wc26ApiMatch[],
 ): readonly EffectiveFixture[] {
   if (entries.length === 0) {
-    return applyConfirmedKnockoutResults(WC26_FIXTURES);
+    return applyAllConfirmedResults(WC26_FIXTURES);
   }
 
   const overlay = new Map<string, Wc26ApiMatch>();
@@ -97,7 +97,7 @@ function applyOverlayEntries(
     overlay.set(entry.fixtureId, entry);
   }
 
-  return applyConfirmedKnockoutResults(
+  return applyAllConfirmedResults(
     WC26_FIXTURES.map((fixture) => {
     const entry = overlay.get(fixture.id);
     if (!entry) {

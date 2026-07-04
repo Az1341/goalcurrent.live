@@ -17,7 +17,10 @@ import {
   isWc26ApiConfigured,
   MissingApiKeyError,
 } from "@/lib/server/wc26-api-football";
-import { applyConfirmedKnockoutResultsToApiMatches } from "@/lib/wc26/knockout-confirmed-results";
+import {
+  applyAllConfirmedResultsToApiMatches,
+  buildConfirmedStaticApiMatches,
+} from "@/lib/wc26/confirmed-results";
 import type { Wc26ScoresApiResponse } from "@/types/fixture-overlay";
 
 export const dynamic = "force-dynamic";
@@ -34,10 +37,10 @@ function scoresCacheKey(request: NextRequest): string {
 
 function unconfiguredResponse(): Wc26ScoresApiResponse {
   return {
-    matches: [],
+    matches: buildConfirmedStaticApiMatches(),
     fetchedAt: new Date().toISOString(),
     configured: false,
-    phase: "unconfigured",
+    phase: "confirmed-static",
   };
 }
 
@@ -164,7 +167,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     if (wantsResults) {
-      const matches = applyConfirmedKnockoutResultsToApiMatches(
+      const matches = applyAllConfirmedResultsToApiMatches(
         await fetchFinishedWc26Matches(),
       );
       const body: Wc26ScoresApiResponse = {
