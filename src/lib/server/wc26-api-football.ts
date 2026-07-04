@@ -169,7 +169,9 @@ function normalizeApiFixture(
     findFixtureIdByKnockoutTeams(homeName, awayName, fixtures, raw.fixture.date) ??
     findFixtureIdByGroupsCfPair(homeName, awayName, fixtures) ??
     findFixtureIdByKnockoutFeederGroups(homeName, awayName, raw.fixture.date) ??
-    findFixtureIdByKickoffUtc(raw.fixture.date);
+    (homeTeamId && awayTeamId
+      ? undefined
+      : findFixtureIdByKickoffUtc(raw.fixture.date));
   if (!fixtureId) {
     return null;
   }

@@ -93,4 +93,25 @@ test("API football maps penalty shootout scores into overlay", () => {
   );
   assert.match(raw, /penaltiesHome/);
   assert.match(raw, /score\?\.penalty/);
+  assert.match(raw, /homeTeamId && awayTeamId[\s\S]*findFixtureIdByKickoffUtc/);
+});
+
+test("confirmed knockout results include R32 matches 83 through 88", () => {
+  const raw = readFileSync(
+    join(root, "src/lib/wc26/knockout-confirmed-results.ts"),
+    "utf8",
+  );
+  assert.match(raw, /matchNumber:\s*83[\s\S]*winnerTeamId:\s*"por"/);
+  assert.match(raw, /matchNumber:\s*88[\s\S]*winnerTeamId:\s*"egy"/);
+  assert.match(raw, /hasApiOverlay/);
+  assert.match(raw, /hasApiTruth/);
+});
+
+test("knockout team pair map includes round-of-16 slots", () => {
+  const raw = readFileSync(
+    join(root, "src/lib/wc26-fixture-match.ts"),
+    "utf8",
+  );
+  assert.match(raw, /"bra\|can":\s*"fixture-089"/);
+  assert.match(raw, /"fra\|par":\s*"fixture-090"/);
 });

@@ -84,6 +84,46 @@ export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[]
     awayScore: 2,
     matchStatus: "aet",
   },
+  {
+    matchNumber: 83,
+    winnerTeamId: "por",
+    homeScore: 2,
+    awayScore: 1,
+  },
+  {
+    matchNumber: 84,
+    winnerTeamId: "esp",
+    homeScore: 3,
+    awayScore: 0,
+  },
+  {
+    matchNumber: 85,
+    winnerTeamId: "sui",
+    homeScore: 2,
+    awayScore: 0,
+  },
+  {
+    matchNumber: 86,
+    winnerTeamId: "arg",
+    homeScore: 3,
+    awayScore: 2,
+    matchStatus: "aet",
+  },
+  {
+    matchNumber: 87,
+    winnerTeamId: "col",
+    homeScore: 1,
+    awayScore: 0,
+  },
+  {
+    matchNumber: 88,
+    winnerTeamId: "egy",
+    homeScore: 1,
+    awayScore: 1,
+    penaltiesHome: 2,
+    penaltiesAway: 4,
+    matchStatus: "pen",
+  },
 ];
 
 const byMatchNumber = new Map(
@@ -163,6 +203,19 @@ export function applyConfirmedKnockoutResultsToApiMatches(
       return withPairing;
     }
 
+    const hasApiTruth =
+      withPairing.apiFixtureId != null &&
+      withPairing.homeScore !== null &&
+      withPairing.awayScore !== null;
+
+    if (hasApiTruth) {
+      return {
+        ...withPairing,
+        penaltiesHome: withPairing.penaltiesHome ?? confirmed.penaltiesHome,
+        penaltiesAway: withPairing.penaltiesAway ?? confirmed.penaltiesAway,
+      };
+    }
+
     const status = resolvedConfirmedStatus(confirmed);
     const hasPenalties =
       confirmed.penaltiesHome !== undefined &&
@@ -216,6 +269,19 @@ function applyConfirmedKnockoutToFixture(fixture: EffectiveFixture): EffectiveFi
 
   if (isLiveMatchStatus(withPairing.status)) {
     return withPairing;
+  }
+
+  const hasApiOverlay =
+    withPairing.apiFixtureId != null &&
+    typeof withPairing.homeScore === "number" &&
+    typeof withPairing.awayScore === "number";
+
+  if (hasApiOverlay) {
+    return {
+      ...withPairing,
+      penaltiesHome: withPairing.penaltiesHome ?? confirmed.penaltiesHome,
+      penaltiesAway: withPairing.penaltiesAway ?? confirmed.penaltiesAway,
+    };
   }
 
   const status = resolvedConfirmedStatus(confirmed);
