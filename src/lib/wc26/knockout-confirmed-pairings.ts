@@ -114,7 +114,7 @@ export const WC26_CONFIRMED_KNOCKOUT_PAIRINGS: readonly ConfirmedKnockoutPairing
       fixtureId: "fixture-089",
       matchNumber: 89,
       homeTeamId: "can",
-      awayTeamId: "bra",
+      awayTeamId: "mar",
     },
     {
       fixtureId: "fixture-090",
@@ -125,7 +125,7 @@ export const WC26_CONFIRMED_KNOCKOUT_PAIRINGS: readonly ConfirmedKnockoutPairing
     {
       fixtureId: "fixture-091",
       matchNumber: 91,
-      homeTeamId: "mar",
+      homeTeamId: "bra",
       awayTeamId: "nor",
     },
     {

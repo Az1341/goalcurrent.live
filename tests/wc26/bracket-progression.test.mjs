@@ -123,6 +123,7 @@ test("confirmed knockout results include R32 matches 83 through 88", () => {
   );
   assert.match(raw, /matchNumber:\s*83[\s\S]*winnerTeamId:\s*"por"/);
   assert.match(raw, /matchNumber:\s*88[\s\S]*winnerTeamId:\s*"egy"/);
+  assert.match(raw, /matchNumber:\s*89[\s\S]*winnerTeamId:\s*"mar"/);
   assert.match(raw, /hasApiOverlay/);
   assert.match(raw, /hasApiTruth/);
 });
@@ -132,8 +133,8 @@ test("knockout team pair map includes round-of-16 slots", () => {
     join(root, "src/lib/wc26-fixture-match.ts"),
     "utf8",
   );
-  assert.match(raw, /"bra\|can":\s*"fixture-089"/);
-  assert.match(raw, /"fra\|par":\s*"fixture-090"/);
+  assert.match(raw, /"can\|mar":\s*"fixture-089"/);
+  assert.match(raw, /"bra\|nor":\s*"fixture-091"/);
 });
 
 test("knockout confirmed pairings include round-of-16 slots", () => {
@@ -141,6 +142,7 @@ test("knockout confirmed pairings include round-of-16 slots", () => {
     join(root, "src/lib/wc26/knockout-confirmed-pairings.ts"),
     "utf8",
   );
-  assert.match(raw, /fixtureId: "fixture-089"[\s\S]*homeTeamId: "can"/);
+  assert.match(raw, /fixtureId: "fixture-089"[\s\S]*homeTeamId: "can"[\s\S]*awayTeamId: "mar"/);
+  assert.match(raw, /fixtureId: "fixture-091"[\s\S]*homeTeamId: "bra"[\s\S]*awayTeamId: "nor"/);
   assert.match(raw, /fixtureId: "fixture-090"[\s\S]*homeTeamId: "par"/);
 });

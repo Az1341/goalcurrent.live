@@ -124,6 +124,12 @@ export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[]
     penaltiesAway: 4,
     matchStatus: "pen",
   },
+  {
+    matchNumber: 89,
+    winnerTeamId: "mar",
+    homeScore: 0,
+    awayScore: 3,
+  },
 ];
 
 const byMatchNumber = new Map(

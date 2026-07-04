@@ -50,10 +50,10 @@ const KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID: Readonly<Record<string, string>> = {
   "arg|cpv": "fixture-086",
   "col|gha": "fixture-087",
   "aus|egy": "fixture-088",
-  // Round of 16 — bracket winners (order-independent)
-  "bra|can": "fixture-089",
+  // Round of 16 — API-verified pairings (order-independent)
+  "can|mar": "fixture-089",
   "fra|par": "fixture-090",
-  "mar|nor": "fixture-091",
+  "bra|nor": "fixture-091",
   "eng|mex": "fixture-092",
   "esp|por": "fixture-093",
   "bel|usa": "fixture-094",
