@@ -4,6 +4,11 @@ name: Generate Linux visual baselines
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - gc-p1-safety-net
+    paths:
+      - .gc-p1vis-generate-linux-baselines
 
 jobs:
   update-linux-snapshots:
