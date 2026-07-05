@@ -111,6 +111,7 @@ npm run test:e2e
 - **Monorepo lockfile warning** — Next.js picks parent `package-lock.json`; consider `outputFileTracingRoot` / `turbopack.root` in a future infra task
 - **Full-repo ESLint cleanup (62 pre-existing errors)** — tracked as separate follow-up work, not part of Phase 1; CI only gates on changed `*.ts` / `*.tsx` files
 - **npm audit breaking upgrades** — see `npm-audit-findings.md`; do not run `npm audit fix --force` without approval
+- **i18n parity (`wc26.bracket.lastUpdated`)** — pre-existing `main` debt (key added to `en.json` for bracket timestamp UI in `BracketPageClient.tsx` but never propagated to other locales). Fixed minimally in GC-P1I18N to unblock CI: one key added to 8 locale files. European locales (de, es, fr, it, nl, pt) use standard short UI translations; ar/fa use standard UI phrases consistent with their localized bracket sections — **native-speaker review recommended** for ar/fa. Broader i18n parity gaps (e.g. many keys still English in non-en files) remain separately-tracked debt, not audited here.
 
 ## PR
 

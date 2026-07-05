@@ -222,6 +222,7 @@
       "title": "Road to the Final",
       "subtitle": "Tutte le 64 partite · Vista tabellone",
       "note": "Tutti gli orari nell'ora locale del visitatore. Date soggette a modifiche.",
+      "lastUpdated": "Ultimo aggiornamento {time}",
       "degraded": "I dati potrebbero essere in ritardo",
       "backToHub": "Torna all'hub Mondiale 2026",
       "tabs": {

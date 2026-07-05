@@ -222,6 +222,7 @@
       "title": "Camino a la Final",
       "subtitle": "Los 64 partidos · Vista de cuadro",
       "note": "Todas las horas en hora local del visitante. Fechas y horarios sujetos a cambios.",
+      "lastUpdated": "Última actualización {time}",
       "degraded": "Los datos pueden estar retrasados",
       "backToHub": "Volver al hub de la Copa 2026",
       "tabs": {
