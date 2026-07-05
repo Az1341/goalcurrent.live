@@ -107,7 +107,7 @@ npm run test:e2e
 
 - **Full RTL accessibility audit** (Arabic/Persian copy, mirrored layouts, screen-reader flow) — separate task per ACCESSIBILITY_AUDIT guidance
 - **color-contrast axe violations** — enable as a hard gate after design fixes
-- **Cross-OS visual baselines** — current snapshots are `win32`; CI (ubuntu) may need linux baselines or `maxDiffPixelRatio` tuning on first CI run
+- **Cross-OS visual baselines** — ~~current snapshots are `win32`; CI (ubuntu) may need linux baselines~~ **Resolved (GC-P1VIS):** `*-linux.png` baselines generated on Actions ubuntu-latest; `*-win32.png` retained for local Windows runs
 - **Monorepo lockfile warning** — Next.js picks parent `package-lock.json`; consider `outputFileTracingRoot` / `turbopack.root` in a future infra task
 - **Full-repo ESLint cleanup (62 pre-existing errors)** — tracked as separate follow-up work, not part of Phase 1; CI only gates on changed `*.ts` / `*.tsx` files
 - **npm audit breaking upgrades** — see `npm-audit-findings.md`; do not run `npm audit fix --force` without approval
