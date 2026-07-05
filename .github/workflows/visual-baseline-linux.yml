@@ -1,0 +1,33 @@
+# TEMPORARY (GC-P1VIS-20260705-115744): generate Linux Playwright visual baselines on ubuntu-latest.
+# Delete this workflow after *-linux.png snapshots are committed to gc-p1-safety-net.
+name: Generate Linux visual baselines
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-linux-snapshots:
+    name: Update Linux visual snapshots
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+
+      - name: Update Linux visual snapshots
+        run: npm run test:visual -- --update-snapshots
+
+      - name: Upload Linux snapshot PNGs
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-snapshots-linux
+          path: tests/e2e/visual-regression.spec.ts-snapshots/*-linux.png
+          retention-days: 7
+          if-no-files-found: error
