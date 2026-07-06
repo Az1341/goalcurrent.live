@@ -37,13 +37,11 @@ function fixtureToApiMatch(fixture: EffectiveFixture): Wc26ApiMatch | null {
 
   const pairing = getConfirmedKnockoutPairingByFixtureId(fixture.id);
   const homeTeamId =
-    fixture.overlayHomeTeamId ??
     pairing?.homeTeamId ??
     (!isKnockoutPlaceholderTeam(fixture.homeTeamId)
       ? fixture.homeTeamId
       : undefined);
   const awayTeamId =
-    fixture.overlayAwayTeamId ??
     pairing?.awayTeamId ??
     (!isKnockoutPlaceholderTeam(fixture.awayTeamId)
       ? fixture.awayTeamId
@@ -84,9 +82,7 @@ export function applyAllConfirmedResultsToApiMatches(
   const byFixtureId = new Map(merged.map((row) => [row.fixtureId, row] as const));
 
   for (const staticRow of buildConfirmedStaticApiMatches()) {
-    if (!byFixtureId.has(staticRow.fixtureId)) {
-      byFixtureId.set(staticRow.fixtureId, staticRow);
-    }
+    byFixtureId.set(staticRow.fixtureId, staticRow);
   }
 
   return [...byFixtureId.values()].sort(

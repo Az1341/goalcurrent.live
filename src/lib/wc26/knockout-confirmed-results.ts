@@ -4,133 +4,13 @@ import type { FixtureStatus } from "@/types/fixture";
 import type { TeamId } from "@/types/team";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
 import { getConfirmedKnockoutPairingByMatchNumber } from "@/lib/wc26/knockout-confirmed-pairings";
+import {
+  WC26_CONFIRMED_KNOCKOUT_RESULTS,
+  type ConfirmedKnockoutResult,
+} from "@/lib/wc26/confirmed-results-ssot";
 
-export type ConfirmedKnockoutResult = {
-  readonly matchNumber: number;
-  readonly winnerTeamId: TeamId;
-  readonly homeScore: number;
-  readonly awayScore: number;
-  readonly penaltiesHome?: number;
-  readonly penaltiesAway?: number;
-  /** Finished status when not plain FT (e.g. after extra time). */
-  readonly matchStatus?: "ft" | "aet" | "pen";
-};
-
-export const WC26_CONFIRMED_KNOCKOUT_RESULTS: readonly ConfirmedKnockoutResult[] = [
-  {
-    matchNumber: 73,
-    winnerTeamId: "can",
-    homeScore: 0,
-    awayScore: 1,
-  },
-  {
-    matchNumber: 74,
-    winnerTeamId: "par",
-    homeScore: 1,
-    awayScore: 1,
-    penaltiesHome: 3,
-    penaltiesAway: 4,
-    matchStatus: "pen",
-  },
-  {
-    matchNumber: 75,
-    winnerTeamId: "bra",
-    homeScore: 2,
-    awayScore: 1,
-  },
-  {
-    matchNumber: 76,
-    winnerTeamId: "mar",
-    homeScore: 1,
-    awayScore: 1,
-    penaltiesHome: 2,
-    penaltiesAway: 3,
-    matchStatus: "pen",
-  },
-  {
-    matchNumber: 77,
-    winnerTeamId: "fra",
-    homeScore: 3,
-    awayScore: 0,
-  },
-  {
-    matchNumber: 78,
-    winnerTeamId: "nor",
-    homeScore: 1,
-    awayScore: 2,
-  },
-  {
-    matchNumber: 79,
-    winnerTeamId: "mex",
-    homeScore: 2,
-    awayScore: 0,
-  },
-  {
-    matchNumber: 80,
-    winnerTeamId: "eng",
-    homeScore: 2,
-    awayScore: 1,
-  },
-  {
-    matchNumber: 81,
-    winnerTeamId: "usa",
-    homeScore: 2,
-    awayScore: 0,
-  },
-  {
-    matchNumber: 82,
-    winnerTeamId: "bel",
-    homeScore: 3,
-    awayScore: 2,
-    matchStatus: "aet",
-  },
-  {
-    matchNumber: 83,
-    winnerTeamId: "por",
-    homeScore: 2,
-    awayScore: 1,
-  },
-  {
-    matchNumber: 84,
-    winnerTeamId: "esp",
-    homeScore: 3,
-    awayScore: 0,
-  },
-  {
-    matchNumber: 85,
-    winnerTeamId: "sui",
-    homeScore: 2,
-    awayScore: 0,
-  },
-  {
-    matchNumber: 86,
-    winnerTeamId: "arg",
-    homeScore: 3,
-    awayScore: 2,
-    matchStatus: "aet",
-  },
-  {
-    matchNumber: 87,
-    winnerTeamId: "col",
-    homeScore: 1,
-    awayScore: 0,
-  },
-  {
-    matchNumber: 88,
-    winnerTeamId: "egy",
-    homeScore: 1,
-    awayScore: 1,
-    penaltiesHome: 2,
-    penaltiesAway: 4,
-    matchStatus: "pen",
-  },
-  {
-    matchNumber: 89,
-    winnerTeamId: "mar",
-    homeScore: 0,
-    awayScore: 3,
-  },
-];
+export type { ConfirmedKnockoutResult };
+export { WC26_CONFIRMED_KNOCKOUT_RESULTS };
 
 const byMatchNumber = new Map(
   WC26_CONFIRMED_KNOCKOUT_RESULTS.map((entry) => [entry.matchNumber, entry] as const),
@@ -199,27 +79,14 @@ export function applyConfirmedKnockoutResultsToApiMatches(
     const withPairing = pairing
       ? {
           ...match,
-          homeTeamId: match.homeTeamId ?? pairing.homeTeamId,
-          awayTeamId: match.awayTeamId ?? pairing.awayTeamId,
+          homeTeamId: pairing.homeTeamId,
+          awayTeamId: pairing.awayTeamId,
         }
       : match;
 
     const confirmed = getConfirmedKnockoutResult(match.matchNumber);
     if (!confirmed || isLiveMatchStatus(withPairing.status)) {
       return withPairing;
-    }
-
-    const hasApiTruth =
-      withPairing.apiFixtureId != null &&
-      withPairing.homeScore !== null &&
-      withPairing.awayScore !== null;
-
-    if (hasApiTruth) {
-      return {
-        ...withPairing,
-        penaltiesHome: withPairing.penaltiesHome ?? confirmed.penaltiesHome,
-        penaltiesAway: withPairing.penaltiesAway ?? confirmed.penaltiesAway,
-      };
     }
 
     const status = resolvedConfirmedStatus(confirmed);
@@ -257,8 +124,8 @@ function applyConfirmedKnockoutPairingOverlay(
 
   return {
     ...fixture,
-    overlayHomeTeamId: fixture.overlayHomeTeamId ?? pairing.homeTeamId,
-    overlayAwayTeamId: fixture.overlayAwayTeamId ?? pairing.awayTeamId,
+    overlayHomeTeamId: pairing.homeTeamId,
+    overlayAwayTeamId: pairing.awayTeamId,
   };
 }
 
@@ -275,19 +142,6 @@ function applyConfirmedKnockoutToFixture(fixture: EffectiveFixture): EffectiveFi
 
   if (isLiveMatchStatus(withPairing.status)) {
     return withPairing;
-  }
-
-  const hasApiOverlay =
-    withPairing.apiFixtureId != null &&
-    typeof withPairing.homeScore === "number" &&
-    typeof withPairing.awayScore === "number";
-
-  if (hasApiOverlay) {
-    return {
-      ...withPairing,
-      penaltiesHome: withPairing.penaltiesHome ?? confirmed.penaltiesHome,
-      penaltiesAway: withPairing.penaltiesAway ?? confirmed.penaltiesAway,
-    };
   }
 
   const status = resolvedConfirmedStatus(confirmed);

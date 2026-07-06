@@ -1,0 +1,655 @@
+{
+  "groupResults": [
+    {
+      "matchNumber": 1,
+      "homeScore": 2,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 2,
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 3,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 4,
+      "homeScore": 4,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 5,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 6,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 7,
+      "homeScore": 0,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 8,
+      "homeScore": 2,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 9,
+      "homeScore": 7,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 10,
+      "homeScore": 2,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 11,
+      "homeScore": 1,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 12,
+      "homeScore": 5,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 13,
+      "homeScore": 0,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 14,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 15,
+      "homeScore": 2,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 16,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 17,
+      "homeScore": 3,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 18,
+      "homeScore": 1,
+      "awayScore": 4
+    },
+    {
+      "matchNumber": 19,
+      "homeScore": 3,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 20,
+      "homeScore": 3,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 21,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 22,
+      "homeScore": 4,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 23,
+      "homeScore": 1,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 24,
+      "homeScore": 1,
+      "awayScore": 3
+    },
+    {
+      "matchNumber": 25,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 26,
+      "homeScore": 4,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 27,
+      "homeScore": 6,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 28,
+      "homeScore": 1,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 29,
+      "homeScore": 2,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 30,
+      "homeScore": 0,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 31,
+      "homeScore": 3,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 32,
+      "homeScore": 0,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 33,
+      "homeScore": 5,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 34,
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 35,
+      "homeScore": 0,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 36,
+      "homeScore": 0,
+      "awayScore": 4
+    },
+    {
+      "matchNumber": 37,
+      "homeScore": 4,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 38,
+      "homeScore": 0,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 39,
+      "homeScore": 2,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 40,
+      "homeScore": 1,
+      "awayScore": 3
+    },
+    {
+      "matchNumber": 41,
+      "homeScore": 2,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 42,
+      "homeScore": 3,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 43,
+      "homeScore": 3,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 44,
+      "homeScore": 1,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 45,
+      "homeScore": 5,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 46,
+      "homeScore": 0,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 47,
+      "homeScore": 0,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 48,
+      "homeScore": 1,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 49,
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 50,
+      "homeScore": 3,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 51,
+      "homeScore": 0,
+      "awayScore": 3
+    },
+    {
+      "matchNumber": 52,
+      "homeScore": 4,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 53,
+      "homeScore": 0,
+      "awayScore": 3
+    },
+    {
+      "matchNumber": 54,
+      "homeScore": 1,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 55,
+      "homeScore": 0,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 56,
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 57,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 58,
+      "homeScore": 1,
+      "awayScore": 3
+    },
+    {
+      "matchNumber": 59,
+      "homeScore": 3,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 60,
+      "homeScore": 0,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 61,
+      "homeScore": 1,
+      "awayScore": 4
+    },
+    {
+      "matchNumber": 62,
+      "homeScore": 5,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 63,
+      "homeScore": 0,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 64,
+      "homeScore": 0,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 65,
+      "homeScore": 1,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 66,
+      "homeScore": 1,
+      "awayScore": 5
+    },
+    {
+      "matchNumber": 67,
+      "homeScore": 0,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 68,
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 69,
+      "homeScore": 0,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 70,
+      "homeScore": 3,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 71,
+      "homeScore": 3,
+      "awayScore": 3
+    },
+    {
+      "matchNumber": 72,
+      "homeScore": 1,
+      "awayScore": 3
+    }
+  ],
+  "knockoutPairings": [
+    {
+      "fixtureId": "fixture-073",
+      "matchNumber": 73,
+      "homeTeamId": "rsa",
+      "awayTeamId": "can"
+    },
+    {
+      "fixtureId": "fixture-074",
+      "matchNumber": 74,
+      "homeTeamId": "ger",
+      "awayTeamId": "par"
+    },
+    {
+      "fixtureId": "fixture-075",
+      "matchNumber": 75,
+      "homeTeamId": "ned",
+      "awayTeamId": "mar"
+    },
+    {
+      "fixtureId": "fixture-076",
+      "matchNumber": 76,
+      "homeTeamId": "bra",
+      "awayTeamId": "jpn"
+    },
+    {
+      "fixtureId": "fixture-077",
+      "matchNumber": 77,
+      "homeTeamId": "fra",
+      "awayTeamId": "swe"
+    },
+    {
+      "fixtureId": "fixture-078",
+      "matchNumber": 78,
+      "homeTeamId": "civ",
+      "awayTeamId": "nor"
+    },
+    {
+      "fixtureId": "fixture-079",
+      "matchNumber": 79,
+      "homeTeamId": "mex",
+      "awayTeamId": "ecu"
+    },
+    {
+      "fixtureId": "fixture-080",
+      "matchNumber": 80,
+      "homeTeamId": "eng",
+      "awayTeamId": "cod"
+    },
+    {
+      "fixtureId": "fixture-081",
+      "matchNumber": 81,
+      "homeTeamId": "usa",
+      "awayTeamId": "bih"
+    },
+    {
+      "fixtureId": "fixture-082",
+      "matchNumber": 82,
+      "homeTeamId": "bel",
+      "awayTeamId": "sen"
+    },
+    {
+      "fixtureId": "fixture-083",
+      "matchNumber": 83,
+      "homeTeamId": "por",
+      "awayTeamId": "cro"
+    },
+    {
+      "fixtureId": "fixture-084",
+      "matchNumber": 84,
+      "homeTeamId": "esp",
+      "awayTeamId": "aut"
+    },
+    {
+      "fixtureId": "fixture-085",
+      "matchNumber": 85,
+      "homeTeamId": "sui",
+      "awayTeamId": "alg"
+    },
+    {
+      "fixtureId": "fixture-086",
+      "matchNumber": 86,
+      "homeTeamId": "arg",
+      "awayTeamId": "cpv"
+    },
+    {
+      "fixtureId": "fixture-087",
+      "matchNumber": 87,
+      "homeTeamId": "col",
+      "awayTeamId": "gha"
+    },
+    {
+      "fixtureId": "fixture-088",
+      "matchNumber": 88,
+      "homeTeamId": "aus",
+      "awayTeamId": "egy"
+    },
+    {
+      "fixtureId": "fixture-089",
+      "matchNumber": 89,
+      "homeTeamId": "par",
+      "awayTeamId": "fra"
+    },
+    {
+      "fixtureId": "fixture-090",
+      "matchNumber": 90,
+      "homeTeamId": "can",
+      "awayTeamId": "mar"
+    },
+    {
+      "fixtureId": "fixture-091",
+      "matchNumber": 91,
+      "homeTeamId": "bra",
+      "awayTeamId": "nor"
+    },
+    {
+      "fixtureId": "fixture-092",
+      "matchNumber": 92,
+      "homeTeamId": "mex",
+      "awayTeamId": "eng"
+    },
+    {
+      "fixtureId": "fixture-093",
+      "matchNumber": 93,
+      "homeTeamId": "por",
+      "awayTeamId": "esp"
+    },
+    {
+      "fixtureId": "fixture-094",
+      "matchNumber": 94,
+      "homeTeamId": "usa",
+      "awayTeamId": "bel"
+    },
+    {
+      "fixtureId": "fixture-095",
+      "matchNumber": 95,
+      "homeTeamId": "arg",
+      "awayTeamId": "egy"
+    },
+    {
+      "fixtureId": "fixture-096",
+      "matchNumber": 96,
+      "homeTeamId": "sui",
+      "awayTeamId": "col"
+    },
+    {
+      "fixtureId": "fixture-097",
+      "matchNumber": 97,
+      "homeTeamId": "fra",
+      "awayTeamId": "mar"
+    },
+    {
+      "fixtureId": "fixture-099",
+      "matchNumber": 99,
+      "homeTeamId": "nor",
+      "awayTeamId": "eng"
+    }
+  ],
+  "knockoutResults": [
+    {
+      "matchNumber": 73,
+      "winnerTeamId": "can",
+      "homeScore": 0,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 74,
+      "winnerTeamId": "par",
+      "homeScore": 1,
+      "awayScore": 1,
+      "penaltiesHome": 3,
+      "penaltiesAway": 4,
+      "matchStatus": "pen"
+    },
+    {
+      "matchNumber": 75,
+      "winnerTeamId": "mar",
+      "homeScore": 1,
+      "awayScore": 1,
+      "penaltiesHome": 2,
+      "penaltiesAway": 3,
+      "matchStatus": "pen"
+    },
+    {
+      "matchNumber": 76,
+      "winnerTeamId": "bra",
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 77,
+      "winnerTeamId": "fra",
+      "homeScore": 3,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 78,
+      "winnerTeamId": "nor",
+      "homeScore": 1,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 79,
+      "winnerTeamId": "mex",
+      "homeScore": 2,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 80,
+      "winnerTeamId": "eng",
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 81,
+      "winnerTeamId": "usa",
+      "homeScore": 2,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 82,
+      "winnerTeamId": "bel",
+      "homeScore": 3,
+      "awayScore": 2,
+      "matchStatus": "aet"
+    },
+    {
+      "matchNumber": 83,
+      "winnerTeamId": "por",
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 84,
+      "winnerTeamId": "esp",
+      "homeScore": 3,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 85,
+      "winnerTeamId": "sui",
+      "homeScore": 2,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 86,
+      "winnerTeamId": "arg",
+      "homeScore": 3,
+      "awayScore": 2,
+      "matchStatus": "aet"
+    },
+    {
+      "matchNumber": 87,
+      "winnerTeamId": "col",
+      "homeScore": 1,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 88,
+      "winnerTeamId": "egy",
+      "homeScore": 1,
+      "awayScore": 1,
+      "penaltiesHome": 2,
+      "penaltiesAway": 4,
+      "matchStatus": "pen"
+    },
+    {
+      "matchNumber": 89,
+      "winnerTeamId": "fra",
+      "homeScore": 0,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 90,
+      "winnerTeamId": "mar",
+      "homeScore": 0,
+      "awayScore": 3
+    },
+    {
+      "matchNumber": 91,
+      "winnerTeamId": "nor",
+      "homeScore": 1,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 92,
+      "winnerTeamId": "eng",
+      "homeScore": 2,
+      "awayScore": 3
+    }
+  ]
+}
