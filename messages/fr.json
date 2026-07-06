@@ -222,6 +222,7 @@
       "title": "Route vers la Finale",
       "subtitle": "Les 64 matchs · Vue tableau",
       "note": "Toutes les heures en heure locale du visiteur. Dates et coups d'envoi susceptibles de changer.",
+      "lastUpdated": "Dernière mise à jour {time}",
       "degraded": "Les données peuvent être retardées",
       "backToHub": "Retour au hub Coupe du Monde 2026",
       "tabs": {

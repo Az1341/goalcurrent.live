@@ -222,6 +222,7 @@
       "title": "Road to the Final",
       "subtitle": "Alle 64 Spiele · Turnierbaum",
       "note": "Alle Zeiten in der lokalen Besucherzeit. Termine können sich ändern.",
+      "lastUpdated": "Zuletzt aktualisiert {time}",
       "degraded": "Daten können verzögert sein",
       "backToHub": "Zurück zum WM-2026-Hub",
       "tabs": {
