@@ -768,8 +768,15 @@ export function buildKnockoutBracketRounds(
 
   for (const template of FIFA_KNOCKOUT_ROUND_TEMPLATES) {
     const matches = template.matches.map((entry) => {
-      const home = resolveKnockoutFeedSlot(entry.home, fixtures, winnerByMatch);
-      const away = resolveKnockoutFeedSlot(entry.away, fixtures, winnerByMatch);
+      const confirmedPairing = getConfirmedKnockoutPairingByMatchNumber(
+        entry.matchNumber,
+      );
+      const home = confirmedPairing
+        ? sideFromConfirmedTeam(confirmedPairing.homeTeamId)
+        : resolveKnockoutFeedSlot(entry.home, fixtures, winnerByMatch);
+      const away = confirmedPairing
+        ? sideFromConfirmedTeam(confirmedPairing.awayTeamId)
+        : resolveKnockoutFeedSlot(entry.away, fixtures, winnerByMatch);
       const winnerTeamId = resolveKnockoutMatchWinner(entry.matchNumber, fixtures);
       const score = formatKnockoutMatchScore(entry.matchNumber, fixtures);
       const schedule = resolveBracketMatchSchedule(entry.matchNumber, fixtures);
