@@ -36,8 +36,8 @@ function sortedTeamPairKey(left: TeamId, right: TeamId): string {
 const KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID: Readonly<Record<string, string>> = {
   "can|rsa": "fixture-073",
   "ger|par": "fixture-074",
-  "bra|jpn": "fixture-075",
-  "mar|ned": "fixture-076",
+  "bra|jpn": "fixture-076",
+  "mar|ned": "fixture-075",
   "fra|swe": "fixture-077",
   "civ|nor": "fixture-078",
   "ecu|mex": "fixture-079",
@@ -50,15 +50,17 @@ const KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID: Readonly<Record<string, string>> = {
   "arg|cpv": "fixture-086",
   "col|gha": "fixture-087",
   "aus|egy": "fixture-088",
-  // Round of 16 — API-verified pairings (order-independent)
-  "can|mar": "fixture-089",
-  "fra|par": "fixture-090",
+  // Round of 16 — FIFA-verified pairings (order-independent)
+  "fra|par": "fixture-089",
+  "can|mar": "fixture-090",
   "bra|nor": "fixture-091",
   "eng|mex": "fixture-092",
   "esp|por": "fixture-093",
   "bel|usa": "fixture-094",
   "arg|egy": "fixture-095",
   "col|sui": "fixture-096",
+  "fra|mar": "fixture-097",
+  "eng|nor": "fixture-099",
 };
 
 /** Resolve a knockout fixture id from a known API team pairing. */

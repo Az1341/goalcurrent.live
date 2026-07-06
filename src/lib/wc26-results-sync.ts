@@ -3,6 +3,8 @@ import {
   replaceLiveFixtureOverlay,
 } from "@/lib/wc26-fixture-overlay";
 import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
+import { getConfirmedKnockoutResult } from "@/lib/wc26/knockout-confirmed-results";
+import { isLiveMatchStatus } from "@/lib/wc26-live";
 import { normalizeWc26MatchStatus } from "@/lib/wc26-match-status";
 import { resolveOverlayKickoffUtc } from "@/lib/wc26/overlay-kickoff";
 import type {
@@ -62,11 +64,34 @@ type FetchScoresOutcome =
 
 function overlayEntryFromApiMatch(match: Wc26ApiMatch): FixtureOverlayEntry {
   const confirmed = getConfirmedKnockoutPairingByFixtureId(match.fixtureId);
-  const homeTeamId = match.homeTeamId ?? confirmed?.homeTeamId;
-  const awayTeamId = match.awayTeamId ?? confirmed?.awayTeamId;
+  const confirmedResult = getConfirmedKnockoutResult(match.matchNumber);
   const status = normalizeWc26MatchStatus(match.status, match.elapsed);
-
   const kickoffUtc = resolveOverlayKickoffUtc(match.fixtureId, match.kickoffUtc);
+
+  if (confirmed && confirmedResult && !isLiveMatchStatus(status)) {
+    const resolvedStatus = confirmedResult.matchStatus ?? status;
+    const entry: FixtureOverlayEntry = {
+      status: resolvedStatus,
+      elapsed:
+        resolvedStatus === "aet" || resolvedStatus === "pen" ? 120 : 90,
+      homeTeamId: confirmed.homeTeamId,
+      awayTeamId: confirmed.awayTeamId,
+      homeScore: confirmedResult.homeScore,
+      awayScore: confirmedResult.awayScore,
+      ...(match.apiFixtureId != null ? { apiFixtureId: match.apiFixtureId } : {}),
+      ...(kickoffUtc ? { kickoffUtc } : {}),
+      ...(confirmedResult.penaltiesHome != null
+        ? { penaltiesHome: confirmedResult.penaltiesHome }
+        : {}),
+      ...(confirmedResult.penaltiesAway != null
+        ? { penaltiesAway: confirmedResult.penaltiesAway }
+        : {}),
+    };
+    return entry;
+  }
+
+  const homeTeamId = confirmed?.homeTeamId ?? match.homeTeamId;
+  const awayTeamId = confirmed?.awayTeamId ?? match.awayTeamId;
 
   const entry: FixtureOverlayEntry = {
     status,

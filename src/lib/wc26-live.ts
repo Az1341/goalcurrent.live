@@ -251,17 +251,17 @@ export function resolveFixtureParticipant(
   side: "home" | "away",
   allFixtures: readonly EffectiveFixture[],
 ): ResolvedFixtureParticipant {
+  const confirmedPairing = getConfirmedKnockoutPairingByFixtureId(fixture.id);
+  if (confirmedPairing) {
+    const teamId =
+      side === "home" ? confirmedPairing.homeTeamId : confirmedPairing.awayTeamId;
+    return participantFromTeamId(teamId);
+  }
+
   const overlayTeamId =
     side === "home" ? fixture.overlayHomeTeamId : fixture.overlayAwayTeamId;
   if (overlayTeamId && !isKnockoutPlaceholderTeam(overlayTeamId)) {
     return participantFromTeamId(overlayTeamId);
-  }
-
-  const confirmed = getConfirmedKnockoutPairingByFixtureId(fixture.id);
-  if (confirmed) {
-    const teamId =
-      side === "home" ? confirmed.homeTeamId : confirmed.awayTeamId;
-    return participantFromTeamId(teamId);
   }
 
   const fallbackId = side === "home" ? fixture.homeTeamId : fixture.awayTeamId;
