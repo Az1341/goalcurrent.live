@@ -81,9 +81,11 @@ function joinDirective(name: string, values: readonly string[]): string {
 }
 
 export function buildContentSecurityPolicy(): string {
+  const devEval =
+    process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
   return [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' " + SCRIPT_SRC.join(" "),
+    `script-src 'self' 'unsafe-inline'${devEval} ` + SCRIPT_SRC.join(" "),
     "style-src 'self' 'unsafe-inline' " + STYLE_SRC.join(" "),
     joinDirective("img-src", IMG_SRC),
     "font-src 'self' data:",

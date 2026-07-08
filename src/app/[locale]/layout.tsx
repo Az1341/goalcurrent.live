@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Roboto_Condensed, Noto_Sans_Arabic, Vazirmatn } from "next/font/google";
+import { Inter, Noto_Sans_Arabic, Vazirmatn } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { hasLocale } from "next-intl";
@@ -9,6 +9,8 @@ import { GA } from "@/components/analytics/GA";
 import Layout from "@/components/layout/Layout";
 import { FirebaseRoot } from "@/components/firebase/FirebaseRoot";
 import { OneSignalInit } from "@/components/push/OneSignalInit";
+import ThemeScript from "@/components/theme/ThemeScript";
+import { ThemeBootstrap, ThemeProvider } from "@/lib/theme/theme";
 import { isFirebaseConfigured } from "@/lib/firebase/config";
 import SiteJsonLd from "@/components/seo/SiteJsonLd";
 import { routing } from "@/i18n/routing";
@@ -27,15 +29,6 @@ const inter = Inter({
   variable: "--font-inter",
   weight: ["400", "500", "600", "700"],
   preload: true,
-  adjustFontFallback: true,
-});
-
-const robotoCondensed = Roboto_Condensed({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-roboto-condensed",
-  weight: ["400", "700"],
-  preload: false,
   adjustFontFallback: true,
 });
 
@@ -138,7 +131,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
   const direction = getDirection(locale);
-  const fontVariables = [inter.variable, robotoCondensed.variable];
+  const fontVariables = [inter.variable];
   if (locale === "fa") {
     fontVariables.push(vazirmatn.variable);
   } else if (locale === "ar") {
@@ -152,14 +145,20 @@ export default async function LocaleLayout({
       className={fontVariables.join(" ")}
       suppressHydrationWarning
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="gc-body">
-        <NextIntlClientProvider messages={messages}>
-          <SiteJsonLd locale={locale} />
-          <Layout>{children}</Layout>
-          <GA />
-          {isFirebaseConfigured() ? <FirebaseRoot /> : <OneSignalInit />}
-          <AdSenseScript />
-        </NextIntlClientProvider>
+        <ThemeProvider>
+          <ThemeBootstrap />
+          <NextIntlClientProvider messages={messages}>
+            <SiteJsonLd locale={locale} />
+            <Layout>{children}</Layout>
+            <GA />
+            {isFirebaseConfigured() ? <FirebaseRoot /> : <OneSignalInit />}
+            <AdSenseScript />
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

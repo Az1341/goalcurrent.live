@@ -1,0 +1,22 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--gc-v5-border, #e5e5ea);
+  border-radius: 8px;
+  background: var(--gc-v5-surface, #fff);
+  color: var(--gc-v5-text, #1d1d1f);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle:hover {
+  border-color: var(--gc-brand-from, #c8102e);
+}
+
+.icon {
+  font-size: 16px;
+  line-height: 1;
+}

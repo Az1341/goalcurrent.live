@@ -248,7 +248,28 @@
   .liveRibbon {
     gap: 20px;
   }
+}
 
+.liveRibbonV5 {
+  background: var(--gc-v5-ticker-bg, #1d1d1f);
+  color: var(--gc-v5-ticker-text, #fff);
+  border-bottom: 1px solid var(--gc-v5-border, #e5e5ea);
+}
+
+.liveRibbonV5 .liveRibbonLabel {
+  color: var(--gc-v5-ticker-text, #fff);
+  border-right-color: var(--gc-v5-border, #3a3a3c);
+}
+
+.liveRibbonV5 .liveMatch {
+  border-right-color: var(--gc-v5-border, #3a3a3c);
+}
+
+.liveRibbonV5 .liveMatchStatusLive {
+  color: var(--gc-brand-from, #c8102e);
+}
+
+@media (min-width: 1024px) {
   .tickerTrack {
     gap: 22px;
   }

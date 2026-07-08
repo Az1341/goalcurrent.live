@@ -223,6 +223,20 @@ export const TOP_NAV: NavItem[] = [
   ...SITE_NAV,
 ];
 
+export const FOOTER_PLATFORM_LINKS: NavLinkItem[] = [
+  { href: "/live", labelKey: "live" },
+  { href: "/worldcup2026/fixtures", labelKey: "fixtures" },
+  { href: "/worldcup2026/teams", labelKey: "teams" },
+  { href: "/premier-league/table", labelKey: "table" },
+];
+
+export const FOOTER_COMPANY_LINKS: NavLinkItem[] = [
+  { href: "/about", labelKey: "about" },
+  { href: "/contact", labelKey: "contact" },
+  { href: "/privacy", labelKey: "privacy" },
+  { href: "/terms", labelKey: "terms" },
+];
+
 export const FOOTER_LINKS: NavLinkItem[] = [
   { href: "/about", labelKey: "about" },
   { href: "/contact", labelKey: "contact" },

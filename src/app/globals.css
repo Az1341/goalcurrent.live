@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@import "@fontsource/big-shoulders-display/400.css";
+@import "@fontsource/big-shoulders-display/600.css";
+@import "@fontsource/big-shoulders-display/700.css";
+@import "@fontsource/big-shoulders-display/800.css";
+@import "@fontsource/big-shoulders-display/900.css";
 
 /* Global reset, design tokens, and base typography only — page styles use CSS modules. */
 
@@ -48,7 +53,7 @@
 
   /* ── Typography (next/font — self-hosted, preloaded) ── */
   --font-body: var(--font-inter);
-  --font-heading: var(--font-roboto-condensed);
+  --font-heading: "Big Shoulders Display", var(--font-inter), sans-serif;
   --gc-emoji-font: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji",
     sans-serif;
   --gc-font: var(--font-body), var(--gc-emoji-font), system-ui, -apple-system,
@@ -63,7 +68,7 @@
   /* ── Layout ── */
   --gc-content-max: 960px;
   --gc-home-max: 1320px;
-  --gc-home-gutter: 14px;
+  --gc-home-gutter: 16px;
   --gc-radius-sm: 8px;
   --gc-radius: 10px;
   --gc-radius-lg: 12px;
@@ -112,15 +117,15 @@
   --gc-match-stat-track: #cbd5e1;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 834px) {
   :root {
-    --gc-home-gutter: 22px;
+    --gc-home-gutter: 40px;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1440px) {
   :root {
-    --gc-home-gutter: 32px;
+    --gc-home-gutter: 80px;
   }
 }
 
@@ -177,14 +182,73 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: #fdf6f0;
+  background-color: var(--gc-page-bg, #fdf6f0);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --gc-bg: #0d0d0f;
+  --gc-surface: #1d1d1f;
+  --gc-card: #1d1d1f;
+  --gc-card-hover: #2a2a2e;
+  --gc-inset: #141416;
+  --gc-text-primary: #f5f5f7;
+  --gc-text-secondary: #d1d1d6;
+  --gc-text-muted: #98989d;
+  --gc-border: #3a3a3c;
+  --gc-border-strong: #48484a;
+  --gc-content-heading: #f5f5f7;
+  --gc-content-accent: #d1d1d6;
+  --gc-content-surface: #141416;
+  --gc-content-surface-alt: #1d1d1f;
+  --gc-content-border: #3a3a3c;
+  --gc-nav-bg: #1d1d1f;
+  --gc-nav-text: #f5f5f7;
+  --gc-nav-text-hover: #ffffff;
+  --gc-pink-bg: #2a1218;
+  --gc-pink-border: #5c1a28;
+  --gc-v5-hero-bg: #1a0510;
+  --gc-v5-text: #f5f5f7;
+  --gc-v5-muted: #98989d;
+  --gc-v5-border: #3a3a3c;
+  --gc-v5-surface: #1d1d1f;
+  --gc-v5-section-alt: #141416;
+  --gc-v5-ticker-bg: #0d0d0f;
+  --gc-v5-ticker-text: #f5f5f7;
+  --gc-v5-footer-bg: #0d0d0f;
+  --gc-page-bg: #0d0d0f;
+  --gc-header-bar-bg: #1d1d1f;
+  --gc-header-bar-border: #3a3a3c;
+}
+
+:root {
+  --gc-v5-hero-bg: #ffffff;
+  --gc-v5-text: #1d1d1f;
+  --gc-v5-muted: #6e6e73;
+  --gc-v5-border: #e5e5ea;
+  --gc-v5-surface: #ffffff;
+  --gc-v5-section-alt: #f5f5f7;
+  --gc-v5-ticker-bg: #1d1d1f;
+  --gc-v5-ticker-text: #ffffff;
+  --gc-v5-footer-bg: #1d1d1f;
+  --gc-page-bg: #ffffff;
+  --gc-header-bar-bg: #ffffff;
+  --gc-header-bar-border: #e5e5ea;
+  /* Semantic aliases (single token set — light/dark via data-theme) */
+  --bg-page: var(--gc-page-bg);
+  --bg-surface: var(--gc-v5-surface);
+  --text-primary: var(--gc-v5-text);
+  --text-secondary: var(--gc-v5-muted);
+  --border: var(--gc-v5-border);
+  --accent-red: var(--gc-brand-from);
 }
 
 body {
   font-family: var(--font-body), var(--gc-emoji-font), system-ui, sans-serif;
   font-weight: var(--gc-weight-body);
   color: var(--gc-text-primary);
-  background-color: #fdf6f0;
+  background-color: var(--gc-page-bg, #fdf6f0);
   min-height: 100vh;
   font-size: 17px;
   line-height: var(--gc-line-height);

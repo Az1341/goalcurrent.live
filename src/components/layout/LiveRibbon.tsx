@@ -92,9 +92,13 @@ function TickerMatchItem({
 
 type LiveRibbonProps = {
   embedded?: boolean;
+  variant?: "default" | "v5";
 };
 
-export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
+export default function LiveRibbon({
+  embedded = false,
+  variant = "default",
+}: LiveRibbonProps) {
   const t = useTranslations("layout.liveRibbon");
   const fixtures = useEffectiveFixtures();
   const allMatches = selectRibbonFixtures(fixtures);
@@ -102,7 +106,7 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
   if (allMatches.length === 0) {
     return (
       <div
-        className={`${styles.liveRibbon} ${embedded ? styles.liveRibbonEmbedded : ""}`}
+        className={`${styles.liveRibbon} ${embedded ? styles.liveRibbonEmbedded : ""} ${variant === "v5" ? styles.liveRibbonV5 : ""}`}
         role="region"
         aria-label={t("tickerAria")}
       >
@@ -119,7 +123,7 @@ export default function LiveRibbon({ embedded = false }: LiveRibbonProps) {
 
   return (
     <div
-      className={`${styles.liveRibbon} ${embedded ? styles.liveRibbonEmbedded : ""}`}
+      className={`${styles.liveRibbon} ${embedded ? styles.liveRibbonEmbedded : ""} ${variant === "v5" ? styles.liveRibbonV5 : ""}`}
       role="region"
       aria-label={t("tickerAria")}
     >

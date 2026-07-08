@@ -2,7 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { FOOTER_LINKS, FOOTER_SOCIAL } from "@/lib/nav";
+import {
+  FOOTER_COMPANY_LINKS,
+  FOOTER_PLATFORM_LINKS,
+  FOOTER_SOCIAL,
+} from "@/lib/nav";
 import { NORDVPN_HREF } from "@/lib/site-keys";
 import { SITE_NAME } from "@/lib/site-url";
 import GooglePlayBadge from "./GooglePlayBadge";
@@ -13,54 +17,81 @@ export default function MasterFooter() {
   const tLayout = useTranslations("layout.footer");
 
   return (
-    <footer className={styles.masterFooter} data-gc-chrome="site-footer">
-      <div className={styles.footerInner}>
-        <nav className={styles.footerNav} aria-label={tLayout("ariaLabel")}>
-          {FOOTER_LINKS.map((link) => (
-            <Link key={link.href} href={link.href}>
-              {t(link.labelKey)}
-            </Link>
-          ))}
+    <footer
+      className={`${styles.masterFooter} ${styles.masterFooterV5}`}
+      data-gc-chrome="site-footer"
+    >
+      <div className={styles.footerV5Grid}>
+        <div className={styles.footerBrandCol}>
+          <Link href="/" className={styles.footerBrand}>
+            Goal<span>Current</span>.live
+          </Link>
+          <p className={styles.footerTagline}>
+            Live football scores, fixtures and news — World Cup 2026 and Premier
+            League 26/27.
+          </p>
+          <div className={styles.footerSocial} aria-label={tLayout("socialAria")}>
+            {FOOTER_SOCIAL.map((social) => (
+              <a
+                key={social.href}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t(social.labelKey)}
+                className={styles.footerSocialIcon}
+              >
+                {t(social.labelKey).charAt(0)}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <nav className={styles.footerLinkCol} aria-label="Platform">
+          <h3 className={styles.footerColTitle}>Platform</h3>
+          <ul className={styles.footerLinkList}>
+            {FOOTER_PLATFORM_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href}>{t(link.labelKey)}</Link>
+              </li>
+            ))}
+          </ul>
         </nav>
 
-        <div className={styles.footerSocial} aria-label={tLayout("socialAria")}>
-          {FOOTER_SOCIAL.map((social) => (
-            <a
-              key={social.href}
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t(social.labelKey)}
-            >
-              {t(social.labelKey)}
-            </a>
-          ))}
-        </div>
+        <nav className={styles.footerLinkCol} aria-label="Company">
+          <h3 className={styles.footerColTitle}>Company</h3>
+          <ul className={styles.footerLinkList}>
+            {FOOTER_COMPANY_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href}>{t(link.labelKey)}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-        <div
-          className={styles.nordVpn}
-          role="complementary"
-          aria-label="Affiliate promotion"
-          data-gc-chrome="nordvpn"
-        >
-          <span>{tLayout("nordVpn")}</span>
-          <span className={styles.nordAd}>{tLayout("nordAd")}</span>
-          <a className={styles.nordCta} href={NORDVPN_HREF} rel="noopener noreferrer sponsored">
-            {tLayout("nordCta")}
-          </a>
-        </div>
-
-        <div className={styles.googlePlayWrap}>
+        <div className={styles.footerStoreCol}>
           <GooglePlayBadge />
         </div>
-
-        <p className={styles.footerCopy}>
-          {tLayout("copyright", {
-            year: new Date().getFullYear(),
-            siteName: SITE_NAME,
-          })}
-        </p>
       </div>
+
+      <div
+        className={styles.nordVpn}
+        role="complementary"
+        aria-label="Affiliate promotion"
+        data-gc-chrome="nordvpn"
+      >
+        <span>{tLayout("nordVpn")}</span>
+        <span className={styles.nordAd}>{tLayout("nordAd")}</span>
+        <a className={styles.nordCta} href={NORDVPN_HREF} rel="noopener noreferrer sponsored">
+          {tLayout("nordCta")}
+        </a>
+      </div>
+
+      <p className={styles.footerCopy}>
+        {tLayout("copyright", {
+          year: new Date().getFullYear(),
+          siteName: SITE_NAME,
+        })}
+      </p>
     </footer>
   );
 }

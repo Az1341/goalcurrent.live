@@ -88,7 +88,13 @@ export async function fetchCachedVideos(
   limit = 12,
 ): Promise<VideosApiResponse> {
   const bucket = await getVideosCacheBucket();
+  const seenIds = new Set<string>();
   const videos = asVideoItems(bucket)
+    .filter((item) => {
+      if (seenIds.has(item.id)) return false;
+      seenIds.add(item.id);
+      return true;
+    })
     .slice(0, limit)
     .map(videoItemToYouTubeVideo);
 

@@ -16,6 +16,7 @@ import HeaderNavDropdown from "./HeaderNavDropdown";
 import LiveRibbon from "./LiveRibbon";
 import HeaderLocaleDropdown from "./HeaderLocaleDropdown";
 import AuthMenu from "@/components/firebase/AuthMenu";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import styles from "./master-chrome.module.css";
 
 function openSubscribeDialog() {
@@ -56,10 +57,13 @@ export default function MasterHeader() {
   return (
     <div
       ref={chromeRef}
-      className={styles.chromeWrap}
+      className={`${styles.chromeWrap} ${isHome ? styles.chromeWrapV5 : ""}`}
       data-gc-chrome="site-header"
     >
-      <header className={styles.masterHeader} role="banner">
+      <header
+        className={`${styles.masterHeader} ${isHome ? styles.masterHeaderV5 : ""}`}
+        role="banner"
+      >
         <div className={styles.bar}>
           <NavLink href="/" className={styles.brand}>
             <div className={styles.brandLogoWrap}>
@@ -102,6 +106,7 @@ export default function MasterHeader() {
           </nav>
 
           <div className={styles.headerActions}>
+            <ThemeToggle />
             <HeaderLocaleDropdown />
             <AuthMenu />
             <button

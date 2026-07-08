@@ -23,6 +23,7 @@
     "test:visual:update": "playwright test --project=visual --update-snapshots"
   },
   "dependencies": {
+    "@fontsource/big-shoulders-display": "^5.2.5",
     "@sentry/nextjs": "^10.60.0",
     "firebase": "^12.15.0",
     "firebase-admin": "^14.1.0",
