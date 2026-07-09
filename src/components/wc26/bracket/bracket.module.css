@@ -26,6 +26,19 @@
   overflow-x: hidden;
 }
 
+[data-theme="dark"] .bracketPage {
+  --bracket-bg: var(--gc-page-bg, #120508);
+  --bracket-card: var(--gc-card, #1d1d1f);
+  --bracket-card-border: var(--gc-border, #3a3a3c);
+  --bracket-surface: var(--gc-content-surface, #141416);
+  --bracket-text: var(--gc-text-primary, #f5f5f7);
+  --bracket-text-dim: var(--gc-text-secondary, #d1d1d6);
+  --bracket-text-muted: var(--gc-text-muted, #98989d);
+  --bracket-score-bg: var(--gc-inset, #141416);
+  --bracket-score-border: var(--gc-border, #3a3a3c);
+  --bracket-gold-bg: #2a2410;
+}
+
 .breadcrumb {
   display: flex;
   flex-wrap: wrap;

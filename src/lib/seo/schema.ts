@@ -7,6 +7,7 @@ import {
 } from "@/lib/seo/constants";
 import { toIsoDate } from "@/lib/seo/dates";
 import { absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/site-url";
+import { SOCIAL_PROFILE_URLS } from "@/lib/site-keys";
 import { defaultOgImageUrl } from "@/lib/seo/constants";
 
 export type ArticleSchemaInput = {
@@ -85,6 +86,7 @@ export function organizationSchema(): SchemaNode {
     name: SITE_NAME,
     url: SITE_URL,
     logo: absoluteUrl("/icons/icon-192.png"),
+    sameAs: [...SOCIAL_PROFILE_URLS],
   };
 }
 

@@ -177,12 +177,13 @@
   min-width: 0;
   box-sizing: border-box;
   padding: 10px 12px;
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
+  background: var(--bracket-card, #ffffff);
+  border: 1px solid var(--bracket-card-border, #e0e0e0);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   font-size: 0.8125rem;
   line-height: 1.35;
+  color: var(--bracket-text, #111111);
 }
 
 .cardLive {
@@ -194,8 +195,8 @@
 }
 
 .cardFinal {
-  background: #fffcf4;
-  border-color: #d4ac50;
+  background: var(--bracket-gold-bg, #fffcf4);
+  border-color: var(--bracket-gold-border, #d4ac50);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -277,7 +278,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #111111;
+  color: var(--bracket-text, #111111);
 }
 
 .teamNamePending {
@@ -444,4 +445,40 @@
     align-items: center;
     justify-content: center;
   }
+}
+
+.globalScrollBar {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left, 0px));
+  right: max(12px, env(safe-area-inset-right, 0px));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 64px);
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--gc-card, rgba(255, 255, 255, 0.96));
+  border: 1px solid var(--gc-content-border, #e4e2db);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.globalScrollLabel {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gc-text-muted, #666);
+  white-space: nowrap;
+}
+
+.globalScrollInput {
+  flex: 1 1 auto;
+  min-width: 0;
+  accent-color: #7b0d1e;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .globalScrollBar {
+  background: rgba(29, 29, 31, 0.96);
+  border-color: var(--gc-border);
 }

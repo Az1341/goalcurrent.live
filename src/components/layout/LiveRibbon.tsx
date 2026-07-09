@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import TeamFlag from "@/components/TeamFlag";
@@ -19,6 +20,26 @@ import styles from "./live-ribbon.module.css";
 const FIXTURES_HREF = "/worldcup2026/fixtures";
 /** Max matches in the desktop marquee loop (matches widest breakpoint). */
 const DESKTOP_MARQUEE_LIMIT = 4;
+const DESKTOP_TICKER_MQ = "(min-width: 768px)";
+
+function subscribeDesktopTicker(onStoreChange: () => void) {
+  const mq = window.matchMedia(DESKTOP_TICKER_MQ);
+  mq.addEventListener("change", onStoreChange);
+  return () => mq.removeEventListener("change", onStoreChange);
+}
+
+function getDesktopTickerSnapshot() {
+  return window.matchMedia(DESKTOP_TICKER_MQ).matches;
+}
+
+/** Mobile-first SSR — only one ticker variant mounts to avoid duplicate DOM. */
+function useDesktopTicker() {
+  return useSyncExternalStore(
+    subscribeDesktopTicker,
+    getDesktopTickerSnapshot,
+    () => false,
+  );
+}
 
 function formatScore(match: HomepageMatchView): string | null {
   if (!match.score) {
@@ -100,6 +121,7 @@ export default function LiveRibbon({
   variant = "default",
 }: LiveRibbonProps) {
   const t = useTranslations("layout.liveRibbon");
+  const isDesktopTicker = useDesktopTicker();
   const fixtures = useEffectiveFixtures();
   const allMatches = selectRibbonFixtures(fixtures);
 
@@ -132,52 +154,54 @@ export default function LiveRibbon({
         {hasLive ? t("liveNow") : t("latestResults")}
       </span>
 
-      <div className={styles.tickerScrollMobile}>
-        <ul
-          className={`${styles.tickerTrack} ${styles.tickerTrackMobile} ${styles.liveRibbonList}`}
-          aria-label={hasLive ? t("liveMatchesAria") : t("latestResultsAria")}
-        >
-          {allMatches.map((match) => (
-            <TickerMatchItem key={match.fixtureId} match={match} t={t} />
-          ))}
-          <li className={styles.liveRibbonItem}>
-            <Link
-              href={FIXTURES_HREF}
-              className={styles.liveRibbonMore}
-              aria-label={t("viewAllFixturesAria")}
-            >
-              {t("allFixtures")}
-            </Link>
-          </li>
-        </ul>
-      </div>
-
-      <div className={styles.tickerScrollDesktop}>
-        <ul
-          className={`${styles.tickerTrack} ${styles.tickerTrackDesktop} ${styles.liveRibbonList}`}
-          aria-label={hasLive ? t("liveMatchesAria") : t("latestResultsAria")}
-        >
-          {desktopTrackMatches.map((match, index) => (
-            <TickerMatchItem
-              key={`${match.fixtureId}-loop-${index}`}
-              match={match}
-              t={t}
-              keySuffix={`-loop-${index}`}
-            />
-          ))}
-          {hiddenCount > 0 ? (
+      {isDesktopTicker ? (
+        <div className={styles.tickerScrollDesktop}>
+          <ul
+            className={`${styles.tickerTrack} ${styles.tickerTrackDesktop} ${styles.liveRibbonList}`}
+            aria-label={hasLive ? t("liveMatchesAria") : t("latestResultsAria")}
+          >
+            {desktopTrackMatches.map((match, index) => (
+              <TickerMatchItem
+                key={`${match.fixtureId}-loop-${index}`}
+                match={match}
+                t={t}
+                keySuffix={`-loop-${index}`}
+              />
+            ))}
+            {hiddenCount > 0 ? (
+              <li className={styles.liveRibbonItem}>
+                <Link
+                  href={FIXTURES_HREF}
+                  className={styles.liveRibbonMore}
+                  aria-label={t("viewMoreMatchesAria", { count: hiddenCount })}
+                >
+                  {t("moreMatches", { count: hiddenCount })}
+                </Link>
+              </li>
+            ) : null}
+          </ul>
+        </div>
+      ) : (
+        <div className={styles.tickerScrollMobile}>
+          <ul
+            className={`${styles.tickerTrack} ${styles.tickerTrackMobile} ${styles.liveRibbonList}`}
+            aria-label={hasLive ? t("liveMatchesAria") : t("latestResultsAria")}
+          >
+            {allMatches.map((match) => (
+              <TickerMatchItem key={match.fixtureId} match={match} t={t} />
+            ))}
             <li className={styles.liveRibbonItem}>
               <Link
                 href={FIXTURES_HREF}
                 className={styles.liveRibbonMore}
-                aria-label={t("viewMoreMatchesAria", { count: hiddenCount })}
+                aria-label={t("viewAllFixturesAria")}
               >
-                {t("moreMatches", { count: hiddenCount })}
+                {t("allFixtures")}
               </Link>
             </li>
-          ) : null}
-        </ul>
-      </div>
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

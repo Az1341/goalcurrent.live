@@ -37,27 +37,31 @@
 }
 
 .sectionToday {
-  background: #f7f7f8;
+  background: var(--gc-content-surface-alt, #f7f7f8);
   border-radius: 12px;
   padding: 12px;
+  border: 1px solid var(--gc-content-border);
 }
 
 .sectionUpcoming {
-  background: #f2f4f7;
+  background: var(--gc-content-surface-alt, #f2f4f7);
   border-radius: 12px;
   padding: 12px;
+  border: 1px solid var(--gc-content-border);
 }
 
 .sectionCompleted {
-  background: #f1f8f2;
+  background: var(--gc-content-surface-alt, #f1f8f2);
   border-radius: 12px;
   padding: 12px;
+  border: 1px solid var(--gc-content-border);
 }
 
 .sectionLiveNow {
-  background: #f7f7f8;
+  background: var(--gc-content-surface-alt, #f7f7f8);
   border-radius: 12px;
   padding: 12px;
+  border: 1px solid var(--gc-content-border);
 }
 
 .sectionHeader {
@@ -112,11 +116,12 @@
 }
 
 .matchPanel {
-  background: #fff;
+  background: var(--gc-card, #fff);
   border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--gc-shadow, 0 1px 3px rgba(0, 0, 0, 0.06));
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--gc-content-border);
+  color: var(--gc-text-primary);
 }
 
 .competitionBlock + .competitionBlock {
@@ -146,9 +151,9 @@
   display: block;
   padding: 10px 12px;
   text-decoration: none;
-  color: inherit;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  background: #fff;
+  color: var(--gc-text-primary);
+  border-bottom: 1px solid var(--gc-content-border);
+  background: var(--gc-card, #fff);
   transition: background 0.15s ease;
 }
 
@@ -293,4 +298,40 @@
 
 .livePitchCard section {
   margin-bottom: 0;
+}
+
+.calendarHub {
+  margin: 8px 0 20px;
+}
+
+.spotlightSection {
+  margin-bottom: 16px;
+}
+
+.spotlightTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gc-text-primary);
+  margin: 0 0 10px;
+}
+
+.spotlightPanel {
+  background: var(--gc-card);
+  border: 1px solid var(--gc-content-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--gc-shadow);
+}
+
+[data-theme="dark"] .sectionCompleted {
+  background: var(--gc-content-surface);
+}
+
+[data-theme="dark"] .syncStatusDegraded {
+  background: #2a2410;
+  border-color: #6b5a1e;
+  color: #fbbf24;
 }

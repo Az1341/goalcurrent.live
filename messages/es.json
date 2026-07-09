@@ -80,7 +80,8 @@
     "facebook": "Facebook",
     "instagram": "Instagram",
     "tiktok": "TikTok",
-    "twitter": "X / Twitter"
+    "theme": "Theme",
+    "themeHint": "Light or dark mode"
   },
   "layout": {
     "cookieConsent": {

@@ -2949,3 +2949,27 @@ a.standingsHead:hover {
   display: grid;
   gap: 4px;
 }
+[data-theme="dark"] .fixMetricTeams,
+[data-theme="dark"] .fixMetricMatches,
+[data-theme="dark"] .fixMetricVenues,
+[data-theme="dark"] .fixMetricHosts,
+[data-theme="dark"] .fixMetricPlayed,
+[data-theme="dark"] .fixMetricLeft {
+  background: var(--gc-card);
+  border-color: var(--gc-border);
+}
+
+[data-theme="dark"] .fixMetric b {
+  color: var(--gc-text-primary);
+}
+
+[data-theme="dark"] .fixMatch {
+  background: var(--gc-card);
+  border-color: var(--gc-border);
+  color: var(--gc-text-primary);
+}
+
+[data-theme="dark"] .fixTeamName,
+[data-theme="dark"] .fixTeamName a {
+  color: var(--gc-text-primary);
+}

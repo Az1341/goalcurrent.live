@@ -25,27 +25,46 @@ export default function BracketFitViewport({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [maxScrollLeft, setMaxScrollLeft] = useState(0);
 
   const updateAffordance = useCallback(() => {
     const el = scrollRef.current;
     if (!el) {
       setCanScrollLeft(false);
       setCanScrollRight(false);
+      setScrollProgress(0);
+      setMaxScrollLeft(0);
       return;
     }
     const maxScroll = el.scrollWidth - el.clientWidth;
+    setMaxScrollLeft(maxScroll);
     if (maxScroll <= 1) {
       setCanScrollLeft(false);
       setCanScrollRight(false);
+      setScrollProgress(0);
       return;
     }
     setCanScrollLeft(el.scrollLeft > 4);
     setCanScrollRight(el.scrollLeft < maxScroll - 4);
+    setScrollProgress(el.scrollLeft / maxScroll);
   }, []);
 
   const scrollBy = useCallback((delta: number) => {
     scrollRef.current?.scrollBy({ left: delta, behavior: "smooth" });
   }, []);
+
+  const handleGlobalScroll = useCallback(
+    (value: number) => {
+      const el = scrollRef.current;
+      if (!el || maxScrollLeft <= 0) {
+        return;
+      }
+      el.scrollLeft = value * maxScrollLeft;
+      updateAffordance();
+    },
+    [maxScrollLeft, updateAffordance],
+  );
 
   useEffect(() => {
     updateAffordance();
@@ -124,6 +143,26 @@ export default function BracketFitViewport({
           </div>
         </div>
       </div>
+      {maxScrollLeft > 1 ? (
+        <div className={styles.globalScrollBar} aria-hidden={false}>
+          <label className={styles.globalScrollLabel} htmlFor="bracket-global-scroll">
+            Bracket position
+          </label>
+          <input
+            id="bracket-global-scroll"
+            type="range"
+            className={styles.globalScrollInput}
+            min={0}
+            max={1000}
+            step={1}
+            value={Math.round(scrollProgress * 1000)}
+            onChange={(event) => {
+              handleGlobalScroll(Number(event.target.value) / 1000);
+            }}
+            aria-label="Scroll knockout bracket horizontally"
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

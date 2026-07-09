@@ -162,6 +162,15 @@
   gap: 12px;
 }
 
+.sheetRowTheme {
+  cursor: default;
+}
+
+.sheetRowTheme:active {
+  background: transparent;
+  color: var(--gc-text-primary, #0f172a);
+}
+
 .chevron {
   color: var(--gc-brand-accent, #c8102e);
   font-size: 0.875rem;

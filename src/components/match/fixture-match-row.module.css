@@ -27,6 +27,7 @@
   font-size: inherit;
   font-weight: 600;
   line-height: 1.25;
+  color: var(--gc-text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -18,6 +18,7 @@ import {
   isMoreSheetLinkActive,
 } from "@/lib/nav";
 import AuthMenu from "@/components/firebase/AuthMenu";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import styles from "./MoreBottomSheet.module.css";
 
 type MoreBottomSheetProps = {
@@ -111,6 +112,15 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
             aria-hidden={Boolean(activeSubmenu)}
           >
             <nav className={styles.sheetList} aria-label={t("openMoreNavigation")}>
+              <div className={`${styles.sheetRow} ${styles.sheetRowTheme}`}>
+                <span className={styles.sheetRowLabel}>
+                  <span className={styles.sheetRowTitle}>{t("theme")}</span>
+                  <span className={styles.sheetRowMeta}>
+                    {t("themeHint")}
+                  </span>
+                </span>
+                <ThemeToggle />
+              </div>
               {MORE_SHEET_LEVEL1.map((item, index) => {
                 if (item.type === "divider") {
                   return <hr key={`divider-${index}`} className={styles.sheetDivider} />;

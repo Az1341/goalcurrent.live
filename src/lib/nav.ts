@@ -1,3 +1,9 @@
+import {
+  FACEBOOK_HREF,
+  INSTAGRAM_HREF,
+  TIKTOK_HREF,
+} from "@/lib/site-keys";
+
 export type NavItem = {
   href: string;
   labelKey: string;
@@ -247,10 +253,9 @@ export const FOOTER_LINKS: NavLinkItem[] = [
 ];
 
 export const FOOTER_SOCIAL: NavLinkItem[] = [
-  { href: "https://facebook.com/goalcurrent", labelKey: "facebook" },
-  { href: "https://www.instagram.com/goalcurrentlive", labelKey: "instagram" },
-  { href: "https://www.tiktok.com/@goalcurrent", labelKey: "tiktok" },
-  { href: "https://twitter.com/goalcurrentlive", labelKey: "twitter" },
+  { href: FACEBOOK_HREF, labelKey: "facebook" },
+  { href: INSTAGRAM_HREF, labelKey: "instagram" },
+  { href: TIKTOK_HREF, labelKey: "tiktok" },
 ];
 
 export function isNavActive(pathname: string, href: string, exact?: boolean) {

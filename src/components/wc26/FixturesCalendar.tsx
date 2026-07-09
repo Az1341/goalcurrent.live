@@ -237,7 +237,11 @@ function centerCalendarDay(
   return true;
 }
 
-export default function FixturesCalendar() {
+export default function FixturesCalendar({
+  variant = "full",
+}: {
+  variant?: "full" | "compact";
+}) {
   const timezoneLabel = useDeviceTimezoneLabel();
   const [fixtures, setFixtures] = useState<readonly EffectiveFixture[]>(() =>
     getEffectiveFixtures(),
@@ -256,6 +260,7 @@ export default function FixturesCalendar() {
   const dayButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const initialScrollDone = useRef(false);
   const activeDateKeyRef = useRef("");
+  const userPickedDateRef = useRef(false);
 
   const scrollActiveDayIntoView = useCallback(
     (dateKey: string, behavior: ScrollBehavior = "smooth"): boolean => {
@@ -307,8 +312,13 @@ export default function FixturesCalendar() {
   );
 
   const activeDateKey = useMemo(() => {
-    if (selectedDate && calendarDays.some((d) => d.dateKey === selectedDate)) {
-      return selectedDate;
+    if (selectedDate) {
+      if (calendarDays.some((d) => d.dateKey === selectedDate)) {
+        return selectedDate;
+      }
+      if (userPickedDateRef.current) {
+        return selectedDate;
+      }
     }
     if (!clientReady) {
       return calendarDays[0]?.dateKey ?? "";
@@ -399,6 +409,8 @@ export default function FixturesCalendar() {
         ) : null}
       </div>
 
+      {variant === "full" ? (
+        <>
       <div className={styles.fixMetrics} aria-label="Tournament facts">
         <div className={`${styles.fixMetric} ${styles.fixMetricTeams}`}>
           <b>{WC26_TEAM_COUNT}</b>
@@ -474,6 +486,8 @@ export default function FixturesCalendar() {
           <option value="ft">Finished</option>
         </select>
       </div>
+        </>
+      ) : null}
 
       <section className={styles.fixCalendar} aria-label="Official match calendar">
         <div className={styles.fixCalHead}>
@@ -514,7 +528,12 @@ export default function FixturesCalendar() {
                 aria-current={isToday ? "date" : undefined}
                 className={`${styles.fixCalDay} ${isSelected ? styles.fixCalDayActive : ""} ${isToday ? styles.fixCalDayToday : ""}`}
                 onClick={() => {
+                  userPickedDateRef.current = true;
                   setSelectedDate(day.dateKey);
+                  setSearch("");
+                  setGroupId("");
+                  setStage("");
+                  setStatus("");
                   requestAnimationFrame(() => {
                     scrollActiveDayIntoView(day.dateKey, "smooth");
                   });

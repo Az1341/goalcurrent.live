@@ -13,6 +13,7 @@ import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import MatchLineupPitchSection from "@/components/match/MatchLineupPitchSection";
 import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import { matchHref } from "@/lib/wc26-match";
+import FixturesCalendar from "@/components/wc26/FixturesCalendar";
 import styles from "./live.module.css";
 
 type LiveSectionProps = {
@@ -22,6 +23,7 @@ type LiveSectionProps = {
   emptyMessage?: string;
   showLiveIndicator?: boolean;
   tone?: "live" | "today" | "upcoming" | "completed";
+  hideWhenEmpty?: boolean;
 };
 
 function competitionLabel(fixture: EffectiveFixture): string {
@@ -63,11 +65,16 @@ function LiveSection({
   emptyMessage,
   showLiveIndicator,
   tone,
+  hideWhenEmpty,
 }: LiveSectionProps) {
   const groups = useMemo(
     () => groupFixturesByCompetition(fixtures),
     [fixtures],
   );
+
+  if (hideWhenEmpty && fixtures.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -113,6 +120,22 @@ export default function LiveMatchCentre() {
     () => partitionFixturesForLiveCentre(fixtures),
     [fixtures],
   );
+  const spotlightFixtures = useMemo(() => {
+    if (buckets.live.length > 0) {
+      return buckets.live;
+    }
+    if (buckets.today.length > 0) {
+      return buckets.today;
+    }
+    return buckets.upcoming.slice(0, 4);
+  }, [buckets]);
+  const spotlightTitle =
+    buckets.live.length > 0
+      ? "Today live"
+      : buckets.today.length > 0
+        ? "Today"
+        : "Next up";
+
   return (
     <main className={styles.content}>
       <h1 className={styles.pageTitle}>
@@ -140,14 +163,27 @@ export default function LiveMatchCentre() {
         </div>
       ) : null}
 
-      <LiveSection
-        id="live-now-heading"
-        title="Live now"
-        fixtures={buckets.live}
-        emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
-        showLiveIndicator
-        tone="live"
-      />
+      {spotlightFixtures.length > 0 ? (
+        <section className={styles.spotlightSection} aria-labelledby="live-spotlight-heading">
+          <h2 id="live-spotlight-heading" className={styles.spotlightTitle}>
+            {buckets.live.length > 0 ? (
+              <span className={styles.liveDot} aria-hidden="true" />
+            ) : null}
+            {spotlightTitle}
+          </h2>
+          <div className={styles.spotlightPanel}>
+            <ul className={styles.fixtureList}>
+              {spotlightFixtures.map((fixture) => (
+                <LiveMatchCard key={`spotlight-${fixture.id}`} fixture={fixture} />
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
+
+      <div className={styles.calendarHub}>
+        <FixturesCalendar variant="compact" />
+      </div>
 
       {buckets.live.length > 0 ? (
         <div className={styles.livePitchStack}>
@@ -174,19 +210,13 @@ export default function LiveMatchCentre() {
       <div className={styles.liveAdWrap}>
         <ContentAdSlot slot={ADSENSE_SLOTS.liveMid} minHeight={120} />
       </div>
-      <LiveSection
-        id="today-heading"
-        title="Today"
-        fixtures={buckets.today}
-        emptyMessage="No World Cup matches scheduled for today in the local schedule."
-        tone="today"
-      />
 
       <LiveSection
         id="upcoming-heading"
         title="Upcoming World Cup fixtures"
         fixtures={buckets.upcoming}
         tone="upcoming"
+        hideWhenEmpty
       />
 
       <LiveSection
