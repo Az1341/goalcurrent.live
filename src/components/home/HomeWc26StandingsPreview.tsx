@@ -67,7 +67,7 @@ export default function HomeWc26StandingsPreview() {
                             <span>{team?.name ?? row.teamId}</span>
                             {qualified ? (
                               <span className={styles.wcGroupMiniQualAfter}>
-                                [Qualified]
+                                Q
                               </span>
                             ) : null}
                             {thirdQualified ? (

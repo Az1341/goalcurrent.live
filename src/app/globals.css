@@ -244,6 +244,16 @@ html {
   --accent-red: var(--gc-brand-from);
 }
 
+/* Pastel / white cards keep dark copy when site chrome is in dark mode */
+[data-theme="dark"] [data-gc-light-surface="true"] {
+  --gc-text-primary: #1e293b;
+  --gc-text-secondary: #334155;
+  --gc-text-muted: #475569;
+  --gc-content-heading: #1e293b;
+  color: #1e293b;
+  color-scheme: light;
+}
+
 body {
   font-family: var(--font-body), var(--gc-emoji-font), system-ui, sans-serif;
   font-weight: var(--gc-weight-body);

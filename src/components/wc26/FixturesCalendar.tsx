@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import MatchKickoffCountdown from "@/components/match/MatchKickoffCountdown";
 import MatchDetailLink from "@/components/match/MatchDetailLink";
 import TeamFlag from "@/components/TeamFlag";
 import TeamLink from "@/components/wc26/TeamLink";
@@ -111,6 +112,7 @@ function FixtureMatchCard({
     <article
       className={`${styles.fixMatch} ${cardStateClass}`}
       data-match-state={matchClass}
+      data-gc-light-surface={matchClass === "upcoming" ? "true" : undefined}
       aria-label={`${label} — ${topStatusLabel(fixture, matchClass)}`}
     >
       <div className={styles.fixMatchTop}>
@@ -180,6 +182,7 @@ function FixtureMatchCard({
           ) : (
             <>
               <div className={styles.fixCentreKickoff}>{kickoffLocal}</div>
+              <MatchKickoffCountdown kickoffUtc={fixture.kickoffUtc} />
               <div className={styles.fixCentreNote}>
                 {timezoneLabel}
                 {isKnockout && stadiumKickoff ? (
@@ -217,7 +220,7 @@ function FixtureMatchCard({
   );
 }
 
-const CALENDAR_SCROLL_MAX_RAF_RETRIES = 4;
+const CALENDAR_SCROLL_MAX_RAF_RETRIES = 16;
 
 function centerCalendarDay(
   container: HTMLDivElement,
@@ -255,7 +258,6 @@ export default function FixturesCalendar() {
   const calRowRef = useRef<HTMLDivElement>(null);
   const dayButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const initialScrollDone = useRef(false);
-  const activeDateKeyRef = useRef("");
 
   const scrollActiveDayIntoView = useCallback(
     (dateKey: string, behavior: ScrollBehavior = "smooth"): boolean => {
@@ -310,11 +312,17 @@ export default function FixturesCalendar() {
     if (selectedDate && calendarDays.some((d) => d.dateKey === selectedDate)) {
       return selectedDate;
     }
-    if (!clientReady) {
-      return calendarDays[0]?.dateKey ?? "";
+    return pickDefaultDateKey(calendarDays);
+  }, [calendarDays, selectedDate]);
+
+  /** Today stays centred in the calendar strip (non-negotiable layout rule). */
+  const calendarCenterKey = useMemo(() => {
+    const today = todayKey || localDateKey(new Date().toISOString());
+    if (calendarDays.some((d) => d.dateKey === today)) {
+      return today;
     }
     return pickDefaultDateKey(calendarDays);
-  }, [calendarDays, selectedDate, clientReady]);
+  }, [calendarDays, todayKey]);
 
   const stages = useMemo(() => getDistinctStages(fixtures), [fixtures]);
 
@@ -332,16 +340,14 @@ export default function FixturesCalendar() {
     [fixtures, search, groupId, stage, status, activeDateKey],
   );
 
-  activeDateKeyRef.current = activeDateKey;
-
   useLayoutEffect(() => {
-    if (!activeDateKey || !clientReady) {
+    if (!calendarCenterKey || !clientReady) {
       return;
     }
 
     let cancelled = false;
     const behavior: ScrollBehavior = initialScrollDone.current ? "smooth" : "instant";
-    const dateKey = activeDateKey;
+    const dateKey = calendarCenterKey;
 
     const attempt = (retriesLeft: number) => {
       if (cancelled) {
@@ -361,7 +367,7 @@ export default function FixturesCalendar() {
     return () => {
       cancelled = true;
     };
-  }, [activeDateKey, clientReady, calendarDays.length, scrollActiveDayIntoView]);
+  }, [calendarCenterKey, clientReady, calendarDays.length, scrollActiveDayIntoView]);
 
   useEffect(() => {
     const container = calRowRef.current;
@@ -370,7 +376,7 @@ export default function FixturesCalendar() {
     }
 
     const observer = new ResizeObserver(() => {
-      const dateKey = activeDateKeyRef.current;
+      const dateKey = calendarCenterKey;
       if (!dateKey) {
         return;
       }
@@ -382,7 +388,7 @@ export default function FixturesCalendar() {
 
     observer.observe(container);
     return () => observer.disconnect();
-  }, [clientReady, scrollActiveDayIntoView]);
+  }, [clientReady, calendarCenterKey, scrollActiveDayIntoView]);
 
   return (
     <section aria-labelledby="fixtures-calendar-heading" className={styles.fixturesCalendar}>
@@ -399,7 +405,7 @@ export default function FixturesCalendar() {
         ) : null}
       </div>
 
-      <div className={styles.fixMetrics} aria-label="Tournament facts">
+      <div className={styles.fixMetrics} aria-label="Tournament facts" data-gc-light-surface="true">
         <div className={`${styles.fixMetric} ${styles.fixMetricTeams}`}>
           <b>{WC26_TEAM_COUNT}</b>
           <span>Teams</span>
@@ -515,9 +521,6 @@ export default function FixturesCalendar() {
                 className={`${styles.fixCalDay} ${isSelected ? styles.fixCalDayActive : ""} ${isToday ? styles.fixCalDayToday : ""}`}
                 onClick={() => {
                   setSelectedDate(day.dateKey);
-                  requestAnimationFrame(() => {
-                    scrollActiveDayIntoView(day.dateKey, "smooth");
-                  });
                 }}
               >
                 <span className={styles.fixCalDow}>{day.dow}</span>

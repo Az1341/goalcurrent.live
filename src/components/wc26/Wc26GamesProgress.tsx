@@ -11,6 +11,7 @@ export default function Wc26GamesProgress() {
     <div
       className={`${styles.fixMetrics} ${styles.fixMetricsProgress}`}
       aria-label="Tournament progress"
+      data-gc-light-surface="true"
     >
       <div className={`${styles.fixMetric} ${styles.fixMetricPlayed}`}>
         <b>{gamesPlayed}</b>

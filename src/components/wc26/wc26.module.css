@@ -474,23 +474,25 @@ a.standingsHead:hover {
 }
 
 .standingsRowEliminated {
-  opacity: 0.72;
+  opacity: 1;
 }
 
 .standingsQualAfter {
   margin-left: 6px;
   font-size: 0.6875rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #15803d;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .standingsThirdAdvanced {
   margin-left: 6px;
   font-size: 0.6875rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #1a7f37;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .standingsEliminated {
@@ -805,6 +807,8 @@ a.standingsHead:hover {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .teamListItem:last-child {
@@ -2141,7 +2145,7 @@ a.standingsHead:hover {
 }
 
 .fixMatchUpcoming {
-  background: var(--gc-card);
+  background: #ffffff;
   border-color: var(--gc-border);
 }
 

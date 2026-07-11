@@ -33,9 +33,9 @@ export function useLiveApi<T = unknown>(
     const pollMs = options.refreshInterval ?? LIVE_POLL_MATCH_MS;
     return useSWR<T>(path, fetcher, {
       revalidateOnMount: true,
-      revalidateOnFocus: true,
+      revalidateOnFocus: false,
       fallbackData: undefined,
-      keepPreviousData: false,
+      keepPreviousData: true,
       refreshInterval: () => visibilityAwareRefreshInterval(pollMs),
       dedupingInterval: pollMs,
       revalidateOnReconnect: true,

@@ -239,13 +239,13 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
             {groupQualification.winner ? (
               <span className={styles.groupCompleteQualifier}>
                 <TeamFlag teamId={groupQualification.winner.teamId} size={22} />
-                {teamDisplayName(groupQualification.winner.teamId)} [Qualified]
+                {teamDisplayName(groupQualification.winner.teamId)} Q
               </span>
             ) : null}
             {groupQualification.runnerUp ? (
               <span className={styles.groupCompleteQualifier}>
                 <TeamFlag teamId={groupQualification.runnerUp.teamId} size={22} />
-                {teamDisplayName(groupQualification.runnerUp.teamId)} [Qualified]
+                {teamDisplayName(groupQualification.runnerUp.teamId)} Q
               </span>
             ) : null}
           </div>

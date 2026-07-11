@@ -83,6 +83,9 @@ export default async function ArticlesIndexPage() {
         </div>
 
         <div className={styles.articlesGrid}>
+          {syndicatedArticles.map((article) => (
+            <ArticleCard key={article.id} article={article} />
+          ))}
           {sortedIndex.map((a) => {
             const image = getArticleCardImage(a.slug);
             return (
@@ -132,9 +135,6 @@ export default async function ArticlesIndexPage() {
               <p>{article.excerpt}</p>
               <span className={styles.readMore}>Read on MSN ↗</span>
             </a>
-          ))}
-          {syndicatedArticles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
           ))}
           {sortedArticles.filter((a) => !indexSlugs.has(a.slug)).map((a) => (
             <Link

@@ -31,6 +31,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
+  color: var(--gc-text-primary);
 }
 
 .homeName {
@@ -63,6 +64,7 @@
   font-variant-numeric: tabular-nums;
   line-height: 1.15;
   white-space: nowrap;
+  color: var(--gc-text-primary);
 }
 
 .centrePrimaryLive {

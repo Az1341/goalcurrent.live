@@ -8,6 +8,7 @@ import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import type { MatchDetailPayload } from "@/types/match-detail";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
+import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
 import MatchRelatedLinks from "@/components/match/MatchRelatedLinks";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
@@ -79,6 +80,11 @@ export default function MatchDetailContent({
         url={absoluteUrl(`/match/${fixtureId}`)}
         title={`${header.homeName} vs ${header.awayName} — Live Score & Highlights`}
       />
+      {header.matchClass === "upcoming" ? (
+        <div className={styles.upcomingCountdownWrap}>
+          <UpcomingMatchCountdown fixture={fixture} />
+        </div>
+      ) : null}
       {scorebatEmbed ? (
         <section className={styles.section} aria-labelledby="match-highlights-heading">
           <h2 id="match-highlights-heading" className={styles.sectionTitle}>
@@ -90,35 +96,33 @@ export default function MatchDetailContent({
       <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="detail" />
       <ContentAdSlot slot={ADSENSE_SLOTS.matchMid} minHeight={120} />
       {detailUnavailable ? (
-        <p className={styles.emptyState}>
-          Detailed live data is temporarily unavailable. Team names and schedule data
-          below are from the local fixture list.
+        <p className={styles.apiNotice} role="status">
+          Detailed live data is temporarily unavailable. Team names, kick-off and
+          schedule below are from the verified local fixture list — stats and lineups
+          appear when the API feed is active.
         </p>
-      ) : (
-        <>
-          <MatchTimeline
-            detail={detail}
-            loading={loading}
-            homeTeamName={header.homeName}
-            awayTeamName={header.awayName}
-          />
-          <MatchMovement detail={detail} loading={loading} />
-          <MatchPlayerStats
-            detail={detail}
-            loading={loading}
-            homeTeamName={header.homeName}
-            awayTeamName={header.awayName}
-          />
-          <MatchLineups
-            detail={detail}
-            loading={loading}
-            homeTeamId={homeResolved.teamId}
-            awayTeamId={awayResolved.teamId}
-            matchNumber={fixture.matchNumber}
-            fixtureId={fixture.id}
-          />
-        </>
-      )}
+      ) : null}
+      <MatchTimeline
+        detail={detail}
+        loading={loading && !detailUnavailable}
+        homeTeamName={header.homeName}
+        awayTeamName={header.awayName}
+      />
+      <MatchMovement detail={detail} loading={loading && !detailUnavailable} />
+      <MatchPlayerStats
+        detail={detail}
+        loading={loading && !detailUnavailable}
+        homeTeamName={header.homeName}
+        awayTeamName={header.awayName}
+      />
+      <MatchLineups
+        detail={detail}
+        loading={loading && !detailUnavailable}
+        homeTeamId={homeResolved.teamId}
+        awayTeamId={awayResolved.teamId}
+        matchNumber={fixture.matchNumber}
+        fixtureId={fixture.id}
+      />
 
       <MatchRelatedLinks fixtureId={fixtureId} groupId={fixture.groupId} />
 

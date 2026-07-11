@@ -113,15 +113,12 @@ export function partitionFixturesForLiveCentre(
   return { live, today, upcoming, completed };
 }
 
-const ONE_HOUR_MS = 60 * 60 * 1000;
-
-/** Next scheduled kickoff within the next hour (excludes live/completed). */
-export function findNextMatchWithinOneHour(
+/** Next scheduled kickoff (excludes live/completed). */
+export function findNextUpcomingMatch(
   fixtures: readonly EffectiveFixture[],
   now: Date = new Date(),
 ): EffectiveFixture | undefined {
   const nowMs = now.getTime();
-  const horizonMs = nowMs + ONE_HOUR_MS;
 
   const candidates = fixtures.filter((fixture) => {
     if (isLiveMatchStatus(fixture.status)) {
@@ -131,11 +128,27 @@ export function findNextMatchWithinOneHour(
       return false;
     }
     const kickoffMs = new Date(fixture.kickoffUtc).getTime();
-    return kickoffMs > nowMs && kickoffMs <= horizonMs;
+    return kickoffMs > nowMs;
   });
 
   candidates.sort(sortByKickoffAsc);
   return candidates[0];
+}
+
+/** @deprecated Use {@link findNextUpcomingMatch} — kept for tests. */
+export function findNextMatchWithinOneHour(
+  fixtures: readonly EffectiveFixture[],
+  now: Date = new Date(),
+): EffectiveFixture | undefined {
+  const nowMs = now.getTime();
+  const horizonMs = nowMs + 60 * 60 * 1000;
+
+  const next = findNextUpcomingMatch(fixtures, now);
+  if (!next) {
+    return undefined;
+  }
+  const kickoffMs = new Date(next.kickoffUtc).getTime();
+  return kickoffMs <= horizonMs ? next : undefined;
 }
 
 /** Human-readable period label — e.g. "2nd Half", "Half Time", "Full Time". */

@@ -254,7 +254,7 @@ export type SocialLinkItem = {
 
 export const FOOTER_SOCIAL: SocialLinkItem[] = [
   {
-    href: "https://www.facebook.com/profile.php?id=61591562350580",
+    href: "https://www.facebook.com/people/Goalcurrentlive/61591562350580/",
     labelKey: "facebook",
     icon: "facebook",
   },

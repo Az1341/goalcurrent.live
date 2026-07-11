@@ -216,8 +216,23 @@
 
 .emptyState {
   font-size: 0.875rem;
-  color: var(--gc-text-muted);
+  color: var(--gc-text-secondary);
   line-height: var(--gc-line-height);
+}
+
+.apiNotice {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: var(--gc-radius-lg);
+  font-size: 0.875rem;
+  line-height: var(--gc-line-height);
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+}
+
+.upcomingCountdownWrap {
+  margin: 0 0 16px;
 }
 
 .timelineList {

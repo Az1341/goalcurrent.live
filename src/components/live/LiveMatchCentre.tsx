@@ -7,7 +7,7 @@ import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
 import { groupLabel } from "@/data/wc26";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { formatStageLabel } from "@/lib/wc26-fixtures-page";
-import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant, findNextMatchWithinOneHour } from "@/lib/wc26-live";
+import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant, findNextUpcomingMatch } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
@@ -74,6 +74,7 @@ function LiveSection({
     <section
       className={`${styles.section} ${sectionToneClass(tone)}`}
       aria-labelledby={id}
+      data-gc-light-surface="true"
     >
       <div className={styles.sectionHeader}>
         {showLiveIndicator && fixtures.length > 0 ? (
@@ -90,7 +91,7 @@ function LiveSection({
         <p className={styles.emptyState}>{emptyMessage}</p>
       ) : null}
       {fixtures.length > 0 ? (
-        <div className={styles.matchPanel}>
+        <div className={styles.matchPanel} data-gc-light-surface="true">
           {groups.map((group) => (
             <div key={group.label} className={styles.competitionBlock}>
               <div className={styles.competitionHeader}>{group.label}</div>
@@ -114,10 +115,10 @@ export default function LiveMatchCentre() {
     () => partitionFixturesForLiveCentre(fixtures),
     [fixtures],
   );
-  const nextMatchInHour = useMemo(
+  const nextUpcomingMatch = useMemo(
     () =>
       buckets.live.length === 0
-        ? findNextMatchWithinOneHour(fixtures)
+        ? findNextUpcomingMatch(fixtures)
         : undefined,
     [buckets.live.length, fixtures],
   );
@@ -153,7 +154,7 @@ export default function LiveMatchCentre() {
         title="Live now"
         fixtures={buckets.live}
         emptyMessage={
-          buckets.live.length === 0 && !nextMatchInHour
+          buckets.live.length === 0 && !nextUpcomingMatch
             ? "No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
             : undefined
         }
@@ -161,8 +162,8 @@ export default function LiveMatchCentre() {
         tone="live"
       />
 
-      {buckets.live.length === 0 && nextMatchInHour ? (
-        <UpcomingMatchCountdown fixture={nextMatchInHour} />
+      {buckets.live.length === 0 && nextUpcomingMatch ? (
+        <UpcomingMatchCountdown fixture={nextUpcomingMatch} />
       ) : null}
 
       {buckets.live.length > 0 ? (

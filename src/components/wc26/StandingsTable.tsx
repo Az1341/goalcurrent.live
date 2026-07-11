@@ -143,6 +143,9 @@ export default function StandingsTable({
                   groupComplete && legacyQualified,
                   legacyEliminated,
                 )}
+                data-gc-light-surface={
+                  qualified || thirdQualified ? "true" : undefined
+                }
                 aria-label={
                   qualified && team
                     ? `${team.name} — qualification zone`
@@ -160,13 +163,19 @@ export default function StandingsTable({
                       <span>{row.teamId}</span>
                     )}
                     {showFinalBadges && qualified ? (
-                      <span className={styles.standingsQualAfter}>[Qualified]</span>
+                      <span className={styles.standingsQualAfter} title="Qualified">
+                        Q
+                      </span>
                     ) : null}
                     {showFinalBadges && thirdQualified ? (
-                      <span className={styles.standingsThirdAdvanced}>✓ Advanced</span>
+                      <span className={styles.standingsThirdAdvanced} title="Advanced as third">
+                        q
+                      </span>
                     ) : null}
                     {showFinalBadges && eliminated ? (
-                      <span className={styles.standingsEliminated}>[Eliminated]</span>
+                      <span className={styles.standingsEliminated} title="Eliminated">
+                        —
+                      </span>
                     ) : null}
                   </span>
                 </td>
