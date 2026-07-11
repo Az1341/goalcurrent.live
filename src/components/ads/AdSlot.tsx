@@ -3,7 +3,7 @@
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import {
   ADSENSE_PUBLISHER_ID,
-  isAdSenseHost,
+  isAdSenseEnabled,
 } from "@/lib/site-integrations";
 
 type AdSlotProps = {
@@ -31,7 +31,7 @@ export function AdSlot({
   const containerRef = useRef<HTMLDivElement>(null);
   const enabled = useSyncExternalStore(
     () => () => {},
-    () => isAdSenseHost(window.location.hostname),
+    () => isAdSenseEnabled(window.location.hostname),
     () => false,
   );
   const hasSlot = slot.trim().length > 0;

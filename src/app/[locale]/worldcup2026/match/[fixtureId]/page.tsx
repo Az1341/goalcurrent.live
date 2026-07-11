@@ -69,7 +69,7 @@ export default async function Wc26MatchPage({ params }: Wc26MatchPageProps) {
     notFound();
   }
 
-  const scorebatEmbed = await getScoreBatEmbedForFixture(fixtureId);
+  const scorebatHighlight = await getScoreBatEmbedForFixture(fixtureId);
 
-  return <MatchPageClient fixtureId={fixtureId} scorebatEmbed={scorebatEmbed} />;
+  return <MatchPageClient fixtureId={fixtureId} scorebatHighlight={scorebatHighlight} />;
 }

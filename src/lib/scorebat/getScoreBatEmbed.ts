@@ -1,5 +1,7 @@
 import "server-only";
 import { getFixtureById, getTeamById } from "@/data/wc26";
+import { parseScoreBatEmbedUrl } from "@/lib/scorebat/parse-embed";
+import type { ScoreBatHighlight } from "@/lib/scorebat/types";
 
 type ScoreBatItem = {
   title: string;
@@ -10,10 +12,28 @@ type ScoreBatResponse = {
   response?: ScoreBatItem[];
 };
 
+function normalizeTeamToken(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/\s+(national team|u23|u21)$/i, "")
+    .trim();
+}
+
+function titleMatchesFixture(
+  title: string,
+  homeTeamName: string,
+  awayTeamName: string,
+): boolean {
+  const normalizedTitle = title.toLowerCase();
+  const home = normalizeTeamToken(homeTeamName);
+  const away = normalizeTeamToken(awayTeamName);
+  return normalizedTitle.includes(home) && normalizedTitle.includes(away);
+}
+
 export async function getScoreBatEmbed(
   homeTeamName: string,
   awayTeamName: string,
-): Promise<string | null> {
+): Promise<ScoreBatHighlight | null> {
   const token = process.env.SCOREBAT_API_TOKEN?.trim();
   if (!token || !homeTeamName || !awayTeamName) {
     return null;
@@ -33,24 +53,33 @@ export async function getScoreBatEmbed(
 
     const data = (await res.json()) as ScoreBatResponse;
     const items = data.response ?? [];
-    const home = homeTeamName.toLowerCase();
-    const away = awayTeamName.toLowerCase();
 
-    const matchItem = items.find((item) => {
-      const title = item.title.toLowerCase();
-      return title.includes(home) && title.includes(away);
-    });
+    const matchItem = items.find((item) =>
+      titleMatchesFixture(item.title, homeTeamName, awayTeamName),
+    );
 
-    return matchItem?.embed ?? null;
+    if (!matchItem?.embed?.trim()) {
+      return null;
+    }
+
+    const embedUrl = parseScoreBatEmbedUrl(matchItem.embed);
+    if (!embedUrl) {
+      return null;
+    }
+
+    return {
+      title: matchItem.title.trim() || `${homeTeamName} vs ${awayTeamName}`,
+      embedUrl,
+    };
   } catch {
     return null;
   }
 }
 
-/** Resolve ScoreBat embed HTML for a local WC26 fixture id. */
+/** Resolve ScoreBat highlights for a local WC26 fixture id. */
 export async function getScoreBatEmbedForFixture(
   fixtureId: string,
-): Promise<string | null> {
+): Promise<ScoreBatHighlight | null> {
   const fixture = getFixtureById(fixtureId);
   if (!fixture) {
     return null;

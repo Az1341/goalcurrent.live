@@ -57,7 +57,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
   const homeName = resolveFixtureParticipantLabel(fixture, "home", seoFixtures);
   const awayName = resolveFixtureParticipantLabel(fixture, "away", seoFixtures);
   const venue = getVenueById(fixture.venueId);
-  const scorebatEmbed = await getScoreBatEmbedForFixture(fixtureId);
+  const scorebatHighlight = await getScoreBatEmbedForFixture(fixtureId);
 
   return (
     <ErrorBoundary>
@@ -83,7 +83,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
           { name: `${homeName} vs ${awayName}`, path: matchHref(fixtureId) },
         ]}
       />
-      <MatchPageClient fixtureId={fixtureId} scorebatEmbed={scorebatEmbed} />
+      <MatchPageClient fixtureId={fixtureId} scorebatHighlight={scorebatHighlight} />
     </ErrorBoundary>
   );
 }

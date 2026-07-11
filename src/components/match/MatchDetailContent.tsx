@@ -12,7 +12,8 @@ import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
 import MatchRelatedLinks from "@/components/match/MatchRelatedLinks";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
-import ScoreBatEmbed from "@/components/scorebat/ScoreBatEmbed";
+import { MatchHighlightsSection } from "@/components/scorebat/MatchHighlightsSection";
+import type { ScoreBatHighlight } from "@/lib/scorebat/types";
 import { ShareButtons } from "@/components/ui/ShareButtons";
 import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import { absoluteUrl } from "@/lib/site-url";
@@ -30,7 +31,7 @@ type MatchDetailContentProps = {
   detail: MatchDetailPayload;
   loading: boolean;
   detailUnavailable?: boolean;
-  scorebatEmbed?: string | null;
+  scorebatHighlight?: ScoreBatHighlight | null;
 };
 
 export default function MatchDetailContent({
@@ -38,7 +39,7 @@ export default function MatchDetailContent({
   detail,
   loading,
   detailUnavailable = false,
-  scorebatEmbed = null,
+  scorebatHighlight = null,
 }: MatchDetailContentProps) {
   const fixtures = useEffectiveFixtures();
   const fixture =
@@ -85,13 +86,8 @@ export default function MatchDetailContent({
           <UpcomingMatchCountdown fixture={fixture} />
         </div>
       ) : null}
-      {scorebatEmbed ? (
-        <section className={styles.section} aria-labelledby="match-highlights-heading">
-          <h2 id="match-highlights-heading" className={styles.sectionTitle}>
-            Match Highlights
-          </h2>
-          <ScoreBatEmbed html={scorebatEmbed} />
-        </section>
+      {scorebatHighlight ? (
+        <MatchHighlightsSection highlight={scorebatHighlight} />
       ) : null}
       <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="detail" />
       <ContentAdSlot slot={ADSENSE_SLOTS.matchMid} minHeight={120} />

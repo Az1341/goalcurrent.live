@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { AdSlot } from "@/components/ads/AdSlot";
-import { isAdSenseHost } from "@/lib/site-integrations";
+import { isAdSenseEnabled } from "@/lib/site-integrations";
 import styles from "./ContentAdSlot.module.css";
 
 type ContentAdSlotProps = {
@@ -20,7 +20,7 @@ export function ContentAdSlot({
 }: ContentAdSlotProps) {
   const enabled = useSyncExternalStore(
     () => () => {},
-    () => isAdSenseHost(window.location.hostname),
+    () => isAdSenseEnabled(window.location.hostname),
     () => false,
   );
   const hasSlot = slot.trim().length > 0;

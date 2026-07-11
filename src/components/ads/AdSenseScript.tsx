@@ -2,7 +2,7 @@
 
 import Script from "next/script";
 import { useSyncExternalStore } from "react";
-import { ADSENSE_PUBLISHER_ID, isAdSenseHost } from "@/lib/site-integrations";
+import { ADSENSE_PUBLISHER_ID, isAdSenseEnabled } from "@/lib/site-integrations";
 
 /** Single global AdSense loader — lazyOnload, production hosts only. */
 export function AdSenseScript() {
@@ -11,7 +11,7 @@ export function AdSenseScript() {
     () => window.location.hostname,
     () => "",
   );
-  const enabled = isAdSenseHost(hostname);
+  const enabled = isAdSenseEnabled(hostname);
 
   if (!enabled) {
     return null;

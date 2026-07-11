@@ -41,6 +41,19 @@ export function isAdSenseHost(hostname: string): boolean {
   return isProductionSiteHost(hostname);
 }
 
+/**
+ * Opt-in gate — set NEXT_PUBLIC_ADSENSE_ENABLED=true in production only after
+ * AdSense approves goalcurrent.live. Until then, no script or ad slots render.
+ */
+export function isAdSenseApproved(): boolean {
+  return process.env.NEXT_PUBLIC_ADSENSE_ENABLED?.trim().toLowerCase() === "true";
+}
+
+/** Production host + explicit approval flag. */
+export function isAdSenseEnabled(hostname: string): boolean {
+  return isAdSenseApproved() && isAdSenseHost(hostname);
+}
+
 /** Firebase is preferred for auth + FCM when configured; otherwise OneSignal remains. */
 export function isFirebaseHost(hostname: string): boolean {
   return isProductionSiteHost(hostname);
