@@ -52,6 +52,34 @@ export function isLiveMatchStatus(status: FixtureStatus | string): boolean {
   return LIVE_STATUSES.has(normalizeStatus(String(status)));
 }
 
+/** Kick-off time has passed (match window started). */
+export function isFixtureKickoffPassed(
+  fixture: Pick<EffectiveFixture, "kickoffUtc">,
+  nowMs: number = Date.now(),
+): boolean {
+  const kickoffMs = new Date(fixture.kickoffUtc).getTime();
+  return Number.isFinite(kickoffMs) && kickoffMs <= nowMs;
+}
+
+/** Pre-match countdown — only before kick-off on fixtures still scheduled. */
+export function shouldShowUpcomingCountdown(fixture: EffectiveFixture): boolean {
+  if (isLiveMatchStatus(fixture.status)) {
+    return false;
+  }
+  if (isEffectiveFixtureCompleted(fixture)) {
+    return false;
+  }
+  return !isFixtureKickoffPassed(fixture);
+}
+
+/** Compact live row when a match is in progress or kick-off has passed. */
+export function shouldShowLiveMatchCard(fixture: EffectiveFixture): boolean {
+  if (isEffectiveFixtureCompleted(fixture)) {
+    return false;
+  }
+  return isLiveMatchStatus(fixture.status) || isFixtureKickoffPassed(fixture);
+}
+
 export type LiveFixtureBuckets = {
   readonly live: readonly EffectiveFixture[];
   readonly today: readonly EffectiveFixture[];

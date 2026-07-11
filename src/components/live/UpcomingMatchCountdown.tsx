@@ -7,7 +7,10 @@ import { getVenueById, groupLabel } from "@/data/wc26";
 import { useLocalizedKickoffLabel } from "@/lib/client/use-local-kickoff";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { formatStageLabel } from "@/lib/wc26-fixtures-page";
-import { resolveFixtureParticipant } from "@/lib/wc26-live";
+import {
+  resolveFixtureParticipant,
+  shouldShowUpcomingCountdown,
+} from "@/lib/wc26-live";
 import { matchHref } from "@/lib/wc26-match";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import styles from "./live.module.css";
@@ -27,22 +30,19 @@ export default function UpcomingMatchCountdown({
   fixture,
 }: UpcomingMatchCountdownProps) {
   const fixtures = useEffectiveFixtures();
-  const home = resolveFixtureParticipant(fixture, "home", fixtures);
-  const away = resolveFixtureParticipant(fixture, "away", fixtures);
-  const venue = getVenueById(fixture.venueId);
-  const kickoffLabel = useLocalizedKickoffLabel(fixture.kickoffUtc);
-  const competitionLabel = fixture.groupId
-    ? groupLabel(fixture.groupId)
-    : formatStageLabel(fixture.stage);
+  const effectiveFixture =
+    fixtures.find((entry) => entry.id === fixture.id) ?? fixture;
 
   const kickoffMs = useMemo(
-    () => new Date(fixture.kickoffUtc).getTime(),
-    [fixture.kickoffUtc],
+    () => new Date(effectiveFixture.kickoffUtc).getTime(),
+    [effectiveFixture.kickoffUtc],
   );
 
   const [remainingMs, setRemainingMs] = useState(() =>
     Math.max(0, kickoffMs - Date.now()),
   );
+
+  const kickoffLabel = useLocalizedKickoffLabel(effectiveFixture.kickoffUtc);
 
   useEffect(() => {
     const tick = () => {
@@ -53,6 +53,17 @@ export default function UpcomingMatchCountdown({
     const id = setInterval(tick, 1_000);
     return () => clearInterval(id);
   }, [kickoffMs]);
+
+  if (!shouldShowUpcomingCountdown(effectiveFixture) || remainingMs <= 0) {
+    return null;
+  }
+
+  const home = resolveFixtureParticipant(effectiveFixture, "home", fixtures);
+  const away = resolveFixtureParticipant(effectiveFixture, "away", fixtures);
+  const venue = getVenueById(effectiveFixture.venueId);
+  const competitionLabel = effectiveFixture.groupId
+    ? groupLabel(effectiveFixture.groupId)
+    : formatStageLabel(effectiveFixture.stage);
 
   const countdown = formatCountdown(remainingMs);
   const venueLabel = venue
@@ -89,7 +100,7 @@ export default function UpcomingMatchCountdown({
 
       <div className={styles.countdownMeta}>
         {kickoffLabel ? (
-          <time className={styles.countdownKickoff} dateTime={fixture.kickoffUtc}>
+          <time className={styles.countdownKickoff} dateTime={effectiveFixture.kickoffUtc}>
             {kickoffLabel}
           </time>
         ) : null}
@@ -98,7 +109,7 @@ export default function UpcomingMatchCountdown({
         ) : null}
       </div>
 
-      <Link href={matchHref(fixture.id)} className={styles.countdownLink}>
+      <Link href={matchHref(effectiveFixture.id)} className={styles.countdownLink}>
         View match centre
       </Link>
     </article>

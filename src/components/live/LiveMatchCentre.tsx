@@ -7,7 +7,7 @@ import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
 import { groupLabel } from "@/data/wc26";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { formatStageLabel } from "@/lib/wc26-fixtures-page";
-import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant, findNextUpcomingMatch } from "@/lib/wc26-live";
+import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant, findNextUpcomingMatch, shouldShowUpcomingCountdown } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
@@ -159,7 +159,7 @@ export default function LiveMatchCentre() {
         fixtures={buckets.live}
         emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
         emptyContent={
-          nextUpcomingMatch ? (
+          nextUpcomingMatch && shouldShowUpcomingCountdown(nextUpcomingMatch) ? (
             <UpcomingMatchCountdown fixture={nextUpcomingMatch} />
           ) : undefined
         }

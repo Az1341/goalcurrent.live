@@ -4,11 +4,12 @@ import Link from "next/link";
 import { getFixtureById, groupLabel } from "@/data/wc26";
 import { buildMatchDetailHeader } from "@/lib/wc26-match";
 import { groupHref } from "@/lib/wc26-groups";
-import { resolveFixtureParticipant } from "@/lib/wc26-live";
+import { resolveFixtureParticipant, shouldShowLiveMatchCard, shouldShowUpcomingCountdown } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import type { MatchDetailPayload } from "@/types/match-detail";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
+import LiveMatchCard from "@/components/live/LiveMatchCard";
 import MatchRelatedLinks from "@/components/match/MatchRelatedLinks";
 import MatchTvBroadcast from "@/components/wc26/MatchTvBroadcast";
 import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
@@ -42,11 +43,12 @@ export default function MatchDetailContent({
   scorebatHighlight = null,
 }: MatchDetailContentProps) {
   const fixtures = useEffectiveFixtures();
-  const fixture =
-    fixtures.find((entry) => entry.id === fixtureId) ?? getFixtureById(fixtureId);
+  const effectiveFixture =
+    fixtures.find((entry) => entry.id === fixtureId) ??
+    getFixtureById(fixtureId);
   const { tvRegion } = useWc26TvRegion();
 
-  if (!fixture) {
+  if (!effectiveFixture) {
     return (
       <main className={styles.matchPage}>
         <p className={styles.emptyState}>Fixture not found.</p>
@@ -57,10 +59,10 @@ export default function MatchDetailContent({
     );
   }
 
-  const header = buildMatchDetailHeader(fixture, fixtures);
-  const homeResolved = resolveFixtureParticipant(fixture, "home", fixtures);
-  const awayResolved = resolveFixtureParticipant(fixture, "away", fixtures);
-  const groupTitle = fixture.groupId ? groupLabel(fixture.groupId) : "World Cup 2026";
+  const header = buildMatchDetailHeader(effectiveFixture, fixtures);
+  const homeResolved = resolveFixtureParticipant(effectiveFixture, "home", fixtures);
+  const awayResolved = resolveFixtureParticipant(effectiveFixture, "away", fixtures);
+  const groupTitle = effectiveFixture.groupId ? groupLabel(effectiveFixture.groupId) : "World Cup 2026";
 
   return (
     <main className={styles.matchPage}>
@@ -69,8 +71,8 @@ export default function MatchDetailContent({
         <span className={styles.breadcrumbSep}>/</span>
         <Link href="/worldcup2026/fixtures">Fixtures</Link>
         <span className={styles.breadcrumbSep}>/</span>
-        {fixture.groupId ? (
-          <Link href={groupHref(fixture.groupId)}>{groupTitle}</Link>
+        {effectiveFixture.groupId ? (
+          <Link href={groupHref(effectiveFixture.groupId)}>{groupTitle}</Link>
         ) : (
           <span>{groupTitle}</span>
         )}
@@ -81,15 +83,24 @@ export default function MatchDetailContent({
         url={absoluteUrl(`/match/${fixtureId}`)}
         title={`${header.homeName} vs ${header.awayName} — Live Score & Highlights`}
       />
-      {header.matchClass === "upcoming" ? (
+      {shouldShowUpcomingCountdown(effectiveFixture) ? (
         <div className={styles.upcomingCountdownWrap}>
-          <UpcomingMatchCountdown fixture={fixture} />
+          <UpcomingMatchCountdown fixture={effectiveFixture} />
         </div>
+      ) : shouldShowLiveMatchCard(effectiveFixture) ? (
+        <section
+          className={styles.matchLiveCardWrap}
+          aria-label="Live match snapshot"
+        >
+          <ul className={styles.matchLiveCardList}>
+            <LiveMatchCard fixture={effectiveFixture} />
+          </ul>
+        </section>
       ) : null}
       {scorebatHighlight ? (
         <MatchHighlightsSection highlight={scorebatHighlight} />
       ) : null}
-      <MatchTvBroadcast tvRegion={tvRegion} matchNumber={fixture.matchNumber} variant="detail" />
+      <MatchTvBroadcast tvRegion={tvRegion} matchNumber={effectiveFixture.matchNumber} variant="detail" />
       <ContentAdSlot slot={ADSENSE_SLOTS.matchMid} minHeight={120} />
       {detailUnavailable ? (
         <p className={styles.apiNotice} role="status">
@@ -116,11 +127,11 @@ export default function MatchDetailContent({
         loading={loading && !detailUnavailable}
         homeTeamId={homeResolved.teamId}
         awayTeamId={awayResolved.teamId}
-        matchNumber={fixture.matchNumber}
-        fixtureId={fixture.id}
+        matchNumber={effectiveFixture.matchNumber}
+        fixtureId={effectiveFixture.id}
       />
 
-      <MatchRelatedLinks fixtureId={fixtureId} groupId={fixture.groupId} />
+      <MatchRelatedLinks fixtureId={fixtureId} groupId={effectiveFixture.groupId} />
 
       <p className={styles.backLink}>
         <Link href="/live">← Live centre</Link>

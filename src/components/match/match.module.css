@@ -235,6 +235,16 @@
   margin: 0 0 16px;
 }
 
+.matchLiveCardWrap {
+  margin: 0 0 16px;
+}
+
+.matchLiveCardList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .timelineList {
   list-style: none;
   margin: 0;
