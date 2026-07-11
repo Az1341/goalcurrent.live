@@ -6,6 +6,8 @@ const useDevServer = process.env.PLAYWRIGHT_DEV === "1";
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  snapshotPathTemplate:
+    "{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{projectName}{ext}",
   timeout: 90_000,
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),

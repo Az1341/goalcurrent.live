@@ -246,11 +246,23 @@ export const FOOTER_LINKS: NavLinkItem[] = [
   { href: "/affiliate-disclosure", labelKey: "affiliateDisclosure" },
 ];
 
-export const FOOTER_SOCIAL: NavLinkItem[] = [
-  { href: "https://facebook.com/goalcurrent", labelKey: "facebook" },
-  { href: "https://www.instagram.com/goalcurrentlive", labelKey: "instagram" },
-  { href: "https://www.tiktok.com/@goalcurrent", labelKey: "tiktok" },
-  { href: "https://twitter.com/goalcurrentlive", labelKey: "twitter" },
+export type SocialLinkItem = {
+  href: string;
+  labelKey: "facebook" | "instagram";
+  icon: "facebook" | "instagram";
+};
+
+export const FOOTER_SOCIAL: SocialLinkItem[] = [
+  {
+    href: "https://www.facebook.com/profile.php?id=61591562350580",
+    labelKey: "facebook",
+    icon: "facebook",
+  },
+  {
+    href: "https://www.instagram.com/goalcurrent.live/",
+    labelKey: "instagram",
+    icon: "instagram",
+  },
 ];
 
 export function isNavActive(pathname: string, href: string, exact?: boolean) {

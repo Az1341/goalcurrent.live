@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  isMatchFavourited,
-  isTeamFavourited,
   toggleFavouriteMatch,
   toggleFavouriteTeam,
 } from "@/lib/favourites";
@@ -26,8 +24,8 @@ export function FavouriteTeamButton({
   teamName,
   className,
 }: FavouriteTeamButtonProps) {
-  useFavourites();
-  const active = isTeamFavourited(teamId);
+  const favourites = useFavourites();
+  const active = favourites.teams.includes(teamId);
 
   return (
     <button
@@ -48,8 +46,8 @@ export function FavouriteMatchButton({
   label,
   className,
 }: FavouriteMatchButtonProps) {
-  useFavourites();
-  const active = isMatchFavourited(matchId);
+  const favourites = useFavourites();
+  const active = favourites.matches.includes(matchId);
 
   return (
     <button

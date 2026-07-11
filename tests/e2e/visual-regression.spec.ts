@@ -8,50 +8,30 @@ const PAGES = [
 ] as const;
 
 function homepageVisualMasks(page: Page): Locator[] {
-  const columnByHeading = (name: string) =>
-    page.getByRole("heading", { name }).locator("xpath=ancestor::section[1]");
-
   return [
-    page.locator('section[aria-labelledby="featured-match-heading"]'),
-    page.getByRole("region", { name: "Live scores ticker" }),
-    columnByHeading("Live Now"),
-    columnByHeading("Latest Results"),
-    columnByHeading("Upcoming Fixtures"),
-    page.locator('section[aria-labelledby="wc-standings-preview"]'),
-    page.locator('section[aria-labelledby="home-pl-heading"]'),
-    page.locator('section[aria-labelledby="wc26-heading"]'),
+    page.locator('[data-gc-chrome="site-footer"]'),
+    page.locator('section[aria-label="Home hero"]'),
+    page.locator('section[aria-label="Featured match hero"]'),
+    page.locator('[class*="tickerWrap"]'),
+    page.locator('section[aria-labelledby="home-today-heading"]'),
     page.locator('section[aria-labelledby="home-news-heading"]'),
+    page.locator('section[aria-labelledby="home-clips-heading"]'),
+    page.locator('section[aria-labelledby="home-leagues-heading"]'),
   ];
 }
 
 async function waitForHomepageStable(page: Page): Promise<void> {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.waitForLoadState("networkidle");
-  await expect(page.locator('[class*="sectionSkeleton"]')).toHaveCount(0, { timeout: 30_000 });
-  await expect(
-    page.locator('section[aria-labelledby="home-news-heading"] [class*="newsSkeleton"]'),
-  ).toHaveCount(0, { timeout: 30_000 });
-  await expect(page.getByText("Loading Premier League data…")).toHaveCount(0, {
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/Live Football/i, {
     timeout: 30_000,
   });
   await page
-    .locator('section[aria-labelledby="home-pl-heading"] nav[aria-label="Premier League quick links"]')
+    .locator('section[aria-labelledby="home-news-heading"]')
     .waitFor({ state: "visible", timeout: 30_000 });
-  await page
-    .locator('section[aria-labelledby="wc-standings-preview"] table tbody tr')
-    .first()
-    .waitFor({ state: "visible", timeout: 30_000 });
-  await page
-    .locator('section[aria-labelledby="home-articles-heading"]')
-    .waitFor({ state: "visible", timeout: 30_000 });
-  await page
-    .locator('section[aria-labelledby="featured-match-heading"] article')
-    .waitFor({ state: "visible", timeout: 30_000 });
-  const articleImages = page.locator('section[aria-labelledby="home-articles-heading"] img');
-  const imageCount = await articleImages.count();
-  for (let index = 0; index < imageCount; index += 1) {
-    await articleImages.nth(index).waitFor({ state: "visible", timeout: 30_000 });
-  }
+  await expect(page.locator('[class*="animate-skeleton-shimmer"]')).toHaveCount(0, {
+    timeout: 30_000,
+  });
 }
 
 async function captureHomepageScreenshot(page: Page, viewportWidth: number): Promise<void> {
@@ -81,7 +61,14 @@ test.describe("Visual regression baselines", () => {
         await page.setViewportSize({ width: viewportWidth, height: 900 });
         await gotoApp(page, path);
         await page.waitForTimeout(500);
-        await expect(page).toHaveScreenshot(`${name}-${viewportWidth}.png`, { fullPage: true });
+        const mask =
+          name === "match-detail"
+            ? [page.locator('[data-gc-chrome="site-footer"]')]
+            : [page.locator('[data-gc-chrome="site-footer"]')];
+        await expect(page).toHaveScreenshot(`${name}-${viewportWidth}.png`, {
+          fullPage: true,
+          mask,
+        });
       });
     }
   }

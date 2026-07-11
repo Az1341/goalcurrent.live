@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
 import InfoPageShell, { InfoBackLink } from "@/components/info/InfoPageShell";
-import { FOOTER_SOCIAL } from "@/lib/nav";
+import SocialLinks from "@/components/layout/SocialLinks";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME, SITE_URL } from "@/lib/site-url";
 import styles from "@/components/info/info-pages.module.css";
@@ -14,7 +13,6 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default async function AboutPage() {
-  const t = await getTranslations("nav");
   return (
     <InfoPageShell>
       <div className={styles.stack}>
@@ -81,11 +79,16 @@ export default async function AboutPage() {
             that passion with fans worldwide.
           </p>
           <p>
-            Follow us on TikTok:{" "}
-            <a href="https://tiktok.com/@goalcurrent" target="_blank" rel="noopener noreferrer">
-              @goalcurrent
-            </a>
+            Follow us on Instagram and Facebook for updates, matchday posts and
+            behind-the-scenes content from the {SITE_NAME} team.
           </p>
+          <div className={styles.socialList}>
+            <SocialLinks
+              linkClassName={styles.socialLink}
+              iconClassName={styles.socialLinkIcon}
+              showLabel
+            />
+          </div>
         </article>
 
         <article className={styles.card}>
@@ -158,28 +161,17 @@ export default async function AboutPage() {
             </a>
             <br />
             Website: <a href={SITE_URL}>goalcurrent.live</a>
-            <br />
-            TikTok:{" "}
-            <a href="https://tiktok.com/@goalcurrent" target="_blank" rel="noopener noreferrer">
-              @goalcurrent
-            </a>
           </div>
           <p>
             Or use our <Link href="/contact">Contact Us page</Link> to send us a
             message directly.
           </p>
           <div className={styles.socialList}>
-            {FOOTER_SOCIAL.map((social) => (
-              <a
-                key={social.href}
-                className={styles.socialLink}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t(social.labelKey)}
-              </a>
-            ))}
+            <SocialLinks
+              linkClassName={styles.socialLink}
+              iconClassName={styles.socialLinkIcon}
+              showLabel
+            />
           </div>
         </article>
 

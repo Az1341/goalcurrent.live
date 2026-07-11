@@ -5,11 +5,11 @@ import { Link } from "@/i18n/navigation";
 import {
   FOOTER_COMPANY_LINKS,
   FOOTER_PLATFORM_LINKS,
-  FOOTER_SOCIAL,
 } from "@/lib/nav";
 import { NORDVPN_HREF } from "@/lib/site-keys";
 import { SITE_NAME } from "@/lib/site-url";
 import GooglePlayBadge from "./GooglePlayBadge";
+import SocialLinks from "./SocialLinks";
 import styles from "./master-chrome.module.css";
 
 export default function MasterFooter() {
@@ -31,18 +31,10 @@ export default function MasterFooter() {
             League 26/27.
           </p>
           <div className={styles.footerSocial} aria-label={tLayout("socialAria")}>
-            {FOOTER_SOCIAL.map((social) => (
-              <a
-                key={social.href}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={t(social.labelKey)}
-                className={styles.footerSocialIcon}
-              >
-                {t(social.labelKey).charAt(0)}
-              </a>
-            ))}
+            <SocialLinks
+              linkClassName={styles.footerSocialIcon}
+              iconClassName={styles.footerSocialSvg}
+            />
           </div>
         </div>
 

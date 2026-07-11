@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import ContactForm from "@/components/info/ContactForm";
 import InfoPageShell, { InfoBackLink } from "@/components/info/InfoPageShell";
+import SocialIcon from "@/components/layout/SocialIcon";
+import SocialLinks from "@/components/layout/SocialLinks";
 import { FOOTER_SOCIAL } from "@/lib/nav";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME, SITE_URL } from "@/lib/site-url";
@@ -30,15 +32,28 @@ export default async function ContactPage() {
               <div className={styles.contactOptionTitle}>Email Us</div>
               <div className={styles.contactOptionSub}>info@goalcurrent.live</div>
             </a>
-            <a
-              className={styles.contactOption}
-              href="https://tiktok.com/@goalcurrent"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className={styles.contactOptionTitle}>TikTok</div>
-              <div className={styles.contactOptionSub}>@goalcurrent</div>
-            </a>
+            {FOOTER_SOCIAL.map((social) => (
+              <a
+                key={social.href}
+                className={styles.contactOption}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className={styles.contactOptionTitle}>
+                  <SocialIcon
+                    name={social.icon}
+                    className={styles.socialLinkIcon}
+                  />{" "}
+                  {t(social.labelKey)}
+                </div>
+                <div className={styles.contactOptionSub}>
+                  {social.labelKey === "instagram"
+                    ? "@goalcurrent.live"
+                    : "GoalCurrent Live"}
+                </div>
+              </a>
+            ))}
           </div>
 
           <h2>Send Us a Message</h2>
@@ -94,26 +109,15 @@ export default async function ContactPage() {
             <br />
             Website: <a href={SITE_URL}>goalcurrent.live</a>
             <br />
-            TikTok:{" "}
-            <a href="https://tiktok.com/@goalcurrent" target="_blank" rel="noopener noreferrer">
-              @goalcurrent
-            </a>
-            <br />
             <br />
             <strong>Response time:</strong> We aim to respond within 24–48 hours.
           </div>
           <div className={styles.socialList}>
-            {FOOTER_SOCIAL.map((social) => (
-              <a
-                key={social.href}
-                className={styles.socialLink}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t(social.labelKey)}
-              </a>
-            ))}
+            <SocialLinks
+              linkClassName={styles.socialLink}
+              iconClassName={styles.socialLinkIcon}
+              showLabel
+            />
           </div>
         </article>
 
