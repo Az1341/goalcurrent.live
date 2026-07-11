@@ -7,15 +7,15 @@ import { useLiveScores } from "@/lib/client/useLiveScores";
 export const LIVE_SCORES_POLL_MS = 10_000;
 
 export function useLiveScoresPolling() {
-  const result = useLiveScores();
+  const { mutate, ...rest } = useLiveScores();
 
   useEffect(() => {
     const id = setInterval(() => {
-      void result.mutate();
+      void mutate();
     }, LIVE_SCORES_POLL_MS);
 
     return () => clearInterval(id);
-  }, [result.mutate]);
+  }, [mutate]);
 
-  return result;
+  return { mutate, ...rest };
 }
