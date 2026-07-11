@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import TeamFlag from "@/components/TeamFlag";
 import type { MatchLineupPlayer } from "@/types/match-detail";
+import type { TeamId } from "@/types/team";
 import { shouldUseUnoptimizedImage } from "@/lib/images";
 import styles from "./MatchLineupField.module.css";
 
@@ -14,6 +16,10 @@ export type MatchLineupFieldProps = {
   homeFormation?: string | null;
   awayFormation?: string | null;
   variant?: "page" | "embedded";
+  homeTeamId?: string;
+  awayTeamId?: string;
+  /** Broadcast-style strip under the team banner, e.g. "Group Stage | Kick-off 20:00". */
+  matchMetaLabel?: string | null;
 };
 
 type GridCoord = { row: number; col: number };
@@ -69,8 +75,9 @@ function gridToPercent(
   const left = ((grid.col - 0.5) / colsInRow) * 100;
   const rowSpan = Math.max(maxRow - 1, 1);
   const rowProgress = (grid.row - 1) / rowSpan;
-  const homeTop = 16 + rowProgress * 28;
-  const awayTop = 84 - rowProgress * 28;
+  // Broadcast cards are tall — spread each half over a wide vertical band.
+  const homeTop = 8 + rowProgress * 38;
+  const awayTop = 92 - rowProgress * 38;
   const top = side === "home" ? homeTop : awayTop;
   return { left, top };
 }
@@ -130,26 +137,29 @@ function PlayerMarker({
   return (
     <div
       className={styles.marker}
-      style={{ left: `${left}%`, top: `${top}%` }}
+      // Upper cards stack above lower ones so nameplates stay readable.
+      style={{ left: `${left}%`, top: `${top}%`, zIndex: Math.round(100 - top) }}
       title={`${player.name}${player.number != null ? ` · #${player.number}` : ""}`}
     >
-      <div className={styles.avatarWrap}>
-        <PlayerAvatar name={player.name} photo={player.photo} />
-        {player.rating != null ? (
-          <span className={`${styles.rating} ${ratingClass(player.rating)}`}>
-            {player.rating.toFixed(1)}
-          </span>
-        ) : null}
-        <span className={styles.badges}>
-          <span className={styles.number}>{player.number ?? "–"}</span>
+      <div className={`${styles.card} ${side === "home" ? styles.cardHome : styles.cardAway}`}>
+        <div className={styles.avatarWrap}>
+          <PlayerAvatar name={player.name} photo={player.photo} />
+          {player.rating != null ? (
+            <span className={`${styles.rating} ${ratingClass(player.rating)}`}>
+              {player.rating.toFixed(1)}
+            </span>
+          ) : null}
           {player.is_captain ? (
             <span className={styles.captain} aria-label="Captain">
               C
             </span>
           ) : null}
+        </div>
+        <span className={styles.plate}>
+          <span className={styles.plateNumber}>{player.number ?? "–"}</span>
+          <span className={styles.plateName}>{surname(player.name)}</span>
         </span>
       </div>
-      <span className={styles.playerName}>{surname(player.name)}</span>
     </div>
   );
 }
@@ -204,23 +214,61 @@ function TeamMarkers({
   );
 }
 
-function TeamHeader({
-  teamName,
-  formation,
-  align,
+function BroadcastBanner({
+  homeTeamName,
+  awayTeamName,
+  homeTeamId,
+  awayTeamId,
+  homeFormation,
+  awayFormation,
+  matchMetaLabel,
 }: {
-  teamName: string;
-  formation?: string | null;
-  align: "start" | "end";
+  homeTeamName: string;
+  awayTeamName: string;
+  homeTeamId?: string;
+  awayTeamId?: string;
+  homeFormation?: string | null;
+  awayFormation?: string | null;
+  matchMetaLabel?: string | null;
 }) {
   return (
-    <div
-      className={`${styles.teamHeader} ${
-        align === "end" ? styles.teamHeaderEnd : styles.teamHeaderStart
-      }`}
-    >
-      <span className={styles.teamName}>{teamName}</span>
-      {formation ? <span className={styles.formation}>{formation}</span> : null}
+    <div className={styles.banner}>
+      <div className={styles.bannerBar}>
+        <span className={styles.bannerTeam}>
+          <TeamFlag
+            teamId={homeTeamId as TeamId | undefined}
+            teamName={homeTeamName}
+            size={30}
+            className={styles.bannerFlag}
+          />
+          <span className={styles.bannerTeamText}>
+            <span className={styles.bannerTeamName}>{homeTeamName}</span>
+            {homeFormation ? (
+              <span className={styles.bannerFormation}>{homeFormation}</span>
+            ) : null}
+          </span>
+        </span>
+        <span className={styles.bannerVs} aria-hidden="true">
+          VS
+        </span>
+        <span className={`${styles.bannerTeam} ${styles.bannerTeamAway}`}>
+          <span className={`${styles.bannerTeamText} ${styles.bannerTeamTextAway}`}>
+            <span className={styles.bannerTeamName}>{awayTeamName}</span>
+            {awayFormation ? (
+              <span className={styles.bannerFormation}>{awayFormation}</span>
+            ) : null}
+          </span>
+          <TeamFlag
+            teamId={awayTeamId as TeamId | undefined}
+            teamName={awayTeamName}
+            size={30}
+            className={styles.bannerFlag}
+          />
+        </span>
+      </div>
+      {matchMetaLabel ? (
+        <div className={styles.bannerMeta}>{matchMetaLabel}</div>
+      ) : null}
     </div>
   );
 }
@@ -233,6 +281,9 @@ export default function MatchLineupField({
   homeFormation,
   awayFormation,
   variant = "page",
+  homeTeamId,
+  awayTeamId,
+  matchMetaLabel,
 }: MatchLineupFieldProps) {
   if (home.length === 0 && away.length === 0) {
     return null;
@@ -252,36 +303,35 @@ export default function MatchLineupField({
       )}
 
       <div className={embedded ? `${styles.wrap} ${styles.wrapEmbedded}` : styles.wrap}>
-        {embedded ? null : (
-          <TeamHeader teamName={homeTeamName} formation={homeFormation} align="start" />
-        )}
+        <div className={styles.stage}>
+          <BroadcastBanner
+            homeTeamName={homeTeamName}
+            awayTeamName={awayTeamName}
+            homeTeamId={homeTeamId}
+            awayTeamId={awayTeamId}
+            homeFormation={homeFormation}
+            awayFormation={awayFormation}
+            matchMetaLabel={matchMetaLabel}
+          />
 
-        <div className={styles.pitch}>
-          {embedded && homeFormation ? (
-            <span className={styles.formationTagTop}>{homeFormation}</span>
-          ) : null}
-          {embedded && awayFormation ? (
-            <span className={styles.formationTagBottom}>{awayFormation}</span>
-          ) : null}
-          <div className={styles.pitchSurface}>
-            <div className={styles.pitchGlow} />
-            <div className={styles.halfway} />
-            <div className={styles.centerCircle} />
-            <div className={styles.centerSpot} />
-            <div className={styles.penaltyTopOuter} />
-            <div className={styles.penaltyTopInner} />
-            <div className={styles.penaltyBottomOuter} />
-            <div className={styles.penaltyBottomInner} />
-          </div>
-          <div className={styles.markers}>
-            <TeamMarkers players={home} side="home" />
-            <TeamMarkers players={away} side="away" />
+          <div className={styles.pitch}>
+            <div className={styles.pitchSurface}>
+              <div className={styles.pitchStripes} />
+              <div className={styles.pitchGlow} />
+              <div className={styles.halfway} />
+              <div className={styles.centerCircle} />
+              <div className={styles.centerSpot} />
+              <div className={styles.penaltyTopOuter} />
+              <div className={styles.penaltyTopInner} />
+              <div className={styles.penaltyBottomOuter} />
+              <div className={styles.penaltyBottomInner} />
+            </div>
+            <div className={styles.markers}>
+              <TeamMarkers players={home} side="home" />
+              <TeamMarkers players={away} side="away" />
+            </div>
           </div>
         </div>
-
-        {embedded ? null : (
-          <TeamHeader teamName={awayTeamName} formation={awayFormation} align="end" />
-        )}
 
         {embedded ? null : (
           <div className={styles.legend}>

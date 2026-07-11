@@ -130,7 +130,23 @@ export function useMatchDetail(
     void mutate();
   }, [apiFixtureId, liveScoresReady, mutate, poll]);
 
-  const detail = data ?? emptyDetail(fixtureId);
+  // API error bodies (e.g. 503 JSON) can arrive without lineups/events —
+  // normalise so match sections always receive a well-formed payload.
+  const detail = useMemo<MatchDetailPayload>(() => {
+    if (!data) {
+      return emptyDetail(fixtureId);
+    }
+    if (Array.isArray(data.events) && data.lineups != null) {
+      return data;
+    }
+    return {
+      ...emptyDetail(fixtureId),
+      ...data,
+      events: data.events ?? [],
+      lineups: data.lineups ?? { home: null, away: null },
+      statistics: data.statistics ?? [],
+    };
+  }, [data, fixtureId]);
   const loading = isLoading && !data;
 
   const refresh = useCallback(() => {

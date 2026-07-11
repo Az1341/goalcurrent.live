@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import MatchLineupField from "@/components/match/MatchLineupField";
+import { getFixtureById } from "@/data/wc26";
+import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import { resolveMatchLineupView } from "@/lib/match-lineup-view";
 import { useMatchDetail } from "@/lib/use-match-detail";
+import { formatStageLabel } from "@/lib/wc26-fixtures-page";
 import type { MatchDetailPayload } from "@/types/match-detail";
 import styles from "./match.module.css";
 
@@ -64,6 +67,12 @@ export default function MatchLineupPitchSection({
     detail,
   );
 
+  const fixture = getFixtureById(fixtureId);
+  const kickoffTime = useLocalizedKickoffTime(fixture?.kickoffUtc ?? "");
+  const matchMetaLabel = fixture
+    ? `${formatStageLabel(fixture.stage)}${kickoffTime ? ` | Kick-off ${kickoffTime}` : ""}`
+    : null;
+
   const headingId = `match-lineups-${fixtureId}`;
 
   return (
@@ -102,6 +111,9 @@ export default function MatchLineupPitchSection({
                 awayTeamName={view.awayTeamName}
                 homeFormation={view.homeFormation}
                 awayFormation={view.awayFormation}
+                homeTeamId={homeTeamId}
+                awayTeamId={awayTeamId}
+                matchMetaLabel={matchMetaLabel}
               />
             </div>
             {view.homeBench.length > 0 || view.awayBench.length > 0 ? (
