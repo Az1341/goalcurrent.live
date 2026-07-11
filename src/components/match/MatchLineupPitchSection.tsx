@@ -104,8 +104,10 @@ export default function MatchLineupPitchSection({
           <>
             <div className={styles.lineupPitchWrap}>
               <MatchLineupBroadcast
-                home={detail.lineups.home}
-                away={detail.lineups.away}
+                home={view.home}
+                away={view.away}
+                homeFormation={view.homeFormation}
+                awayFormation={view.awayFormation}
                 homeTeamName={view.homeTeamName}
                 awayTeamName={view.awayTeamName}
                 homeTeamId={homeTeamId}

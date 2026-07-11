@@ -4,15 +4,19 @@ import Image from "next/image";
 import { useState } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import { shouldUseUnoptimizedImage } from "@/lib/images";
-import type { MatchLineupPlayer, MatchLineupSide } from "@/types/match-detail";
+import type { MatchLineupPlayer } from "@/types/match-detail";
 import type { TeamId } from "@/types/team";
 import styles from "./MatchLineupBroadcast.module.css";
 
 // ── Types ─────────────────────────────────────────────────────────────
 
 export type MatchLineupBroadcastProps = {
-  home: MatchLineupSide | null;
-  away: MatchLineupSide | null;
+  /** Starting XI for the home team (max 11 used). */
+  home: readonly MatchLineupPlayer[];
+  /** Starting XI for the away team (max 11 used). */
+  away: readonly MatchLineupPlayer[];
+  homeFormation?: string | null;
+  awayFormation?: string | null;
   homeTeamName: string;
   awayTeamName: string;
   homeTeamId?: string;
@@ -223,15 +227,15 @@ function TeamHalf({
 export default function MatchLineupBroadcast({
   home,
   away,
+  homeFormation,
+  awayFormation,
   homeTeamName,
   awayTeamName,
   homeTeamId,
   awayTeamId,
   matchMetaLabel,
 }: MatchLineupBroadcastProps) {
-  const homeStarters = home?.startXI ?? [];
-  const awayStarters = away?.startXI ?? [];
-  const hasLineup = homeStarters.length > 0 || awayStarters.length > 0;
+  const hasLineup = home.length > 0 || away.length > 0;
 
   return (
     <div className={styles.root}>
@@ -250,8 +254,8 @@ export default function MatchLineupBroadcast({
           />
           <div className={styles.teamInfo}>
             <span className={styles.teamName}>{homeTeamName}</span>
-            {home?.formation ? (
-              <span className={styles.formation}>{home.formation}</span>
+            {homeFormation ? (
+              <span className={styles.formation}>{homeFormation}</span>
             ) : null}
           </div>
         </div>
@@ -263,8 +267,8 @@ export default function MatchLineupBroadcast({
         <div className={`${styles.teamSide} ${styles.teamSideAway}`}>
           <div className={`${styles.teamInfo} ${styles.teamInfoAway}`}>
             <span className={styles.teamName}>{awayTeamName}</span>
-            {away?.formation ? (
-              <span className={styles.formation}>{away.formation}</span>
+            {awayFormation ? (
+              <span className={styles.formation}>{awayFormation}</span>
             ) : null}
           </div>
           <TeamFlag
@@ -290,8 +294,8 @@ export default function MatchLineupBroadcast({
           <div className={styles.halfDivider} aria-hidden="true" />
           <div className={styles.centreCircle} aria-hidden="true" />
 
-          <TeamHalf players={homeStarters} side="home" />
-          <TeamHalf players={awayStarters} side="away" />
+          <TeamHalf players={home} side="home" />
+          <TeamHalf players={away} side="away" />
         </div>
       ) : (
         <p className={styles.empty}>

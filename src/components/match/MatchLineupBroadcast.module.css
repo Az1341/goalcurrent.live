@@ -6,6 +6,7 @@
   border-radius: 10px;
   background: #05080f;
   font-family: inherit;
+  container-type: inline-size;
 }
 
 .stadiumBg {
@@ -127,7 +128,16 @@
   z-index: 10;
   display: flex;
   padding: 16px 20px 0;
-  height: clamp(280px, 44vw, 520px);
+  /* Use a percentage of the component's own width via container query fallback */
+  height: clamp(300px, 65%, 540px);
+  /* 65% of the container width keeps a ~3:2 aspect for landscape pitch */
+  aspect-ratio: unset;
+}
+
+@supports (container-type: inline-size) {
+  .pitchArea {
+    height: clamp(300px, 58cqw, 540px);
+  }
 }
 
 .half {

@@ -605,7 +605,7 @@
 
 .lineupPitchWrap {
   margin: 0 auto;
-  max-width: 28rem;
+  max-width: 56rem;
   width: 100%;
   overflow: hidden;
   isolation: isolate;
