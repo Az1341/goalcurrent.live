@@ -455,17 +455,20 @@ export function MatchPlayerStats({
   homeTeamName,
   awayTeamName,
 }: MatchPlayerStatsProps) {
+  const hasApiPlayerStats = (detail.playerStats?.length ?? 0) > 0;
+
   const rows = useMemo(
     () =>
       aggregateMatchPlayerStats(
         {
           events: detail.events,
           lineups: detail.lineups,
+          playerStats: detail.playerStats,
         },
         homeTeamName,
         awayTeamName,
       ),
-    [detail.events, detail.lineups, homeTeamName, awayTeamName],
+    [detail.events, detail.lineups, detail.playerStats, homeTeamName, awayTeamName],
   );
 
   return (
@@ -487,8 +490,9 @@ export function MatchPlayerStats({
         ) : (
           <>
             <p className={styles.playerStatsNote}>
-              From match events. Shots, pass accuracy and ratings appear when the
-              provider supplies player-level data.
+              {hasApiPlayerStats
+                ? "From live provider data. Goals and assists also follow match events when the feed updates."
+                : "From match events. Shots, pass accuracy and ratings appear when the provider supplies player-level data."}
             </p>
             <div className={styles.playerStatsTableWrap}>
               <table className={styles.playerStatsTable}>

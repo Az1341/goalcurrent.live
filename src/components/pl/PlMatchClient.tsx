@@ -511,6 +511,7 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
           events: data.events,
           lineups: data.lineups,
           statistics: data.statistics,
+          playerStats: [],
         }}
         loading={false}
       />
@@ -522,6 +523,7 @@ export default function PlMatchClient({ fixtureId }: PlMatchClientProps) {
           events: data.events,
           lineups: data.lineups,
           statistics: data.statistics,
+          playerStats: [],
         }}
         loading={false}
         homeTeamName={fixture.homeTeamName}

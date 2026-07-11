@@ -51,6 +51,7 @@ function emptyDetail(fixtureId: string): MatchDetailPayload {
     events: [],
     lineups: { home: null, away: null },
     statistics: [],
+    playerStats: [],
   };
 }
 
@@ -145,6 +146,7 @@ export function useMatchDetail(
       events: data.events ?? [],
       lineups: data.lineups ?? { home: null, away: null },
       statistics: data.statistics ?? [],
+      playerStats: data.playerStats ?? [],
     };
   }, [data, fixtureId]);
   const loading = isLoading && !data;

@@ -53,6 +53,7 @@ function emptyPayload(fixtureId: string): MatchDetailPayload {
     events: [],
     lineups: { home: null, away: null },
     statistics: [],
+    playerStats: [],
   };
 }
 

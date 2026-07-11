@@ -15,6 +15,7 @@ import type {
   MatchEventItem,
   MatchLineupPlayer,
   MatchLineupSide,
+  MatchPlayerApiStat,
   MatchStatisticPair,
 } from "@/types/match-detail";
 import { isWc26ApiConfigured } from "@/lib/server/wc26-api-football";
@@ -73,7 +74,21 @@ type ApiFixturePlayerRow = {
   team: { name: string };
   players: Array<{
     player: { id: number; name: string; photo: string | null };
-    statistics: Array<{ games: { captain?: boolean; rating?: string | number | null } }>;
+    statistics: Array<{
+      games?: {
+        minutes?: number | null;
+        number?: number | null;
+        position?: string | null;
+        rating?: string | number | null;
+        captain?: boolean;
+        substitute?: boolean;
+      };
+      shots?: { total?: number | null; on?: number | null };
+      goals?: { total?: number | null; assists?: number | null };
+      passes?: { accuracy?: string | number | null };
+      fouls?: { committed?: number | null };
+      cards?: { yellow?: number | null; red?: number | null };
+    }>;
   }>;
 };
 
@@ -91,7 +106,69 @@ function emptyPayload(fixtureId: string): MatchDetailPayload {
     events: [],
     lineups: { home: null, away: null },
     statistics: [],
+    playerStats: [],
   };
+}
+
+function parseApiNumber(value: string | number | null | undefined): number | null {
+  if (value == null || value === "") {
+    return null;
+  }
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+  const parsed = Number.parseFloat(String(value).replace("%", "").trim());
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatPassAccuracy(value: string | number | null | undefined): string | null {
+  if (value == null || value === "") {
+    return null;
+  }
+  if (typeof value === "string" && value.includes("%")) {
+    return value;
+  }
+  const parsed = parseApiNumber(value);
+  return parsed == null ? null : `${Math.round(parsed)}%`;
+}
+
+function mapPlayerStatistics(rows: ApiFixturePlayerRow[]): MatchPlayerApiStat[] {
+  const stats: MatchPlayerApiStat[] = [];
+
+  for (const row of rows) {
+    for (const entry of row.players ?? []) {
+      const block = entry.statistics?.[0];
+      if (!block) {
+        continue;
+      }
+
+      const games = block.games;
+      const minutes = parseApiNumber(games?.minutes);
+      if ((minutes ?? 0) <= 0 && !games?.substitute) {
+        continue;
+      }
+
+      stats.push({
+        playerName: entry.player.name,
+        teamName: row.team.name,
+        number: games?.number ?? null,
+        position: games?.position ?? null,
+        minutes,
+        goals: parseApiNumber(block.goals?.total),
+        assists: parseApiNumber(block.goals?.assists),
+        shots: parseApiNumber(block.shots?.total),
+        shotsOnTarget: parseApiNumber(block.shots?.on),
+        passAccuracy: formatPassAccuracy(block.passes?.accuracy),
+        fouls: parseApiNumber(block.fouls?.committed),
+        yellowCards: parseApiNumber(block.cards?.yellow),
+        redCards: parseApiNumber(block.cards?.red),
+        substituted: Boolean(games?.substitute),
+        rating: parseApiNumber(games?.rating),
+      });
+    }
+  }
+
+  return stats;
 }
 
 async function findApiFootballFixtureId(
@@ -427,6 +504,7 @@ export async function fetchWc26MatchDetail(
         homeTeam?.name ?? homeResolved.label,
         awayTeam?.name ?? awayResolved.label,
       ),
+      playerStats: mapPlayerStatistics(players),
     };
   } catch (error) {
     throw error;

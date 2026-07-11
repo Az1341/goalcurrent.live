@@ -3,7 +3,7 @@ import type { MatchDetailPayload } from "@/types/match-detail";
 /** Subset of match detail used by statistics graph + player stats sections. */
 export type MatchStatsViewModel = Pick<
   MatchDetailPayload,
-  "configured" | "apiAvailable" | "events" | "lineups" | "statistics"
+  "configured" | "apiAvailable" | "events" | "lineups" | "statistics" | "playerStats"
 >;
 
 export const MATCH_MOVEMENT_STAT_KEYS = [
