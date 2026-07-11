@@ -62,7 +62,7 @@ export default function Wc26HeroStats({ variant = "hub" }: Wc26HeroStatsProps) {
   ];
 
   return (
-    <div className={styles.hubStats}>
+    <div className={styles.hubStats} data-gc-light-surface="true">
       {stats.map(({ value, label, tone }) => {
         const goalsLoadingChip = tone === "goals" && goalsStillLoading;
 
