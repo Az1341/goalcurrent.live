@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import SocialIcon, { type SocialIconName } from "@/components/layout/SocialIcon";
+import SocialIcon from "@/components/layout/SocialIcon";
 import { FOOTER_SOCIAL } from "@/lib/nav";
 
 type SocialLinksProps = {

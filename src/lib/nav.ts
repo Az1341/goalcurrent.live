@@ -248,8 +248,8 @@ export const FOOTER_LINKS: NavLinkItem[] = [
 
 export type SocialLinkItem = {
   href: string;
-  labelKey: "facebook" | "instagram";
-  icon: "facebook" | "instagram";
+  labelKey: "facebook" | "instagram" | "tiktok" | "twitter";
+  icon: "facebook" | "instagram" | "tiktok" | "twitter";
 };
 
 export const FOOTER_SOCIAL: SocialLinkItem[] = [
@@ -262,6 +262,16 @@ export const FOOTER_SOCIAL: SocialLinkItem[] = [
     href: "https://www.instagram.com/goalcurrent.live/",
     labelKey: "instagram",
     icon: "instagram",
+  },
+  {
+    href: "https://x.com/GoalCurrentlive",
+    labelKey: "twitter",
+    icon: "twitter",
+  },
+  {
+    href: "https://www.tiktok.com/@goalcurrent",
+    labelKey: "tiktok",
+    icon: "tiktok",
   },
 ];
 
