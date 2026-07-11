@@ -653,10 +653,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
   color: #fff;
   text-decoration: none;
+}
+
+.footerSocialSvg {
+  width: 18px;
+  height: 18px;
 }
 
 .masterFooterV5 .footerSocial {

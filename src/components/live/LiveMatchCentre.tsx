@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import LiveMatchCard from "@/components/live/LiveMatchCard";
+import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
 import { groupLabel } from "@/data/wc26";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { formatStageLabel } from "@/lib/wc26-fixtures-page";
-import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant } from "@/lib/wc26-live";
+import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant, findNextMatchWithinOneHour } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
@@ -113,6 +114,13 @@ export default function LiveMatchCentre() {
     () => partitionFixturesForLiveCentre(fixtures),
     [fixtures],
   );
+  const nextMatchInHour = useMemo(
+    () =>
+      buckets.live.length === 0
+        ? findNextMatchWithinOneHour(fixtures)
+        : undefined,
+    [buckets.live.length, fixtures],
+  );
   return (
     <main className={styles.content}>
       <h1 className={styles.pageTitle}>
@@ -121,7 +129,7 @@ export default function LiveMatchCentre() {
       <p className={styles.pageIntro}>
         World Cup 2026 scores from confirmed results and live API sync. Finished
         group and knockout matches show full-time scores; live matches update
-        every 15 seconds when the provider is active.
+        every 10 seconds when the provider is active.
       </p>
 
       {syncStatus === "pending" || syncStatus === "degraded" ? (
@@ -144,10 +152,18 @@ export default function LiveMatchCentre() {
         id="live-now-heading"
         title="Live now"
         fixtures={buckets.live}
-        emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
+        emptyMessage={
+          buckets.live.length === 0 && !nextMatchInHour
+            ? "No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
+            : undefined
+        }
         showLiveIndicator
         tone="live"
       />
+
+      {buckets.live.length === 0 && nextMatchInHour ? (
+        <UpcomingMatchCountdown fixture={nextMatchInHour} />
+      ) : null}
 
       {buckets.live.length > 0 ? (
         <div className={styles.livePitchStack}>

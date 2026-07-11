@@ -113,6 +113,31 @@ export function partitionFixturesForLiveCentre(
   return { live, today, upcoming, completed };
 }
 
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+/** Next scheduled kickoff within the next hour (excludes live/completed). */
+export function findNextMatchWithinOneHour(
+  fixtures: readonly EffectiveFixture[],
+  now: Date = new Date(),
+): EffectiveFixture | undefined {
+  const nowMs = now.getTime();
+  const horizonMs = nowMs + ONE_HOUR_MS;
+
+  const candidates = fixtures.filter((fixture) => {
+    if (isLiveMatchStatus(fixture.status)) {
+      return false;
+    }
+    if (isEffectiveFixtureCompleted(fixture, now)) {
+      return false;
+    }
+    const kickoffMs = new Date(fixture.kickoffUtc).getTime();
+    return kickoffMs > nowMs && kickoffMs <= horizonMs;
+  });
+
+  candidates.sort(sortByKickoffAsc);
+  return candidates[0];
+}
+
 /** Human-readable period label — e.g. "2nd Half", "Half Time", "Full Time". */
 export function formatPeriodLabel(status: FixtureStatus | string): string {
   const normalized = normalizeStatus(String(status));
