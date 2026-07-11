@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import useSWR from "swr";
 import NewsCard, { FeaturedArticle } from "@/components/news/NewsCard";
 import type { NewsApiResponse, NewsArticle } from "@/types/news";
@@ -32,15 +32,6 @@ type NewsHubProps = {
 };
 
 export default function NewsHub({ initialData }: NewsHubProps) {
-  const [updatedLabel, setUpdatedLabel] = useState(
-    initialData?.articles.length
-      ? `Updated: ${new Date(initialData.fetched).toLocaleTimeString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })} · ${initialData.sources.join(" + ")}`
-      : "Loading…",
-  );
-
   const { data, error, isLoading } = useSWR<NewsApiResponse>(
     "/api/news",
     fetcher,
@@ -53,27 +44,29 @@ export default function NewsHub({ initialData }: NewsHubProps) {
     },
   );
 
-  const articles = useMemo(() => {
-    const payload = data?.articles.length ? data : null;
+  const updatedLabel = useMemo(() => {
+    const payload = data?.articles.length ? data : initialData;
     if (!payload?.articles.length) {
-      return [] as NewsArticle[];
+      return "Loading…";
     }
-    setUpdatedLabel(
-      `Updated: ${new Date(payload.fetched).toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })} · ${payload.sources.join(" + ") || "BBC Sport + ESPN"}`,
-    );
-    return mergeEditorialFirst(payload.articles);
+    return `Updated: ${new Date(payload.fetched).toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })} · ${payload.sources.join(" + ") || "BBC Sport + ESPN"}`;
+  }, [data, initialData]);
+
+  // Editorial content must always render, even when the RSS feed is empty.
+  const articles = useMemo(() => {
+    const rssArticles: NewsArticle[] = data?.articles ?? [];
+    return mergeEditorialFirst(rssArticles);
   }, [data]);
 
   const sources = useMemo(
     () => data?.sources ?? [],
     [data?.sources],
   );
-  const showSkeleton = isLoading && !data?.articles.length && !initialData?.articles.length;
-  const showError =
-    !!error && !data?.articles.length && !initialData?.articles.length;
+  const showSkeleton = isLoading && articles.length === 0;
+  const showError = !!error && articles.length === 0;
   const featured = articles[0];
   const rest = articles.slice(1);
 

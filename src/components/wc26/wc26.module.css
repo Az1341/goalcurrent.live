@@ -288,7 +288,7 @@
   text-align: center;
   font-weight: 700;
   color: var(--gc-content-heading);
-  background: color-mix(in srgb, var(--wc26-accent) 11%, #ffffff);
+  background: color-mix(in srgb, var(--wc26-accent) 11%, var(--gc-card));
   border-bottom: 1px solid color-mix(in srgb, var(--wc26-accent) 20%, var(--gc-border));
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1946,6 +1946,7 @@ a.standingsHead:hover {
   overflow-y: hidden;
   max-width: 100%;
   padding: 0 20px 4px;
+  scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
   scrollbar-width: thin;
@@ -1958,6 +1959,7 @@ a.standingsHead:hover {
   border-radius: var(--gc-radius);
   padding: 9px 6px;
   text-align: center;
+  scroll-snap-align: center;
   cursor: pointer;
   background: var(--gc-content-surface-alt);
   color: var(--gc-text-primary);

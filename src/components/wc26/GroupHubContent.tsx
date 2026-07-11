@@ -193,7 +193,7 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
           FIFA World Cup 2026 — <span>{title}</span>
         </h1>
         <p className={styles.pageIntro}>
-          {title} hub with live standings, fixtures, results, top scorers and
+          {title} hub with final standings, fixtures, results, top scorers and
           news for {teamNames}.
         </p>
 
@@ -228,7 +228,11 @@ export default function GroupHubContent({ groupId }: GroupHubContentProps) {
       </header>
 
       {groupComplete ? (
-        <div className={styles.groupCompleteBanner} role="status">
+        <div
+          className={styles.groupCompleteBanner}
+          role="status"
+          data-gc-light-surface="true"
+        >
           <p className={styles.groupCompleteBannerTitle}>
             {title} — group stage complete
           </p>

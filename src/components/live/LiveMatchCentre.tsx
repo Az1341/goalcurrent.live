@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import LiveMatchCard from "@/components/live/LiveMatchCard";
 import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
 import { groupLabel } from "@/data/wc26";
@@ -23,6 +23,8 @@ type LiveSectionProps = {
   emptyMessage?: string;
   showLiveIndicator?: boolean;
   tone?: "live" | "today" | "upcoming" | "completed";
+  /** Rendered inside the section when there are no fixtures (e.g. countdown). */
+  emptyContent?: ReactNode;
 };
 
 function competitionLabel(fixture: EffectiveFixture): string {
@@ -64,6 +66,7 @@ function LiveSection({
   emptyMessage,
   showLiveIndicator,
   tone,
+  emptyContent,
 }: LiveSectionProps) {
   const groups = useMemo(
     () => groupFixturesByCompetition(fixtures),
@@ -87,7 +90,8 @@ function LiveSection({
           <span className={styles.sectionCount}>{fixtures.length}</span>
         ) : null}
       </div>
-      {fixtures.length === 0 && emptyMessage ? (
+      {fixtures.length === 0 && emptyContent ? emptyContent : null}
+      {fixtures.length === 0 && !emptyContent && emptyMessage ? (
         <p className={styles.emptyState}>{emptyMessage}</p>
       ) : null}
       {fixtures.length > 0 ? (
@@ -153,18 +157,15 @@ export default function LiveMatchCentre() {
         id="live-now-heading"
         title="Live now"
         fixtures={buckets.live}
-        emptyMessage={
-          buckets.live.length === 0 && !nextUpcomingMatch
-            ? "No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
-            : undefined
+        emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
+        emptyContent={
+          nextUpcomingMatch ? (
+            <UpcomingMatchCountdown fixture={nextUpcomingMatch} />
+          ) : undefined
         }
         showLiveIndicator
         tone="live"
       />
-
-      {buckets.live.length === 0 && nextUpcomingMatch ? (
-        <UpcomingMatchCountdown fixture={nextUpcomingMatch} />
-      ) : null}
 
       {buckets.live.length > 0 ? (
         <div className={styles.livePitchStack}>

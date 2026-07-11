@@ -112,7 +112,7 @@ function FixtureMatchCard({
     <article
       className={`${styles.fixMatch} ${cardStateClass}`}
       data-match-state={matchClass}
-      data-gc-light-surface={matchClass === "upcoming" ? "true" : undefined}
+      data-gc-light-surface="true"
       aria-label={`${label} — ${topStatusLabel(fixture, matchClass)}`}
     >
       <div className={styles.fixMatchTop}>
@@ -220,7 +220,7 @@ function FixtureMatchCard({
   );
 }
 
-const CALENDAR_SCROLL_MAX_RAF_RETRIES = 16;
+const CALENDAR_SCROLL_MAX_RAF_RETRIES = 32;
 
 function centerCalendarDay(
   container: HTMLDivElement,
@@ -230,14 +230,35 @@ function centerCalendarDay(
   if (container.clientWidth <= 0 || day.offsetWidth <= 0) {
     return false;
   }
-  const dayCenter = day.offsetLeft + day.offsetWidth / 2;
-  const target = dayCenter - container.clientWidth / 2;
+  // Rect-based math — offsetLeft is unreliable here because the buttons'
+  // offsetParent sits outside the scroll strip.
+  const containerRect = container.getBoundingClientRect();
+  const dayRect = day.getBoundingClientRect();
+  const delta =
+    dayRect.left +
+    dayRect.width / 2 -
+    (containerRect.left + containerRect.width / 2);
   const maxScroll = Math.max(0, container.scrollWidth - container.clientWidth);
   container.scrollTo({
-    left: Math.min(maxScroll, Math.max(0, target)),
+    left: Math.min(maxScroll, Math.max(0, container.scrollLeft + delta)),
     behavior,
   });
   return true;
+}
+
+/** True when the day button's centre is within half a button of the strip centre. */
+function isDayCentered(
+  container: HTMLDivElement,
+  day: HTMLButtonElement,
+): boolean {
+  const containerRect = container.getBoundingClientRect();
+  const dayRect = day.getBoundingClientRect();
+  const distance = Math.abs(
+    dayRect.left +
+      dayRect.width / 2 -
+      (containerRect.left + containerRect.width / 2),
+  );
+  return distance <= Math.max(4, dayRect.width / 2);
 }
 
 export default function FixturesCalendar() {
@@ -266,7 +287,15 @@ export default function FixturesCalendar() {
       if (!container || !day) {
         return false;
       }
-      return centerCalendarDay(container, day, behavior);
+      if (!centerCalendarDay(container, day, behavior)) {
+        return false;
+      }
+      // Manual math can drift when fonts/layout settle late — fall back to
+      // native centring if the day is still outside the visible strip.
+      if (behavior === "instant" && !isDayCentered(container, day)) {
+        day.scrollIntoView({ inline: "center", block: "nearest", behavior });
+      }
+      return true;
     },
     [],
   );
@@ -286,12 +315,6 @@ export default function FixturesCalendar() {
   useEffect(() => {
     initialScrollDone.current = false;
   }, [pathname]);
-
-  useEffect(() => {
-    if (clientReady && todayKey) {
-      setSelectedDate((prev) => prev || todayKey);
-    }
-  }, [clientReady, todayKey]);
 
   const refreshFixtures = useCallback(() => {
     setFixtures(getEffectiveFixtures());
@@ -388,6 +411,33 @@ export default function FixturesCalendar() {
 
     observer.observe(container);
     return () => observer.disconnect();
+  }, [clientReady, calendarCenterKey, scrollActiveDayIntoView]);
+
+  // Late layout settles (web fonts, images, hydration of surrounding sections)
+  // can shift offsets after the first centring pass — re-centre once each.
+  useEffect(() => {
+    if (!clientReady || !calendarCenterKey) {
+      return;
+    }
+
+    let cancelled = false;
+    const recenter = () => {
+      if (!cancelled) {
+        scrollActiveDayIntoView(calendarCenterKey, "instant");
+      }
+    };
+
+    if (typeof document !== "undefined" && "fonts" in document) {
+      document.fonts.ready.then(recenter).catch(() => {});
+    }
+    window.addEventListener("load", recenter, { once: true });
+    const settleTimer = window.setTimeout(recenter, 600);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", recenter);
+      window.clearTimeout(settleTimer);
+    };
   }, [clientReady, calendarCenterKey, scrollActiveDayIntoView]);
 
   return (

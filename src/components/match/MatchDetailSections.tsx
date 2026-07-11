@@ -91,7 +91,11 @@ export function MatchDetailHeader({ header, detail, loading }: MatchDetailHeader
     goalSummary != null && (goalSummary.home.length > 0 || goalSummary.away.length > 0);
 
   return (
-    <section className={styles.headerCard} aria-labelledby="match-header-title">
+    <section
+      className={styles.headerCard}
+      aria-labelledby="match-header-title"
+      data-gc-light-surface="true"
+    >
       <div className={styles.headerTop}>
         <div>
           <div id="match-header-title" style={{ fontWeight: 600 }}>
@@ -295,7 +299,7 @@ export function MatchTimeline({
             )}
           </p>
         ) : (
-          <div className={styles.timelineBoard}>
+          <div className={styles.timelineBoard} data-gc-light-surface="true">
             <div className={styles.timelineBoardHeader} aria-hidden="true">
               <span className={styles.timelineBoardTeamHome}>{homeTeamName}</span>
               <span className={styles.timelineBoardCenter}>Timeline</span>

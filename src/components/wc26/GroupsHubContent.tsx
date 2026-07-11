@@ -26,7 +26,7 @@ export default function GroupsHubContent() {
       </h1>
       <p className={styles.pageIntro}>
         {WC26_GROUP_COUNT} groups · {WC26_TEAM_COUNT} teams in the expanded
-        tournament. Select a group for detail or review live standings below.
+        tournament. Select a group for detail or review final standings below.
       </p>
 
       <Wc26HeroStats variant="hub" />

@@ -18,7 +18,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Groups",
     titleHighlight: "Groups",
     description:
-      "All twelve groups for the expanded 48-team tournament. Browse each group for live standings, fixtures and qualified teams.",
+      "All twelve groups for the expanded 48-team tournament. Browse each group for final standings, fixtures and qualified teams.",
     hubDescription: "All 12 groups (A–L) for the 48-team tournament.",
   },
   {

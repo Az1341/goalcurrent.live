@@ -302,7 +302,7 @@ export function groupHubTitle(groupId: Wc26GroupId): string {
 
 export function groupHubDescription(groupId: Wc26GroupId): string {
   const teams = buildGroupTeamNamesList(groupId);
-  return `${groupLabel(groupId)} at FIFA World Cup 2026 — live standings, fixtures, results, top scorers and news for ${teams} on ${SITE_NAME}.`;
+  return `${groupLabel(groupId)} at FIFA World Cup 2026 — final standings, fixtures, results, top scorers and news for ${teams} on ${SITE_NAME}.`;
 }
 
 export { buildHomepageMatchView };

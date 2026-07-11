@@ -135,22 +135,6 @@ export function findNextUpcomingMatch(
   return candidates[0];
 }
 
-/** @deprecated Use {@link findNextUpcomingMatch} — kept for tests. */
-export function findNextMatchWithinOneHour(
-  fixtures: readonly EffectiveFixture[],
-  now: Date = new Date(),
-): EffectiveFixture | undefined {
-  const nowMs = now.getTime();
-  const horizonMs = nowMs + 60 * 60 * 1000;
-
-  const next = findNextUpcomingMatch(fixtures, now);
-  if (!next) {
-    return undefined;
-  }
-  const kickoffMs = new Date(next.kickoffUtc).getTime();
-  return kickoffMs <= horizonMs ? next : undefined;
-}
-
 /** Human-readable period label — e.g. "2nd Half", "Half Time", "Full Time". */
 export function formatPeriodLabel(status: FixtureStatus | string): string {
   const normalized = normalizeStatus(String(status));

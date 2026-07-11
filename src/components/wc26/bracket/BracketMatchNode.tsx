@@ -133,7 +133,7 @@ export default function BracketMatchNode({
         : styles.card;
 
   return (
-    <article className={cardClass}>
+    <article className={cardClass} data-gc-light-surface="true">
       {match.isFinal ? (
         <p className={styles.cardFinalLabel}>Final</p>
       ) : match.isThirdPlace ? (

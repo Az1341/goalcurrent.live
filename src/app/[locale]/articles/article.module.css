@@ -328,7 +328,7 @@
   border: 1px solid var(--gc-border);
   border-radius: var(--gc-radius-lg);
   overflow: hidden;
-  background: #f8fafc;
+  background: var(--gc-inset);
 }
 
 .figureImage {
@@ -384,7 +384,7 @@
   margin: 0 0 10px;
   font-size: 0.9375rem;
   font-weight: 700;
-  color: #041e42;
+  color: var(--gc-content-heading);
 }
 
 .keyTakeaways ul,
@@ -403,7 +403,7 @@
 }
 
 .comparisonBox {
-  background: #fff;
+  background: var(--gc-card);
   border: 1px solid var(--gc-border);
 }
 
