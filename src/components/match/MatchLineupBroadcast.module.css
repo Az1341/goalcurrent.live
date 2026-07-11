@@ -1,0 +1,329 @@
+/* ── Outer frame ─────────────────────────────────────────────────── */
+.root {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #05080f;
+  font-family: inherit;
+}
+
+.stadiumBg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/football-hero-bg.jpg");
+  background-size: cover;
+  background-position: center top;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.62) 0%,
+    rgba(0, 0, 0, 0.28) 35%,
+    rgba(0, 0, 0, 0.22) 60%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+  z-index: 1;
+}
+
+/* ── Banner ─────────────────────────────────────────────────────── */
+.banner {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px 0;
+  gap: 12px;
+}
+
+.teamSide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.teamSideAway {
+  justify-content: flex-end;
+}
+
+.flag {
+  border-radius: 3px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+  flex-shrink: 0;
+}
+
+.teamInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.teamInfoAway {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.teamName {
+  font-size: clamp(0.875rem, 2vw, 1.5rem);
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.formation {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.vs {
+  font-size: clamp(0.625rem, 1.2vw, 0.875rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+  flex-shrink: 0;
+}
+
+/* ── Match meta pill ─────────────────────────────────────────────── */
+.metaRow {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.metaPill {
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Pitch area ──────────────────────────────────────────────────── */
+.pitchArea {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  padding: 16px 20px 0;
+  height: clamp(280px, 44vw, 520px);
+}
+
+.half {
+  position: relative;
+  flex: 1;
+  height: 100%;
+}
+
+/* ── Pitch line overlay (behind players) ────────────────────────── */
+.halfLines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Halfway divider — vertical line between halves */
+.halfDivider {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* Centre circle, straddling the divider */
+.centreCircle {
+  position: absolute;
+  z-index: 10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 13%;
+  aspect-ratio: 1;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ── Player card ─────────────────────────────────────────────────── */
+.player {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transform: translate(-50%, -50%);
+  cursor: default;
+}
+
+.photoWrap {
+  position: relative;
+  width: clamp(40px, 5.5vw, 60px);
+  height: clamp(40px, 5.5vw, 60px);
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+  display: block;
+}
+
+.photoFallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.75rem, 1.4vw, 1.125rem);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.numberBadge {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: #fff;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+  line-height: 1;
+}
+
+.captainBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 900;
+  color: #0f172a;
+  background: #fbbf24;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  line-height: 1;
+}
+
+.ratingBadge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  border-radius: 999px;
+  padding: 1px 4px;
+  font-size: 8px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+}
+
+.ratingHigh { background: #10b981; }
+.ratingGood { background: #84cc16; }
+.ratingMid  { background: #fbbf24; color: #0f172a; }
+.ratingLow  { background: #f97316; }
+
+.nameplate {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  padding: 2px 5px;
+  width: max-content;
+  max-width: clamp(52px, 7vw, 80px);
+}
+
+.nameplateNum {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.nameplateName {
+  font-size: clamp(7px, 0.85vw, 10px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.nameplateHome .nameplateName { color: #fda4af; }
+.nameplateAway .nameplateName { color: #93c5fd; }
+
+/* ── Bottom fade ─────────────────────────────────────────────────── */
+.bottomFade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.62) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ── Empty / loading states ──────────────────────────────────────── */
+.empty {
+  position: relative;
+  z-index: 10;
+  padding: 40px 24px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+}

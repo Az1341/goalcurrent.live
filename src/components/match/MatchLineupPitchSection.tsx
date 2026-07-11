@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import MatchLineupField from "@/components/match/MatchLineupField";
+import MatchLineupBroadcast from "@/components/match/MatchLineupBroadcast";
 import { getFixtureById } from "@/data/wc26";
 import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import { resolveMatchLineupView } from "@/lib/match-lineup-view";
@@ -103,14 +103,11 @@ export default function MatchLineupPitchSection({
         ) : (
           <>
             <div className={styles.lineupPitchWrap}>
-              <MatchLineupField
-                variant="embedded"
-                home={view.home}
-                away={view.away}
+              <MatchLineupBroadcast
+                home={detail.lineups.home}
+                away={detail.lineups.away}
                 homeTeamName={view.homeTeamName}
                 awayTeamName={view.awayTeamName}
-                homeFormation={view.homeFormation}
-                awayFormation={view.awayFormation}
                 homeTeamId={homeTeamId}
                 awayTeamId={awayTeamId}
                 matchMetaLabel={matchMetaLabel}
