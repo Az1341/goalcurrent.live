@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import ContactForm from "@/components/info/ContactForm";
 import InfoPageShell, { InfoBackLink } from "@/components/info/InfoPageShell";
@@ -91,9 +92,9 @@ export default async function ContactPage() {
           <h2>Affiliate and Legal Enquiries</h2>
           <p>
             Questions about affiliate links, privacy, or legal matters? See our{" "}
-            <a href="/affiliate-disclosure">Affiliate Disclosure</a>,{" "}
-            <a href="/privacy">Privacy Policy</a>, and{" "}
-            <a href="/terms">Terms & Conditions</a>, or email{" "}
+            <Link href="/affiliate-disclosure">Affiliate Disclosure</Link>,{" "}
+            <Link href="/privacy">Privacy Policy</Link>, and{" "}
+            <Link href="/terms">Terms & Conditions</Link>, or email{" "}
             <a href="mailto:info@goalcurrent.live">info@goalcurrent.live</a>.
           </p>
         </article>
