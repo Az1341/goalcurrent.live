@@ -1,14 +1,21 @@
-/* ── Outer frame ─────────────────────────────────────────────────── */
+/* ─── Root ──────────────────────────────────────────────────────────
+   Reference: 1440 × 1024 px Figma frame.
+   We keep the aspect-ratio so the layout scales cleanly at any width.
+   container-type lets child elements use cqw units.
+────────────────────────────────────────────────────────────────────── */
 .root {
   position: relative;
   width: 100%;
+  /* 1024/1440 ≈ 71.1% — maintains Figma proportions */
+  aspect-ratio: 1440 / 1024;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #05080f;
-  font-family: inherit;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
   container-type: inline-size;
 }
 
+/* ─── Stadium background ─────────────────────────────────────────── */
 .stadiumBg {
   position: absolute;
   inset: 0;
@@ -18,322 +25,217 @@
   z-index: 0;
 }
 
-.overlay {
+/* flat 35% dark veil — matches Figma rgba(0,0,0,0.35) */
+.stadiumVeil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.62) 0%,
-    rgba(0, 0, 0, 0.28) 35%,
-    rgba(0, 0, 0, 0.22) 60%,
-    rgba(0, 0, 0, 0.72) 100%
-  );
+  background: rgba(0, 0, 0, 0.35);
   z-index: 1;
 }
 
-/* ── Banner ─────────────────────────────────────────────────────── */
-.banner {
+/* subtle lower-half gradient — matches Figma pitch-overlay */
+.pitchOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 61%;
+  background: linear-gradient(
+    203deg,
+    rgba(0, 0, 0, 0) 25%,
+    rgba(0, 0, 0, 0.08) 75%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────── */
+/* Figma: pt-60 px-80 gap-20, occupies top ~31.6% of frame */
+.header {
   position: relative;
   z-index: 10;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 28px 0;
-  gap: 12px;
-}
-
-.teamSide {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  min-width: 0;
-}
-
-.teamSideAway {
-  justify-content: flex-end;
-}
-
-.flag {
-  border-radius: 3px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
-  flex-shrink: 0;
-}
-
-.teamInfo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  align-items: center;
+  gap: 1.39cqw;      /* 20 / 1440 */
+  padding: 4.17cqw 5.56cqw 0; /* 60 / 1440, 80 / 1440 */
 }
 
-.teamInfoAway {
-  align-items: flex-end;
-  text-align: right;
-}
-
-.teamName {
-  font-size: clamp(0.875rem, 2vw, 1.5rem);
-  font-weight: 800;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.formation {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.vs {
-  font-size: clamp(0.625rem, 1.2vw, 0.875rem);
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.45);
-  flex-shrink: 0;
-}
-
-/* ── Match meta pill ─────────────────────────────────────────────── */
-.metaRow {
-  position: relative;
-  z-index: 10;
-  text-align: center;
-  margin-top: 8px;
-}
-
-.metaPill {
-  display: inline-block;
-  background: rgba(0, 0, 0, 0.58);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 5px 20px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* ── Pitch area ──────────────────────────────────────────────────── */
-.pitchArea {
-  position: relative;
-  z-index: 10;
+.teamsBar {
   display: flex;
-  padding: 16px 20px 0;
-  /* Use a percentage of the component's own width via container query fallback */
-  height: clamp(300px, 65%, 540px);
-  /* 65% of the container width keeps a ~3:2 aspect for landscape pitch */
-  aspect-ratio: unset;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
-@supports (container-type: inline-size) {
-  .pitchArea {
-    height: clamp(300px, 58cqw, 540px);
-  }
+/* Norway side (flag LEFT of name) */
+.teamGroup {
+  display: flex;
+  align-items: center;
+  gap: 1.67cqw; /* 24 / 1440 */
 }
 
-.half {
-  position: relative;
-  flex: 1;
+/* England side (name LEFT of flag) */
+.teamGroupAway {
+  flex-direction: row-reverse;
+}
+
+.flagBox {
+  /* Figma: 80 × 54 px, rounded 4px */
+  width: 5.56cqw;  /* 80 / 1440 */
+  height: 3.75cqw; /* 54 / 1440 */
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.flagImg {
+  width: 100%;
   height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-/* ── Pitch line overlay (behind players) ────────────────────────── */
-.halfLines {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+/* Figma: 48px Inter Black uppercase white */
+.teamName {
+  font-size: clamp(14px, 3.33cqw, 48px); /* 48 / 1440 */
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-/* Halfway divider — vertical line between halves */
-.halfDivider {
+/* ─── Info strip ──────────────────────────────────────────────────── */
+/* Figma: blur 5px, rgba(0,0,0,0.5), border rgba(255,255,255,0.2),
+          px-40 py-10, rounded 2px, 14px semibold */
+.infoStrip {
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  padding: 0.69cqw 2.78cqw; /* 10/1440, 40/1440 */
+  font-size: clamp(8px, 0.97cqw, 14px); /* 14/1440 */
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ─── Lineup (pitch) area ─────────────────────────────────────────── */
+/* Figma: 700 / 1024 = 68.4% of total height */
+.pitch {
   position: absolute;
-  z-index: 10;
-  top: 0;
+  left: 0;
+  right: 0;
   bottom: 0;
-  left: 50%;
-  width: 1px;
-  background: rgba(255, 255, 255, 0.18);
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-/* Centre circle, straddling the divider */
-.centreCircle {
-  position: absolute;
+  height: 68.4%;
   z-index: 10;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 13%;
-  aspect-ratio: 1;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  border-radius: 50%;
-  pointer-events: none;
 }
 
-/* ── Player card ─────────────────────────────────────────────────── */
+/* ─── Player card ─────────────────────────────────────────────────── */
+/* Figma: 110 × 130 px total card (110 × 100 photo + 30 name tag) */
 .player {
   position: absolute;
+  /* 110 / 1440 card width */
+  width: 7.64cqw;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  transform: translate(-50%, -50%);
-  cursor: default;
 }
 
+/* Photo area — rounded top corners only */
 .photoWrap {
   position: relative;
-  width: clamp(40px, 5.5vw, 60px);
-  height: clamp(40px, 5.5vw, 60px);
+  width: 100%;
+  /* 100 / 130 = 76.9% of card total; photo:name ratio 100:30 */
+  aspect-ratio: 110 / 100;
+  overflow: hidden;
+  border-radius: 4px 4px 0 0;
+  background: #1e293b;
 }
 
 .photo {
   width: 100%;
   height: 100%;
-  border-radius: 7px;
   object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+  object-position: top center;
   display: block;
 }
 
 .photoFallback {
   width: 100%;
   height: 100%;
-  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(0.75rem, 1.4vw, 1.125rem);
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.08);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+  font-size: 1.67cqw; /* ~24px at 1440 */
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.6);
+  background: #1e293b;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 
+/* ─── Number badge ───────────────────────────────────────────────── */
+/* Figma: #ba1d23, 2px radius, left 4px top 4px, px-6 py-2, 10px Inter Black */
 .numberBadge {
   position: absolute;
-  top: -4px;
-  left: -4px;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  font-weight: 800;
-  color: #fff;
-  padding: 0 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
-  line-height: 1;
-}
-
-.captainBadge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
+  top: 0.28cqw;   /* 4 / 1440 */
+  left: 0.28cqw;  /* 4 / 1440 */
+  background: #ba1d23;
+  border-radius: 2px;
+  padding: 0.14cqw 0.42cqw; /* 2/1440, 6/1440 */
+  font-size: clamp(6px, 0.69cqw, 10px); /* 10/1440 */
   font-weight: 900;
-  color: #0f172a;
-  background: #fbbf24;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
-  line-height: 1;
-}
-
-.ratingBadge {
-  position: absolute;
-  bottom: -4px;
-  right: -4px;
-  border-radius: 999px;
-  padding: 1px 4px;
-  font-size: 8px;
-  font-weight: 800;
   color: #fff;
-  line-height: 1.2;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  line-height: 1;
+  white-space: nowrap;
+  z-index: 2;
 }
 
-.ratingHigh { background: #10b981; }
-.ratingGood { background: #84cc16; }
-.ratingMid  { background: #fbbf24; color: #0f172a; }
-.ratingLow  { background: #f97316; }
-
-.nameplate {
+/* ─── Name tag ──────────────────────────────────────────────────── */
+/* Figma: #05080f bg, 30px tall, rounded bottom corners, 11px Inter Bold uppercase */
+.nameTag {
+  width: 100%;
+  background: #05080f;
+  border-radius: 0 0 4px 4px;
   display: flex;
   align-items: center;
-  gap: 3px;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 3px;
-  padding: 2px 5px;
-  width: max-content;
-  max-width: clamp(52px, 7vw, 80px);
+  justify-content: center;
+  padding: 0 0.28cqw;
+  /* 30 / 100 = 30% of photo height (photo is 100/130 × card) */
+  height: 2.08cqw; /* 30/1440 */
+  overflow: hidden;
 }
 
-.nameplateNum {
-  font-size: 8px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.5);
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-.nameplateName {
-  font-size: clamp(7px, 0.85vw, 10px);
+.nameText {
+  font-size: clamp(5px, 0.76cqw, 11px); /* 11/1440 */
   font-weight: 700;
-  letter-spacing: 0.04em;
   color: #fff;
   text-transform: uppercase;
+  letter-spacing: 0.03em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1;
-  min-width: 0;
+  text-align: center;
+  width: 100%;
 }
 
-.nameplateHome .nameplateName { color: #fda4af; }
-.nameplateAway .nameplateName { color: #93c5fd; }
-
-/* ── Bottom fade ─────────────────────────────────────────────────── */
-.bottomFade {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.62) 100%);
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* ── Empty / loading states ──────────────────────────────────────── */
+/* ─── Empty / loading state ──────────────────────────────────────── */
 .empty {
   position: relative;
   z-index: 10;
-  padding: 40px 24px;
-  text-align: center;
-  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: clamp(10px, 1cqw, 14px);
   color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  padding: 2cqw;
 }

@@ -8,12 +8,10 @@ import type { MatchLineupPlayer } from "@/types/match-detail";
 import type { TeamId } from "@/types/team";
 import styles from "./MatchLineupBroadcast.module.css";
 
-// ── Types ─────────────────────────────────────────────────────────────
+// ── Public API ────────────────────────────────────────────────────────
 
 export type MatchLineupBroadcastProps = {
-  /** Starting XI for the home team (max 11 used). */
   home: readonly MatchLineupPlayer[];
-  /** Starting XI for the away team (max 11 used). */
   away: readonly MatchLineupPlayer[];
   homeFormation?: string | null;
   awayFormation?: string | null;
@@ -21,11 +19,13 @@ export type MatchLineupBroadcastProps = {
   awayTeamName: string;
   homeTeamId?: string;
   awayTeamId?: string;
-  /** Short meta string, e.g. "Group Stage · Kick-off 20:00" */
   matchMetaLabel?: string | null;
 };
 
-// ── Grid coordinate helpers ───────────────────────────────────────────
+// ── Grid → coordinate helpers ─────────────────────────────────────────
+// Reference frame: 1440 px wide × 700 px tall pitch area.
+// x = % of full width (1440 px).
+// y = % of pitch height (700 px).
 
 type GridCoord = { row: number; col: number };
 
@@ -66,12 +66,21 @@ function fallbackGrid(
   return { row, col: sameRow };
 }
 
+function spreadDuplicates(grid: GridCoord, seen: Map<string, number>): GridCoord {
+  const key = `${grid.row}:${grid.col}`;
+  const dupes = seen.get(key) ?? 0;
+  seen.set(key, dupes + 1);
+  return dupes === 0 ? grid : { row: grid.row, col: grid.col + dupes * 0.3 };
+}
+
 /**
- * Convert grid row/col into x/y percentages for a HORIZONTAL pitch layout.
+ * Convert grid_position row/col → (x%, y%) within the 1440×700 pitch area.
  *
- * Home half (left div):  row 1 (GK) → x≈8%,  row max (FW) → x≈87%
- * Away half (right div): row 1 (GK) → x≈92%, row max (FW) → x≈13%
- * y is vertical position within the half, spread by column.
+ * Both teams render GK at the TOP (y≈16%) and attackers at the BOTTOM (y≈85%),
+ * side-by-side — matching the Figma broadcast layout exactly.
+ *
+ * Home occupies the LEFT half  (x: 4 – 40%)
+ * Away occupies the RIGHT half (x: 60 – 96%)
  */
 function gridToXY(
   grid: GridCoord,
@@ -80,17 +89,15 @@ function gridToXY(
   side: "home" | "away",
 ): { x: number; y: number } {
   const colsInRow = Math.max(rowMaxCols.get(grid.row) ?? grid.col, 1);
-  const y = ((grid.col - 0.5) / colsInRow) * 100;
   const rowProgress = (grid.row - 1) / Math.max(maxRow - 1, 1);
-  const x = side === "home" ? 8 + rowProgress * 79 : 92 - rowProgress * 79;
+  const y = 16 + rowProgress * 69; // 16% (GK) → 85% (FW)
+  const xSpan = 36; // spread within each half
+  const colFrac = (grid.col - 0.5) / colsInRow;
+  const x =
+    side === "home"
+      ? 4 + colFrac * xSpan          // home: 4 – 40%
+      : 96 - colFrac * xSpan;        // away: 96 – 60% (mirrored)
   return { x, y };
-}
-
-function spreadDuplicates(grid: GridCoord, seen: Map<string, number>): GridCoord {
-  const key = `${grid.row}:${grid.col}`;
-  const dupes = seen.get(key) ?? 0;
-  seen.set(key, dupes + 1);
-  return dupes === 0 ? grid : { row: grid.row, col: grid.col + dupes * 0.25 };
 }
 
 function surname(name: string): string {
@@ -98,51 +105,35 @@ function surname(name: string): string {
   return parts[parts.length - 1] ?? name;
 }
 
-// ── Rating badge ──────────────────────────────────────────────────────
-
-function ratingClass(r: number | null | undefined): string | undefined {
-  if (r == null) return undefined;
-  if (r >= 8) return styles.ratingHigh;
-  if (r >= 7.5) return styles.ratingGood;
-  if (r >= 7) return styles.ratingMid;
-  return styles.ratingLow;
-}
-
 // ── Player card ───────────────────────────────────────────────────────
 
 function PlayerCard({
   player,
-  side,
   x,
   y,
 }: {
   player: MatchLineupPlayer;
-  side: "home" | "away";
   x: number;
   y: number;
 }) {
   const [imgErr, setImgErr] = useState(false);
   const initials = surname(player.name).substring(0, 2).toUpperCase();
-  const badgeBg = side === "home" ? "#9f1239" : "#1e3a8a";
-  const rCls = ratingClass(player.rating);
+  const displayName = surname(player.name);
 
   return (
     <div
       className={styles.player}
-      style={{
-        left: `${x}%`,
-        top: `${y}%`,
-        zIndex: Math.round(100 - y),
-      }}
+      style={{ left: `${x}%`, top: `${y}%` }}
       title={`${player.name}${player.number != null ? ` · #${player.number}` : ""}`}
     >
+      {/* Photo */}
       <div className={styles.photoWrap}>
         {player.photo && !imgErr ? (
           <Image
             src={player.photo}
             alt={player.name}
             fill
-            sizes="60px"
+            sizes="110px"
             className={styles.photo}
             unoptimized={shouldUseUnoptimizedImage(player.photo)}
             onError={() => setImgErr(true)}
@@ -151,56 +142,36 @@ function PlayerCard({
           <div className={styles.photoFallback}>{initials}</div>
         )}
 
+        {/* Red number badge — top-left of photo, Figma #ba1d23 */}
         {player.number != null ? (
-          <span
-            className={styles.numberBadge}
-            style={{ backgroundColor: badgeBg }}
-          >
-            {player.number}
-          </span>
-        ) : null}
-
-        {player.is_captain ? (
-          <span className={styles.captainBadge} aria-label="Captain">
-            C
-          </span>
-        ) : null}
-
-        {rCls ? (
-          <span className={`${styles.ratingBadge} ${rCls}`}>
-            {player.rating!.toFixed(1)}
-          </span>
+          <span className={styles.numberBadge}>{player.number}</span>
         ) : null}
       </div>
 
-      <span
-        className={`${styles.nameplate} ${side === "home" ? styles.nameplateHome : styles.nameplateAway}`}
-      >
-        {player.number != null ? (
-          <span className={styles.nameplateNum}>{player.number}</span>
-        ) : null}
-        <span className={styles.nameplateName}>{surname(player.name)}</span>
-      </span>
+      {/* Dark name tag — Figma #05080f strip below photo */}
+      <div className={styles.nameTag}>
+        <span className={styles.nameText}>{displayName}</span>
+      </div>
     </div>
   );
 }
 
-// ── Team half renderer ────────────────────────────────────────────────
+// ── Team side renderer ────────────────────────────────────────────────
 
-function TeamHalf({
+function TeamSide({
   players,
   side,
 }: {
   players: readonly MatchLineupPlayer[];
   side: "home" | "away";
 }) {
-  const starters = players.filter((_, i) => i < 11);
+  const starters = players.slice(0, 11);
   const rowMaxCols = buildRowMaxCols(starters);
   const maxRow = getMaxRow(rowMaxCols);
   const seen = new Map<string, number>();
 
   return (
-    <div className={styles.half}>
+    <>
       {starters.map((player, index) => {
         const baseGrid =
           parseGridPosition(player.grid_position) ??
@@ -212,13 +183,12 @@ function TeamHalf({
           <PlayerCard
             key={`${side}-${player.number ?? "na"}-${player.name}`}
             player={player}
-            side={side}
             x={x}
             y={y}
           />
         );
       })}
-    </div>
+    </>
   );
 }
 
@@ -227,8 +197,6 @@ function TeamHalf({
 export default function MatchLineupBroadcast({
   home,
   away,
-  homeFormation,
-  awayFormation,
   homeTeamName,
   awayTeamName,
   homeTeamId,
@@ -239,72 +207,57 @@ export default function MatchLineupBroadcast({
 
   return (
     <div className={styles.root}>
-      {/* Stadium backdrop */}
+      {/* Stadium image + overlays */}
       <div className={styles.stadiumBg} aria-hidden="true" />
-      <div className={styles.overlay} aria-hidden="true" />
+      <div className={styles.stadiumVeil} aria-hidden="true" />
+      <div className={styles.pitchOverlay} aria-hidden="true" />
 
-      {/* Team header */}
-      <div className={styles.banner}>
-        <div className={styles.teamSide}>
-          <TeamFlag
-            teamId={homeTeamId as TeamId | undefined}
-            teamName={homeTeamName}
-            size={44}
-            className={styles.flag}
-          />
-          <div className={styles.teamInfo}>
+      {/* Header — teams bar + info strip */}
+      <div className={styles.header}>
+        <div className={styles.teamsBar}>
+          {/* Home: flag LEFT of name */}
+          <div className={styles.teamGroup}>
+            <div className={styles.flagBox}>
+              <TeamFlag
+                teamId={homeTeamId as TeamId | undefined}
+                teamName={homeTeamName}
+                size={80}
+                className={styles.flagImg}
+              />
+            </div>
             <span className={styles.teamName}>{homeTeamName}</span>
-            {homeFormation ? (
-              <span className={styles.formation}>{homeFormation}</span>
-            ) : null}
           </div>
-        </div>
 
-        <span className={styles.vs} aria-hidden="true">
-          VS
-        </span>
-
-        <div className={`${styles.teamSide} ${styles.teamSideAway}`}>
-          <div className={`${styles.teamInfo} ${styles.teamInfoAway}`}>
+          {/* Away: name LEFT of flag */}
+          <div className={`${styles.teamGroup} ${styles.teamGroupAway}`}>
+            <div className={styles.flagBox}>
+              <TeamFlag
+                teamId={awayTeamId as TeamId | undefined}
+                teamName={awayTeamName}
+                size={80}
+                className={styles.flagImg}
+              />
+            </div>
             <span className={styles.teamName}>{awayTeamName}</span>
-            {awayFormation ? (
-              <span className={styles.formation}>{awayFormation}</span>
-            ) : null}
           </div>
-          <TeamFlag
-            teamId={awayTeamId as TeamId | undefined}
-            teamName={awayTeamName}
-            size={44}
-            className={styles.flag}
-          />
         </div>
+
+        {matchMetaLabel ? (
+          <div className={styles.infoStrip}>{matchMetaLabel}</div>
+        ) : null}
       </div>
 
-      {/* Match meta pill */}
-      {matchMetaLabel ? (
-        <div className={styles.metaRow}>
-          <span className={styles.metaPill}>{matchMetaLabel}</span>
-        </div>
-      ) : null}
-
-      {/* Pitch */}
+      {/* Pitch — absolute-positioned players */}
       {hasLineup ? (
-        <div className={styles.pitchArea} aria-label="Tactical lineup pitch">
-          {/* Halfway-line decorations sit between the two halves */}
-          <div className={styles.halfDivider} aria-hidden="true" />
-          <div className={styles.centreCircle} aria-hidden="true" />
-
-          <TeamHalf players={home} side="home" />
-          <TeamHalf players={away} side="away" />
+        <div className={styles.pitch} aria-label="Tactical lineup">
+          <TeamSide players={home} side="home" />
+          <TeamSide players={away} side="away" />
         </div>
       ) : (
         <p className={styles.empty}>
           Lineups will appear here when the teams are announced.
         </p>
       )}
-
-      {/* Bottom fade */}
-      <div className={styles.bottomFade} aria-hidden="true" />
     </div>
   );
 }
