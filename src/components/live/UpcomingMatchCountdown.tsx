@@ -7,13 +7,15 @@ import { getVenueById, groupLabel } from "@/data/wc26";
 import { useLocalizedKickoffLabel } from "@/lib/client/use-local-kickoff";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import { formatStageLabel } from "@/lib/wc26-fixtures-page";
-import {
-  resolveFixtureParticipant,
-  shouldShowUpcomingCountdown,
-} from "@/lib/wc26-live";
+import { resolveFixtureParticipant } from "@/lib/wc26-live";
 import { matchHref } from "@/lib/wc26-match";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import styles from "./live.module.css";
+
+/** Max wall-clock window during which we show a LIVE NOW hero card when the
+ *  API has not yet confirmed the match as live. 130 min covers a full AET +
+ *  penalties match (120 min) plus a 10-min handoff buffer. */
+const MATCH_WINDOW_MS = 130 * 60 * 1_000;
 
 type UpcomingMatchCountdownProps = {
   fixture: EffectiveFixture;
@@ -43,23 +45,23 @@ export default function UpcomingMatchCountdown({
     [effectiveFixture.kickoffUtc],
   );
 
-  const [remainingMs, setRemainingMs] = useState(() =>
-    Math.max(0, kickoffMs - Date.now()),
-  );
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
   const kickoffLabel = useLocalizedKickoffLabel(effectiveFixture.kickoffUtc);
 
   useEffect(() => {
-    const tick = () => {
-      setRemainingMs(Math.max(0, kickoffMs - Date.now()));
-    };
-
+    const tick = () => setNowMs(Date.now());
     tick();
     const id = setInterval(tick, 1_000);
     return () => clearInterval(id);
-  }, [kickoffMs]);
+  }, []);
 
-  if (!shouldShowUpcomingCountdown(effectiveFixture) || remainingMs <= 0) {
+  const remainingMs = kickoffMs - nowMs; // positive = pre-kickoff, negative = post-kickoff
+  const elapsedMs   = nowMs - kickoffMs; // positive after kickoff
+
+  // Belt-and-suspenders: the parent already stops rendering us after MATCH_WINDOW_MS,
+  // but guard here in case of any timing gap.
+  if (elapsedMs >= MATCH_WINDOW_MS) {
     return null;
   }
 
@@ -69,17 +71,74 @@ export default function UpcomingMatchCountdown({
   const competitionLabel = effectiveFixture.groupId
     ? groupLabel(effectiveFixture.groupId)
     : formatStageLabel(effectiveFixture.stage);
-
-  const countdown = formatCountdown(remainingMs);
   const venueLabel = venue
     ? `${venue.name}${venue.city ? ` - ${venue.city}` : ""}`
     : null;
+
+  const isLiveNow = remainingMs <= 0;
+  const approxMin = isLiveNow ? Math.floor(elapsedMs / 60_000) : 0;
+
+  if (isLiveNow) {
+    return (
+      <article
+        className={styles.countdownCard}
+        aria-live="polite"
+        aria-label={`${home.label} vs ${away.label} — live now, approximately ${approxMin} minutes elapsed`}
+      >
+        <div className={styles.countdownHeader}>
+          <span className={styles.countdownLiveNow}>
+            <span className={styles.countdownLiveDot} aria-hidden="true" />
+            Live now
+          </span>
+          <span className={styles.countdownCompetition}>{competitionLabel}</span>
+        </div>
+
+        <div className={styles.countdownTeams}>
+          <div className={`${styles.countdownTeam} ${styles.countdownTeamHome}`}>
+            <TeamFlag teamId={home.teamId} teamName={home.label} size={44} />
+            <span className={styles.countdownTeamName}>{home.label}</span>
+          </div>
+
+          <div className={styles.countdownCentre}>
+            <span className={styles.countdownLiveBadge} aria-hidden="true">
+              ● LIVE
+            </span>
+            <span className={styles.countdownElapsed}>
+              {approxMin}&prime; elapsed
+            </span>
+          </div>
+
+          <div className={`${styles.countdownTeam} ${styles.countdownTeamAway}`}>
+            <TeamFlag teamId={away.teamId} teamName={away.label} size={44} />
+            <span className={styles.countdownTeamName}>{away.label}</span>
+          </div>
+        </div>
+
+        <div className={styles.countdownMeta}>
+          {kickoffLabel ? (
+            <time className={styles.countdownKickoff} dateTime={effectiveFixture.kickoffUtc}>
+              {kickoffLabel}
+            </time>
+          ) : null}
+          {venueLabel ? (
+            <span className={styles.countdownVenue}>{venueLabel}</span>
+          ) : null}
+        </div>
+
+        <Link href={matchHref(effectiveFixture.id)} className={styles.countdownLink}>
+          View match centre →
+        </Link>
+      </article>
+    );
+  }
+
+  const countdown = formatCountdown(remainingMs);
 
   return (
     <article
       className={styles.countdownCard}
       aria-live="polite"
-      aria-label={`Next match: ${home.label} vs ${away.label}, kick-off in ${countdown} (days hours:minutes:seconds)`}
+      aria-label={`Next match: ${home.label} vs ${away.label}, kick-off in ${countdown}`}
     >
       <div className={styles.countdownHeader}>
         <span className={styles.countdownEyebrow}>Up next</span>

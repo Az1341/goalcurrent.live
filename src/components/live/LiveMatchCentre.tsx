@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import LiveMatchCard from "@/components/live/LiveMatchCard";
 import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
 import { groupLabel } from "@/data/wc26";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
+import { isEffectiveFixtureCompleted } from "@/lib/wc26-fixture-overlay";
 import { formatStageLabel } from "@/lib/wc26-fixtures-page";
-import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant, findNextUpcomingMatch, shouldShowUpcomingCountdown } from "@/lib/wc26-live";
+import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant, findNextUpcomingMatch } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
 import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
@@ -15,6 +16,9 @@ import MatchLineupPitchSection from "@/components/match/MatchLineupPitchSection"
 import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import { matchHref } from "@/lib/wc26-match";
 import styles from "./live.module.css";
+
+/** Must stay in sync with UpcomingMatchCountdown's MATCH_WINDOW_MS */
+const MATCH_WINDOW_MS = 130 * 60 * 1_000;
 
 type LiveSectionProps = {
   id: string;
@@ -119,13 +123,43 @@ export default function LiveMatchCentre() {
     () => partitionFixturesForLiveCentre(fixtures),
     [fixtures],
   );
-  const nextUpcomingMatch = useMemo(
-    () =>
-      buckets.live.length === 0
-        ? findNextUpcomingMatch(fixtures)
-        : undefined,
-    [buckets.live.length, fixtures],
-  );
+
+  // Refresh every 15 s so the featured fixture (countdown ↔ live-now ↔ next upcoming)
+  // transitions automatically without waiting for an API sync event.
+  const [clockMs, setClockMs] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setClockMs(Date.now()), 15_000);
+    return () => clearInterval(id);
+  }, []);
+
+  /** The single hero fixture shown in the "Live now" empty slot.
+   *  Priority order:
+   *    1. A match that kicked off within MATCH_WINDOW_MS but the API has not
+   *       yet confirmed it as live → show the LIVE NOW hero card.
+   *    2. The next future upcoming match → show the countdown card.
+   *    (When buckets.live has entries the API is driving the section; no hero needed.) */
+  const featuredFixture = useMemo<EffectiveFixture | undefined>(() => {
+    if (buckets.live.length > 0) return undefined;
+
+    // 1. Just-kicked-off match (API lag scenario)
+    const justKickedOff = fixtures
+      .filter((f) => {
+        if (isLiveMatchStatus(f.status)) return false;
+        if (isEffectiveFixtureCompleted(f)) return false;
+        const elapsed = clockMs - new Date(f.kickoffUtc).getTime();
+        return elapsed >= 0 && elapsed < MATCH_WINDOW_MS;
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime(),
+      )[0];
+
+    if (justKickedOff) return justKickedOff;
+
+    // 2. Next scheduled upcoming match
+    return findNextUpcomingMatch(fixtures, new Date(clockMs));
+  }, [buckets.live.length, fixtures, clockMs]);
+
   return (
     <main className={styles.content}>
       <h1 className={styles.pageTitle}>
@@ -159,8 +193,8 @@ export default function LiveMatchCentre() {
         fixtures={buckets.live}
         emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
         emptyContent={
-          nextUpcomingMatch && shouldShowUpcomingCountdown(nextUpcomingMatch) ? (
-            <UpcomingMatchCountdown fixture={nextUpcomingMatch} />
+          featuredFixture ? (
+            <UpcomingMatchCountdown fixture={featuredFixture} />
           ) : undefined
         }
         showLiveIndicator
