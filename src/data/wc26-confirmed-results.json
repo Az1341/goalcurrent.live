@@ -513,10 +513,34 @@
       "awayTeamId": "mar"
     },
     {
+      "fixtureId": "fixture-098",
+      "matchNumber": 98,
+      "homeTeamId": "esp",
+      "awayTeamId": "bel"
+    },
+    {
       "fixtureId": "fixture-099",
       "matchNumber": 99,
       "homeTeamId": "nor",
       "awayTeamId": "eng"
+    },
+    {
+      "fixtureId": "fixture-100",
+      "matchNumber": 100,
+      "homeTeamId": "arg",
+      "awayTeamId": "sui"
+    },
+    {
+      "fixtureId": "fixture-101",
+      "matchNumber": 101,
+      "homeTeamId": "fra",
+      "awayTeamId": "esp"
+    },
+    {
+      "fixtureId": "fixture-102",
+      "matchNumber": 102,
+      "homeTeamId": "eng",
+      "awayTeamId": "arg"
     }
   ],
   "knockoutResults": [
@@ -650,6 +674,59 @@
       "winnerTeamId": "eng",
       "homeScore": 2,
       "awayScore": 3
+    },
+    {
+      "matchNumber": 93,
+      "winnerTeamId": "esp",
+      "homeScore": 0,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 94,
+      "winnerTeamId": "bel",
+      "homeScore": 1,
+      "awayScore": 4
+    },
+    {
+      "matchNumber": 95,
+      "winnerTeamId": "arg",
+      "homeScore": 3,
+      "awayScore": 2
+    },
+    {
+      "matchNumber": 96,
+      "winnerTeamId": "sui",
+      "homeScore": 0,
+      "awayScore": 0,
+      "penaltiesHome": 4,
+      "penaltiesAway": 3,
+      "matchStatus": "pen"
+    },
+    {
+      "matchNumber": 97,
+      "winnerTeamId": "fra",
+      "homeScore": 2,
+      "awayScore": 0
+    },
+    {
+      "matchNumber": 98,
+      "winnerTeamId": "esp",
+      "homeScore": 2,
+      "awayScore": 1
+    },
+    {
+      "matchNumber": 99,
+      "winnerTeamId": "eng",
+      "homeScore": 1,
+      "awayScore": 2,
+      "matchStatus": "aet"
+    },
+    {
+      "matchNumber": 100,
+      "winnerTeamId": "arg",
+      "homeScore": 3,
+      "awayScore": 1,
+      "matchStatus": "aet"
     }
   ]
 }
