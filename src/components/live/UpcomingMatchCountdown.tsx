@@ -20,10 +20,15 @@ type UpcomingMatchCountdownProps = {
 };
 
 function formatCountdown(remainingMs: number): string {
-  const totalSeconds = Math.max(0, Math.floor(remainingMs / 1000));
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  const ms = Math.max(0, remainingMs);
+  const days = Math.floor(ms / 86_400_000);
+  const hours = Math.floor(ms / 3_600_000) % 24;
+  const minutes = Math.floor(ms / 60_000) % 60;
+  const seconds = Math.floor(ms / 1_000) % 60;
+  const hh = String(hours).padStart(2, "0");
+  const mm = String(minutes).padStart(2, "0");
+  const ss = String(seconds).padStart(2, "0");
+  return `${days}d ${hh}:${mm}:${ss}`;
 }
 
 export default function UpcomingMatchCountdown({
@@ -74,7 +79,7 @@ export default function UpcomingMatchCountdown({
     <article
       className={styles.countdownCard}
       aria-live="polite"
-      aria-label={`Next match: ${home.label} vs ${away.label}, kick-off in ${countdown}`}
+      aria-label={`Next match: ${home.label} vs ${away.label}, kick-off in ${countdown} (days hours:minutes:seconds)`}
     >
       <div className={styles.countdownHeader}>
         <span className={styles.countdownEyebrow}>Up next</span>
