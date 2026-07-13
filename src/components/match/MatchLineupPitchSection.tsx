@@ -71,9 +71,10 @@ export default function MatchLineupPitchSection({
   const fixture = getFixtureById(fixtureId);
   const kickoffUtc = kickoffUtcProp ?? fixture?.kickoffUtc ?? "";
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const status = matchStatus ?? fixture?.status;
 
   const revealWindowOpen =
-    isLiveMatchStatus(matchStatus ?? fixture?.status) ||
+    (status != null && isLiveMatchStatus(status)) ||
     isLineupRevealWindow(kickoffUtc, nowMs);
 
   const fetched = useMatchDetail(
