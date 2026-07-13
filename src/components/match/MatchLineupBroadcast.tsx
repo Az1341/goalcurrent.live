@@ -107,18 +107,28 @@ function surname(name: string): string {
 
 // ── Player card ───────────────────────────────────────────────────────
 
+function displayPlayerName(player: MatchLineupPlayer): string {
+  const last = surname(player.name);
+  const isGoalkeeper = (player.position ?? "").charAt(0).toUpperCase() === "G";
+  return isGoalkeeper ? `GK ${last}` : last;
+}
+
 function PlayerCard({
   player,
   x,
   y,
+  side,
 }: {
   player: MatchLineupPlayer;
   x: number;
   y: number;
+  side: "home" | "away";
 }) {
   const [imgErr, setImgErr] = useState(false);
   const initials = surname(player.name).substring(0, 2).toUpperCase();
-  const displayName = surname(player.name);
+  const displayName = displayPlayerName(player);
+  const badgeClass =
+    side === "home" ? styles.numberBadgeHome : styles.numberBadgeAway;
 
   return (
     <div
@@ -142,9 +152,10 @@ function PlayerCard({
           <div className={styles.photoFallback}>{initials}</div>
         )}
 
-        {/* Red number badge — top-left of photo, Figma #ba1d23 */}
         {player.number != null ? (
-          <span className={styles.numberBadge}>{player.number}</span>
+          <span className={`${styles.numberBadge} ${badgeClass}`}>
+            {player.number}
+          </span>
         ) : null}
       </div>
 
@@ -185,6 +196,7 @@ function TeamSide({
             player={player}
             x={x}
             y={y}
+            side={side}
           />
         );
       })}
@@ -211,6 +223,7 @@ export default function MatchLineupBroadcast({
       <div className={styles.stadiumBg} aria-hidden="true" />
       <div className={styles.stadiumVeil} aria-hidden="true" />
       <div className={styles.pitchOverlay} aria-hidden="true" />
+      <div className={styles.footerVignette} aria-hidden="true" />
 
       {/* Header — teams bar + info strip */}
       <div className={styles.header}>

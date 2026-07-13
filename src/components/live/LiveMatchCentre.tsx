@@ -213,6 +213,8 @@ export default function LiveMatchCentre() {
                 matchNumber={fixture.matchNumber}
                 homeTeamId={home.teamId}
                 awayTeamId={away.teamId}
+                kickoffUtc={fixture.kickoffUtc}
+                matchStatus={fixture.status}
                 poll={isLiveMatchStatus(fixture.status)}
                 variant="embedded"
                 matchHref={matchHref(fixture.id)}
