@@ -91,7 +91,7 @@ export default function MatchDetailContent({
           aria-label="Live match snapshot"
         >
           <ul className={styles.matchLiveCardList}>
-            <LiveMatchCard fixture={effectiveFixture} />
+            <LiveMatchCard fixture={effectiveFixture} fixtures={fixtures} />
           </ul>
         </section>
       ) : null}

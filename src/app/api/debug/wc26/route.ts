@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { isDebugAuthorized } from "@/lib/server/cache";
 import { fetchWc26EventsRaw } from "@/lib/server/wc26-events";
 import { fetchWc26FixturesRaw } from "@/lib/server/wc26-fixtures";
 import { fetchWc26TopScorers } from "@/lib/server/wc26-top-scorers";
@@ -13,11 +14,11 @@ const NO_STORE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate",
 };
 
-export async function GET(): Promise<NextResponse> {
-  if (process.env.NODE_ENV === "production") {
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  if (!isDebugAuthorized(request)) {
     return NextResponse.json(
-      { ok: false, error: "Debug disabled in production" },
-      { status: 403, headers: NO_STORE_HEADERS },
+      { ok: false, error: "Unauthorized" },
+      { status: 401, headers: NO_STORE_HEADERS },
     );
   }
 

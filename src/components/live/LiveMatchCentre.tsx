@@ -22,6 +22,7 @@ type LiveSectionProps = {
   id: string;
   title: string;
   fixtures: readonly EffectiveFixture[];
+  allFixtures: readonly EffectiveFixture[];
   emptyMessage?: string;
   showLiveIndicator?: boolean;
   tone?: "live" | "today" | "upcoming" | "completed";
@@ -65,6 +66,7 @@ function LiveSection({
   id,
   title,
   fixtures,
+  allFixtures,
   emptyMessage,
   showLiveIndicator,
   tone,
@@ -103,7 +105,11 @@ function LiveSection({
               <div className={styles.competitionHeader}>{group.label}</div>
               <ul className={styles.fixtureList}>
                 {group.fixtures.map((fixture) => (
-                  <LiveMatchCard key={fixture.id} fixture={fixture} />
+                  <LiveMatchCard
+                    key={fixture.id}
+                    fixture={fixture}
+                    fixtures={allFixtures}
+                  />
                 ))}
               </ul>
             </div>
@@ -189,6 +195,7 @@ export default function LiveMatchCentre() {
         id="live-now-heading"
         title="Live now"
         fixtures={buckets.live}
+        allFixtures={fixtures}
         emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
         emptyContent={
           featuredFixture ? (
@@ -227,6 +234,7 @@ export default function LiveMatchCentre() {
         id="today-heading"
         title="Today"
         fixtures={buckets.today}
+        allFixtures={fixtures}
         emptyMessage="No World Cup matches scheduled for today in the local schedule."
         tone="today"
       />
@@ -235,6 +243,7 @@ export default function LiveMatchCentre() {
         id="upcoming-heading"
         title="Upcoming World Cup fixtures"
         fixtures={buckets.upcoming}
+        allFixtures={fixtures}
         tone="upcoming"
       />
 
@@ -242,6 +251,7 @@ export default function LiveMatchCentre() {
         id="completed-heading"
         title="Completed"
         fixtures={buckets.completed}
+        allFixtures={fixtures}
         emptyMessage="No completed matches yet. Full-time results appear when matches finish."
         tone="completed"
       />

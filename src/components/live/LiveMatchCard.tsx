@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { memo } from "react";
 import { getVenueById } from "@/data/wc26";
 import {
   getFixtureScore,
@@ -16,13 +17,13 @@ import {
   isLiveMatchStatus,
   resolveFixtureParticipant,
 } from "@/lib/wc26-live";
-import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { matchHref } from "@/lib/wc26-match";
 import FixtureMatchRow from "@/components/match/FixtureMatchRow";
 import styles from "./live.module.css";
 
 type LiveMatchCardProps = {
   fixture: EffectiveFixture;
+  fixtures: readonly EffectiveFixture[];
 };
 
 function statusColumnLabel(
@@ -42,8 +43,7 @@ function statusColumnLabel(
   return undefined;
 }
 
-export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
-  const fixtures = useEffectiveFixtures();
+function LiveMatchCard({ fixture, fixtures }: LiveMatchCardProps) {
   const home = resolveFixtureParticipant(fixture, "home", fixtures);
   const away = resolveFixtureParticipant(fixture, "away", fixtures);
   const isLive = isLiveMatchStatus(fixture.status);
@@ -100,3 +100,5 @@ export default function LiveMatchCard({ fixture }: LiveMatchCardProps) {
     </li>
   );
 }
+
+export default memo(LiveMatchCard);

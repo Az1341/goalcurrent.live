@@ -44,6 +44,7 @@ jobs:
       - run: npx tsc --noEmit
       - run: npm run i18n:check
       - run: npm run test:unit
+      - run: npm run verify:design
 
   e2e:
     name: Playwright E2E + visual regression

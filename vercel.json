@@ -1,39 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/google-play-badge.png",
-      "destination": "/images/google-play-badge.png",
-      "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/.well-known/assetlinks.json",
-      "destination": "/api/well-known/assetlinks"
-    },
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    },
-    {
-      "source": "/sitemap-news.xml",
-      "destination": "/api/sitemap-news"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/api/robots"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/.well-known/assetlinks.json",
-      "headers": [
-        { "key": "Content-Type", "value": "application/json" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
-    }
-  ],
   "crons": [
     {
       "path": "/api/cron/refresh-content",

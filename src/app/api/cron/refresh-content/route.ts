@@ -62,12 +62,12 @@ export async function GET(request: Request): Promise<NextResponse> {
     captureRouteError("api/cron/refresh-content", error);
     return NextResponse.json(
       {
-        ok: true,
+        ok: false,
         usedSeed: true,
         refreshedAt: new Date().toISOString(),
         error: "Refresh failed - serving cached seed content",
       },
-      { status: 200 },
+      { status: 503 },
     );
   }
 }

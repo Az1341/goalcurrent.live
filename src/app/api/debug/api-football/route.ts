@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isDebugAuthorized } from "@/lib/server/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -23,10 +24,10 @@ function isDebugEndpoint(value: string | null): value is DebugEndpoint {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  if (process.env.NODE_ENV === "production") {
+  if (!isDebugAuthorized(request)) {
     return NextResponse.json(
-      { ok: false, error: "Debug disabled in production" },
-      { status: 403, headers: NO_STORE_HEADERS },
+      { ok: false, error: "Unauthorized" },
+      { status: 401, headers: NO_STORE_HEADERS },
     );
   }
 

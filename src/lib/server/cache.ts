@@ -1,21 +1,21 @@
-/** In-memory per-instance cache — cleared on deploy / cold start. */
+import { LRUCache } from "lru-cache";
+
 type CacheEntry = {
   value: unknown;
-  expiry: number;
 };
 
-export const apiCache = new Map<string, CacheEntry>();
+/** In-memory per-instance cache — cleared on deploy / cold start. */
+export const apiCache = new LRUCache<string, CacheEntry>({
+  max: 500,
+  ttl: 5 * 60 * 1000,
+  ttlAutopurge: true,
+});
 
 const DEFAULT_TTL_MS = 300_000;
 
 export function getCached(key: string): unknown | null {
   const entry = apiCache.get(key);
-  if (!entry) return null;
-  if (Date.now() > entry.expiry) {
-    apiCache.delete(key);
-    return null;
-  }
-  return entry.value;
+  return entry?.value ?? null;
 }
 
 export function setCached(
@@ -23,8 +23,86 @@ export function setCached(
   value: unknown,
   ttlMs = DEFAULT_TTL_MS,
 ): void {
-  apiCache.set(key, {
-    value,
-    expiry: Date.now() + ttlMs,
-  });
+  apiCache.set(key, { value }, { ttl: ttlMs });
+}
+
+type RateLimitEntry = {
+  count: number;
+  resetAt: number;
+};
+
+const RATE_WINDOW_MS = 60_000;
+const DEFAULT_MAX_REQUESTS = 60;
+const UPSTREAM_MAX_REQUESTS = 30;
+
+const rateLimitCounters = new LRUCache<string, RateLimitEntry>({
+  max: 10_000,
+  ttl: RATE_WINDOW_MS,
+  ttlAutopurge: true,
+});
+
+function maxRequestsForPath(pathname: string): number {
+  if (
+    pathname.startsWith("/api/wc26/") ||
+    pathname.startsWith("/api/pl/") ||
+    pathname.startsWith("/api/debug/")
+  ) {
+    return UPSTREAM_MAX_REQUESTS;
+  }
+  return DEFAULT_MAX_REQUESTS;
+}
+
+export type RateLimitResult =
+  | { allowed: true }
+  | { allowed: false; retryAfterSec: number };
+
+export function checkRateLimit(
+  ip: string,
+  pathname: string,
+): RateLimitResult {
+  const now = Date.now();
+  const maxRequests = maxRequestsForPath(pathname);
+  const entry = rateLimitCounters.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitCounters.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return { allowed: true };
+  }
+
+  if (entry.count >= maxRequests) {
+    const retryAfterSec = Math.max(1, Math.ceil((entry.resetAt - now) / 1000));
+    return { allowed: false, retryAfterSec };
+  }
+
+  entry.count += 1;
+  rateLimitCounters.set(ip, entry);
+  return { allowed: true };
+}
+
+export function clientIpFromRequest(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0]?.trim() || "unknown";
+  }
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) {
+    return realIp.trim();
+  }
+  return "unknown";
+}
+
+/** Gate debug/diagnostic routes behind DEBUG_SECRET or CRON_SECRET. */
+export function isDebugAuthorized(request: Request): boolean {
+  const secret =
+    process.env.DEBUG_SECRET?.trim() || process.env.CRON_SECRET?.trim();
+  if (!secret) {
+    return process.env.NODE_ENV === "development";
+  }
+
+  const authHeader = request.headers.get("authorization");
+  if (authHeader === `Bearer ${secret}`) {
+    return true;
+  }
+
+  return request.headers.get("x-debug-secret") === secret;
 }

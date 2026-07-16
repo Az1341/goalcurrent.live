@@ -56,7 +56,7 @@ const SITE_REDIRECTS: RouteRedirect[] = [
 const nextConfig: NextConfig = {
   images: {
     dangerouslyAllowSVG: true,
-    contentDispositionType: "attachment",
+    contentDispositionType: "inline",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1600],

@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { routing } from "@/i18n/routing";
 import { CONTENT_SECURITY_POLICY } from "@/lib/security/csp";
+import {
+  checkRateLimit,
+  clientIpFromRequest,
+} from "@/lib/server/cache";
 
 const LEGACY_GROUP_PATH = /^\/worldcup2026\/groups\/group-([a-l])$/i;
 const LOCALE_PREFIX = /^\/(en|fa|ar|fr|de|nl|es|pt|it)(\/|$)/;
@@ -159,6 +163,25 @@ export function proxy(request: NextRequest) {
 
   // API routes must bypass i18n (otherwise /api/pl/fixtures → /en/api/pl/fixtures → 404)
   if (pathname.startsWith("/api/")) {
+    const ip = clientIpFromRequest(request);
+    const rateLimit = checkRateLimit(ip, pathname);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: {
+            code: "rate_limit",
+            message: "Too many requests.",
+          },
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimit.retryAfterSec),
+          },
+        },
+      );
+    }
     return NextResponse.next();
   }
 
@@ -191,6 +214,7 @@ export function proxy(request: NextRequest) {
 
 export const proxyConfig = {
   matcher: [
+    "/api/:path*",
     "/.well-known/assetlinks.json",
     "/sitemap.xml",
     "/sitemap-news.xml",
