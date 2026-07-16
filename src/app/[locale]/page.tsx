@@ -1,9 +1,7 @@
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 15;
 
 import nextDynamic from "next/dynamic";
 import type { Metadata } from "next";
-import { getLocale } from "next-intl/server";
 import HomeFeaturedMatchJsonLd from "@/components/seo/HomeFeaturedMatchJsonLd";
 import { WC26_FIXTURES } from "@/data/wc26";
 import { HOME_HERO_BG } from "@/lib/critical-assets";
@@ -22,8 +20,12 @@ export const metadata: Metadata = buildPageMetadata({
   absoluteTitle: true,
 });
 
-export default async function HomePage() {
-  const locale = await getLocale();
+type HomePageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function HomePage({ params }: HomePageProps) {
+  const { locale } = await params;
   const featuredSelection = selectFeaturedFixtures(WC26_FIXTURES);
 
   return (
