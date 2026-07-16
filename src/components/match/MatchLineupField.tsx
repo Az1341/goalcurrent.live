@@ -5,6 +5,12 @@ import { useState } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import type { MatchLineupPlayer } from "@/types/match-detail";
 import type { TeamId } from "@/types/team";
+import {
+  buildRowMaxCols,
+  getMaxRow,
+  parseGridPosition,
+  type GridCoord,
+} from "@/lib/match-lineup-grid";
 import { shouldUseUnoptimizedImage } from "@/lib/images";
 import styles from "./MatchLineupField.module.css";
 
@@ -21,34 +27,6 @@ export type MatchLineupFieldProps = {
   /** Broadcast-style strip under the team banner, e.g. "Group Stage | Kick-off 20:00". */
   matchMetaLabel?: string | null;
 };
-
-type GridCoord = { row: number; col: number };
-
-function parseGridPosition(position: string | null | undefined): GridCoord | null {
-  if (!position) return null;
-  const [rowRaw, colRaw] = position.split(":");
-  const row = Number(rowRaw);
-  const col = Number(colRaw);
-  if (!Number.isFinite(row) || !Number.isFinite(col) || row < 1 || col < 1) {
-    return null;
-  }
-  return { row, col };
-}
-
-function buildRowMaxCols(players: readonly MatchLineupPlayer[]): Map<number, number> {
-  const map = new Map<number, number>();
-  for (const player of players) {
-    const grid = parseGridPosition(player.grid_position);
-    if (!grid) continue;
-    map.set(grid.row, Math.max(map.get(grid.row) ?? 0, grid.col));
-  }
-  return map;
-}
-
-function getMaxRow(rowMaxCols: Map<number, number>): number {
-  if (rowMaxCols.size === 0) return 1;
-  return Math.max(...rowMaxCols.keys());
-}
 
 function fallbackGrid(
   player: MatchLineupPlayer,

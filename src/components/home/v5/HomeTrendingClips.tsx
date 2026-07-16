@@ -1,9 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
+import Image from "next/image";
 import useSWR from "swr";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { fetcher } from "@/lib/client/fetcher";
+import { shouldUseUnoptimizedImage } from "@/lib/images";
 import type { VideosApiResponse, YouTubeVideo } from "@/types/video";
 import styles from "../home-v5.module.css";
 
@@ -21,6 +24,8 @@ function dedupeVideos(videos: readonly YouTubeVideo[]): YouTubeVideo[] {
 }
 
 export default function HomeTrendingClips() {
+  const tNav = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const { data, isLoading } = useSWR<VideosApiResponse>(
     "/api/videos?limit=8",
     fetcher,
@@ -35,7 +40,7 @@ export default function HomeTrendingClips() {
     return (
       <section className={styles.section} aria-labelledby="home-clips-heading">
         <h2 id="home-clips-heading" className={styles.sectionTitle}>
-          Trending Clips
+          {tNav("latestVideos")}
         </h2>
         <div className={`${styles.skeleton} animate-skeleton-shimmer`} />
       </section>
@@ -50,10 +55,10 @@ export default function HomeTrendingClips() {
     <section className={styles.section} aria-labelledby="home-clips-heading">
       <div className={styles.sectionHeader}>
         <h2 id="home-clips-heading" className={styles.sectionTitle}>
-          Trending Clips
+          {tNav("latestVideos")}
         </h2>
         <Link href="/videos" className={styles.sectionLink}>
-          View all →
+          {tCommon("viewAll")} →
         </Link>
       </div>
       <div className={styles.clipsScroll}>
@@ -66,7 +71,14 @@ export default function HomeTrendingClips() {
             rel="noopener noreferrer"
           >
             <div className={styles.clipThumb}>
-              <img src={video.thumbnail} alt="" loading="lazy" />
+              <Image
+                src={video.thumbnail}
+                alt=""
+                fill
+                sizes="160px"
+                unoptimized={shouldUseUnoptimizedImage(video.thumbnail)}
+                className={styles.clipThumbImage}
+              />
               <span className={styles.clipPlay} aria-hidden="true">
                 ▶
               </span>

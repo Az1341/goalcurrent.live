@@ -21,7 +21,7 @@
     "i18n:check": "node scripts/check-message-parity.cjs",
     "verify:design": "node scripts/verify-fundamentals.cjs",
     "test:i18n": "node --test tests/i18n/*.test.mjs",
-    "test:unit": "tsx --test tests/i18n/*.test.mjs tests/content/*.test.mjs tests/wc26/*.test.mjs",
+    "test:unit": "tsx --test tests/i18n/*.test.mjs tests/content/*.test.mjs tests/wc26/*.test.mjs tests/lib/*.test.mjs",
     "test:e2e": "playwright test --project=chromium",
     "test:visual": "playwright test --project=visual",
     "test:visual:update": "playwright test --project=visual --update-snapshots"
@@ -51,6 +51,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-security": "^4.0.1",
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.1",
     "tsx": "^4.19.4",

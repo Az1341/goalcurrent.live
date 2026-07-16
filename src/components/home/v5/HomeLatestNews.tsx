@@ -2,11 +2,12 @@
 
 import type { ReactNode } from "react";
 import { useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { formatNewsRelativeTime } from "@/lib/news-format";
 import { mergeHomepageNewsFeed } from "@/lib/editorial-news";
-import { withSvgMediaClass } from "@/lib/images";
+import { shouldUseUnoptimizedImage, withSvgMediaClass } from "@/lib/images";
 import { useNewsFeed } from "@/lib/use-news-feed";
 import type { NewsArticle } from "@/types/news";
 import styles from "../home-v5.module.css";
@@ -87,7 +88,14 @@ export default function HomeLatestNews() {
                 styles.newsFeaturedImageSvg,
               )}
             >
-              <img src={featured.image} alt="" loading="lazy" />
+              <Image
+                src={featured.image}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                unoptimized={shouldUseUnoptimizedImage(featured.image)}
+                className={styles.newsFeaturedImg}
+              />
             </div>
           ) : (
             <div className={styles.newsFeaturedImage} aria-hidden="true" />
@@ -120,7 +128,14 @@ export default function HomeLatestNews() {
                     styles.newsThumbSvg,
                   )}
                 >
-                  <img src={article.image} alt="" loading="lazy" />
+                  <Image
+                    src={article.image}
+                    alt=""
+                    fill
+                    sizes="80px"
+                    unoptimized={shouldUseUnoptimizedImage(article.image)}
+                    className={styles.newsThumbImg}
+                  />
                 </div>
               ) : (
                 <div className={styles.newsThumb} aria-hidden="true" />

@@ -6,6 +6,12 @@ import TeamFlag from "@/components/TeamFlag";
 import { shouldUseUnoptimizedImage } from "@/lib/images";
 import type { MatchLineupPlayer } from "@/types/match-detail";
 import type { TeamId } from "@/types/team";
+import {
+  buildRowMaxCols,
+  getMaxRow,
+  parseGridPosition,
+  type GridCoord,
+} from "@/lib/match-lineup-grid";
 import styles from "./MatchLineupBroadcast.module.css";
 
 // ── Public API ────────────────────────────────────────────────────────
@@ -26,31 +32,6 @@ export type MatchLineupBroadcastProps = {
 // Reference frame: 1440 px wide × 700 px tall pitch area.
 // x = % of full width (1440 px).
 // y = % of pitch height (700 px).
-
-type GridCoord = { row: number; col: number };
-
-function parseGridPosition(pos: string | null | undefined): GridCoord | null {
-  if (!pos) return null;
-  const [r, c] = pos.split(":");
-  const row = Number(r);
-  const col = Number(c);
-  if (!isFinite(row) || !isFinite(col) || row < 1 || col < 1) return null;
-  return { row, col };
-}
-
-function buildRowMaxCols(players: readonly MatchLineupPlayer[]): Map<number, number> {
-  const map = new Map<number, number>();
-  for (const p of players) {
-    const g = parseGridPosition(p.grid_position);
-    if (!g) continue;
-    map.set(g.row, Math.max(map.get(g.row) ?? 0, g.col));
-  }
-  return map;
-}
-
-function getMaxRow(map: Map<number, number>): number {
-  return map.size === 0 ? 1 : Math.max(...map.keys());
-}
 
 function fallbackGrid(
   player: MatchLineupPlayer,
