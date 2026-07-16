@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import useSWR from "swr";
-import { PlAdSlotMid } from "@/components/pl/PlCommercialStrip";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
 import type {
   PlFixtureRow,
@@ -210,8 +209,6 @@ export default function PlHubClient() {
           API data.
         </p>
       </header>
-
-      <PlAdSlotMid />
 
       {isLoading ? (
         <PlLoadingPanel title="Loading hub" text="Fetching Premier League data…" />

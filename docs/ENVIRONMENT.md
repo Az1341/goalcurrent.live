@@ -28,7 +28,7 @@ Set on Vercel project **`goalcurrent.live`** (Production + Preview):
 | `GNEWS_API_KEY` | Server only | Secondary news source (skipped when unset) |
 | `SCOREBAT_API_TOKEN` | Server only | ScoreBat video highlights |
 
-See `.env.example` for the full template including AdSense and Sentry.
+See `.env.example` for the full template including Sentry.
 
 **Security:** never prefix API keys with `NEXT_PUBLIC_`. Keys must only be read in server code and API routes.
 

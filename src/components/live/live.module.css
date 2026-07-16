@@ -377,21 +377,6 @@
   margin: 0 0 16px;
 }
 
-.liveAdWrap {
-  margin: 0;
-}
-
-.liveAdWrap:empty {
-  display: none;
-}
-
-.liveAdWrap [data-gc-content-ad] {
-  min-height: 0;
-  width: 100%;
-  max-width: 100%;
-  margin: 12px 0 0;
-}
-
 .syncStatus {
   display: inline-flex;
   align-items: center;
@@ -447,10 +432,6 @@
 
   .syncStatusSlot {
     margin-bottom: 12px;
-  }
-
-  .liveAdWrap [data-gc-content-ad] {
-    margin-top: 10px;
   }
 
   .lineupBenchGrid {

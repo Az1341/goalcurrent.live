@@ -89,25 +89,6 @@ export default function AffiliateDisclosurePage() {
         </article>
 
         <article className={styles.card}>
-          <h2>Advertising</h2>
-          <p>
-            This site displays advertisements served by <strong>Google AdSense</strong>.
-            We do not control the specific ads shown. Ad revenue helps us maintain
-            and improve this free football resource.
-          </p>
-          <p>
-            To manage your Google ad preferences, visit:{" "}
-            <a
-              href="https://google.com/settings/ads"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              google.com/settings/ads
-            </a>
-          </p>
-        </article>
-
-        <article className={styles.card}>
           <h2>Third-Party Links</h2>
           <p>
             This site may contain links to third-party websites including news

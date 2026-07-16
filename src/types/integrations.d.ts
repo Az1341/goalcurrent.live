@@ -7,7 +7,6 @@ declare global {
     __gc_gtag_init?: boolean;
     __gc_onesignal_init?: boolean;
     __gc_sw_registered?: boolean;
-    __gc_adsense_slots_pushed?: Set<string>;
     AndroidBridge?: {
       onAuthStateChanged?: (payload: string) => void;
       onFcmToken?: (token: string) => void;
@@ -24,6 +23,5 @@ declare global {
     >;
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
-    adsbygoogle?: unknown[];
   }
 }

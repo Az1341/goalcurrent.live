@@ -11,9 +11,7 @@ import { formatStageLabel } from "@/lib/wc26-fixtures-page";
 import { partitionFixturesForLiveCentre, isLiveMatchStatus, resolveFixtureParticipant, findNextUpcomingMatch } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import { useWc26SyncStatus } from "@/lib/use-wc26-sync-status";
-import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import MatchLineupPitchSection from "@/components/match/MatchLineupPitchSection";
-import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import { matchHref } from "@/lib/wc26-match";
 import styles from "./live.module.css";
 
@@ -225,9 +223,6 @@ export default function LiveMatchCentre() {
         </div>
       ) : null}
 
-      <div className={styles.liveAdWrap}>
-        <ContentAdSlot slot={ADSENSE_SLOTS.liveMid} minHeight={120} />
-      </div>
       <LiveSection
         id="today-heading"
         title="Today"

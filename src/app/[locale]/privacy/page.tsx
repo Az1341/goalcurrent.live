@@ -52,25 +52,8 @@ export default function PrivacyPage() {
         <ul>
           <li>To send football news updates — only if you subscribed</li>
           <li>To improve our website using anonymous analytics</li>
-          <li>To serve relevant advertisements via Google AdSense</li>
+          <li>To improve our website using anonymous analytics</li>
         </ul>
-      </section>
-
-      <section>
-        <h2>Google AdSense & Advertising</h2>
-        <p>
-          We use Google AdSense to display advertisements. Google may use cookies
-          to show ads based on your previous visits to this and other websites.
-        </p>
-        <p>
-          You can opt out at any time at:{" "}
-          <a href="https://google.com/settings/ads" target="_blank" rel="noopener noreferrer">
-            google.com/settings/ads
-          </a>
-        </p>
-        <div className={styles.highlight}>
-          {SITE_NAME} is ad-supported. Ads help us keep the site free and running.
-        </div>
       </section>
 
       <section>
@@ -92,7 +75,6 @@ export default function PrivacyPage() {
         <ul>
           <li>Remember your cookie preferences</li>
           <li>Analyse site traffic (Google Analytics)</li>
-          <li>Display personalised ads (Google AdSense)</li>
         </ul>
         <p>
           You can control cookies through your browser settings or via our cookie

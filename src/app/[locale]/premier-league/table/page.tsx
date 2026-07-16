@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import PlTableClient from "@/components/pl/PlTableClient";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
@@ -11,10 +10,5 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function PremierLeagueTablePage() {
-  return (
-    <>
-      <PlAdSlotTop />
-      <PlTableClient />
-    </>
-  );
+  return <PlTableClient />;
 }

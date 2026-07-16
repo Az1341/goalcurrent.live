@@ -4,7 +4,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
-import { AdSenseScript } from "@/components/ads/AdSenseScript";
 import { GA } from "@/components/analytics/GA";
 import Layout from "@/components/layout/Layout";
 import { FirebaseRoot } from "@/components/firebase/FirebaseRoot";
@@ -156,7 +155,6 @@ export default async function LocaleLayout({
             <Layout>{children}</Layout>
             <GA />
             {isFirebaseConfigured() ? <FirebaseRoot /> : <OneSignalInit />}
-            <AdSenseScript />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import UnderConstruction from "@/components/UnderConstruction";
-import { PlAdSlotTop } from "@/components/pl/PlCommercialStrip";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
 
@@ -18,16 +17,13 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function PremierLeague2526TablePage() {
   return (
-    <>
-      <PlAdSlotTop />
-      <UnderConstruction
+    <UnderConstruction
         title="Premier League Table 2025/26"
         emoji="📋"
         description={`The archived 2025/26 Premier League table will be published on ${SITE_NAME} when the season data is ready.`}
         links={PL_LINKS}
         backHref="/premier-league/table"
         backLabel="← Current PL Table 26/27"
-      />
-    </>
+    />
   );
 }

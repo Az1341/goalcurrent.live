@@ -31,7 +31,7 @@ export default function CookiesPage() {
           Cookies are small text files placed on your device when you visit a
           website. They help websites remember your preferences and improve your
           experience. Some cookies are essential for the site to function, while
-          others are used for analytics or advertising.
+          others are used for analytics.
         </p>
       </section>
 
@@ -45,10 +45,6 @@ export default function CookiesPage() {
           <li>
             <strong>Analytics cookies</strong> — to understand how visitors use the
             site
-          </li>
-          <li>
-            <strong>Advertising cookies</strong> — to show relevant ads via Google
-            AdSense
           </li>
           <li>
             <strong>Push notification cookies</strong> — to manage your notification
@@ -108,17 +104,6 @@ export default function CookiesPage() {
               </td>
             </tr>
             <tr>
-              <td>__gads, __gpi</td>
-              <td>Google AdSense</td>
-              <td>Personalises and measures advertisements</td>
-              <td>13 months</td>
-              <td>
-                <span className={`${styles.badge} ${styles.badgeAds}`}>
-                  Advertising
-                </span>
-              </td>
-            </tr>
-            <tr>
               <td>onesignal-*</td>
               <td>OneSignal</td>
               <td>Manages push notification subscriptions</td>
@@ -161,8 +146,7 @@ export default function CookiesPage() {
         </p>
         <ul>
           <li>
-            <strong>Accept</strong> — allow cookies including analytics and
-            advertising where applicable
+            <strong>Accept</strong> — allow cookies including analytics
           </li>
           <li>
             <strong>Decline</strong> — allow only essential cookies required for the

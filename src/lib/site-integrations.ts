@@ -1,8 +1,6 @@
 ﻿/** Shared integration IDs for GoalCurrent.live. */
 export const ONESIGNAL_APP_ID = "27dd2cba-29fc-4c6a-9183-54db03eef92d";
 export const GA_MEASUREMENT_ID = "G-X84HCE5KGT";
-export const ADSENSE_PUBLISHER_ID =
-  process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || "ca-pub-8697460993506171";
 
 /** PWA theme-color (burgundy .live brand - not header gradient) */
 export const BRAND_THEME_COLOR = "#5c0a1a";
@@ -34,24 +32,6 @@ export function isAnalyticsHost(hostname: string): boolean {
   if (host === "localhost" || host.endsWith(".localhost")) return true;
   if (host.endsWith(".vercel.app")) return true;
   return false;
-}
-
-/** AdSense publisher is tied to the live site — do not load on localhost/preview. */
-export function isAdSenseHost(hostname: string): boolean {
-  return isProductionSiteHost(hostname);
-}
-
-/**
- * Opt-in gate — set NEXT_PUBLIC_ADSENSE_ENABLED=true in production only after
- * AdSense approves goalcurrent.live. Until then, no script or ad slots render.
- */
-export function isAdSenseApproved(): boolean {
-  return process.env.NEXT_PUBLIC_ADSENSE_ENABLED?.trim().toLowerCase() === "true";
-}
-
-/** Production host + explicit approval flag. */
-export function isAdSenseEnabled(hostname: string): boolean {
-  return isAdSenseApproved() && isAdSenseHost(hostname);
 }
 
 /** Firebase is preferred for auth + FCM when configured; otherwise OneSignal remains. */

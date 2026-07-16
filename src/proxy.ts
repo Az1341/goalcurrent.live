@@ -13,7 +13,7 @@ const LOCALE_API =
 const LOCALE_PUBLIC_ASSET =
   /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(flags|images|icons)(\/.*)?$/;
 const LOCALE_PUBLIC_FILE =
-  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(logo\.svg|favicon\.ico|favicon\.svg|sw\.js|firebase-messaging-sw\.js|OneSignalSDKWorker\.js|OneSignalSDKUpdaterWorker\.js|manifest\.json|ads\.txt)$/;
+  /^\/(en|fa|ar|fr|de|nl|es|pt|it)\/(logo\.svg|favicon\.ico|favicon\.svg|sw\.js|firebase-messaging-sw\.js|OneSignalSDKWorker\.js|OneSignalSDKUpdaterWorker\.js|manifest\.json)$/;
 
 const PUBLIC_STATIC_FILES = new Set([
   "/logo.svg",
@@ -24,7 +24,6 @@ const PUBLIC_STATIC_FILES = new Set([
   "/OneSignalSDKWorker.js",
   "/OneSignalSDKUpdaterWorker.js",
   "/manifest.json",
-  "/ads.txt",
 ]);
 
 function isRootPublicStaticPath(pathname: string): boolean {
@@ -196,6 +195,6 @@ export const proxyConfig = {
     "/sitemap.xml",
     "/sitemap-news.xml",
     "/robots.txt",
-    "/((?!api|_next|_vercel|favicon.ico|sw.js|firebase-messaging-sw.js|OneSignalSDKWorker.js|manifest.json|ads.txt|.*\\..*).*)",
+    "/((?!api|_next|_vercel|favicon.ico|sw.js|firebase-messaging-sw.js|OneSignalSDKWorker.js|manifest.json|.*\\..*).*)",
   ],
 };

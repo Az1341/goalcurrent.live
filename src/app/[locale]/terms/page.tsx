@@ -91,10 +91,6 @@ export default function TermsPage() {
           <strong>#AD</strong> or <strong>Affiliate link</strong> notices in
           compliance with UK ASA guidelines.
         </p>
-        <p>
-          Advertisements are served by Google AdSense. We do not control the
-          specific ads displayed.
-        </p>
       </section>
 
       <section>

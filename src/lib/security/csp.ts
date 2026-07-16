@@ -5,7 +5,7 @@ import { REMOTE_IMAGE_HOSTNAMES } from "@/lib/images";
  *
  * Applied on every HTML route via src/proxy.ts (Next.js 16 middleware).
  *
- * script-src 'unsafe-inline' — Next.js bootstrap, GA/AdSense/OneSignal loaders,
+ * script-src 'unsafe-inline' — Next.js bootstrap, GA/OneSignal loaders,
  * and JSON-LD blocks (type=application/ld+json).
  */
 const SCRIPT_SRC = [
@@ -19,9 +19,6 @@ const SCRIPT_SRC = [
   "https://apis.google.com",
   "https://accounts.google.com",
   "https://appleid.apple.com",
-  "https://pagead2.googlesyndication.com",
-  "https://googleads.g.doubleclick.net",
-  "https://fundingchoicesmessages.google.com",
   "https://vercel.live",
 ] as const;
 
@@ -57,7 +54,6 @@ const CONNECT_SRC = [
   "https://firebaseinstallations.googleapis.com",
   "https://*.firebaseio.com",
   "https://*.firebaseapp.com",
-  "https://fundingchoicesmessages.google.com",
   "https://*.google.com",
   "https://*.ingest.sentry.io",
   "https://www.scorebat.com",
@@ -71,9 +67,6 @@ const FRAME_SRC = [
   "https://accounts.google.com",
   "https://appleid.apple.com",
   "https://*.firebaseapp.com",
-  "https://googleads.g.doubleclick.net",
-  "https://td.doubleclick.net",
-  "https://fundingchoicesmessages.google.com",
 ] as const;
 
 function joinDirective(name: string, values: readonly string[]): string {

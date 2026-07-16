@@ -7,7 +7,6 @@ import {
   useState,
 } from "react";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
-import { PlMobileAdSlot } from "@/components/pl/PlCommercialStrip";
 import { useLiveFixtures } from "@/lib/client/useLiveFixtures";
 import type { PlFixtureRow, PlFixturesApiResponse } from "@/lib/pl/types";
 import {
@@ -184,8 +183,6 @@ export default function PlFixturesClient() {
               );
             })}
           </div>
-
-          <PlMobileAdSlot />
 
           {listIsDeferred ? (
             <div className={styles.panel} role="status" aria-live="polite">

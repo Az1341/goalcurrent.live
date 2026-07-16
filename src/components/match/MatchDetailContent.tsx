@@ -7,7 +7,6 @@ import { groupHref } from "@/lib/wc26-groups";
 import { resolveFixtureParticipant, shouldShowLiveMatchCard, shouldShowUpcomingCountdown } from "@/lib/wc26-live";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import type { MatchDetailPayload } from "@/types/match-detail";
-import { ContentAdSlot } from "@/components/ads/ContentAdSlot";
 import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
 import LiveMatchCard from "@/components/live/LiveMatchCard";
 import MatchRelatedLinks from "@/components/match/MatchRelatedLinks";
@@ -16,7 +15,6 @@ import { useWc26TvRegion } from "@/lib/use-wc26-tv-region";
 import { MatchHighlightsSection } from "@/components/scorebat/MatchHighlightsSection";
 import type { ScoreBatHighlight } from "@/lib/scorebat/types";
 import { ShareButtons } from "@/components/ui/ShareButtons";
-import { ADSENSE_SLOTS } from "@/lib/adsense-slots";
 import { absoluteUrl } from "@/lib/site-url";
 import {
   MatchDetailHeader,
@@ -101,7 +99,6 @@ export default function MatchDetailContent({
         <MatchHighlightsSection highlight={scorebatHighlight} />
       ) : null}
       <MatchTvBroadcast tvRegion={tvRegion} matchNumber={effectiveFixture.matchNumber} variant="detail" />
-      <ContentAdSlot slot={ADSENSE_SLOTS.matchMid} minHeight={120} />
       {detailUnavailable ? (
         <p className={styles.apiNotice} role="status">
           Detailed live data is temporarily unavailable. Team names, kick-off and
