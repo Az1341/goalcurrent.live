@@ -177,6 +177,15 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
       "All ten round-of-32 ties decided as Spain, Argentina and Portugal enter the last 16. Messi and Kane lead the Golden Boot on six — our predictions for who wins it.",
     date: "3 July 2026",
   },
+  {
+    slug: "england-argentina-world-cup-semifinal-analysis",
+    category: "Match Report",
+    title:
+      "England 1-2 Argentina: How the Three Lions' World Cup Dream Died in Atlanta",
+    excerpt:
+      "Anthony Gordon put England ahead in Atlanta, but Enzo Fernández and Lautaro Martínez struck late as Argentina reached the World Cup 2026 final at the Three Lions' expense.",
+    date: "16 July 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {
