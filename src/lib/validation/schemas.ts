@@ -1,0 +1,50 @@
+import { z } from "zod";
+import { LOCALES } from "@/i18n/locales";
+
+export const newsCategorySchema = z.enum([
+  "all",
+  "wc26",
+  "pl",
+  "world-cup",
+  "premier-league",
+]);
+
+export const videoCategorySchema = z.enum([
+  "all",
+  "pl",
+  "premier-league",
+  "wc",
+  "world-cup",
+]);
+
+export const newsCategoryQuerySchema = z.object({
+  category: newsCategorySchema.optional().default("all"),
+});
+
+export const videoCategoryQuerySchema = z.object({
+  category: videoCategorySchema.optional().default("all"),
+  limit: z.coerce.number().int().min(1).max(24).optional(),
+});
+
+export const apiFixtureIdQuerySchema = z.object({
+  apiFixtureId: z.coerce.number().int().positive().optional(),
+});
+
+export const fixtureIdParamSchema = z
+  .string()
+  .min(1)
+  .transform((raw) => Number.parseInt(decodeURIComponent(raw), 10))
+  .refine((id) => Number.isFinite(id) && id > 0, "Invalid fixture id.");
+
+export const wc26FixtureIdSchema = z
+  .string()
+  .min(1)
+  .regex(/^fixture-\d{3}$/i, "Expected fixture-NNN format.");
+
+export const fcmTokenBodySchema = z.object({
+  token: z.string().trim().min(1, "FCM token is required."),
+  locale: z.enum(LOCALES).optional(),
+  idToken: z.string().trim().min(1).optional(),
+});
+
+export type FcmTokenBody = z.infer<typeof fcmTokenBodySchema>;

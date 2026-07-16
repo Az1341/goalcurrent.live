@@ -499,15 +499,15 @@ export function MatchPlayerStats({
                 <thead>
                   <tr>
                     <th scope="col">Player</th>
-                    <th scope="col">G</th>
-                    <th scope="col">A</th>
-                    <th scope="col">Sh</th>
-                    <th scope="col">SOT</th>
-                    <th scope="col">Pass%</th>
-                    <th scope="col">F</th>
-                    <th scope="col">C</th>
-                    <th scope="col">Sub</th>
-                    <th scope="col">Rat</th>
+                    <th scope="col"><abbr title="Goals">G</abbr></th>
+                    <th scope="col"><abbr title="Assists">A</abbr></th>
+                    <th scope="col"><abbr title="Shots">Sh</abbr></th>
+                    <th scope="col"><abbr title="Shots on target">SOT</abbr></th>
+                    <th scope="col"><abbr title="Pass accuracy">Pass%</abbr></th>
+                    <th scope="col"><abbr title="Fouls">F</abbr></th>
+                    <th scope="col"><abbr title="Cards">C</abbr></th>
+                    <th scope="col"><abbr title="Substitute">Sub</abbr></th>
+                    <th scope="col"><abbr title="Rating">Rat</abbr></th>
                   </tr>
                 </thead>
                 <tbody>

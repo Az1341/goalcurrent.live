@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { respondError, respondOk } from "@/lib/api/response";
 import { isDebugAuthorized } from "@/lib/server/cache";
 
 export const dynamic = "force-dynamic";
@@ -25,30 +26,25 @@ function isDebugEndpoint(value: string | null): value is DebugEndpoint {
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   if (!isDebugAuthorized(request)) {
-    return NextResponse.json(
-      { ok: false, error: "Unauthorized" },
-      { status: 401, headers: NO_STORE_HEADERS },
-    );
+    return respondError("unauthorized", "Unauthorized.", 401);
   }
 
   const endpointParam = request.nextUrl.searchParams.get("endpoint");
 
   if (!isDebugEndpoint(endpointParam)) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "Invalid or missing endpoint. Use ?endpoint=topscorers|events|fixtures",
-      },
-      { status: 400, headers: NO_STORE_HEADERS },
+    return respondError(
+      "invalid_endpoint",
+      "Invalid or missing endpoint. Use ?endpoint=topscorers|events|fixtures",
+      400,
     );
   }
 
   const apiKey = process.env.API_FOOTBALL_KEY?.trim();
   if (!apiKey) {
-    return NextResponse.json(
-      { ok: false, error: "API_FOOTBALL_KEY is not configured" },
-      { status: 500, headers: NO_STORE_HEADERS },
+    return respondError(
+      "api_key_missing",
+      "API_FOOTBALL_KEY is not configured.",
+      500,
     );
   }
 
@@ -64,15 +60,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const data: unknown = await res.json();
 
     if (!res.ok) {
-      return NextResponse.json(
-        { ok: false, error: `api-sports ${res.status}` },
-        { status: res.status, headers: NO_STORE_HEADERS },
+      return respondError(
+        "upstream_error",
+        `api-sports ${res.status}`,
+        res.status,
       );
     }
 
-    return NextResponse.json(
+    return respondOk(
       {
-        ok: true,
         endpoint: endpointParam,
         url,
         data,
@@ -81,9 +77,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json(
-      { ok: false, error: message },
-      { status: 500, headers: NO_STORE_HEADERS },
-    );
+    return respondError("debug_fetch_failed", message, 500);
   }
 }

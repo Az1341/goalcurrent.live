@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { respondError } from "@/lib/api/response";
 import { getFixtureById } from "@/data/wc26";
+import { wc26FixtureIdSchema } from "@/lib/validation/schemas";
 import { getStaleApiCache, setSuccessApiCache } from "@/lib/api-football/cache";
 import { apiFootballErrorMessage } from "@/lib/api-football/errors";
 import { respondApiFootballFailure } from "@/lib/api-football/route-errors";
@@ -62,7 +64,11 @@ export async function GET(
   { params }: RouteParams,
 ): Promise<NextResponse> {
   const { fixtureId: rawId } = await params;
-  const fixtureId = decodeURIComponent(rawId);
+  const fixtureParsed = wc26FixtureIdSchema.safeParse(decodeURIComponent(rawId));
+  if (!fixtureParsed.success) {
+    return respondError("invalid_fixture_id", "Invalid fixture id.", 400);
+  }
+  const fixtureId = fixtureParsed.data;
   const knownApiFixtureId =
     parseOptionalApiFixtureId(
       request.nextUrl.searchParams.get("apiFixtureId"),
@@ -70,7 +76,7 @@ export async function GET(
   const liveHint = isLiveDetailRequest(fixtureId, knownApiFixtureId);
 
   if (!getFixtureById(fixtureId)) {
-    return NextResponse.json({ error: "Fixture not found" }, { status: 404 });
+    return respondError("fixture_not_found", "Fixture not found.", 404);
   }
 
   const cacheKey = knownApiFixtureId

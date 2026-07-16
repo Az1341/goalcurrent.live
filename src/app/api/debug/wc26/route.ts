@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { respondError, respondOk } from "@/lib/api/response";
 import { isDebugAuthorized } from "@/lib/server/cache";
 import { fetchWc26EventsRaw } from "@/lib/server/wc26-events";
 import { fetchWc26FixturesRaw } from "@/lib/server/wc26-fixtures";
@@ -16,10 +17,7 @@ const NO_STORE_HEADERS = {
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   if (!isDebugAuthorized(request)) {
-    return NextResponse.json(
-      { ok: false, error: "Unauthorized" },
-      { status: 401, headers: NO_STORE_HEADERS },
-    );
+    return respondError("unauthorized", "Unauthorized.", 401);
   }
 
   try {
@@ -34,9 +32,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       merged.scorers.length,
     );
 
-    return NextResponse.json(
+    return respondOk(
       {
-        ok: true,
         rawTopScorers,
         rawFixtures,
         rawEvents,
@@ -50,9 +47,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json(
-      { ok: false, error: message },
-      { status: 500, headers: NO_STORE_HEADERS },
-    );
+    return respondError("debug_fetch_failed", message, 500);
   }
 }

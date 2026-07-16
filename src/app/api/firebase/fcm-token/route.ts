@@ -4,55 +4,46 @@ import {
   getFirebaseAdminMessaging,
   isFirebaseAdminConfigured,
 } from "@/lib/firebase/admin";
-
-type FcmTokenBody = {
-  token?: string;
-  locale?: string;
-  idToken?: string;
-};
+import { parseJsonBody, respondError, respondOk } from "@/lib/api/response";
+import { fcmTokenBodySchema } from "@/lib/validation/schemas";
 
 export async function POST(request: Request) {
   if (!isFirebaseAdminConfigured()) {
-    return NextResponse.json(
-      { ok: false, error: "firebase_admin_not_configured" },
-      { status: 503 },
+    return respondError(
+      "firebase_admin_not_configured",
+      "Push notifications are not configured.",
+      503,
     );
   }
 
-  let body: FcmTokenBody;
-  try {
-    body = (await request.json()) as FcmTokenBody;
-  } catch {
-    return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
+  const parsed = await parseJsonBody(request, fcmTokenBodySchema);
+  if ("error" in parsed) {
+    return parsed.error;
   }
 
-  const token = body.token?.trim();
-  if (!token) {
-    return NextResponse.json({ ok: false, error: "missing_token" }, { status: 400 });
-  }
+  const { token, locale, idToken } = parsed.data;
 
   const auth = getFirebaseAdminAuth();
   const messaging = getFirebaseAdminMessaging();
   if (!auth || !messaging) {
-    return NextResponse.json(
-      { ok: false, error: "firebase_admin_unavailable" },
-      { status: 503 },
+    return respondError(
+      "firebase_admin_unavailable",
+      "Firebase admin is unavailable.",
+      503,
     );
   }
 
   let uid: string | null = null;
-  const idToken = body.idToken?.trim();
   if (idToken) {
     try {
       const decoded = await auth.verifyIdToken(idToken);
       uid = decoded.uid;
     } catch {
-      return NextResponse.json({ ok: false, error: "invalid_id_token" }, { status: 401 });
+      return respondError("invalid_id_token", "Invalid Firebase ID token.", 401);
     }
   }
 
   const topics = ["goalcurrent-live"];
-  const locale = body.locale?.trim();
   if (locale) {
     topics.push(`lang-${locale}`);
   }
@@ -66,14 +57,10 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error("[firebase/fcm-token] subscribe failed", error);
-    return NextResponse.json(
-      { ok: false, error: "subscribe_failed" },
-      { status: 502 },
-    );
+    return respondError("subscribe_failed", "Failed to subscribe device to topics.", 502);
   }
 
-  return NextResponse.json({
-    ok: true,
+  return respondOk({
     topics,
     authenticated: Boolean(uid),
   });

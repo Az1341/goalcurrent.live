@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { respondError } from "@/lib/api/response";
 import { captureRouteError } from "@/lib/log";
 import {
   fetchPlMatchDetail,
   plMatchCacheControl,
 } from "@/lib/pl/match-detail";
+import { fixtureIdParamSchema } from "@/lib/validation/schemas";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +20,8 @@ function resolveRequestLocale(request: NextRequest): string {
 }
 
 function parseFixtureId(raw: string): number | null {
-  const id = Number.parseInt(raw, 10);
-  if (!Number.isFinite(id) || id <= 0) return null;
-  return id;
+  const parsed = fixtureIdParamSchema.safeParse(raw);
+  return parsed.success ? parsed.data : null;
 }
 
 export async function GET(
@@ -28,13 +29,10 @@ export async function GET(
   { params }: RouteParams,
 ): Promise<NextResponse> {
   const { fixtureId: rawId } = await params;
-  const fixtureId = parseFixtureId(decodeURIComponent(rawId));
+  const fixtureId = parseFixtureId(rawId);
 
   if (fixtureId === null) {
-    return NextResponse.json(
-      { error: "Invalid fixture id." },
-      { status: 400, headers: { "Cache-Control": "no-store" } },
-    );
+    return respondError("invalid_fixture_id", "Invalid fixture id.", 400);
   }
 
   try {

@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { formatNewsRelativeTime } from "@/lib/news-format";
 import { mergeHomepageNewsFeed } from "@/lib/editorial-news";
 import { withSvgMediaClass } from "@/lib/images";
@@ -43,6 +44,8 @@ function NewsLink({
 }
 
 export default function HomeLatestNews() {
+  const tNav = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const { articles, loading } = useNewsFeed();
   const [featured, ...rest] = useMemo(() => {
     const merged = mergeHomepageNewsFeed(articles);
@@ -52,9 +55,9 @@ export default function HomeLatestNews() {
   if (loading && !featured) {
     return (
       <section className={styles.section} aria-labelledby="home-news-heading">
-        <h2 id="home-news-heading" className={styles.sectionTitle}>
-          Latest News
-        </h2>
+          <h2 id="home-news-heading" className={styles.sectionTitle}>
+            {tNav("latestNews")}
+          </h2>
         <div className={`${styles.skeleton} animate-skeleton-shimmer`} />
       </section>
     );
@@ -68,10 +71,10 @@ export default function HomeLatestNews() {
     <section className={styles.section} aria-labelledby="home-news-heading">
       <div className={styles.sectionHeader}>
         <h2 id="home-news-heading" className={styles.sectionTitle}>
-          Latest News
+          {tNav("latestNews")}
         </h2>
         <Link href="/news" className={styles.sectionLink}>
-          View all →
+          {tCommon("viewAll")} →
         </Link>
       </div>
       <div className={styles.newsLayout}>

@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
+import { parseSearchParams } from "@/lib/api/response";
 import { captureRouteError } from "@/lib/log";
-import {
-  fetchNewsFeed,
-  parseNewsFeedCategory,
-} from "@/content/readers";
+import { fetchNewsFeed, parseNewsFeedCategory } from "@/content/readers";
+import { newsCategoryQuerySchema } from "@/lib/validation/schemas";
 import type { NewsApiResponse } from "@/types/news";
 
-export async function GET(request: Request): Promise<NextResponse<NewsApiResponse>> {
+export async function GET(request: Request): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
-  const category = parseNewsFeedCategory(searchParams.get("category"));
+  const parsed = parseSearchParams(searchParams, newsCategoryQuerySchema);
+  if ("error" in parsed) {
+    return parsed.error;
+  }
+  const category = parseNewsFeedCategory(parsed.data.category);
 
   try {
     const payload = await fetchNewsFeed(category);

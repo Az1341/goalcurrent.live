@@ -9,12 +9,8 @@ import type { PlFixtureRow } from "@/lib/pl/types";
 import TeamFlag from "@/components/TeamFlag";
 import { PlTeamBadge } from "@/components/pl/PlShared";
 import { matchHref } from "@/lib/wc26-match";
-import { localDateKey } from "@/lib/wc26-fixtures-page";
+import { isLocalToday } from "@/lib/date-utils";
 import styles from "../home-v5.module.css";
-
-function isLocalToday(iso: string, now = new Date()): boolean {
-  return localDateKey(iso) === localDateKey(now.toISOString());
-}
 
 function Wc26StatusPill({ match }: { match: HomepageMatchView }) {
   const kickoffTime = useLocalizedKickoffTime(match.kickoffUtc);

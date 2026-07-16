@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { respondError, respondOk } from "@/lib/api/response";
 import { revalidateTag } from "next/cache";
 import { captureRouteError } from "@/lib/log";
 import {
@@ -25,7 +26,7 @@ function isAuthorized(request: Request): boolean {
 
 export async function GET(request: Request): Promise<NextResponse> {
   if (!isAuthorized(request)) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    return respondError("unauthorized", "Unauthorized.", 401);
   }
 
   try {
@@ -41,8 +42,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     revalidateTag("content-videos", "days");
     revalidateTag("content-articles", "days");
 
-    return NextResponse.json({
-      ok: true,
+    return respondOk({
       refreshedAt: new Date().toISOString(),
       counts: {
         news: result.news.items.length,
@@ -60,14 +60,11 @@ export async function GET(request: Request): Promise<NextResponse> {
     });
   } catch (error) {
     captureRouteError("api/cron/refresh-content", error);
-    return NextResponse.json(
-      {
-        ok: false,
-        usedSeed: true,
-        refreshedAt: new Date().toISOString(),
-        error: "Refresh failed - serving cached seed content",
-      },
-      { status: 503 },
+    return respondError(
+      "refresh_failed",
+      "Refresh failed - serving cached seed content.",
+      503,
+      { usedSeed: true, refreshedAt: new Date().toISOString() },
     );
   }
 }

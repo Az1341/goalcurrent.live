@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
+import { parseSearchParams } from "@/lib/api/response";
 import { captureRouteError } from "@/lib/log";
 import { fetchCachedVideos } from "@/content/readers";
 import { parseVideoFeedCategory } from "@/lib/youtube-videos";
+import { videoCategoryQuerySchema } from "@/lib/validation/schemas";
 import type { VideosApiResponse } from "@/types/video";
 
-export async function GET(request: Request): Promise<NextResponse<VideosApiResponse>> {
+export async function GET(request: Request): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
-  const category = parseVideoFeedCategory(searchParams.get("category"));
-  const limitRaw = searchParams.get("limit");
-  const limit = limitRaw ? Number.parseInt(limitRaw, 10) : undefined;
+  const parsed = parseSearchParams(searchParams, videoCategoryQuerySchema);
+  if ("error" in parsed) {
+    return parsed.error;
+  }
+  const category = parseVideoFeedCategory(parsed.data.category);
   const maxResults =
-    limit && Number.isFinite(limit) && limit > 0
-      ? Math.min(limit, 24)
-      : category === "all"
-        ? 4
-        : 12;
+    parsed.data.limit ??
+    (category === "all" ? 4 : 12);
 
   try {
     const payload = await fetchCachedVideos(maxResults);

@@ -10,13 +10,9 @@ import {
 } from "@/lib/wc26-live";
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
 import type { PlFixtureRow, PlFixturesApiResponse } from "@/lib/pl/types";
-import { localDateKey } from "@/lib/wc26-fixtures-page";
+import { isLocalToday } from "@/lib/date-utils";
 import { Wc26MatchCard, PlMatchCard } from "./HomeLiveMatchCards";
 import styles from "../home-v5.module.css";
-
-function isLocalToday(iso: string, now = new Date()): boolean {
-  return localDateKey(iso) === localDateKey(now.toISOString());
-}
 
 type HomeTodaysMatchesProps = {
   fixtures: readonly EffectiveFixture[];

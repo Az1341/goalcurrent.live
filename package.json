@@ -2,6 +2,10 @@
   "name": "goalcurrent.live",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "packageManager": "npm@11.13.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/Az1341/goalcurrent.live.git"
@@ -25,6 +29,8 @@
   "dependencies": {
     "@fontsource/big-shoulders-display": "^5.2.5",
     "@sentry/nextjs": "^10.60.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "firebase": "^12.15.0",
     "firebase-admin": "^14.1.0",
     "lru-cache": "^11.5.2",
@@ -33,7 +39,8 @@
     "next-intl": "^4.13.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "swr": "^2.4.2"
+    "swr": "^2.4.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",

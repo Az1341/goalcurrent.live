@@ -1,10 +1,14 @@
 import { resolveStandingsWithClubFallback } from "@/lib/pl/standings-resolve";
 import {
-  API_FOOTBALL_BASE_URL,
   PL_LEAGUE_ID,
   PL_LEAGUE_NAME,
   PL_SEASON,
 } from "@/lib/pl/constants";
+import { apiFootballFetch } from "@/lib/api-football/client";
+import {
+  ApiFootballAuthError,
+  ApiFootballRateLimitError,
+} from "@/lib/api-football/errors";
 import { resolvePlBroadcasterFromLocale } from "@/lib/pl/pl-broadcasters";
 import type {
   PlFixtureRow,
@@ -128,61 +132,47 @@ async function fetchStandingsFromApi(): Promise<PlStandingsApiResponse> {
     return baseResponse("fallback", { configured: false });
   }
 
-  const path =
-    `/standings?league=${PL_LEAGUE_ID}&season=${PL_SEASON}`;
-  const res = await fetch(`${API_FOOTBALL_BASE_URL}${path}`, {
-    headers: { "x-apisports-key": apiKey },
-    next: { revalidate: 0 },
-  });
+  try {
+    const path = `/standings?league=${PL_LEAGUE_ID}&season=${PL_SEASON}`;
+    const { data, results } = await apiFootballFetch<
+      NonNullable<ApiFootballStandingsResponse["response"]>
+    >(path);
 
-  if (res.status === 429) {
-    return baseResponse("fallback", {
+    const payload: ApiFootballStandingsResponse = {
+      response: data,
+      results,
+    };
+
+    const standings = mapStandings(payload);
+
+    if (!standings.length || results === 0) {
+      return baseResponse("fallback", {
+        configured: true,
+        standings: [],
+      });
+    }
+
+    return baseResponse("api-football", {
       configured: true,
-      error: "API rate limit reached. Please retry shortly.",
+      standings,
     });
-  }
+  } catch (error) {
+    if (error instanceof ApiFootballRateLimitError) {
+      return baseResponse("fallback", {
+        configured: true,
+        error: "API rate limit reached. Please retry shortly.",
+      });
+    }
 
-  if (res.status === 401 || res.status === 403) {
-    return baseResponse("fallback", {
-      configured: true,
-      error: "API key rejected. Check API_FOOTBALL_KEY.",
-    });
-  }
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`api-sports ${res.status}: ${text.slice(0, 200)}`);
-  }
-
-  const payload = (await res.json()) as ApiFootballStandingsResponse;
-
-  if (payload.errors && Object.keys(payload.errors).length > 0) {
-    const errorText = JSON.stringify(payload.errors);
-    if (isAuthError(errorText)) {
+    if (error instanceof ApiFootballAuthError) {
       return baseResponse("fallback", {
         configured: true,
         error: "API key invalid or missing permissions.",
       });
     }
-    return baseResponse("fallback", {
-      configured: true,
-      error: errorText,
-    });
+
+    throw error;
   }
-
-  const standings = mapStandings(payload);
-
-  if (!standings.length || payload.results === 0) {
-    return baseResponse("fallback", {
-      configured: true,
-      standings: [],
-    });
-  }
-
-  return baseResponse("api-football", {
-    configured: true,
-    standings,
-  });
 }
 
 export async function fetchPlStandings(): Promise<PlStandingsApiResponse> {
@@ -364,67 +354,47 @@ async function fetchFixturesFromApi(locale: string): Promise<PlFixturesApiRespon
     return baseFixturesResponse("fallback", { configured: false });
   }
 
-  // /fixtures does not support the page parameter — one league+season request.
-  const path =
-    `/fixtures?league=${PL_LEAGUE_ID}&season=${PL_SEASON}&timezone=UTC`;
-  const res = await fetch(`${API_FOOTBALL_BASE_URL}${path}`, {
-    headers: { "x-apisports-key": apiKey },
-    next: { revalidate: 0 },
-  });
-
-  if (res.status === 429) {
-    return baseFixturesResponse("fallback", {
-      configured: true,
-      error: "API rate limit reached. Please retry shortly.",
-    });
-  }
-
-  if (res.status === 401 || res.status === 403) {
-    return baseFixturesResponse("fallback", {
-      configured: true,
-      error: "API key rejected. Check API_FOOTBALL_KEY.",
-    });
-  }
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`api-sports ${res.status}: ${text.slice(0, 200)}`);
-  }
-
-  const payload = (await res.json()) as ApiFootballFixturesResponse;
-
-  if (payload.errors && Object.keys(payload.errors).length > 0) {
-    const errorText = JSON.stringify(payload.errors);
-    if (isAuthError(errorText)) {
-      return baseFixturesResponse("fallback", {
-        configured: true,
-        error: "API key invalid or missing permissions.",
-      });
-    }
-    return baseFixturesResponse("fallback", {
-      configured: true,
-      error: errorText,
-    });
-  }
-
-  const fixtures = (payload.response ?? [])
-    .map((item) => normalizeFixture(item, locale))
-    .sort(
-      (a, b) =>
-        new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime(),
+  try {
+    const path = `/fixtures?league=${PL_LEAGUE_ID}&season=${PL_SEASON}&timezone=UTC`;
+    const { data } = await apiFootballFetch<NonNullable<ApiFootballFixturesResponse["response"]>>(
+      path,
     );
 
-  if (!fixtures.length) {
-    return baseFixturesResponse("fallback", {
-      configured: true,
-      fixtures: [],
-    });
-  }
+    const fixtures = (data ?? [])
+      .map((item) => normalizeFixture(item, locale))
+      .sort(
+        (a, b) =>
+          new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime(),
+      );
 
-  return baseFixturesResponse("api-football", {
-    configured: true,
-    fixtures,
-  });
+    if (!fixtures.length) {
+      return baseFixturesResponse("fallback", {
+        configured: true,
+        fixtures: [],
+      });
+    }
+
+    return baseFixturesResponse("api-football", {
+      configured: true,
+      fixtures,
+    });
+  } catch (error) {
+    if (error instanceof ApiFootballRateLimitError) {
+      return baseFixturesResponse("fallback", {
+        configured: true,
+        error: "API rate limit reached. Please retry shortly.",
+      });
+    }
+
+    if (error instanceof ApiFootballAuthError) {
+      return baseFixturesResponse("fallback", {
+        configured: true,
+        error: "API key rejected. Check API_FOOTBALL_KEY.",
+      });
+    }
+
+    throw error;
+  }
 }
 
 export async function fetchPlFixtures(

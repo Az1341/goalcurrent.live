@@ -4,9 +4,9 @@ import type { NextRequest } from "next/server";
 import { routing } from "@/i18n/routing";
 import { CONTENT_SECURITY_POLICY } from "@/lib/security/csp";
 import {
-  checkRateLimit,
+  checkRateLimitAsync,
   clientIpFromRequest,
-} from "@/lib/server/cache";
+} from "@/lib/rate-limit";
 
 const LEGACY_GROUP_PATH = /^\/worldcup2026\/groups\/group-([a-l])$/i;
 const LOCALE_PREFIX = /^\/(en|fa|ar|fr|de|nl|es|pt|it)(\/|$)/;
@@ -118,7 +118,7 @@ function applyLegacyRedirects(request: NextRequest): NextResponse | null {
 }
 
 /** Next.js 16 proxy — locale routing, legacy redirects, CSP. */
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/.well-known/assetlinks.json") {
@@ -164,7 +164,7 @@ export function proxy(request: NextRequest) {
   // API routes must bypass i18n (otherwise /api/pl/fixtures → /en/api/pl/fixtures → 404)
   if (pathname.startsWith("/api/")) {
     const ip = clientIpFromRequest(request);
-    const rateLimit = checkRateLimit(ip, pathname);
+    const rateLimit = await checkRateLimitAsync(ip, pathname);
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {
