@@ -27,10 +27,10 @@ import { SITE_NAME } from "@/lib/site-url";
 import layoutStyles from "@/components/layout/layout.module.css";
 import styles from "@/components/wc26/wc26.module.css";
 
-const COMPETITION_LABELS: Record<string, string> = {};
-
 export default function FavouritesPageContent() {
   const t = useTranslations("favourites");
+  const tCommon = useTranslations("common");
+  const tStatus = useTranslations("match.status");
   const { teams, matches, competitions } = useFavourites();
   const { tvRegion } = useWc26TvRegion();
   const effectiveFixtures = useEffectiveFixtures();
@@ -77,7 +77,7 @@ export default function FavouritesPageContent() {
                     className={styles.favRemoveBtn}
                     onClick={() => removeFavouriteTeam(teamId)}
                   >
-                    Remove
+                    {t("removeBtn")}
                   </button>
                 </li>
               );
@@ -88,10 +88,10 @@ export default function FavouritesPageContent() {
 
       <section aria-labelledby="fav-matches-heading">
         <h2 id="fav-matches-heading" className={styles.sectionTitle}>
-          Favourite matches
+          {t("matchesSection")}
         </h2>
         {matches.length === 0 ? (
-          <p className={styles.favSectionEmpty}>No matches saved yet.</p>
+          <p className={styles.favSectionEmpty}>{t("noMatches")}</p>
         ) : (
           <ul className={styles.favList}>
             {matches.map((matchId) => {
@@ -120,8 +120,19 @@ export default function FavouritesPageContent() {
                       const isLive = liveStatus === "live" || liveStatus === "1h" || liveStatus === "2h" || liveStatus === "ht";
                       const isFT = liveStatus === "ft" || liveStatus === "aet" || liveStatus === "pen";
                       const scoreText = hasScore ? `${live.homeScore} – ${live.awayScore}` : null;
-                      const halfLabel = liveStatus === "1h" ? "1st Half" : liveStatus === "2h" ? "2nd Half" : liveStatus === "ht" ? "Half Time" : "Live";
-                      const statusLabel = isLive ? halfLabel : isFT ? "Full Time" : null;
+                      const halfLabel =
+                        liveStatus === "1h"
+                          ? tStatus("1h")
+                          : liveStatus === "2h"
+                            ? tStatus("2h")
+                            : liveStatus === "ht"
+                              ? tStatus("ht")
+                              : tStatus("live");
+                      const statusLabel = isLive
+                        ? halfLabel
+                        : isFT
+                          ? tStatus("ft")
+                          : null;
                       const elapsedLabel = isLive && live.elapsed != null ? `${live.elapsed}'` : null;
                       return (
                     <div style={{
@@ -165,7 +176,7 @@ export default function FavouritesPageContent() {
                             <div style={{ fontSize: 22, fontWeight: 800, color: isLive ? "#16a34a" : "#0f172a", lineHeight: 1 }}>{scoreText}</div>
                           ) : (
                             <>
-                              <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>vs</div>
+                              <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>{tCommon("vs")}</div>
                               <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
                                 <LocalizedKickoffLabel iso={live.kickoffUtc} />
                               </div>
@@ -204,7 +215,7 @@ export default function FavouritesPageContent() {
                           fontSize: 13,
                           textAlign: "center",
                         }}>
-                          ⚽ Match Details & Live Score
+                          {t("matchDetailsCta")}
                         </Link>
                         <button
                           type="button"
@@ -219,7 +230,7 @@ export default function FavouritesPageContent() {
                           }}
                           onClick={() => removeFavouriteMatch(matchId)}
                         >
-                          Remove
+                          {t("removeBtn")}
                         </button>
                       </div>
                     </div>
@@ -231,14 +242,14 @@ export default function FavouritesPageContent() {
 
               return (
                 <li key={matchId} className={styles.favListItem}>
-                  <span className={styles.favListLabel}>Saved match ({matchId})</span>
-                  <span className={styles.favListMeta}>No longer available</span>
+                  <span className={styles.favListLabel}>{t("savedMatch", { matchId })}</span>
+                  <span className={styles.favListMeta}>{t("noLongerAvailable")}</span>
                   <button
                     type="button"
                     className={styles.favRemoveBtn}
                     onClick={() => removeFavouriteMatch(matchId)}
                   >
-                    Remove
+                    {t("removeBtn")}
                   </button>
                 </li>
               );
@@ -249,10 +260,10 @@ export default function FavouritesPageContent() {
 
       <section aria-labelledby="fav-competitions-heading">
         <h2 id="fav-competitions-heading" className={styles.sectionTitle}>
-          Favourite competitions
+          {t("competitionsSection")}
         </h2>
         {competitions.length === 0 ? (
-          <p className={styles.favSectionEmpty}>No competitions saved yet.</p>
+          <p className={styles.favSectionEmpty}>{t("noCompetitions")}</p>
         ) : (
           <ul className={styles.favList}>
             {competitions.map((competitionId) => (
@@ -267,7 +278,7 @@ export default function FavouritesPageContent() {
                   className={styles.favRemoveBtn}
                   onClick={() => removeFavouriteCompetition(competitionId)}
                 >
-                  Remove
+                  {t("removeBtn")}
                 </button>
               </li>
             ))}
@@ -276,7 +287,7 @@ export default function FavouritesPageContent() {
       </section>
 
       <p className={styles.hubBack}>
-        <Link href="/">← Back to Home</Link>
+        <Link href="/">{tCommon("backToHome")}</Link>
       </p>
     </main>
   );

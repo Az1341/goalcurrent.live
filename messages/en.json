@@ -308,7 +308,15 @@
     "emptyHint": "Star a team on the Teams page, a fixture on Fixtures, or a match on the homepage.",
     "teamsSection": "Favourite teams",
     "noTeams": "No teams saved yet.",
-    "wc26Competition": "FIFA World Cup 2026"
+    "wc26Competition": "FIFA World Cup 2026",
+    "removeBtn": "Remove",
+    "matchesSection": "Favourite matches",
+    "noMatches": "No matches saved yet.",
+    "matchDetailsCta": "⚽ Match Details & Live Score",
+    "savedMatch": "Saved match ({matchId})",
+    "noLongerAvailable": "No longer available",
+    "competitionsSection": "Favourite competitions",
+    "noCompetitions": "No competitions saved yet."
   },
   "live": {
     "pageTitle": "Live Scores — {competition}",

@@ -305,10 +305,18 @@
     "or": "or",
     "pageIntro": "فرقك ومبارياتك على {siteName}.",
     "emptyTitle": "لا توجد مفضلات",
-    "emptyHint": "Star a team on the Teams page, a fixture on Fixtures, or a match on the homepage.",
+    "emptyHint": "ضع نجمة على فريق أو مباراة من صفحة الفرق أو الجدول أو الصفحة الرئيسية.",
     "teamsSection": "الفرق المفضلة",
-    "noTeams": "No teams saved yet.",
-    "wc26Competition": "FIFA World Cup 2026"
+    "noTeams": "لا توجد فرق محفوظة بعد.",
+    "wc26Competition": "FIFA World Cup 2026",
+    "removeBtn": "إزالة",
+    "matchesSection": "المباريات المفضلة",
+    "noMatches": "لا توجد مباريات محفوظة بعد.",
+    "matchDetailsCta": "⚽ التفاصيل والنتيجة المباشرة",
+    "savedMatch": "مباراة محفوظة ({matchId})",
+    "noLongerAvailable": "لم تعد متاحة",
+    "competitionsSection": "البطولات المفضلة",
+    "noCompetitions": "لا توجد بطولات محفوظة بعد."
   },
   "news": {
     "loading": "Loading…",
@@ -337,9 +345,9 @@
   "live": {
     "pageTitle": "النتائج المباشرة — {competition}",
     "competition": "كأس العالم 2026",
-    "pageIntro": "World Cup 2026 scores from confirmed results and live API sync. Finished group and knockout matches show full-time scores; live matches update every 10 seconds when the provider is active.",
+    "pageIntro": "نتائج كأس العالم 2026 من النتائج المؤكدة ومزامنة API المباشرة.",
     "syncPending": "جارٍ المزامنة…",
-    "syncDegraded": "Showing last known scores — live provider is temporarily limited.",
+    "syncDegraded": "عرض آخر النتائج المعروفة — مزود البث المباشر محدود مؤقتاً.",
     "sections": {
       "liveNow": "مباشر الآن",
       "today": "اليوم",

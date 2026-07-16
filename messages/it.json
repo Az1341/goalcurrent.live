@@ -97,9 +97,9 @@
       "nordAd": "AD",
       "nordCta": "Get NordVPN →",
       "copyright": "© {year} Ashna4All · Ahmad Zafarani · {siteName} independent fan site · Not affiliated with FIFA, UEFA or the Premier League.",
-      "platform": "Platform",
-      "company": "Company",
-      "tagline": "Live football scores, fixtures and news — World Cup 2026 and Premier League 26/27."
+      "platform": "Piattaforma",
+      "company": "Azienda",
+      "tagline": "Risultati live, calendario e news — Mondiale 2026 e Premier League 26/27."
     },
     "liveRibbon": {
       "live": "LIVE",
@@ -285,30 +285,38 @@
     "wc26Title": "World Cup 2026",
     "viewAll": "View All",
     "wc26Summary": "USA · Mexico · Canada · 11 Jun – 19 Jul 2026 · {gamesPlayed} played · {gamesLeft} remaining",
-    "heroHeadline1": "Live Football.",
-    "heroHeadline2": "Every Goal.",
-    "heroHeadline3": "Every Moment.",
-    "viewAllMatches": "View all matches",
-    "heroAria": "Home hero",
-    "featuredHeroAria": "Featured match hero"
+    "heroHeadline1": "Calcio in diretta.",
+    "heroHeadline2": "Ogni gol.",
+    "heroHeadline3": "Ogni momento.",
+    "viewAllMatches": "Tutte le partite",
+    "heroAria": "Hero homepage",
+    "featuredHeroAria": "Partita in evidenza"
   },
   "favourites": {
     "add": "Add {team} to favourites",
     "remove": "Remove {team} from favourites",
-    "title": "Favourites",
+    "title": "Preferiti",
     "empty": "No favourites yet. Star teams on match pages to save them here.",
-    "stripTitle": "Your Favourites",
-    "manage": "Manage",
+    "stripTitle": "I tuoi preferiti",
+    "manage": "Gestisci",
     "emptyStripLead": "Star a match or team to see them here. Browse",
     "liveScores": "live scores",
     "worldCupTeams": "World Cup teams",
     "or": "or",
-    "pageIntro": "Your saved teams, matches and competitions across {siteName}.",
-    "emptyTitle": "No favourites saved yet",
-    "emptyHint": "Star a team on the Teams page, a fixture on Fixtures, or a match on the homepage.",
-    "teamsSection": "Favourite teams",
-    "noTeams": "No teams saved yet.",
-    "wc26Competition": "FIFA World Cup 2026"
+    "pageIntro": "Le tue squadre, partite e competizioni salvate su {siteName}.",
+    "emptyTitle": "Nessun preferito salvato",
+    "emptyHint": "Segna squadra, partita o competizione da Squadre, Calendario o Home.",
+    "teamsSection": "Squadre preferite",
+    "noTeams": "Nessuna squadra salvata.",
+    "wc26Competition": "Coppa del Mondo FIFA 2026",
+    "removeBtn": "Rimuovi",
+    "matchesSection": "Partite preferite",
+    "noMatches": "Nessuna partita salvata.",
+    "matchDetailsCta": "Dettagli e risultato live",
+    "savedMatch": "Partita salvata ({matchId})",
+    "noLongerAvailable": "Non piu disponibile",
+    "competitionsSection": "Competizioni preferite",
+    "noCompetitions": "Nessuna competizione salvata."
   },
   "news": {
     "loading": "Loading…",
@@ -335,31 +343,31 @@
     "loading": "Caricamento…"
   },
   "live": {
-    "pageTitle": "Live Scores — {competition}",
-    "competition": "World Cup 2026",
-    "pageIntro": "World Cup 2026 scores from confirmed results and live API sync. Finished group and knockout matches show full-time scores; live matches update every 10 seconds when the provider is active.",
-    "syncPending": "Syncing live data…",
-    "syncDegraded": "Showing last known scores — live provider is temporarily limited.",
+    "pageTitle": "Risultati live — {competition}",
+    "competition": "Mondiale 2026",
+    "pageIntro": "Risultati del Mondiale 2026 da dati confermati e API live.",
+    "syncPending": "Sincronizzazione…",
+    "syncDegraded": "Ultimi risultati — provider limitato.",
     "sections": {
-      "liveNow": "Live now",
-      "today": "Today",
-      "upcoming": "Upcoming World Cup fixtures",
-      "completed": "Completed"
+      "liveNow": "In diretta",
+      "today": "Oggi",
+      "upcoming": "Prossime partite",
+      "completed": "Concluse"
     },
     "empty": {
-      "liveNow": "No live matches right now. Live scores appear here when the tournament is underway and API sync is active.",
-      "today": "No World Cup matches scheduled for today in the local schedule.",
-      "completed": "No completed matches yet. Full-time results appear when matches finish."
+      "liveNow": "Nessuna partita in diretta.",
+      "today": "Nessuna partita oggi.",
+      "completed": "Nessuna partita conclusa."
     },
-    "backToHub": "← Back to World Cup 2026 hub",
+    "backToHub": "Torna all hub Mondiale 2026",
     "countdown": {
-      "liveNow": "Live now",
-      "liveBadge": "● LIVE",
-      "elapsed": "{min}' elapsed",
-      "upNext": "Up next",
-      "untilKickoff": "until kick-off",
-      "viewMatchCentre": "View match centre",
-      "viewMatchCentreArrow": "View match centre →",
+      "liveNow": "In diretta",
+      "liveBadge": "LIVE",
+      "elapsed": "{min} min",
+      "upNext": "Prossima",
+      "untilKickoff": "al calcio d inizio",
+      "viewMatchCentre": "Centro partita",
+      "viewMatchCentreArrow": "Centro partita →",
       "liveNowAria": "{home} vs {away} — live now, approximately {min} minutes elapsed",
       "nextMatchAria": "Next match: {home} vs {away}, kick-off in {countdown}"
     }

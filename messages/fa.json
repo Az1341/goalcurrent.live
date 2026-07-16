@@ -305,10 +305,18 @@
     "or": "یا",
     "pageIntro": "تیم‌ها و مسابقات ذخیره‌شده در {siteName}.",
     "emptyTitle": "هنوز مورد علاقه‌ای نیست",
-    "emptyHint": "Star a team on the Teams page, a fixture on Fixtures, or a match on the homepage.",
+    "emptyHint": "از صفحه تیم‌ها، برنامه یا صفحه اصلی یک تیم یا مسابقه را ستاره‌دار کنید.",
     "teamsSection": "تیم‌های مورد علاقه",
-    "noTeams": "No teams saved yet.",
-    "wc26Competition": "FIFA World Cup 2026"
+    "noTeams": "هنوز تیمی ذخیره نشده.",
+    "wc26Competition": "FIFA World Cup 2026",
+    "removeBtn": "حذف",
+    "matchesSection": "مسابقات مورد علاقه",
+    "noMatches": "هنوز مسابقه‌ای ذخیره نشده.",
+    "matchDetailsCta": "⚽ جزئیات و نتیجه زنده",
+    "savedMatch": "مسابقه ذخیره‌شده ({matchId})",
+    "noLongerAvailable": "دیگر در دسترس نیست",
+    "competitionsSection": "رقابت‌های مورد علاقه",
+    "noCompetitions": "هنوز رقابتی ذخیره نشده."
   },
   "news": {
     "loading": "Loading…",
@@ -337,9 +345,9 @@
   "live": {
     "pageTitle": "نتایج زنده — {competition}",
     "competition": "جام جهانی ۲۰۲۶",
-    "pageIntro": "World Cup 2026 scores from confirmed results and live API sync. Finished group and knockout matches show full-time scores; live matches update every 10 seconds when the provider is active.",
+    "pageIntro": "نتایج جام جهانی ۲۰۲۶ از نتایج تأییدشده و همگام‌سازی زنده API.",
     "syncPending": "در حال همگام‌سازی…",
-    "syncDegraded": "Showing last known scores — live provider is temporarily limited.",
+    "syncDegraded": "نمایش آخرین نتایج — ارائه‌دهنده زنده موقتاً محدود است.",
     "sections": {
       "liveNow": "اکنون زنده",
       "today": "امروز",
