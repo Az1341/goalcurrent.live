@@ -32,6 +32,7 @@
   cursor: pointer;
   font-family: inherit;
   min-width: 0;
+  touch-action: manipulation;
 }
 
 .tabLabel {

@@ -1,10 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePathname } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import NavLink from "@/components/nav/NavLink";
-import { useState } from "react";
+import { useCallback, useEffect, useState, type MouseEvent } from "react";
 import {
   MOBILE_BOTTOM_TABS,
   isMobileBottomTabActive,
@@ -100,9 +100,27 @@ function TabIcon({ tabId }: { tabId: string }) {
 
 export default function BottomTabBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const [moreOpen, setMoreOpen] = useState(false);
+  const [navReady, setNavReady] = useState(false);
+
+  useEffect(() => {
+    setNavReady(true);
+  }, []);
+
+  const handleTabNavigate = useCallback(
+    (href: (typeof MOBILE_BOTTOM_TABS)[number]["href"]) =>
+      (event: MouseEvent<HTMLAnchorElement>) => {
+        if (!navReady) {
+          return;
+        }
+        event.preventDefault();
+        router.push(href);
+      },
+    [navReady, router],
+  );
 
   return (
     <>
@@ -119,6 +137,7 @@ export default function BottomTabBar() {
               href={tab.href}
               className={`${styles.tabLink} ${active ? styles.tabLinkActive : ""}`}
               aria-current={active ? "page" : undefined}
+              onClick={handleTabNavigate(tab.href)}
             >
               <span className={styles.iconWrap}>
                 <TabIcon tabId={tab.id} />
