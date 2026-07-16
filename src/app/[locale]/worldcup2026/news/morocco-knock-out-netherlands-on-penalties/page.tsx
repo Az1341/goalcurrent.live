@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import ArticleBanner from "@/components/articles/ArticleBanner";
 import Link from "next/link";
 import ArticleAuthorLine, {
   ArticleCopyrightNotice,
@@ -67,18 +67,10 @@ export default function MoroccoNetherlandsPenaltiesArticlePage() {
       <ArticleSeo article={seoArticle} breadcrumbs={breadcrumbs} />
       <main className={styles.articlePage}>
         <div className={styles.stack}>
-          <div className={styles.articleBanner}>
-            <Image
-              src={HERO_IMAGE}
-              alt="Original GoalCurrent.live graphic for Morocco beating the Netherlands on penalties at World Cup 2026"
-              width={1280}
-              height={720}
-              priority
-              unoptimized
-              sizes="(max-width: 768px) 100vw, 896px"
-              className={styles.articleBannerImage}
-            />
-          </div>
+          <ArticleBanner
+            src={HERO_IMAGE}
+            alt="Original GoalCurrent.live graphic for Morocco beating the Netherlands on penalties at World Cup 2026"
+          />
 
           <div className={styles.heroCard}>
             <div className={styles.categoryPill}>Match Report · World Cup 2026</div>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { ContentItem } from "@/content/types";
 import { isArticleCardImageUnoptimized } from "@/lib/article-hub";
+import { withSvgMediaClass } from "@/lib/images";
 import styles from "@/app/[locale]/articles/article.module.css";
 
 type ArticleCardProps = {
@@ -13,14 +14,24 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 
   const card = (
     <>
-      <div className={styles.articleIndexImageWrap}>
+      <div
+        className={withSvgMediaClass(
+          image,
+          styles.articleIndexImageWrap,
+          styles.articleIndexImageWrapSvg,
+        )}
+      >
         <Image
           src={image}
           alt=""
           width={640}
-          height={280}
+          height={360}
           sizes="(max-width: 768px) 100vw, 400px"
-          className={styles.articleIndexImage}
+          className={withSvgMediaClass(
+            image,
+            styles.articleIndexImage,
+            styles.articleIndexImageSvg,
+          )}
           unoptimized={isArticleCardImageUnoptimized(image)}
         />
       </div>

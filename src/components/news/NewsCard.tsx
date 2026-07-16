@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CardMedia from "@/components/ui/CardMedia";
+import { withSvgMediaClass } from "@/lib/images";
 import type { NewsArticle, NewsTag } from "@/types/news";
 import styles from "./news.module.css";
 
@@ -54,14 +55,24 @@ export function ArticleLink({ article, className, children }: ArticleLinkProps) 
 export function FeaturedArticle({ article }: { article: NewsArticle }) {
   return (
     <ArticleLink article={article} className={styles.featured}>
-      <div className={styles.featuredImageWrap}>
+      <div
+        className={withSvgMediaClass(
+          article.image,
+          styles.featuredImageWrap,
+          styles.featuredImageWrapSvg,
+        )}
+      >
         <CardMedia
           src={article.image}
           alt=""
           width={800}
-          height={280}
+          height={450}
           sizes="(max-width: 768px) 100vw, 800px"
-          className={styles.featuredImage}
+          className={withSvgMediaClass(
+            article.image,
+            styles.featuredImage,
+            styles.featuredImageSvg,
+          )}
         />
       </div>
       <span className={styles.featuredTag}>{article.tag}</span>
@@ -84,14 +95,24 @@ export function FeaturedArticle({ article }: { article: NewsArticle }) {
 export default function NewsCard({ article }: { article: NewsArticle }) {
   return (
     <ArticleLink article={article} className={styles.card}>
-      <div className={styles.cardImageWrap}>
+      <div
+        className={withSvgMediaClass(
+          article.image,
+          styles.cardImageWrap,
+          styles.cardImageWrapSvg,
+        )}
+      >
         <CardMedia
           src={article.image}
           alt=""
-          width={400}
-          height={150}
+          width={640}
+          height={360}
           sizes="(max-width: 768px) 100vw, 400px"
-          className={styles.cardImage}
+          className={withSvgMediaClass(
+            article.image,
+            styles.cardImage,
+            styles.cardImageSvg,
+          )}
         />
       </div>
       <div className={styles.cardBody}>

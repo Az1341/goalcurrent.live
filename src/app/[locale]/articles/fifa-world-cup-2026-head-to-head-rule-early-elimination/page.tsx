@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import ArticleBanner from "@/components/articles/ArticleBanner";
 import ArticleAuthorLine, {
   ArticleCopyrightNotice,
 } from "@/components/articles/ArticleAuthorLine";
@@ -63,18 +63,10 @@ export default function FifaHeadToHeadRuleArticlePage() {
       />
       <main className={styles.articlePage}>
         <div className={styles.stack}>
-          <div className={styles.articleBanner}>
-            <Image
-              src={HERO_IMAGE}
-              alt="Original GoalCurrent.live graphic explaining FIFA Article 13 head-to-head tiebreakers at World Cup 2026"
-              width={1280}
-              height={720}
-              priority
-              unoptimized
-              sizes="(max-width: 768px) 100vw, 896px"
-              className={styles.articleBannerImage}
-            />
-          </div>
+          <ArticleBanner
+            src={HERO_IMAGE}
+            alt="Original GoalCurrent.live graphic explaining FIFA Article 13 head-to-head tiebreakers at World Cup 2026"
+          />
 
           <div className={styles.heroCard}>
             <div className={styles.categoryPill}>Analysis | World Cup 2026</div>

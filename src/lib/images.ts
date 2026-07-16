@@ -55,3 +55,12 @@ export function shouldUseUnoptimizedImage(src: string): boolean {
 
   return !isOptimizableRemoteSrc(src);
 }
+
+/** Append an SVG-specific class when `src` is local SVG card/banner art. */
+export function withSvgMediaClass(
+  src: string | null | undefined,
+  baseClass: string,
+  svgClass: string,
+): string {
+  return src && isSvgSrc(src) ? `${baseClass} ${svgClass}` : baseClass;
+}

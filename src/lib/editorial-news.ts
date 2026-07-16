@@ -1,4 +1,5 @@
 import {
+  getArticleIndexNewsArticles,
   getEditorialNewsArticles,
   getPinnedGoalCurrentNewsArticles,
 } from "@/lib/article-hub";
@@ -13,6 +14,25 @@ function newsSortKey(article: NewsArticle): number {
 
 function sortNewsByDateDesc(articles: readonly NewsArticle[]): NewsArticle[] {
   return [...articles].sort((a, b) => newsSortKey(b) - newsSortKey(a));
+}
+
+/** Partner RSS only — sorted newest first. */
+export function sortPartnerNewsFeed(articles: readonly NewsArticle[]): NewsArticle[] {
+  return sortNewsByDateDesc(articles);
+}
+
+/** Homepage: latest GoalCurrent article first, then partner RSS (deduped). */
+export function mergeHomepageNewsFeed(articles: readonly NewsArticle[]): NewsArticle[] {
+  const [latestEditorial] = getArticleIndexNewsArticles();
+  if (!latestEditorial) {
+    return sortNewsByDateDesc(articles);
+  }
+
+  const pinnedLinks = new Set([latestEditorial.link]);
+  const rest = sortNewsByDateDesc(
+    articles.filter((item) => !pinnedLinks.has(item.link)),
+  );
+  return [latestEditorial, ...rest];
 }
 
 /** GoalCurrent articles stay first; partner RSS follows, each block sorted by date. */

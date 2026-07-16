@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CardMedia from "@/components/ui/CardMedia";
+import { withSvgMediaClass } from "@/lib/images";
 import type { NewsArticle, NewsTag } from "@/types/news";
 import styles from "./news.module.css";
 
@@ -30,14 +31,24 @@ type NewsArticleCardProps = {
 export default function NewsArticleCard({ article }: NewsArticleCardProps) {
   const content = (
     <>
-      <div className={styles.cardImageWrap}>
+      <div
+        className={withSvgMediaClass(
+          article.image,
+          styles.cardImageWrap,
+          styles.cardImageWrapSvg,
+        )}
+      >
         <CardMedia
           src={article.image}
           alt=""
-          width={400}
-          height={150}
+          width={640}
+          height={360}
           sizes="(max-width: 768px) 100vw, 400px"
-          className={styles.cardImage}
+          className={withSvgMediaClass(
+            article.image,
+            styles.cardImage,
+            styles.cardImageSvg,
+          )}
         />
       </div>
       <div className={styles.cardBody}>

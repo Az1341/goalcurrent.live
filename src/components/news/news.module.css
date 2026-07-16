@@ -73,10 +73,18 @@
   background: var(--gc-surface-elevated, #1a2332);
 }
 
+.featuredImageWrapSvg {
+  aspect-ratio: 16 / 9;
+}
+
 .featuredImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.featuredImageSvg {
+  object-fit: contain;
 }
 
 .featured {
@@ -180,11 +188,22 @@
   font-size: 3rem;
 }
 
+.cardImageWrapSvg {
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #0f172a;
+}
+
 .cardImage {
   width: 100%;
   height: 150px;
   object-fit: cover;
   display: block;
+}
+
+.cardImageSvg {
+  height: 100%;
+  object-fit: contain;
 }
 
 .cardBody {

@@ -35,6 +35,19 @@
   object-position: center 35%;
 }
 
+.articleBannerSvg {
+  aspect-ratio: 16 / 9;
+  background: #0f172a;
+}
+
+.articleBannerImageSvg {
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
 .articleIndexImageWrap {
   border-radius: 10px;
   overflow: hidden;
@@ -43,11 +56,20 @@
   background: #0f172a;
 }
 
+.articleIndexImageWrapSvg {
+  aspect-ratio: 16 / 9;
+}
+
 .articleIndexImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center 30%;
+}
+
+.articleIndexImageSvg {
+  object-fit: contain;
+  object-position: center;
 }
 
 /* Hero card */

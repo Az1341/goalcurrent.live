@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import ArticleBanner from "@/components/articles/ArticleBanner";
 import Link from "next/link";
 import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles/ArticleAuthorLine";
 import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
@@ -15,18 +15,10 @@ export default function ArticleJune30Recap() {
     <StaticArticleSeo slug={SLUG}>
       <main className={styles.articlePage}>
         <div className={styles.stack}>
-          <div className={styles.articleBanner}>
-            <Image
-              src={HERO_IMAGE}
-              alt="GoalCurrent.live editorial graphic for the World Cup 2026 knockout matchday recap on 30 June"
-              width={1280}
-              height={720}
-              priority
-              unoptimized
-              sizes="(max-width: 768px) 100vw, 896px"
-              className={styles.articleBannerImage}
-            />
-          </div>
+          <ArticleBanner
+            src={HERO_IMAGE}
+            alt="GoalCurrent.live editorial graphic for the World Cup 2026 knockout matchday recap on 30 June"
+          />
           <div className={styles.heroCard}>
             <div className={styles.categoryPill}>Match Recap · World Cup 2026</div>
             <h1>

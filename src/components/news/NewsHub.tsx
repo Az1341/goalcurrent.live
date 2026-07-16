@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import useSWR from "swr";
 import NewsCard, { FeaturedArticle } from "@/components/news/NewsCard";
 import type { NewsApiResponse, NewsArticle } from "@/types/news";
-import { mergeEditorialFirst } from "@/lib/editorial-news";
+import { sortPartnerNewsFeed } from "@/lib/editorial-news";
 import { EDITORIAL_SOURCE_LABEL } from "@/lib/seo/constants";
 import { fetcher, visibilityAwareRefreshInterval } from "@/lib/client/fetcher";
 import styles from "./news.module.css";
@@ -55,10 +55,9 @@ export default function NewsHub({ initialData }: NewsHubProps) {
     })} · ${payload.sources.join(" + ") || "BBC Sport + ESPN"}`;
   }, [data, initialData]);
 
-  // Editorial content must always render, even when the RSS feed is empty.
   const articles = useMemo(() => {
     const rssArticles: NewsArticle[] = data?.articles ?? [];
-    return mergeEditorialFirst(rssArticles);
+    return sortPartnerNewsFeed(rssArticles);
   }, [data]);
 
   const sources = useMemo(

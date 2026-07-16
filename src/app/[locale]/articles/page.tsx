@@ -9,6 +9,7 @@ import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles
 import { fetchSyndicatedArticles } from "@/content/readers";
 import { ARTICLE_INDEX, ARTICLES, EXTERNAL_ARTICLE_CARDS, articleHref } from "@/data/articles";
 import { getArticleCardImage, isArticleCardImageUnoptimized } from "@/lib/article-hub";
+import { withSvgMediaClass } from "@/lib/images";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { toIsoDate } from "@/lib/seo/dates";
 import { EDITORIAL_AUTHOR, EDITORIAL_PUBLISHER } from "@/lib/seo/constants";
@@ -94,14 +95,24 @@ export default async function ArticlesIndexPage() {
               href={a.href ?? articleHref(a.slug)}
               className={styles.articleIndexCard}
             >
-              <div className={styles.articleIndexImageWrap}>
+              <div
+                className={withSvgMediaClass(
+                  image,
+                  styles.articleIndexImageWrap,
+                  styles.articleIndexImageWrapSvg,
+                )}
+              >
                 <Image
                   src={image}
                   alt=""
                   width={640}
-                  height={280}
+                  height={360}
                   sizes="(max-width: 768px) 100vw, 400px"
-                  className={styles.articleIndexImage}
+                  className={withSvgMediaClass(
+                    image,
+                    styles.articleIndexImage,
+                    styles.articleIndexImageSvg,
+                  )}
                   unoptimized={isArticleCardImageUnoptimized(image)}
                 />
               </div>

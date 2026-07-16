@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { useMemo } from "react";
 import Link from "next/link";
 import { formatNewsRelativeTime } from "@/lib/news-format";
+import { mergeHomepageNewsFeed } from "@/lib/editorial-news";
+import { withSvgMediaClass } from "@/lib/images";
 import { useNewsFeed } from "@/lib/use-news-feed";
 import type { NewsArticle } from "@/types/news";
 import styles from "../home-v5.module.css";
@@ -42,10 +44,10 @@ function NewsLink({
 
 export default function HomeLatestNews() {
   const { articles, loading } = useNewsFeed();
-  const [featured, ...rest] = useMemo(
-    () => articles.slice(0, 4),
-    [articles],
-  );
+  const [featured, ...rest] = useMemo(() => {
+    const merged = mergeHomepageNewsFeed(articles);
+    return merged.slice(0, 4);
+  }, [articles]);
 
   if (loading && !featured) {
     return (
@@ -75,7 +77,13 @@ export default function HomeLatestNews() {
       <div className={styles.newsLayout}>
         <NewsLink article={featured} className={styles.newsFeatured}>
           {featured.image ? (
-            <div className={styles.newsFeaturedImage}>
+            <div
+              className={withSvgMediaClass(
+                featured.image,
+                styles.newsFeaturedImage,
+                styles.newsFeaturedImageSvg,
+              )}
+            >
               <img src={featured.image} alt="" loading="lazy" />
             </div>
           ) : (
@@ -102,7 +110,13 @@ export default function HomeLatestNews() {
               className={styles.newsSecondaryRow}
             >
               {article.image ? (
-                <div className={styles.newsThumb}>
+                <div
+                  className={withSvgMediaClass(
+                    article.image,
+                    styles.newsThumb,
+                    styles.newsThumbSvg,
+                  )}
+                >
                   <img src={article.image} alt="" loading="lazy" />
                 </div>
               ) : (
