@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validateGetQuery } from "@/lib/api/response";
+import { wc26ScoresQuerySchema } from "@/lib/validation/schemas";
 import {
   ApiFootballRateLimitError,
   apiFootballErrorMessage,
@@ -123,6 +125,9 @@ function failureScoresBody(
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  const validated = validateGetQuery(request, wc26ScoresQuerySchema);
+  if ("error" in validated) return validated.error;
+
   const cacheKey = scoresCacheKey(request);
   const cached = getCached(cacheKey);
   if (cached) {
@@ -136,13 +141,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   logInfo(ROUTE, "CACHE MISS");
 
-  const { searchParams } = request.nextUrl;
-  const live = searchParams.get("live");
-  const results = searchParams.get("results");
+  const { live, results } = validated.data;
 
   const wantsLive = live === "true";
   const hasNoFilters =
-    (live === null || live === "") && (results === null || results === "");
+    (live === undefined || live === "") && (results === undefined || results === "");
   const wantsResults = results === "wc" || hasNoFilters;
 
   if (!isWc26ApiConfigured()) {

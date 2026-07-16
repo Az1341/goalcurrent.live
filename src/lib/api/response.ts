@@ -70,3 +70,11 @@ export async function parseJsonBody<T>(
 
   return { data: parsed.data };
 }
+
+export function validateGetQuery<T>(
+  request: Request,
+  schema: ZodType<T>,
+): { data: T } | { error: NextResponse<ApiErrorBody> } {
+  const { searchParams } = new URL(request.url);
+  return parseSearchParams(searchParams, schema);
+}

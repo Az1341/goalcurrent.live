@@ -27,8 +27,7 @@ export default function MasterFooter() {
             Goal<span>Current</span>.live
           </Link>
           <p className={styles.footerTagline}>
-            Live football scores, fixtures and news — World Cup 2026 and Premier
-            League 26/27.
+            {tLayout("tagline")}
           </p>
           <div className={styles.footerSocial} aria-label={tLayout("socialAria")}>
             <SocialLinks
@@ -38,8 +37,8 @@ export default function MasterFooter() {
           </div>
         </div>
 
-        <nav className={styles.footerLinkCol} aria-label="Platform">
-          <h3 className={styles.footerColTitle}>Platform</h3>
+        <nav className={styles.footerLinkCol} aria-label={tLayout("platform")}>
+          <h3 className={styles.footerColTitle}>{tLayout("platform")}</h3>
           <ul className={styles.footerLinkList}>
             {FOOTER_PLATFORM_LINKS.map((link) => (
               <li key={link.href}>
@@ -49,8 +48,8 @@ export default function MasterFooter() {
           </ul>
         </nav>
 
-        <nav className={styles.footerLinkCol} aria-label="Company">
-          <h3 className={styles.footerColTitle}>Company</h3>
+        <nav className={styles.footerLinkCol} aria-label={tLayout("company")}>
+          <h3 className={styles.footerColTitle}>{tLayout("company")}</h3>
           <ul className={styles.footerLinkList}>
             {FOOTER_COMPANY_LINKS.map((link) => (
               <li key={link.href}>

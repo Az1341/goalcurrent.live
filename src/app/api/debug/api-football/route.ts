@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { respondError, respondOk } from "@/lib/api/response";
+import { respondError, respondOk, validateGetQuery } from "@/lib/api/response";
+import { debugEndpointQuerySchema } from "@/lib/validation/schemas";
 import { isDebugAuthorized } from "@/lib/server/cache";
 
 export const dynamic = "force-dynamic";
@@ -14,30 +15,20 @@ const ENDPOINT_PATHS = {
   fixtures: `/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}`,
 } as const;
 
-type DebugEndpoint = keyof typeof ENDPOINT_PATHS;
-
 const NO_STORE_HEADERS = {
   "Cache-Control": "no-store, no-cache, must-revalidate",
 };
-
-function isDebugEndpoint(value: string | null): value is DebugEndpoint {
-  return value === "topscorers" || value === "events" || value === "fixtures";
-}
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   if (!isDebugAuthorized(request)) {
     return respondError("unauthorized", "Unauthorized.", 401);
   }
 
-  const endpointParam = request.nextUrl.searchParams.get("endpoint");
-
-  if (!isDebugEndpoint(endpointParam)) {
-    return respondError(
-      "invalid_endpoint",
-      "Invalid or missing endpoint. Use ?endpoint=topscorers|events|fixtures",
-      400,
-    );
+  const query = validateGetQuery(request, debugEndpointQuerySchema);
+  if ("error" in query) {
+    return query.error;
   }
+  const endpointParam = query.data.endpoint;
 
   const apiKey = process.env.API_FOOTBALL_KEY?.trim();
   if (!apiKey) {

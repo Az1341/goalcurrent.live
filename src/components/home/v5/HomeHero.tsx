@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { HOME_HERO_CONFIG } from "@/lib/home/hero-config";
 import type { HomepageMatchView } from "@/lib/wc26-live";
@@ -47,12 +48,13 @@ export default function HomeHero({
   wc26Views,
   plFixtures,
 }: HomeHeroProps) {
+  const t = useTranslations("home");
   const config = HOME_HERO_CONFIG;
   const marquee = config.marquee;
 
   if (config.variant === "marquee" && marquee) {
     return (
-      <section className={styles.heroMarquee} aria-label="Featured match hero">
+      <section className={styles.heroMarquee} aria-label={t("featuredHeroAria")}>
         <div
           className={styles.heroMarqueeBg}
           style={{ backgroundImage: `url(${marquee.backgroundImage})` }}
@@ -77,7 +79,7 @@ export default function HomeHero({
             href={marquee.ctaHref ?? "/live"}
             className={`${styles.ctaPrimary} ${styles.ctaFullMobile}`}
           >
-            {marquee.ctaLabel ?? "View all matches"}
+            {marquee.ctaLabel ?? t("viewAllMatches")}
             <span className={styles.ctaArrow} aria-hidden="true">
               →
             </span>
@@ -88,13 +90,13 @@ export default function HomeHero({
   }
 
   return (
-    <section className={styles.heroDefault} aria-label="Home hero">
+    <section className={styles.heroDefault} aria-label={t("heroAria")}>
       <h1 className={styles.heroHeadline}>
-        Live Football.
+        {t("heroHeadline1")}
         <br />
-        Every Goal.
+        {t("heroHeadline2")}
         <br />
-        Every Moment.
+        {t("heroHeadline3")}
       </h1>
       <HomeFeaturedMatchCards
         wc26Views={wc26Views}
@@ -102,7 +104,7 @@ export default function HomeHero({
         limit={3}
       />
       <Link href="/live" className={`${styles.ctaPrimary} ${styles.ctaFullMobile}`}>
-        View all matches
+        {t("viewAllMatches")}
         <span className={styles.ctaArrow} aria-hidden="true">
           →
         </span>

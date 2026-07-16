@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validateGetQuery } from "@/lib/api/response";
+import { wc26FixturesQuerySchema } from "@/lib/validation/schemas";
 import { captureRouteError } from "@/lib/log";
 import {
   apiFootballErrorMessage,
@@ -44,7 +46,10 @@ function mapLiveMatch(match: Wc26ApiMatch): Wc26LiveFixturePayload | null {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  const status = request.nextUrl.searchParams.get("status");
+  const validated = validateGetQuery(request, wc26FixturesQuerySchema);
+  if ("error" in validated) return validated.error;
+
+  const status = validated.data.status;
 
   if (status !== "LIVE") {
     return NextResponse.json([], {

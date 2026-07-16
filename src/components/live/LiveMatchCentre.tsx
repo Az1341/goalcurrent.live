@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import LiveMatchCard from "@/components/live/LiveMatchCard";
 import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
@@ -121,6 +122,7 @@ function LiveSection({
 }
 
 export default function LiveMatchCentre() {
+  const t = useTranslations("live");
   const fixtures = useEffectiveFixtures();
   const syncStatus = useWc26SyncStatus();
   const buckets = useMemo(
@@ -167,25 +169,21 @@ export default function LiveMatchCentre() {
   return (
     <main className={styles.content}>
       <h1 className={styles.pageTitle}>
-        Live Scores — <span>World Cup 2026</span>
+        {t("pageTitle", { competition: t("competition") })}
       </h1>
-      <p className={styles.pageIntro}>
-        World Cup 2026 scores from confirmed results and live API sync. Finished
-        group and knockout matches show full-time scores; live matches update
-        every 10 seconds when the provider is active.
-      </p>
+      <p className={styles.pageIntro}>{t("pageIntro")}</p>
 
       {syncStatus === "pending" || syncStatus === "degraded" ? (
         <div className={styles.syncStatusSlot}>
           {syncStatus === "pending" ? (
             <p className={styles.syncStatus} role="status" aria-live="polite">
               <span className={styles.syncStatusDot} aria-hidden="true" />
-              Syncing live data…
+              {t("syncPending")}
             </p>
           ) : null}
           {syncStatus === "degraded" ? (
             <p className={styles.syncStatusDegraded} role="status" aria-live="polite">
-              Showing last known scores — live provider is temporarily limited.
+              {t("syncDegraded")}
             </p>
           ) : null}
         </div>
@@ -193,10 +191,10 @@ export default function LiveMatchCentre() {
 
       <LiveSection
         id="live-now-heading"
-        title="Live now"
+        title={t("sections.liveNow")}
         fixtures={buckets.live}
         allFixtures={fixtures}
-        emptyMessage="No live matches right now. Live scores appear here when the tournament is underway and API sync is active."
+        emptyMessage={t("empty.liveNow")}
         emptyContent={
           featuredFixture ? (
             <UpcomingMatchCountdown fixture={featuredFixture} />
@@ -232,16 +230,16 @@ export default function LiveMatchCentre() {
 
       <LiveSection
         id="today-heading"
-        title="Today"
+        title={t("sections.today")}
         fixtures={buckets.today}
         allFixtures={fixtures}
-        emptyMessage="No World Cup matches scheduled for today in the local schedule."
+        emptyMessage={t("empty.today")}
         tone="today"
       />
 
       <LiveSection
         id="upcoming-heading"
-        title="Upcoming World Cup fixtures"
+        title={t("sections.upcoming")}
         fixtures={buckets.upcoming}
         allFixtures={fixtures}
         tone="upcoming"
@@ -249,15 +247,15 @@ export default function LiveMatchCentre() {
 
       <LiveSection
         id="completed-heading"
-        title="Completed"
+        title={t("sections.completed")}
         fixtures={buckets.completed}
         allFixtures={fixtures}
-        emptyMessage="No completed matches yet. Full-time results appear when matches finish."
+        emptyMessage={t("empty.completed")}
         tone="completed"
       />
 
       <p className={styles.hubBack}>
-        <Link href="/worldcup2026">← Back to World Cup 2026 hub</Link>
+        <Link href="/worldcup2026">{t("backToHub")}</Link>
       </p>
     </main>
   );

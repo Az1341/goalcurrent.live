@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validateGetQuery } from "@/lib/api/response";
+import { wc26KnockoutFixturesQuerySchema } from "@/lib/validation/schemas";
 import { captureRouteError } from "@/lib/log";
 import {
   apiFootballErrorMessage,
@@ -23,7 +25,10 @@ function isKnockoutRound(value: string): value is Wc26KnockoutApiRound {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  const round = request.nextUrl.searchParams.get("round") ?? "";
+  const validated = validateGetQuery(request, wc26KnockoutFixturesQuerySchema);
+  if ("error" in validated) return validated.error;
+
+  const round = validated.data.round ?? "";
 
   if (!isWc26ApiConfigured()) {
     return NextResponse.json(

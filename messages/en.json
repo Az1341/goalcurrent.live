@@ -96,7 +96,10 @@
       "nordVpn": "🔒 Stream securely abroad — NordVPN affiliate",
       "nordAd": "AD",
       "nordCta": "Get NordVPN →",
-      "copyright": "© {year} Ashna4All · Ahmad Zafarani · {siteName} independent fan site · Not affiliated with FIFA, UEFA or the Premier League."
+      "copyright": "© {year} Ashna4All · Ahmad Zafarani · {siteName} independent fan site · Not affiliated with FIFA, UEFA or the Premier League.",
+      "platform": "Platform",
+      "company": "Company",
+      "tagline": "Live football scores, fixtures and news — World Cup 2026 and Premier League 26/27."
     },
     "liveRibbon": {
       "live": "LIVE",
@@ -281,7 +284,13 @@
     "noUpcomingFixtures": "No upcoming fixtures scheduled.",
     "wc26Title": "World Cup 2026",
     "viewAll": "View All",
-    "wc26Summary": "USA · Mexico · Canada · 11 Jun – 19 Jul 2026 · {gamesPlayed} played · {gamesLeft} remaining"
+    "wc26Summary": "USA · Mexico · Canada · 11 Jun – 19 Jul 2026 · {gamesPlayed} played · {gamesLeft} remaining",
+    "heroHeadline1": "Live Football.",
+    "heroHeadline2": "Every Goal.",
+    "heroHeadline3": "Every Moment.",
+    "viewAllMatches": "View all matches",
+    "heroAria": "Home hero",
+    "featuredHeroAria": "Featured match hero"
   },
   "favourites": {
     "add": "Add {team} to favourites",
@@ -293,7 +302,43 @@
     "emptyStripLead": "Star a match or team to see them here. Browse",
     "liveScores": "live scores",
     "worldCupTeams": "World Cup teams",
-    "or": "or"
+    "or": "or",
+    "pageIntro": "Your saved teams, matches and competitions across {siteName}.",
+    "emptyTitle": "No favourites saved yet",
+    "emptyHint": "Star a team on the Teams page, a fixture on Fixtures, or a match on the homepage.",
+    "teamsSection": "Favourite teams",
+    "noTeams": "No teams saved yet.",
+    "wc26Competition": "FIFA World Cup 2026"
+  },
+  "live": {
+    "pageTitle": "Live Scores — {competition}",
+    "competition": "World Cup 2026",
+    "pageIntro": "World Cup 2026 scores from confirmed results and live API sync. Finished group and knockout matches show full-time scores; live matches update every 10 seconds when the provider is active.",
+    "syncPending": "Syncing live data…",
+    "syncDegraded": "Showing last known scores — live provider is temporarily limited.",
+    "sections": {
+      "liveNow": "Live now",
+      "today": "Today",
+      "upcoming": "Upcoming World Cup fixtures",
+      "completed": "Completed"
+    },
+    "empty": {
+      "liveNow": "No live matches right now. Live scores appear here when the tournament is underway and API sync is active.",
+      "today": "No World Cup matches scheduled for today in the local schedule.",
+      "completed": "No completed matches yet. Full-time results appear when matches finish."
+    },
+    "backToHub": "← Back to World Cup 2026 hub",
+    "countdown": {
+      "liveNow": "Live now",
+      "liveBadge": "● LIVE",
+      "elapsed": "{min}' elapsed",
+      "upNext": "Up next",
+      "untilKickoff": "until kick-off",
+      "viewMatchCentre": "View match centre",
+      "viewMatchCentreArrow": "View match centre →",
+      "liveNowAria": "{home} vs {away} — live now, approximately {min} minutes elapsed",
+      "nextMatchAria": "Next match: {home} vs {away}, kick-off in {countdown}"
+    }
   },
   "news": {
     "loading": "Loading…",

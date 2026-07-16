@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import { getVenueById, groupLabel } from "@/data/wc26";
@@ -36,6 +37,7 @@ function formatCountdown(remainingMs: number): string {
 export default function UpcomingMatchCountdown({
   fixture,
 }: UpcomingMatchCountdownProps) {
+  const t = useTranslations("live.countdown");
   const fixtures = useEffectiveFixtures();
   const effectiveFixture =
     fixtures.find((entry) => entry.id === fixture.id) ?? fixture;
@@ -83,12 +85,16 @@ export default function UpcomingMatchCountdown({
       <article
         className={styles.countdownCard}
         aria-live="polite"
-        aria-label={`${home.label} vs ${away.label} — live now, approximately ${approxMin} minutes elapsed`}
+        aria-label={t("liveNowAria", {
+          home: home.label,
+          away: away.label,
+          min: approxMin,
+        })}
       >
         <div className={styles.countdownHeader}>
           <span className={styles.countdownLiveNow}>
             <span className={styles.countdownLiveDot} aria-hidden="true" />
-            Live now
+            {t("liveNow")}
           </span>
           <span className={styles.countdownCompetition}>{competitionLabel}</span>
         </div>
@@ -101,10 +107,10 @@ export default function UpcomingMatchCountdown({
 
           <div className={styles.countdownCentre}>
             <span className={styles.countdownLiveBadge} aria-hidden="true">
-              ● LIVE
+              {t("liveBadge")}
             </span>
             <span className={styles.countdownElapsed}>
-              {approxMin}&prime; elapsed
+              {t("elapsed", { min: approxMin })}
             </span>
           </div>
 
@@ -126,7 +132,7 @@ export default function UpcomingMatchCountdown({
         </div>
 
         <Link href={matchHref(effectiveFixture.id)} className={styles.countdownLink}>
-          View match centre →
+          {t("viewMatchCentreArrow")}
         </Link>
       </article>
     );
@@ -138,10 +144,14 @@ export default function UpcomingMatchCountdown({
     <article
       className={styles.countdownCard}
       aria-live="polite"
-      aria-label={`Next match: ${home.label} vs ${away.label}, kick-off in ${countdown}`}
+      aria-label={t("nextMatchAria", {
+        home: home.label,
+        away: away.label,
+        countdown,
+      })}
     >
       <div className={styles.countdownHeader}>
-        <span className={styles.countdownEyebrow}>Up next</span>
+        <span className={styles.countdownEyebrow}>{t("upNext")}</span>
         <span className={styles.countdownCompetition}>{competitionLabel}</span>
       </div>
 
@@ -153,7 +163,7 @@ export default function UpcomingMatchCountdown({
 
         <div className={styles.countdownCentre}>
           <span className={styles.countdownTimer}>{countdown}</span>
-          <span className={styles.countdownSub}>until kick-off</span>
+          <span className={styles.countdownSub}>{t("untilKickoff")}</span>
         </div>
 
         <div className={`${styles.countdownTeam} ${styles.countdownTeamAway}`}>
@@ -174,7 +184,7 @@ export default function UpcomingMatchCountdown({
       </div>
 
       <Link href={matchHref(effectiveFixture.id)} className={styles.countdownLink}>
-        View match centre
+        {t("viewMatchCentre")}
       </Link>
     </article>
   );

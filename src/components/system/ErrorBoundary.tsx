@@ -1,11 +1,21 @@
 "use client";
 
 import * as Sentry from "@sentry/nextjs";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 type Props = { children: React.ReactNode };
 
 type State = { hasError: boolean };
+
+function ErrorFallback() {
+  const t = useTranslations("errors.generic");
+  return (
+    <div role="alert" style={{ padding: "1.5rem", textAlign: "center" }}>
+      {t("description")}
+    </div>
+  );
+}
 
 export default class ErrorBoundary extends React.Component<Props, State> {
   state: State = { hasError: false };
@@ -22,11 +32,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div role="alert" style={{ padding: "1.5rem", textAlign: "center" }}>
-          Something went wrong. Please refresh.
-        </div>
-      );
+      return <ErrorFallback />;
     }
 
     return this.props.children;

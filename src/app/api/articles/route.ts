@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
+import { respondError } from "@/lib/api/response";
+import { validateGetQuery } from "@/lib/api/response";
+import { emptyQuerySchema } from "@/lib/validation/schemas";
 import { captureRouteError } from "@/lib/log";
 import { fetchSyndicatedArticles } from "@/content/readers";
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(request: Request): Promise<NextResponse> {
+  const validated = validateGetQuery(request, emptyQuerySchema);
+  if ("error" in validated) {
+    return validated.error;
+  }
+
   try {
     const articles = await fetchSyndicatedArticles();
     return NextResponse.json(

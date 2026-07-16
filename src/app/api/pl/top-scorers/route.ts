@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validateGetQuery } from "@/lib/api/response";
+import { emptyQuerySchema } from "@/lib/validation/schemas";
 import { captureRouteError, logInfo } from "@/lib/log";
 import {
   fetchPlTopScorers,
@@ -11,6 +13,9 @@ export const dynamic = "force-dynamic";
 const ROUTE = "/api/pl/top-scorers";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  const validated = validateGetQuery(request, emptyQuerySchema);
+  if ("error" in validated) return validated.error;
+
   const cacheKey = request.url;
   const cached = getCached(cacheKey);
   if (cached) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { respondError, respondOk } from "@/lib/api/response";
+import { respondError, respondOk, validateGetQuery } from "@/lib/api/response";
+import { emptyQuerySchema } from "@/lib/validation/schemas";
 import { isDebugAuthorized } from "@/lib/server/cache";
 import { fetchWc26EventsRaw } from "@/lib/server/wc26-events";
 import { fetchWc26FixturesRaw } from "@/lib/server/wc26-fixtures";
@@ -16,6 +17,9 @@ const NO_STORE_HEADERS = {
 };
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  const validated = validateGetQuery(request, emptyQuerySchema);
+  if ("error" in validated) return validated.error;
+
   if (!isDebugAuthorized(request)) {
     return respondError("unauthorized", "Unauthorized.", 401);
   }

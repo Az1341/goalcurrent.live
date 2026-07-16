@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import { useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import {
   buildHomepageMatchView,
@@ -12,11 +13,30 @@ import { fetcher, LIVE_SWR_OPTIONS } from "@/lib/client/fetcher";
 import type { PlFixturesApiResponse } from "@/lib/pl/types";
 import LiveRibbon from "@/components/layout/LiveRibbon";
 import HomeHero from "@/components/home/v5/HomeHero";
-import HomeTodaysMatches from "@/components/home/v5/HomeTodaysMatches";
-import HomeLatestNews from "@/components/home/v5/HomeLatestNews";
-import HomeTrendingClips from "@/components/home/v5/HomeTrendingClips";
-import HomeTeamsLeagues from "@/components/home/v5/HomeTeamsLeagues";
 import styles from "@/components/home/home-v5.module.css";
+
+const HomeTodaysMatches = dynamic(
+  () => import("@/components/home/v5/HomeTodaysMatches"),
+  { loading: () => <div className={`${styles.skeleton} animate-skeleton-shimmer`} /> },
+);
+
+const HomeLatestNews = dynamic(
+  () => import("@/components/home/v5/HomeLatestNews"),
+  { loading: () => <div className={`${styles.skeleton} animate-skeleton-shimmer`} /> },
+);
+
+const HomeTrendingClips = dynamic(
+  () => import("@/components/home/v5/HomeTrendingClips"),
+  {
+    ssr: false,
+    loading: () => <div className={`${styles.skeleton} animate-skeleton-shimmer`} />,
+  },
+);
+
+const HomeTeamsLeagues = dynamic(
+  () => import("@/components/home/v5/HomeTeamsLeagues"),
+  { loading: () => <div className={`${styles.skeleton} animate-skeleton-shimmer`} /> },
+);
 
 export default function HomeClient() {
   const fixtures = useEffectiveFixtures();

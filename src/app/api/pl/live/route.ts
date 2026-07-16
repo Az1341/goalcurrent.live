@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validateGetQuery } from "@/lib/api/response";
+import { emptyQuerySchema } from "@/lib/validation/schemas";
 import { captureRouteError, logInfo } from "@/lib/log";
 import { fetchPlLive, plLiveCacheControl } from "@/lib/pl/endpoints";
 import { getCached, setCached } from "@/lib/server/cache";
@@ -8,7 +10,10 @@ export const dynamic = "force-dynamic";
 const ROUTE = "/api/pl/live";
 const CACHE_KEY = "pl-live-scores";
 
-export async function GET(_request: NextRequest): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const validated = validateGetQuery(request, emptyQuerySchema);
+  if ("error" in validated) return validated.error;
+
   const cached = getCached(CACHE_KEY);
   if (cached) {
     logInfo(ROUTE, "CACHE HIT");

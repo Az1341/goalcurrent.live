@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
+import { validateGetQuery } from "@/lib/api/response";
+import { emptyQuerySchema } from "@/lib/validation/schemas";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const validated = validateGetQuery(request, emptyQuerySchema);
+  if ("error" in validated) return validated.error;
+
   return NextResponse.json(
     [{
       relation: ["delegate_permission/common.handle_all_urls"],

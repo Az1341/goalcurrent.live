@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
+import { validateGetQuery } from "@/lib/api/response";
+import { emptyQuerySchema } from "@/lib/validation/schemas";
 import { captureRouteError } from "@/lib/log";
 import { fetchPlAssists, plLeaderboardCacheControl } from "@/lib/pl/endpoints";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(request: Request): Promise<NextResponse> {
+  const validated = validateGetQuery(request, emptyQuerySchema);
+  if ("error" in validated) return validated.error;
+
   try {
     const body = await fetchPlAssists();
     return NextResponse.json(body, {

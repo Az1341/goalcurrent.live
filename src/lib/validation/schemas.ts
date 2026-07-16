@@ -30,6 +30,25 @@ export const apiFixtureIdQuerySchema = z.object({
   apiFixtureId: z.coerce.number().int().positive().optional(),
 });
 
+export const emptyQuerySchema = z.object({}).strict();
+
+export const debugEndpointQuerySchema = z.object({
+  endpoint: z.enum(["topscorers", "events", "fixtures"]),
+});
+
+export const wc26ScoresQuerySchema = z.object({
+  live: z.string().optional(),
+  results: z.string().optional(),
+});
+
+export const wc26FixturesQuerySchema = z.object({
+  status: z.string().optional(),
+});
+
+export const wc26KnockoutFixturesQuerySchema = z.object({
+  round: z.string().optional(),
+});
+
 export const fixtureIdParamSchema = z
   .string()
   .min(1)

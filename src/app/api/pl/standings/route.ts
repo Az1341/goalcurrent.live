@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { validateGetQuery } from "@/lib/api/response";
+import { emptyQuerySchema } from "@/lib/validation/schemas";
 import { getStaleApiCache, setSuccessApiCache } from "@/lib/api-football/cache";
 import { apiFootballErrorMessage } from "@/lib/api-football/errors";
 import { respondApiFootballFailure } from "@/lib/api-football/route-errors";
@@ -10,7 +12,10 @@ export const dynamic = "force-dynamic";
 
 const ROUTE = "api/pl/standings";
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(request: Request): Promise<NextResponse> {
+  const validated = validateGetQuery(request, emptyQuerySchema);
+  if ("error" in validated) return validated.error;
+
   const cacheKey = ROUTE;
 
   try {

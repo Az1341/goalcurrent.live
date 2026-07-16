@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import TeamFlag from "@/components/TeamFlag";
 import {
   removeFavouriteCompetition,
@@ -26,11 +27,10 @@ import { SITE_NAME } from "@/lib/site-url";
 import layoutStyles from "@/components/layout/layout.module.css";
 import styles from "@/components/wc26/wc26.module.css";
 
-const COMPETITION_LABELS: Record<string, string> = {
-  wc26: "FIFA World Cup 2026",
-};
+const COMPETITION_LABELS: Record<string, string> = {};
 
 export default function FavouritesPageContent() {
+  const t = useTranslations("favourites");
   const { teams, matches, competitions } = useFavourites();
   const { tvRegion } = useWc26TvRegion();
   const effectiveFixtures = useEffectiveFixtures();
@@ -40,29 +40,22 @@ export default function FavouritesPageContent() {
 
   return (
     <main className={layoutStyles.content}>
-      <h1 className={styles.pageTitle}>Favourites</h1>
-      <p className={styles.pageIntro}>
-        Your saved teams, matches and competitions across {SITE_NAME}.
-      </p>
+      <h1 className={styles.pageTitle}>{t("title")}</h1>
+      <p className={styles.pageIntro}>{t("pageIntro", { siteName: SITE_NAME })}</p>
 
       {!hasAny ? (
         <div className={styles.favEmpty}>
-          <h2>No favourites saved yet</h2>
-          <p>
-            Star a team on the{" "}
-            <Link href="/worldcup2026/teams">Teams page</Link>, a fixture on{" "}
-            <Link href="/worldcup2026/fixtures">Fixtures</Link>, or a match on
-            the homepage.
-          </p>
+          <h2>{t("emptyTitle")}</h2>
+          <p>{t("emptyHint")}</p>
         </div>
       ) : null}
 
       <section aria-labelledby="fav-teams-heading">
         <h2 id="fav-teams-heading" className={styles.sectionTitle}>
-          Favourite teams
+          {t("teamsSection")}
         </h2>
         {teams.length === 0 ? (
-          <p className={styles.favSectionEmpty}>No teams saved yet.</p>
+          <p className={styles.favSectionEmpty}>{t("noTeams")}</p>
         ) : (
           <ul className={styles.favList}>
             {teams.map((teamId) => {
@@ -265,7 +258,9 @@ export default function FavouritesPageContent() {
             {competitions.map((competitionId) => (
               <li key={competitionId} className={styles.favListItem}>
                 <span className={styles.favListLabel}>
-                  {COMPETITION_LABELS[competitionId] ?? competitionId}
+                  {competitionId === "wc26"
+                    ? t("wc26Competition")
+                    : competitionId}
                 </span>
                 <button
                   type="button"

@@ -10,6 +10,70 @@ type GlobalErrorProps = {
   reset: () => void;
 };
 
+type ErrorCopy = {
+  code: string;
+  title: string;
+  description: string;
+  tryAgain: string;
+};
+
+const ERROR_COPY: Record<AppLocale, ErrorCopy> = {
+  en: {
+    code: "Error",
+    title: "Something went wrong",
+    description: "Please try again or return home.",
+    tryAgain: "Try again",
+  },
+  fa: {
+    code: "خطا",
+    title: "مشکلی پیش آمد",
+    description: "لطفاً دوباره تلاش کنید یا به صفحه اصلی برگردید.",
+    tryAgain: "تلاش دوباره",
+  },
+  ar: {
+    code: "خطأ",
+    title: "حدث خطأ ما",
+    description: "يرجى المحاولة مرة أخرى أو العودة إلى الصفحة الرئيسية.",
+    tryAgain: "حاول مرة أخرى",
+  },
+  fr: {
+    code: "Erreur",
+    title: "Une erreur est survenue",
+    description: "Veuillez réessayer ou retourner à l'accueil.",
+    tryAgain: "Réessayer",
+  },
+  de: {
+    code: "Fehler",
+    title: "Etwas ist schiefgelaufen",
+    description: "Bitte versuchen Sie es erneut oder kehren Sie zur Startseite zurück.",
+    tryAgain: "Erneut versuchen",
+  },
+  nl: {
+    code: "Fout",
+    title: "Er is iets misgegaan",
+    description: "Probeer het opnieuw of ga terug naar home.",
+    tryAgain: "Opnieuw proberen",
+  },
+  es: {
+    code: "Error",
+    title: "Algo salió mal",
+    description: "Inténtalo de nuevo o vuelve al inicio.",
+    tryAgain: "Reintentar",
+  },
+  pt: {
+    code: "Erro",
+    title: "Algo correu mal",
+    description: "Tente novamente ou volte ao início.",
+    tryAgain: "Tentar novamente",
+  },
+  it: {
+    code: "Errore",
+    title: "Qualcosa è andato storto",
+    description: "Riprova o torna alla home.",
+    tryAgain: "Riprova",
+  },
+};
+
 function resolveDocumentLocale(): AppLocale {
   if (typeof document === "undefined") {
     return DEFAULT_LOCALE;
@@ -31,6 +95,7 @@ function resolveDocumentLocale(): AppLocale {
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   const locale = useMemo(() => resolveDocumentLocale(), []);
+  const copy = ERROR_COPY[locale] ?? ERROR_COPY.en;
 
   useEffect(() => {
     Sentry.captureException(error);
@@ -41,12 +106,12 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       <body>
         <main className={styles.page}>
           <div className={styles.card}>
-            <p className={styles.code}>Error</p>
-            <h1>Something went wrong</h1>
-            <p>Please try again or refresh the page.</p>
+            <p className={styles.code}>{copy.code}</p>
+            <h1>{copy.title}</h1>
+            <p>{copy.description}</p>
             <div className={styles.actions}>
               <button type="button" className={styles.primary} onClick={() => reset()}>
-                Try again
+                {copy.tryAgain}
               </button>
             </div>
           </div>
