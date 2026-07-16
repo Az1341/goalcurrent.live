@@ -49,33 +49,74 @@ export function getEditorialNewsArticles(): NewsArticle[] {
   }));
 }
 
+function newsTagFromIndexCategory(category: string): NewsArticle["tag"] {
+  if (category === "Match Recap" || category === "Match Report") {
+    return "RESULT";
+  }
+  if (category === "Preview") {
+    return "PREVIEW";
+  }
+  return "FEATURE";
+}
+
+function articleIndexEntryToNewsArticle(entry: ArticleIndexEntry): NewsArticle {
+  return {
+    title: entry.title,
+    link: entry.href ?? articleHref(entry.slug),
+    excerpt: entry.excerpt,
+    date: toIsoDate(entry.date),
+    source: EDITORIAL_SOURCE_LABEL,
+    tag: newsTagFromIndexCategory(entry.category),
+    image: getArticleCardImage(entry.slug),
+  };
+}
+
+function sortNewsByDateDesc(articles: readonly NewsArticle[]): NewsArticle[] {
+  return [...articles].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+}
+
+/** All GoalCurrent articles from ARTICLE_INDEX as news cards, newest first. */
+export function getArticleIndexNewsArticles(): NewsArticle[] {
+  return sortNewsByDateDesc(
+    [...ARTICLE_INDEX].map((entry) => articleIndexEntryToNewsArticle(entry)),
+  );
+}
+
+/** GoalCurrent editorial + index articles for news feeds — pinned above partner RSS. */
+export function getPinnedGoalCurrentNewsArticles(): NewsArticle[] {
+  const seen = new Set<string>();
+  const merged: NewsArticle[] = [];
+
+  for (const article of [
+    ...getArticleIndexNewsArticles(),
+    ...getEditorialNewsArticles(),
+  ]) {
+    if (seen.has(article.link)) {
+      continue;
+    }
+    seen.add(article.link);
+    merged.push(article);
+  }
+
+  return sortNewsByDateDesc(merged);
+}
+
 export function getLatestMatchRecap(): ArticleIndexEntry | undefined {
   const recaps = ARTICLE_INDEX.filter((entry) => entry.category === "Match Recap");
   return recaps.length > 0 ? recaps[recaps.length - 1] : undefined;
 }
 
-/** Latest match recap first, then other index articles. */
+/** Newest GoalCurrent articles first for the homepage grid. */
 export function getHomepageArticles(limit = 3): ArticleIndexEntry[] {
-  const latestRecap = getLatestMatchRecap();
-  if (!latestRecap) {
-    return [...ARTICLE_INDEX].slice(0, limit);
-  }
-
-  const rest = ARTICLE_INDEX.filter((entry) => entry.slug !== latestRecap.slug);
-  return [latestRecap, ...rest].slice(0, limit);
+  return [...ARTICLE_INDEX]
+    .sort((a, b) => toIsoDate(b.date).localeCompare(toIsoDate(a.date)))
+    .slice(0, limit);
 }
 
 export function getMatchRecapNewsArticles(): NewsArticle[] {
-  return [...ARTICLE_INDEX]
-    .filter((entry) => entry.category === "Match Recap")
-    .reverse()
-    .map((article) => ({
-      title: article.title,
-      link: article.href ?? articleHref(article.slug),
-      excerpt: article.excerpt,
-      date: toIsoDate(article.date),
-      source: EDITORIAL_SOURCE_LABEL,
-      tag: "RESULT" as const,
-      image: getArticleCardImage(article.slug),
-    }));
+  return sortNewsByDateDesc(
+    ARTICLE_INDEX.filter((entry) => entry.category === "Match Recap").map((entry) =>
+      articleIndexEntryToNewsArticle(entry),
+    ),
+  );
 }

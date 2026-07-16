@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { mergeEditorialFirst } from "@/lib/editorial-news";
 import type { NewsApiResponse, NewsArticle } from "@/types/news";
 
 const REFRESH_MS = 3_600_000;
@@ -60,12 +61,13 @@ async function fetchNews(): Promise<void> {
     }
 
     const data = (await response.json()) as NewsApiResponse;
-    if (!data.articles.length) {
+    const merged = mergeEditorialFirst(data.articles);
+    if (!merged.length) {
       throw new Error("No articles");
     }
 
     setSnapshot({
-      articles: data.articles,
+      articles: merged,
       loading: false,
       error: false,
     });

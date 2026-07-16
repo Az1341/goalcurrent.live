@@ -1,4 +1,7 @@
-import { getEditorialNewsArticles, getMatchRecapNewsArticles } from "@/lib/article-hub";
+import {
+  getEditorialNewsArticles,
+  getPinnedGoalCurrentNewsArticles,
+} from "@/lib/article-hub";
 import type { NewsArticle } from "@/types/news";
 
 export { getEditorialNewsArticles } from "@/lib/article-hub";
@@ -8,22 +11,28 @@ function newsSortKey(article: NewsArticle): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-/** Merge editorial + RSS, dedupe by link, newest first. */
-export function mergeEditorialFirst(articles: readonly NewsArticle[]): NewsArticle[] {
-  const editorial = getEditorialNewsArticles();
-  const editorialLinks = new Set(editorial.map((item) => item.link));
-  const rest = articles.filter((item) => !editorialLinks.has(item.link));
-  return [...editorial, ...rest].sort(
-    (a, b) => newsSortKey(b) - newsSortKey(a),
-  );
+function sortNewsByDateDesc(articles: readonly NewsArticle[]): NewsArticle[] {
+  return [...articles].sort((a, b) => newsSortKey(b) - newsSortKey(a));
 }
 
-/** Match recaps + editorial merged with World Cup RSS — newest first. */
-export function mergeWc26NewsFeed(articles: readonly NewsArticle[]): NewsArticle[] {
-  const pinned = [...getMatchRecapNewsArticles(), ...getEditorialNewsArticles()];
+/** GoalCurrent articles stay first; partner RSS follows, each block sorted by date. */
+export function mergeEditorialFirst(articles: readonly NewsArticle[]): NewsArticle[] {
+  const pinned = getPinnedGoalCurrentNewsArticles();
   const pinnedLinks = new Set(pinned.map((item) => item.link));
-  const rest = articles.filter((item) => !pinnedLinks.has(item.link));
-  return [...pinned, ...rest].sort(
-    (a, b) => newsSortKey(b) - newsSortKey(a),
+  const rest = sortNewsByDateDesc(
+    articles.filter((item) => !pinnedLinks.has(item.link)),
   );
+  return [...pinned, ...rest];
+}
+
+/** World Cup news — GoalCurrent articles pinned above partner RSS. */
+export function mergeWc26NewsFeed(articles: readonly NewsArticle[]): NewsArticle[] {
+  const pinned = getPinnedGoalCurrentNewsArticles().filter(
+    (item) => !item.link.includes("/premier-league-2026-27-august-countdown"),
+  );
+  const pinnedLinks = new Set(pinned.map((item) => item.link));
+  const rest = sortNewsByDateDesc(
+    articles.filter((item) => !pinnedLinks.has(item.link)),
+  );
+  return [...pinned, ...rest];
 }
