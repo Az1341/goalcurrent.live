@@ -36,7 +36,7 @@ function parseRssItemXml(itemXml) {
   const title = decodeHtml(titleMatch?.[1] ?? "");
   const link = decodeHtml(linkMatch?.[1] ?? "");
   const description = decodeHtml(descMatch?.[1] ?? "");
-  const image = imgMatch?.[1] ?? "";
+  const image = imgMatch?.[1] ? decodeHtml(imgMatch[1]) : "";
   if (!title || !link) return null;
 
   const videoFromDesc = description.match(
@@ -73,4 +73,20 @@ test("extractYouTubeVideoId handles watch and youtu.be URLs", () => {
     "abc123XYZ",
   );
   assert.equal(extractYouTubeVideoId("https://youtu.be/abc123XYZ"), "abc123XYZ");
+});
+
+const GUARDIAN_ITEM = `<item>
+  <title>World Cup 2026 live</title>
+  <link>https://www.theguardian.com/football/live/example</link>
+  <description>Latest</description>
+  <media:thumbnail url="https://i.guim.co.uk/img/media/example.jpg?width=140&amp;quality=85&amp;auto=format&amp;fit=max&amp;s=abc"/>
+</item>`;
+
+test("parseRssItemXml decodes HTML entities in Guardian thumbnail URLs", () => {
+  const parsed = parseRssItemXml(GUARDIAN_ITEM);
+  assert.ok(parsed);
+  assert.equal(
+    parsed.thumbnail,
+    "https://i.guim.co.uk/img/media/example.jpg?width=140&quality=85&auto=format&fit=max&s=abc",
+  );
 });

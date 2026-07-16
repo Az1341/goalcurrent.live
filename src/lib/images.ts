@@ -10,10 +10,21 @@ export const REMOTE_IMAGE_HOSTNAMES = [
   "a2.espncdn.com",
   "a3.espncdn.com",
   "a4.espncdn.com",
+  "i.guim.co.uk",
 ] as const;
 
 export function isLocalImageSrc(src: string): boolean {
   return src.startsWith("/");
+}
+
+/** Decode HTML entities in remote image URLs (Guardian RSS uses &amp; in query strings). */
+export function sanitizeRemoteImageUrl(src: string): string {
+  return src
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
 }
 
 export function isSvgSrc(src: string): boolean {

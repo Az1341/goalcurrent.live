@@ -1,5 +1,6 @@
 import type { ContentItem, VideoItem } from "@/content/types";
 import { plainTextFromHtml } from "@/content/merge";
+import { sanitizeRemoteImageUrl } from "@/lib/images";
 import type { NewsArticle, NewsTag } from "@/types/news";
 import type { YouTubeVideo } from "@/types/video";
 
@@ -68,6 +69,8 @@ export function formatNewsSource(source: string): string {
 }
 
 export function contentItemToNewsArticle(item: ContentItem): NewsArticle {
+  const thumbnail = item.thumbnail ? sanitizeRemoteImageUrl(item.thumbnail) : undefined;
+
   return {
     title: plainTextFromHtml(item.title),
     link: item.url,
@@ -75,7 +78,7 @@ export function contentItemToNewsArticle(item: ContentItem): NewsArticle {
     date: item.publishedAt,
     source: formatNewsSource(item.source),
     tag: tagFromText(`${item.title} ${item.description}`),
-    ...(item.thumbnail ? { image: item.thumbnail } : {}),
+    ...(thumbnail ? { image: thumbnail } : {}),
   };
 }
 

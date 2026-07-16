@@ -67,7 +67,7 @@ export function parseRssItemXml(itemXml: string): ParsedRssItem | null {
   const link = decodeHtml(linkMatch?.[1] ?? "");
   const description = decodeHtml(descMatch?.[1] ?? "");
   const pubDate = pubDateMatch?.[1] ?? "";
-  const image = imgMatch?.[1] ?? "";
+  const image = imgMatch?.[1] ? decodeHtml(imgMatch[1]) : "";
 
   if (!title || !link) {
     return null;
