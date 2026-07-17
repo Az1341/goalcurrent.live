@@ -1,39 +1,21 @@
 {
   "common": {
-    "loading": "Wird geladen…",
-    "vs": "gegen",
-    "home": "Startseite",
-    "live": "Live",
-    "ft": "FT",
-    "ht": "HT",
-    "firstHalf": "1. Hz.",
-    "secondHalf": "2. Hz.",
-    "tbd": "TBD",
-    "updatedMinutesAgo": "Aktualisiert vor {count, plural, one {# Minute} other {# Minuten}}",
-    "updatedSecondsAgo": "Aktualisiert vor {count, plural, one {# Sekunde} other {# Sekunden}}",
-    "returnHome": "Zur Startseite",
     "tryAgain": "Erneut versuchen",
     "backToHome": "← Zurück zur Startseite",
     "viewAll": "Alle anzeigen",
     "search": "Suchen",
     "noResults": "Keine Ergebnisse.",
-    "subscribe": "Abonnieren",
-    "language": "Sprache"
+    "firstHalf": "1. Hz.",
+    "secondHalf": "2. Hz.",
+    "updatedMinutesAgo": "Aktualisiert vor {count, plural, one {# Minute} other {# Minuten}}",
+    "updatedSecondsAgo": "Aktualisiert vor {count, plural, one {# Sekunde} other {# Sekunden}}"
   },
   "nav": {
-    "home": "Startseite",
-    "live": "Live",
-    "favourites": "Favoriten",
-    "news": "Nachrichten",
-    "articles": "Artikel",
-    "videos": "Videos",
     "worldCup2026": "WM 2026",
-    "premierLeague": "Premier League",
     "table": "Tabelle",
     "fixtures": "Spielplan",
     "table2627": "Tabelle 26/27",
     "fixtures2627": "Spielplan 26/27",
-    "clubs": "Clubs",
     "players": "Spieler",
     "statistics": "Statistiken",
     "transfers": "Transfers",
@@ -42,14 +24,11 @@
     "teams": "Mannschaften",
     "venues": "Stadien",
     "bracket": "K.-o.-Baum",
-    "pl2627": "PL 26/27",
-    "wc26": "WC26",
     "overview": "Übersicht",
     "plHome": "PL Start",
     "wc26Home": "WM Start",
     "mainNavigation": "Hauptnavigation",
     "openMoreNavigation": "Weitere Navigation öffnen",
-    "more": "Mehr",
     "back": "Zurück",
     "backToMenu": "Zurück zum Menü",
     "closeMenu": "Menü schließen",
@@ -60,7 +39,6 @@
     "privacy": "Datenschutz",
     "cookies": "Cookies",
     "affiliateDisclosure": "Affiliate-Hinweis",
-    "language": "Sprache",
     "liveResults": "Live-Ergebnisse",
     "liveMatches": "Live-Spiele",
     "plVideos": "🎬 PL-Videos",
@@ -76,11 +54,7 @@
     "plTable2627": "Premier League 26/27",
     "wc26GroupTables": "WM-Gruppen 2026",
     "wc26Bracket": "WM-K.-o.-Baum 2026",
-    "videoAudio": "Video & Audio",
-    "facebook": "Facebook",
-    "instagram": "Instagram",
-    "tiktok": "TikTok",
-    "twitter": "X / Twitter"
+    "videoAudio": "Video & Audio"
   },
   "layout": {
     "cookieConsent": {
@@ -90,25 +64,8 @@
       "decline": "Ablehnen",
       "accept": "Akzeptieren ✓"
     },
-    "footer": {
-      "ariaLabel": "Footer",
-      "socialAria": "Social media",
-      "nordVpn": "🔒 Stream securely abroad — NordVPN affiliate",
-      "nordAd": "AD",
-      "nordCta": "Get NordVPN →",
-      "copyright": "© {year} Ashna4All · Ahmad Zafarani · {siteName} independent fan site · Not affiliated with FIFA, UEFA or the Premier League.",
-      "platform": "Plattform",
-      "company": "Unternehmen",
-      "tagline": "Live-Ergebnisse, Spielplan und News — WM 2026 und Premier League 26/27."
-    },
     "liveRibbon": {
-      "live": "LIVE",
-      "ft": "FT",
-      "vs": "vs",
       "viewAllFixtures": "Alle Spiele anzeigen",
-      "worldCup2026": "WORLD CUP 2026",
-      "liveNow": "LIVE NOW",
-      "latestResults": "LATEST RESULTS",
       "emptyMessage": "Spielplan lokal — Ergebnisse bei aktiver API-Synchronisation",
       "liveMatchesAria": "Live-Spiele",
       "latestResultsAria": "Neueste Ergebnisse",
@@ -122,14 +79,12 @@
   },
   "errors": {
     "notFound": {
-      "code": "404",
       "title": "Seite nicht gefunden",
       "description": "Die angeforderte Seite existiert nicht oder wurde verschoben.",
       "returnHome": "Zur Startseite",
       "liveScores": "Live-Ergebnisse"
     },
     "generic": {
-      "code": "Error",
       "title": "Ein Fehler ist aufgetreten",
       "description": "Bitte versuchen Sie es erneut oder kehren Sie zur Startseite zurück.",
       "tryAgain": "Erneut versuchen",
@@ -137,7 +92,6 @@
     }
   },
   "match": {
-    "title": "{home} gegen {away}",
     "liveMatch": "Live-Spiel",
     "matchCentre": "Spielzentrum",
     "noEvents": "Noch keine Ereignisse erfasst.",
@@ -256,23 +210,11 @@
     }
   },
   "pl": {
-    "hubTitle": "Premier League",
-    "table": {
-      "zoneCl": "CL",
-      "zoneEl": "EL",
-      "zoneConf": "Conf",
-      "zoneRel": "Rel"
-    },
     "loading": "Premier-League-Daten werden geladen…"
   },
   "home": {
-    "title": "Live-Fußballergebnisse und Spielzentrum",
     "badge": "WM 2026 · Hauptwettbewerb",
     "featuredMatch": "Spiel des Tages",
-    "liveNow": "Live Now",
-    "viewAllLive": "View All Live Matches",
-    "noLiveMatches": "No live matches right now.",
-    "subtitle": "Live results, fixtures and news from {siteName} — World Cup 2026 is the lead competition.",
     "matchDetails": "Spieldetails",
     "allFixtures": "Alle Spiele",
     "noFixturesLoaded": "Keine WM-Spiele geladen.",
@@ -282,41 +224,7 @@
     "upcomingFixtures": "Kommende Spiele",
     "viewAllFixtures": "Gesamter Spielplan",
     "noUpcomingFixtures": "Keine anstehenden Spiele.",
-    "wc26Title": "World Cup 2026",
-    "viewAll": "View All",
-    "wc26Summary": "USA · Mexiko · Kanada · 11. Juni – 19. Juli 2026 · {gamesPlayed} gespielt · {gamesLeft} ausstehend",
-    "heroHeadline1": "Live-Fussball.",
-    "heroHeadline2": "Jedes Tor.",
-    "heroHeadline3": "Jeder Moment.",
-    "viewAllMatches": "Alle Spiele anzeigen",
-    "heroAria": "Startseiten-Hero",
-    "featuredHeroAria": "Spiel des Tages"
-  },
-  "favourites": {
-    "add": "Add {team} to favourites",
-    "remove": "Remove {team} from favourites",
-    "title": "Favoriten",
-    "empty": "No favourites yet. Star teams on match pages to save them here.",
-    "stripTitle": "Ihre Favoriten",
-    "manage": "Verwalten",
-    "emptyStripLead": "Star a match or team to see them here. Browse",
-    "liveScores": "live scores",
-    "worldCupTeams": "World Cup teams",
-    "or": "or",
-    "pageIntro": "Ihre gespeicherten Teams, Spiele und Wettbewerbe auf {siteName}.",
-    "emptyTitle": "Noch keine Favoriten",
-    "emptyHint": "Markieren Sie Team, Spiel oder Wettbewerb auf Teams-, Spielplan- oder Startseite.",
-    "teamsSection": "Lieblingsteams",
-    "noTeams": "Noch keine Teams gespeichert.",
-    "wc26Competition": "FIFA-Weltmeisterschaft 2026",
-    "removeBtn": "Entfernen",
-    "matchesSection": "Lieblingsspiele",
-    "noMatches": "Noch keine Spiele gespeichert.",
-    "matchDetailsCta": "Details und Live-Ergebnis",
-    "savedMatch": "Gespeichertes Spiel ({matchId})",
-    "noLongerAvailable": "Nicht mehr verfuegbar",
-    "competitionsSection": "Lieblingswettbewerbe",
-    "noCompetitions": "Noch keine Wettbewerbe gespeichert."
+    "wc26Summary": "USA · Mexiko · Kanada · 11. Juni – 19. Juli 2026 · {gamesPlayed} gespielt · {gamesLeft} ausstehend"
   },
   "news": {
     "loading": "Wird geladen…",
@@ -328,48 +236,5 @@
     "siteDescription": "{siteName} - Live-Ergebnisse, Spielplan, Gruppen und Tabellen für die FIFA-WM 2026.",
     "matchDescription": "WM-2026-Spiel — {title}. Live-Zentrum, Timeline, Statistiken und Aufstellungen auf {siteName}.",
     "titleTemplate": "{title} - {siteName}"
-  },
-  "auth": {
-    "account": "Konto",
-    "signIn": "Anmelden",
-    "signOut": "Abmelden",
-    "continueWithGoogle": "Mit Google fortfahren",
-    "continueWithApple": "Mit Apple fortfahren",
-    "signedInAs": "Angemeldet als {name}",
-    "enableNotifications": "Benachrichtigungen aktivieren",
-    "notificationsEnabled": "Benachrichtigungen aktiv",
-    "notificationsBlocked": "Benachrichtigungen im Browser blockiert",
-    "signInError": "Anmeldung fehlgeschlagen. Bitte erneut versuchen.",
-    "loading": "Laden…"
-  },
-  "live": {
-    "pageTitle": "Live-Ergebnisse — {competition}",
-    "competition": "WM 2026",
-    "pageIntro": "WM-2026-Ergebnisse aus bestaetigten Resultaten und Live-API.",
-    "syncPending": "Synchronisiere…",
-    "syncDegraded": "Letzte bekannte Ergebnisse — Live-Anbieter eingeschraenkt.",
-    "sections": {
-      "liveNow": "Jetzt live",
-      "today": "Heute",
-      "upcoming": "Kommende WM-Spiele",
-      "completed": "Beendet"
-    },
-    "empty": {
-      "liveNow": "Keine Live-Spiele.",
-      "today": "Heute keine WM-Spiele.",
-      "completed": "Noch keine beendeten Spiele."
-    },
-    "backToHub": "Zurueck zum WM-2026-Hub",
-    "countdown": {
-      "liveNow": "Jetzt live",
-      "liveBadge": "LIVE",
-      "elapsed": "{min} min",
-      "upNext": "Als Naechstes",
-      "untilKickoff": "bis Anpfiff",
-      "viewMatchCentre": "Spielzentrum",
-      "viewMatchCentreArrow": "Spielzentrum →",
-      "liveNowAria": "{home} vs {away} — live now, approximately {min} minutes elapsed",
-      "nextMatchAria": "Next match: {home} vs {away}, kick-off in {countdown}"
-    }
   }
 }

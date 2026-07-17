@@ -1,39 +1,21 @@
 {
   "common": {
-    "loading": "Laden…",
-    "vs": "tegen",
-    "home": "Home",
-    "live": "Live",
-    "ft": "FT",
-    "ht": "HT",
-    "firstHalf": "1e helft",
-    "secondHalf": "2e helft",
-    "tbd": "TBD",
-    "updatedMinutesAgo": "Bijgewerkt {count, plural, one {# minuut geleden} other {# minuten geleden}}",
-    "updatedSecondsAgo": "Bijgewerkt {count, plural, one {# seconde geleden} other {# seconden geleden}}",
-    "returnHome": "Terug naar home",
     "tryAgain": "Opnieuw proberen",
     "backToHome": "← Terug naar home",
     "viewAll": "Alles bekijken",
     "search": "Zoeken",
     "noResults": "Geen resultaten.",
-    "subscribe": "Abonneren",
-    "language": "Taal"
+    "firstHalf": "1e helft",
+    "secondHalf": "2e helft",
+    "updatedMinutesAgo": "Bijgewerkt {count, plural, one {# minuut geleden} other {# minuten geleden}}",
+    "updatedSecondsAgo": "Bijgewerkt {count, plural, one {# seconde geleden} other {# seconden geleden}}"
   },
   "nav": {
-    "home": "Home",
-    "live": "Live",
-    "favourites": "Favorieten",
-    "news": "Nieuws",
-    "articles": "Artikelen",
-    "videos": "Video's",
     "worldCup2026": "WK 2026",
-    "premierLeague": "Premier League",
     "table": "Stand",
     "fixtures": "Programma",
     "table2627": "Stand 26/27",
     "fixtures2627": "Programma 26/27",
-    "clubs": "Clubs",
     "players": "Spelers",
     "statistics": "Statistieken",
     "transfers": "Transfers",
@@ -42,14 +24,11 @@
     "teams": "Teams",
     "venues": "Stadions",
     "bracket": "Schema",
-    "pl2627": "PL 26/27",
-    "wc26": "WC26",
     "overview": "Overzicht",
     "plHome": "PL Home",
     "wc26Home": "WK Home",
     "mainNavigation": "Hoofdnavigatie",
     "openMoreNavigation": "Meer navigatie openen",
-    "more": "Meer",
     "back": "Terug",
     "backToMenu": "Terug naar menu",
     "closeMenu": "Menu sluiten",
@@ -60,7 +39,6 @@
     "privacy": "Privacy",
     "cookies": "Cookies",
     "affiliateDisclosure": "Affiliate-verklaring",
-    "language": "Taal",
     "liveResults": "Live uitslagen",
     "liveMatches": "Live wedstrijden",
     "plVideos": "🎬 PL-video's",
@@ -76,11 +54,7 @@
     "plTable2627": "Premier League 26/27",
     "wc26GroupTables": "WK-groepen 2026",
     "wc26Bracket": "WK-schema 2026",
-    "videoAudio": "Video & audio",
-    "facebook": "Facebook",
-    "instagram": "Instagram",
-    "tiktok": "TikTok",
-    "twitter": "X / Twitter"
+    "videoAudio": "Video & audio"
   },
   "layout": {
     "cookieConsent": {
@@ -90,25 +64,8 @@
       "decline": "Weigeren",
       "accept": "Accepteren ✓"
     },
-    "footer": {
-      "ariaLabel": "Footer",
-      "socialAria": "Social media",
-      "nordVpn": "🔒 Stream securely abroad — NordVPN affiliate",
-      "nordAd": "AD",
-      "nordCta": "Get NordVPN →",
-      "copyright": "© {year} Ashna4All · Ahmad Zafarani · {siteName} independent fan site · Not affiliated with FIFA, UEFA or the Premier League.",
-      "platform": "Platform",
-      "company": "Bedrijf",
-      "tagline": "Live uitslagen, speelschema en nieuws — WK 2026 en Premier League 26/27."
-    },
     "liveRibbon": {
-      "live": "LIVE",
-      "ft": "FT",
-      "vs": "vs",
       "viewAllFixtures": "Alle wedstrijden bekijken",
-      "worldCup2026": "WORLD CUP 2026",
-      "liveNow": "LIVE NOW",
-      "latestResults": "LATEST RESULTS",
       "emptyMessage": "Lokaal programma — uitslagen wanneer API-sync actief is",
       "liveMatchesAria": "Live wedstrijden",
       "latestResultsAria": "Laatste uitslagen",
@@ -122,14 +79,12 @@
   },
   "errors": {
     "notFound": {
-      "code": "404",
       "title": "Pagina niet gevonden",
       "description": "De opgevraagde pagina bestaat niet of is verplaatst.",
       "returnHome": "Terug naar home",
       "liveScores": "Live uitslagen"
     },
     "generic": {
-      "code": "Error",
       "title": "Er is iets misgegaan",
       "description": "Probeer het opnieuw of ga terug naar home.",
       "tryAgain": "Opnieuw proberen",
@@ -137,7 +92,6 @@
     }
   },
   "match": {
-    "title": "{home} tegen {away}",
     "liveMatch": "Live wedstrijd",
     "matchCentre": "Wedstrijdcentrum",
     "noEvents": "Nog geen gebeurtenissen geregistreerd.",
@@ -256,23 +210,11 @@
     }
   },
   "pl": {
-    "hubTitle": "Premier League",
-    "table": {
-      "zoneCl": "CL",
-      "zoneEl": "EL",
-      "zoneConf": "Conf",
-      "zoneRel": "Rel"
-    },
     "loading": "Premier League-gegevens laden…"
   },
   "home": {
-    "title": "Live voetbalscores en wedstrijdcentrum",
     "badge": "WK 2026 · hoofdcompetitie",
     "featuredMatch": "Uitgelichte wedstrijd",
-    "liveNow": "Live Now",
-    "viewAllLive": "View All Live Matches",
-    "noLiveMatches": "No live matches right now.",
-    "subtitle": "Live results, fixtures and news from {siteName} — World Cup 2026 is the lead competition.",
     "matchDetails": "Wedstrijddetails",
     "allFixtures": "Alle wedstrijden",
     "noFixturesLoaded": "Geen WK-wedstrijden geladen.",
@@ -282,41 +224,7 @@
     "upcomingFixtures": "Komende wedstrijden",
     "viewAllFixtures": "Volledig programma",
     "noUpcomingFixtures": "Geen komende wedstrijden.",
-    "wc26Title": "World Cup 2026",
-    "viewAll": "View All",
-    "wc26Summary": "VS · Mexico · Canada · 11 jun – 19 jul 2026 · {gamesPlayed} gespeeld · {gamesLeft} resterend",
-    "heroHeadline1": "Live voetbal.",
-    "heroHeadline2": "Elk doelpunt.",
-    "heroHeadline3": "Elk moment.",
-    "viewAllMatches": "Alle wedstrijden",
-    "heroAria": "Home hero",
-    "featuredHeroAria": "Uitgelichte wedstrijd"
-  },
-  "favourites": {
-    "add": "Add {team} to favourites",
-    "remove": "Remove {team} from favourites",
-    "title": "Favorieten",
-    "empty": "No favourites yet. Star teams on match pages to save them here.",
-    "stripTitle": "Jouw favorieten",
-    "manage": "Beheren",
-    "emptyStripLead": "Star a match or team to see them here. Browse",
-    "liveScores": "live scores",
-    "worldCupTeams": "World Cup teams",
-    "or": "or",
-    "pageIntro": "Je opgeslagen teams, wedstrijden en competities op {siteName}.",
-    "emptyTitle": "Nog geen favorieten",
-    "emptyHint": "Markeer team, wedstrijd of competitie via Teams, Speelschema of Home.",
-    "teamsSection": "Favoriete teams",
-    "noTeams": "Nog geen teams opgeslagen.",
-    "wc26Competition": "FIFA Wereldkampioenschap 2026",
-    "removeBtn": "Verwijderen",
-    "matchesSection": "Favoriete wedstrijden",
-    "noMatches": "Nog geen wedstrijden opgeslagen.",
-    "matchDetailsCta": "Details en live uitslag",
-    "savedMatch": "Opgeslagen wedstrijd ({matchId})",
-    "noLongerAvailable": "Niet meer beschikbaar",
-    "competitionsSection": "Favoriete competities",
-    "noCompetitions": "Nog geen competities opgeslagen."
+    "wc26Summary": "VS · Mexico · Canada · 11 jun – 19 jul 2026 · {gamesPlayed} gespeeld · {gamesLeft} resterend"
   },
   "news": {
     "loading": "Laden…",
@@ -328,48 +236,5 @@
     "siteDescription": "{siteName} - live uitslagen, programma, groepen en standen voor het FIFA WK 2026.",
     "matchDescription": "WK 2026-wedstrijd — {title}. Live centrum, tijdlijn, statistieken en opstellingen op {siteName}.",
     "titleTemplate": "{title} - {siteName}"
-  },
-  "auth": {
-    "account": "Account",
-    "signIn": "Inloggen",
-    "signOut": "Uitloggen",
-    "continueWithGoogle": "Doorgaan met Google",
-    "continueWithApple": "Doorgaan met Apple",
-    "signedInAs": "Ingelogd als {name}",
-    "enableNotifications": "Meldingen inschakelen",
-    "notificationsEnabled": "Meldingen aan",
-    "notificationsBlocked": "Meldingen geblokkeerd in browser",
-    "signInError": "Inloggen mislukt. Probeer opnieuw.",
-    "loading": "Laden…"
-  },
-  "live": {
-    "pageTitle": "Live uitslagen — {competition}",
-    "competition": "WK 2026",
-    "pageIntro": "WK 2026-uitslagen uit bevestigde resultaten en live API.",
-    "syncPending": "Synchroniseren…",
-    "syncDegraded": "Laatst bekende uitslagen — provider beperkt.",
-    "sections": {
-      "liveNow": "Nu live",
-      "today": "Vandaag",
-      "upcoming": "Komende WK-wedstrijden",
-      "completed": "Afgerond"
-    },
-    "empty": {
-      "liveNow": "Geen live wedstrijden.",
-      "today": "Geen WK-wedstrijden vandaag.",
-      "completed": "Nog geen afgeronde wedstrijden."
-    },
-    "backToHub": "Terug naar WK 2026-hub",
-    "countdown": {
-      "liveNow": "Nu live",
-      "liveBadge": "LIVE",
-      "elapsed": "{min} min",
-      "upNext": "Volgende",
-      "untilKickoff": "tot aftrap",
-      "viewMatchCentre": "Wedstrijdcentrum",
-      "viewMatchCentreArrow": "Wedstrijdcentrum →",
-      "liveNowAria": "{home} vs {away} — live now, approximately {min} minutes elapsed",
-      "nextMatchAria": "Next match: {home} vs {away}, kick-off in {countdown}"
-    }
   }
 }
