@@ -186,6 +186,15 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
       "Anthony Gordon put England ahead in Atlanta, but Enzo Fernández and Lautaro Martínez struck late as Argentina reached the World Cup 2026 final at the Three Lions' expense.",
     date: "16 July 2026",
   },
+  {
+    slug: "england-france-third-place-preview",
+    category: "Preview",
+    title:
+      "England vs France: The World Cup Nobody Wanted, But Somebody Has to Win",
+    excerpt:
+      "Two semi-final losers meet in Miami for the bronze final — with Mbappé chasing the Golden Boot and England chasing their best World Cup finish in sixty years.",
+    date: "18 July 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {

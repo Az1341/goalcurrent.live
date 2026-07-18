@@ -24,6 +24,8 @@ export const ARTICLE_CARD_IMAGES: Record<string, string> = {
     "/images/news/world-cup-2026-july-3-recap/hero.svg",
   "england-argentina-world-cup-semifinal-analysis":
     "/images/news/england-argentina-world-cup-semifinal-analysis/hero.svg",
+  "england-france-third-place-preview":
+    "/images/news/england-france-third-place-preview/hero.svg",
 };
 
 const DEFAULT_ARTICLE_CARD_IMAGE = "/images/football-hero-bg.jpg";
