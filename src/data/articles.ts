@@ -195,6 +195,15 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
       "Two semi-final losers meet in Miami for the bronze final — with Mbappé chasing the Golden Boot and England chasing their best World Cup finish in sixty years.",
     date: "18 July 2026",
   },
+  {
+    slug: "england-6-4-france-third-place-recap",
+    category: "Match Recap",
+    title:
+      "England 6-4 France: A Third-Place Thriller That Proved the Tournament's Best Was Yet to Come",
+    excerpt:
+      "Rice and Saka fired England into a 4-0 half-time lead before Mbappé dragged France back to 4-3 — but Saka's hat-trick and Bellingham's 90+8' finish sealed a breathless 6-4 bronze win in Miami.",
+    date: "18 July 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {

@@ -26,6 +26,8 @@ export const ARTICLE_CARD_IMAGES: Record<string, string> = {
     "/images/news/england-argentina-world-cup-semifinal-analysis/hero.svg",
   "england-france-third-place-preview":
     "/images/news/england-france-third-place-preview/hero.svg",
+  "england-6-4-france-third-place-recap":
+    "/images/news/england-6-4-france-third-place-recap/hero.jpg",
 };
 
 const DEFAULT_ARTICLE_CARD_IMAGE = "/images/football-hero-bg.jpg";
