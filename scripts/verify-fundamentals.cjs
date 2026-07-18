@@ -38,4 +38,24 @@ for (const rule of REQUIRED_SOURCE_SNIPPETS) {
   }
 }
 if (failed) process.exit(1);
+
+// SVG article heroes must use ArticleBanner (contain, 16:9) — not cover + max-height crop.
+const articlesRoot = path.join(root, "src/app/[locale]/articles");
+for (const entry of fs.readdirSync(articlesRoot, { withFileTypes: true })) {
+  if (!entry.isDirectory()) continue;
+  const pagePath = path.join(articlesRoot, entry.name, "page.tsx");
+  if (!fs.existsSync(pagePath)) continue;
+  const text = fs.readFileSync(pagePath, "utf8");
+  if (!text.includes(".svg")) continue;
+  if (text.includes("ArticleBanner")) continue;
+  if (text.includes("articleBannerImageSvg")) continue;
+  if (text.includes("articleBannerImage") && text.includes("hero.svg")) {
+    console.error(
+      `verify:design ${pagePath} uses SVG hero with articleBannerImage crop — use ArticleBanner`,
+    );
+    failed = true;
+  }
+}
+
+if (failed) process.exit(1);
 console.log("verify:design OK");

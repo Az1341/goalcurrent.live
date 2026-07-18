@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import ArticleBanner from "@/components/articles/ArticleBanner";
 import ArticleAuthorLine, { ArticleCopyrightNotice } from "@/components/articles/ArticleAuthorLine";
 import { StaticArticleSeo, staticArticleMetadata } from "@/components/seo/StaticArticleSeo";
 import styles from "../article.module.css";
@@ -15,18 +15,10 @@ export default function ArticleEnglandFranceThirdPlacePreview() {
     <StaticArticleSeo slug={SLUG}>
       <main className={styles.articlePage}>
         <div className={styles.stack}>
-          <div className={styles.articleBanner}>
-            <Image
-              src={HERO_IMAGE}
-              alt="GoalCurrent.live editorial graphic for England vs France in the World Cup 2026 third-place playoff in Miami"
-              width={1200}
-              height={630}
-              priority
-              unoptimized
-              sizes="(max-width: 768px) 100vw, 896px"
-              className={styles.articleBannerImage}
-            />
-          </div>
+          <ArticleBanner
+            src={HERO_IMAGE}
+            alt="GoalCurrent.live editorial graphic for England vs France in the World Cup 2026 third-place playoff in Miami"
+          />
           <div className={styles.heroCard}>
             <div className={styles.categoryPill}>Preview · World Cup 2026</div>
             <h1>
