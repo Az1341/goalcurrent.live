@@ -161,6 +161,28 @@
       "redCard": "Cartão vermelho",
       "yellowCard": "Cartão amarelo",
       "substitution": "Substituição"
+    },
+    "playerStats": {
+      "title": "Player stats",
+      "loading": "Loading player statistics…",
+      "emptyEvents": "Player goals, assists, cards and substitutions will appear when the live feed records match events.",
+      "emptyApi": "Player statistics will appear when server API sync is configured and the match is underway or finished.",
+      "noteApi": "From live provider data. Goals and assists also follow match events when the feed updates.",
+      "noteEvents": "From match events. Shots, pass accuracy and ratings appear when the provider supplies player-level data.",
+      "showAll": "Show all players ({count})",
+      "showTopSix": "Show top 6 only",
+      "columns": {
+        "player": "Player",
+        "goals": "G",
+        "assists": "A",
+        "shots": "Sh",
+        "shotsOnTarget": "SOT",
+        "passAccuracy": "Pass%",
+        "fouls": "F",
+        "cards": "C",
+        "substitute": "Sub",
+        "rating": "Rat"
+      }
     }
   },
   "wc26": {

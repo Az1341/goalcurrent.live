@@ -155,3 +155,64 @@ test("live events override API goal counts when feed is ahead", () => {
   assert.equal(scorer?.goals, 2);
   assert.equal(scorer?.shots, 3);
 });
+
+test("API abbreviations merge with lineup full names on same team and number", () => {
+  const rows = aggregateMatchPlayerStats(
+    {
+      events: [
+        {
+          minute: 12,
+          extra: null,
+          teamName: AWAY,
+          playerName: "B. Saka",
+          assistName: null,
+          type: "Goal",
+          detail: "Normal Goal",
+        },
+      ],
+      lineups: {
+        home: null,
+        away: {
+          teamName: AWAY,
+          formation: "4-3-3",
+          coach: "Coach",
+          startXI: [
+            {
+              name: "Bukayo Saka",
+              number: 7,
+              position: "F",
+            },
+          ],
+          substitutes: [],
+        },
+      },
+      playerStats: [
+        {
+          playerName: "B. Saka",
+          teamName: AWAY,
+          number: 7,
+          position: "F",
+          minutes: 67,
+          goals: 2,
+          assists: 0,
+          shots: 3,
+          shotsOnTarget: 3,
+          passAccuracy: "16%",
+          fouls: 0,
+          yellowCards: 0,
+          redCards: 0,
+          substituted: false,
+          rating: 8.6,
+        },
+      ],
+    },
+    HOME,
+    AWAY,
+  );
+
+  const sakaRows = rows.filter((row) => row.teamName === AWAY && row.number === 7);
+  assert.equal(sakaRows.length, 1);
+  assert.equal(sakaRows[0]?.playerName, "Bukayo Saka");
+  assert.equal(sakaRows[0]?.goals, 2);
+  assert.equal(sakaRows[0]?.shots, 3);
+});

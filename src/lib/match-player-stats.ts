@@ -60,7 +60,167 @@ export type MatchPlayerStatsInput = {
 };
 
 function normalizeName(value: string): string {
-  return value.trim().toLowerCase();
+  return stripDiacritics(value.trim().toLowerCase());
+}
+
+function stripDiacritics(value: string): string {
+  return value.normalize("NFD").replace(/\p{M}/gu, "");
+}
+
+function isAbbreviatedName(name: string): boolean {
+  return /^[\p{L}]\.\s+\S+/u.test(name.trim());
+}
+
+function parseAbbreviatedName(
+  name: string,
+): { initial: string; surname: string } | null {
+  const match = name.trim().match(/^([\p{L}])\.?\s+(.+)$/u);
+  if (!match) {
+    return null;
+  }
+  return {
+    initial: match[1].toLowerCase(),
+    surname: normalizeName(match[2]),
+  };
+}
+
+function getSurname(name: string): string {
+  const parts = normalizeName(name).split(/\s+/).filter(Boolean);
+  return parts[parts.length - 1] ?? "";
+}
+
+function getFirstInitial(name: string): string {
+  const parts = normalizeName(name).split(/\s+/).filter(Boolean);
+  return parts[0]?.[0]?.toLowerCase() ?? "";
+}
+
+function namesReferToSamePlayer(left: string, right: string): boolean {
+  const normalizedLeft = normalizeName(left);
+  const normalizedRight = normalizeName(right);
+  if (normalizedLeft === normalizedRight) {
+    return true;
+  }
+
+  const abbrevLeft = parseAbbreviatedName(left);
+  const abbrevRight = parseAbbreviatedName(right);
+
+  if (abbrevLeft && !abbrevRight) {
+    return (
+      abbrevLeft.surname === getSurname(right) &&
+      abbrevLeft.initial === getFirstInitial(right)
+    );
+  }
+
+  if (abbrevRight && !abbrevLeft) {
+    return (
+      abbrevRight.surname === getSurname(left) &&
+      abbrevRight.initial === getFirstInitial(left)
+    );
+  }
+
+  return (
+    getSurname(left) === getSurname(right) &&
+    getFirstInitial(left) === getFirstInitial(right) &&
+    getSurname(left) !== ""
+  );
+}
+
+function preferDisplayName(left: string, right: string): string {
+  const leftAbbrev = isAbbreviatedName(left);
+  const rightAbbrev = isAbbreviatedName(right);
+  if (leftAbbrev && !rightAbbrev) {
+    return right.trim();
+  }
+  if (!leftAbbrev && rightAbbrev) {
+    return left.trim();
+  }
+  return right.trim().length > left.trim().length ? right.trim() : left.trim();
+}
+
+function sameTeamName(left: string, right: string): boolean {
+  return normalizeName(left) === normalizeName(right);
+}
+
+function playersShouldMerge(
+  left: PlayerAccumulator,
+  right: PlayerAccumulator,
+): boolean {
+  if (!sameTeamName(left.teamName, right.teamName)) {
+    return false;
+  }
+  if (
+    left.number != null &&
+    right.number != null &&
+    left.number === right.number
+  ) {
+    return true;
+  }
+  return namesReferToSamePlayer(left.playerName, right.playerName);
+}
+
+function mergePlayerEntries(
+  target: PlayerAccumulator,
+  source: PlayerAccumulator,
+): void {
+  target.playerName = preferDisplayName(target.playerName, source.playerName);
+  target.teamSide =
+    target.teamSide === "neutral" ? source.teamSide : target.teamSide;
+  target.number = target.number ?? source.number;
+  target.position = target.position ?? source.position;
+  target.minutes =
+    target.minutes == null
+      ? source.minutes
+      : source.minutes == null
+        ? target.minutes
+        : Math.max(target.minutes, source.minutes);
+  target.goals = Math.max(target.goals, source.goals);
+  target.assists = Math.max(target.assists, source.assists);
+  target.shots = target.shots ?? source.shots;
+  target.shotsOnTarget = target.shotsOnTarget ?? source.shotsOnTarget;
+  target.passAccuracy = target.passAccuracy ?? source.passAccuracy;
+  target.fouls =
+    target.fouls == null
+      ? source.fouls
+      : source.fouls == null
+        ? target.fouls
+        : Math.max(target.fouls, source.fouls);
+  target.yellowCards = Math.max(target.yellowCards, source.yellowCards);
+  target.redCards = Math.max(target.redCards, source.redCards);
+  target.substitutedOn = target.substitutedOn || source.substitutedOn;
+  target.substitutedOff = target.substitutedOff || source.substitutedOff;
+  target.rating = target.rating ?? source.rating;
+  target.fromApi = target.fromApi || source.fromApi;
+}
+
+function dedupePlayerMap(map: Map<string, PlayerAccumulator>): void {
+  const keys = [...map.keys()];
+  const removed = new Set<string>();
+
+  for (let index = 0; index < keys.length; index += 1) {
+    const keyA = keys[index];
+    if (removed.has(keyA)) {
+      continue;
+    }
+    const entryA = map.get(keyA);
+    if (!entryA) {
+      continue;
+    }
+
+    for (let other = index + 1; other < keys.length; other += 1) {
+      const keyB = keys[other];
+      if (removed.has(keyB)) {
+        continue;
+      }
+      const entryB = map.get(keyB);
+      if (!entryB || !playersShouldMerge(entryA, entryB)) {
+        continue;
+      }
+
+      mergePlayerEntries(entryA, entryB);
+      map.delete(keyB);
+      removed.add(keyB);
+    }
+  }
 }
 
 function playerKey(playerName: string, teamName: string): string {
@@ -405,6 +565,8 @@ export function aggregateMatchPlayerStats(
     lineupAwayName,
     hasApiStats,
   );
+
+  dedupePlayerMap(map);
 
   const rows = Array.from(map.values()).map(toRow);
 

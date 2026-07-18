@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import TeamFlag from "@/components/TeamFlag";
 import TeamLink from "@/components/wc26/TeamLink";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
@@ -457,6 +458,7 @@ export function MatchPlayerStats({
   homeTeamName,
   awayTeamName,
 }: MatchPlayerStatsProps) {
+  const t = useTranslations("match.playerStats");
   const hasApiPlayerStats = (detail.playerStats?.length ?? 0) > 0;
   const [expanded, setExpanded] = useState(false);
 
@@ -480,40 +482,38 @@ export function MatchPlayerStats({
   return (
     <section className={styles.section} aria-labelledby="match-player-stats-heading">
       <h2 id="match-player-stats-heading" className={styles.sectionTitle}>
-        Player stats
+        {t("title")}
       </h2>
       <div className={styles.panel}>
         {showSectionLoading(loading, rows.length > 0) ? (
-          <p className={styles.emptyState}>Loading player statistics…</p>
+          <p className={styles.emptyState}>{t("loading")}</p>
         ) : rows.length === 0 ? (
           <p className={styles.emptyState}>
             {detailEmptyMessage(
               detail,
-              "Player goals, assists, cards and substitutions will appear when the live feed records match events.",
-              "Player statistics will appear when server API sync is configured and the match is underway or finished.",
+              t("emptyEvents"),
+              t("emptyApi"),
             )}
           </p>
         ) : (
           <>
             <p className={styles.playerStatsNote}>
-              {hasApiPlayerStats
-                ? "From live provider data. Goals and assists also follow match events when the feed updates."
-                : "From match events. Shots, pass accuracy and ratings appear when the provider supplies player-level data."}
+              {hasApiPlayerStats ? t("noteApi") : t("noteEvents")}
             </p>
             <div className={styles.playerStatsTableWrap}>
               <table className={styles.playerStatsTable}>
                 <thead>
                   <tr>
-                    <th scope="col">Player</th>
-                    <th scope="col"><abbr title="Goals">G</abbr></th>
-                    <th scope="col"><abbr title="Assists">A</abbr></th>
-                    <th scope="col"><abbr title="Shots">Sh</abbr></th>
-                    <th scope="col"><abbr title="Shots on target">SOT</abbr></th>
-                    <th scope="col"><abbr title="Pass accuracy">Pass%</abbr></th>
-                    <th scope="col"><abbr title="Fouls">F</abbr></th>
-                    <th scope="col"><abbr title="Cards">C</abbr></th>
-                    <th scope="col"><abbr title="Substitute">Sub</abbr></th>
-                    <th scope="col"><abbr title="Rating">Rat</abbr></th>
+                    <th scope="col">{t("columns.player")}</th>
+                    <th scope="col"><abbr title={t("columns.goals")}>{t("columns.goals")}</abbr></th>
+                    <th scope="col"><abbr title={t("columns.assists")}>{t("columns.assists")}</abbr></th>
+                    <th scope="col"><abbr title={t("columns.shots")}>{t("columns.shots")}</abbr></th>
+                    <th scope="col"><abbr title={t("columns.shotsOnTarget")}>{t("columns.shotsOnTarget")}</abbr></th>
+                    <th scope="col"><abbr title={t("columns.passAccuracy")}>{t("columns.passAccuracy")}</abbr></th>
+                    <th scope="col"><abbr title={t("columns.fouls")}>{t("columns.fouls")}</abbr></th>
+                    <th scope="col"><abbr title={t("columns.cards")}>{t("columns.cards")}</abbr></th>
+                    <th scope="col"><abbr title={t("columns.substitute")}>{t("columns.substitute")}</abbr></th>
+                    <th scope="col"><abbr title={t("columns.rating")}>{t("columns.rating")}</abbr></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -557,8 +557,8 @@ export function MatchPlayerStats({
                 onClick={() => setExpanded((value) => !value)}
               >
                 {expanded
-                  ? "Show top 6 only"
-                  : `Show all players (${rows.length})`}
+                  ? t("showTopSix")
+                  : t("showAll", { count: rows.length })}
               </button>
             ) : null}
           </>

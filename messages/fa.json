@@ -161,6 +161,28 @@
       "redCard": "کارت قرمز",
       "yellowCard": "کارت زرد",
       "substitution": "تعویض"
+    },
+    "playerStats": {
+      "title": "آمار بازیکنان",
+      "loading": "در حال بارگذاری آمار بازیکنان…",
+      "emptyEvents": "گل، پاس گل، کارت و تعویض بازیکنان پس از ثبت رویدادها در فید زنده نمایش داده می‌شود.",
+      "emptyApi": "آمار بازیکنان پس از پیکربندی API و شروع یا پایان مسابقه در دسترس قرار می‌گیرد.",
+      "noteApi": "داده از ارائه‌دهنده زنده. گل و پاس گل همچنین با به‌روزرسانی فید مسابقه تکمیل می‌شود.",
+      "noteEvents": "بر اساس رویدادهای مسابقه. شوت، دقت پاس و امتیاز با دریافت داده سطح بازیکن از API نمایش داده می‌شود.",
+      "showAll": "نمایش همه بازیکنان ({count})",
+      "showTopSix": "فقط ۶ بازیکن برتر",
+      "columns": {
+        "player": "بازیکن",
+        "goals": "گ",
+        "assists": "پ",
+        "shots": "ش",
+        "shotsOnTarget": "ش‌در",
+        "passAccuracy": "پاس٪",
+        "fouls": "ف",
+        "cards": "ک",
+        "substitute": "ت",
+        "rating": "ام"
+      }
     }
   },
   "wc26": {
@@ -345,7 +367,7 @@
   "live": {
     "pageTitle": "نتایج زنده — {competition}",
     "competition": "جام جهانی ۲۰۲۶",
-    "pageIntro": "نتایج جام جهانی ۲۰۲۶ از نتایج تأییدشده و همگام‌سازی زنده API. مسابقات تمام‌شده امتیاز نهایی را نشان می‌دهند؛ مسابقات زنده هر ۱۰ ثانیه به‌روزرسانی می‌شوند.",
+    "pageIntro": "نتایج زنده جام جهانی ۲۰۲۶ از منبع تأییدشده و API همگام‌سازی می‌شوند. مسابقات پایان‌یافته با نتیجه نهایی نمایش داده می‌شوند و مسابقات زنده هر ۱۰ ثانیه به‌روز می‌شوند.",
     "syncPending": "در حال همگام‌سازی…",
     "syncDegraded": "نمایش آخرین نتایج — ارائه‌دهنده زنده موقتاً محدود است.",
     "sections": {
@@ -359,15 +381,15 @@
       "today": "امروز مسابقه‌ای از جام جهانی در برنامه محلی ثبت نشده است.",
       "completed": "هنوز مسابقه تمام‌شده‌ای نیست. نتایج نهایی پس از پایان مسابقات نمایش داده می‌شوند."
     },
-    "backToHub": "← Back to World Cup 2026 hub",
+    "backToHub": "← بازگشت به صفحه جام جهانی ۲۰۲۶",
     "countdown": {
-      "liveNow": "Live now",
-      "liveBadge": "● LIVE",
-      "elapsed": "{min}' elapsed",
-      "upNext": "Up next",
-      "untilKickoff": "until kick-off",
-      "viewMatchCentre": "View match centre",
-      "viewMatchCentreArrow": "View match centre →",
+      "liveNow": "اکنون زنده",
+      "liveBadge": "● زنده",
+      "elapsed": "{min} دقیقه سپری‌شده",
+      "upNext": "بعدی",
+      "untilKickoff": "تا شروع بازی",
+      "viewMatchCentre": "مشاهده مرکز مسابقه",
+      "viewMatchCentreArrow": "مشاهده مرکز مسابقه ←",
       "liveNowAria": "{home} در برابر {away} — اکنون زنده، حدود {min} دقیقه سپری‌شده",
       "nextMatchAria": "مسابقه بعد: {home} در برابر {away}، شروع در {countdown}"
     }
