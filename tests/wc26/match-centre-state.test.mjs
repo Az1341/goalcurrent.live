@@ -50,3 +50,23 @@ test("live card when status is live or kick-off passed", () => {
     false,
   );
 });
+
+test("kickoff passed scheduled knockout shows as live in match header", async () => {
+  const { buildHomepageMatchView } = await import(
+    pathToFileURL(join(root, "src/lib/wc26-live.ts")).href
+  );
+
+  const view = buildHomepageMatchView({
+    id: "fixture-103",
+    homeTeamId: "fra",
+    awayTeamId: "eng",
+    venueId: "venue-miami",
+    kickoffUtc: "2020-01-01T20:00:00.000Z",
+    status: "scheduled",
+    stage: "third-place",
+    matchNumber: 103,
+  });
+
+  assert.equal(view.matchClass, "live");
+  assert.equal(view.statusLabel, "Live");
+});

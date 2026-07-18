@@ -28,6 +28,7 @@ export default function MasterHeader() {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const isHome = pathname === "/";
+  const isMatchPage = pathname.startsWith("/match/");
   const chromeRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -120,7 +121,7 @@ export default function MasterHeader() {
         </div>
       </header>
 
-      {!isHome ? <LiveRibbon /> : null}
+      {!isHome && !isMatchPage ? <LiveRibbon /> : null}
     </div>
   );
 }

@@ -124,6 +124,15 @@ export function partitionFixturesForLiveCentre(
       continue;
     }
 
+    if (isFixtureKickoffPassed(fixture, now.getTime())) {
+      live.push(fixture);
+      const kickoffKey = localDateKey(fixture.kickoffUtc);
+      if (kickoffKey === todayKey) {
+        today.push(fixture);
+      }
+      continue;
+    }
+
     const kickoffAt = new Date(fixture.kickoffUtc);
     const kickoffKey = localDateKey(fixture.kickoffUtc);
     if (kickoffKey === todayKey) {
@@ -239,20 +248,28 @@ export type HomepageMatchView = {
   readonly elapsed: number | null;
 };
 
-function classifyHomepageMatch(fixture: EffectiveFixture): HomepageMatchClass {
+function classifyHomepageMatch(
+  fixture: EffectiveFixture,
+  now: Date = new Date(),
+): HomepageMatchClass {
   if (isLiveMatchStatus(fixture.status)) {
     return "live";
   }
-  if (isEffectiveFixtureCompleted(fixture)) {
+  if (isEffectiveFixtureCompleted(fixture, now)) {
     return "ft";
+  }
+  if (isFixtureKickoffPassed(fixture, now.getTime())) {
+    return "live";
   }
   return "upcoming";
 }
 
 function homepageStatusLabel(fixture: EffectiveFixture, matchClass: HomepageMatchClass): string {
   if (matchClass === "live") {
-    // Return human label only — elapsed shown separately in each UI component
-    return formatFixtureStatusLabel(fixture.status);
+    if (isLiveMatchStatus(fixture.status)) {
+      return formatFixtureStatusLabel(fixture.status);
+    }
+    return "Live";
   }
   if (matchClass === "ft") {
     return formatFixtureStatusLabel(fixture.status);
