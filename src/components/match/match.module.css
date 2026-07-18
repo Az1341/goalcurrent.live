@@ -1024,6 +1024,38 @@
   color: var(--gc-text-muted);
 }
 
+.playerStatsRowMoreStart td {
+  border-top: 2px solid var(--gc-border);
+}
+
+.playerStatsExpandBtn {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 12px 16px;
+  border: none;
+  border-top: 1px solid var(--gc-border);
+  background: var(--gc-content-surface);
+  color: var(--gc-content-accent-hover);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.playerStatsExpandBtn:hover {
+  background: var(--gc-content-surface-alt);
+  color: var(--gc-content-heading);
+}
+
+.playerStatsExpandBtn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--gc-content-accent) 45%, transparent);
+  outline-offset: -2px;
+}
+
 /* ── Score elapsed (minute shown below status) ── */
 .scoreElapsed {
   display: block;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import TeamLink from "@/components/wc26/TeamLink";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
@@ -449,6 +449,8 @@ type MatchPlayerStatsProps = {
   awayTeamName: string;
 };
 
+const PLAYER_STATS_VISIBLE = 6;
+
 export function MatchPlayerStats({
   detail,
   loading,
@@ -456,6 +458,7 @@ export function MatchPlayerStats({
   awayTeamName,
 }: MatchPlayerStatsProps) {
   const hasApiPlayerStats = (detail.playerStats?.length ?? 0) > 0;
+  const [expanded, setExpanded] = useState(false);
 
   const rows = useMemo(
     () =>
@@ -470,6 +473,9 @@ export function MatchPlayerStats({
       ),
     [detail.events, detail.lineups, detail.playerStats, homeTeamName, awayTeamName],
   );
+
+  const hasMoreRows = rows.length > PLAYER_STATS_VISIBLE;
+  const visibleRows = expanded ? rows : rows.slice(0, PLAYER_STATS_VISIBLE);
 
   return (
     <section className={styles.section} aria-labelledby="match-player-stats-heading">
@@ -511,8 +517,15 @@ export function MatchPlayerStats({
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((row) => (
-                    <tr key={`${row.teamName}-${row.playerName}`}>
+                  {visibleRows.map((row, index) => (
+                    <tr
+                      key={`${row.teamName}-${row.playerName}-${index}`}
+                      className={
+                        expanded && index === PLAYER_STATS_VISIBLE
+                          ? styles.playerStatsRowMoreStart
+                          : undefined
+                      }
+                    >
                       <td className={styles.playerStatsNameCell}>
                         <span className={styles.playerStatsName}>
                           {row.number != null ? (
@@ -536,6 +549,18 @@ export function MatchPlayerStats({
                 </tbody>
               </table>
             </div>
+            {hasMoreRows ? (
+              <button
+                type="button"
+                className={styles.playerStatsExpandBtn}
+                aria-expanded={expanded}
+                onClick={() => setExpanded((value) => !value)}
+              >
+                {expanded
+                  ? "Show top 6 only"
+                  : `Show all players (${rows.length})`}
+              </button>
+            ) : null}
           </>
         )}
       </div>
