@@ -5,4 +5,6 @@ export const routing = defineRouting({
   locales: [...LOCALES],
   defaultLocale: DEFAULT_LOCALE,
   localePrefix: "as-needed",
+  /** Unprefixed URLs stay English; only /fa/… etc. when user picks a locale. */
+  localeDetection: false,
 });
