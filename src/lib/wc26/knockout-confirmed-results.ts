@@ -1,5 +1,4 @@
 import type { EffectiveFixture } from "@/lib/wc26-fixture-overlay";
-import { isLiveMatchStatus } from "@/lib/wc26-live";
 import type { FixtureStatus } from "@/types/fixture";
 import type { TeamId } from "@/types/team";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
@@ -85,7 +84,7 @@ export function applyConfirmedKnockoutResultsToApiMatches(
       : match;
 
     const confirmed = getConfirmedKnockoutResult(match.matchNumber);
-    if (!confirmed || isLiveMatchStatus(withPairing.status)) {
+    if (!confirmed) {
       return withPairing;
     }
 
@@ -137,10 +136,6 @@ function applyConfirmedKnockoutToFixture(fixture: EffectiveFixture): EffectiveFi
   const withPairing = applyConfirmedKnockoutPairingOverlay(fixture);
   const confirmed = getConfirmedKnockoutResult(fixture.matchNumber);
   if (!confirmed) {
-    return withPairing;
-  }
-
-  if (isLiveMatchStatus(withPairing.status)) {
     return withPairing;
   }
 

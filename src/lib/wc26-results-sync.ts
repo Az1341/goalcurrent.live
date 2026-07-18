@@ -4,7 +4,6 @@ import {
 } from "@/lib/wc26-fixture-overlay";
 import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
 import { getConfirmedKnockoutResult } from "@/lib/wc26/knockout-confirmed-results";
-import { isLiveMatchStatus } from "@/lib/wc26-live";
 import { normalizeWc26MatchStatus } from "@/lib/wc26-match-status";
 import { resolveOverlayKickoffUtc } from "@/lib/wc26/overlay-kickoff";
 import type {
@@ -68,7 +67,7 @@ function overlayEntryFromApiMatch(match: Wc26ApiMatch): FixtureOverlayEntry {
   const status = normalizeWc26MatchStatus(match.status, match.elapsed);
   const kickoffUtc = resolveOverlayKickoffUtc(match.fixtureId, match.kickoffUtc);
 
-  if (confirmed && confirmedResult && !isLiveMatchStatus(status)) {
+  if (confirmed && confirmedResult) {
     const resolvedStatus = confirmedResult.matchStatus ?? status;
     const entry: FixtureOverlayEntry = {
       status: resolvedStatus,

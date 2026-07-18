@@ -541,6 +541,12 @@
       "matchNumber": 102,
       "homeTeamId": "eng",
       "awayTeamId": "arg"
+    },
+    {
+      "fixtureId": "fixture-103",
+      "matchNumber": 103,
+      "homeTeamId": "fra",
+      "awayTeamId": "eng"
     }
   ],
   "knockoutResults": [
@@ -727,6 +733,12 @@
       "homeScore": 3,
       "awayScore": 1,
       "matchStatus": "aet"
+    },
+    {
+      "matchNumber": 101,
+      "winnerTeamId": "esp",
+      "homeScore": 0,
+      "awayScore": 2
     },
     {
       "matchNumber": 102,

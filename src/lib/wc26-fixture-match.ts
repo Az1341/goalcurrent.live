@@ -61,6 +61,9 @@ const KNOCKOUT_TEAM_PAIR_TO_FIXTURE_ID: Readonly<Record<string, string>> = {
   "col|sui": "fixture-096",
   "fra|mar": "fixture-097",
   "eng|nor": "fixture-099",
+  "fra|esp": "fixture-101",
+  "arg|eng": "fixture-102",
+  "eng|fra": "fixture-103",
 };
 
 /** Resolve a knockout fixture id from a known API team pairing. */

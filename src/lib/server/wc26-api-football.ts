@@ -15,6 +15,7 @@ import {
 } from "@/lib/wc26-fixture-match";
 import { normalizeWc26MatchStatus } from "@/lib/wc26-match-status";
 import { getConfirmedKnockoutPairingByFixtureId } from "@/lib/wc26/knockout-confirmed-pairings";
+import { getConfirmedKnockoutResult } from "@/lib/wc26/knockout-confirmed-results";
 import { applyAllConfirmedResults } from "@/lib/wc26/confirmed-results";
 import { resolveTeamId } from "@/lib/teamIdentity";
 import type { Wc26ApiMatch } from "@/types/fixture-overlay";
@@ -310,7 +311,12 @@ export async function fetchLiveWc26Matches(): Promise<Wc26ApiMatch[]> {
     `/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&live=all`,
   );
 
-  return mapLiveFixtures(raw).filter(
-    (match) => match.status !== "ft" && match.status !== "aet" && match.status !== "pen",
-  );
+  return mapLiveFixtures(raw)
+    .filter(
+      (match) =>
+        match.status !== "ft" &&
+        match.status !== "aet" &&
+        match.status !== "pen" &&
+        !getConfirmedKnockoutResult(match.matchNumber),
+    );
 }
