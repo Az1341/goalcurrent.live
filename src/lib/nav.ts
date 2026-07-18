@@ -269,7 +269,7 @@ export const FOOTER_SOCIAL: SocialLinkItem[] = [
     icon: "twitter",
   },
   {
-    href: "https://www.tiktok.com/@goalcurrent",
+    href: "https://www.tiktok.com/@goalcurrent.live",
     labelKey: "tiktok",
     icon: "tiktok",
   },

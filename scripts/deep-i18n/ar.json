@@ -1,39 +1,21 @@
 {
   "common": {
-    "loading": "جارٍ التحميل…",
-    "vs": "ضد",
-    "home": "الرئيسية",
-    "live": "مباشر",
-    "ft": "FT",
-    "ht": "HT",
-    "firstHalf": "الشوط الأول",
-    "secondHalf": "الشوط الثاني",
-    "tbd": "TBD",
-    "updatedMinutesAgo": "تم التحديث منذ {count, plural, one {# دقيقة} other {# دقيقة}}",
-    "updatedSecondsAgo": "تم التحديث منذ {count, plural, one {# ثانية} other {# ثانية}}",
-    "returnHome": "العودة للرئيسية",
     "tryAgain": "حاول مرة أخرى",
     "backToHome": "← العودة إلى الرئيسية",
     "viewAll": "عرض الكل",
     "search": "بحث",
     "noResults": "لم يتم العثور على نتائج.",
-    "subscribe": "اشترك",
-    "language": "اللغة"
+    "firstHalf": "الشوط الأول",
+    "secondHalf": "الشوط الثاني",
+    "updatedMinutesAgo": "تم التحديث منذ {count, plural, one {# دقيقة} other {# دقيقة}}",
+    "updatedSecondsAgo": "تم التحديث منذ {count, plural, one {# ثانية} other {# ثانية}}"
   },
   "nav": {
-    "home": "الرئيسية",
-    "live": "مباشر",
-    "favourites": "المفضلة",
-    "news": "الأخبار",
-    "articles": "المقالات",
-    "videos": "الفيديو",
     "worldCup2026": "كأس العالم 2026",
-    "premierLeague": "Premier League",
     "table": "الترتيب",
     "fixtures": "جدول المباريات",
     "table2627": "الترتيب 26/27",
     "fixtures2627": "جدول المباريات 26/27",
-    "clubs": "الأندية",
     "players": "اللاعبون",
     "statistics": "الإحصائيات",
     "transfers": "الانتقالات",
@@ -42,14 +24,11 @@
     "teams": "الفرق",
     "venues": "الملاعب",
     "bracket": "جدول خروج المغلوب",
-    "pl2627": "PL 26/27",
-    "wc26": "WC26",
     "overview": "نظرة عامة",
     "plHome": "الرئيسية — الدوري",
     "wc26Home": "الرئيسية — كأس العالم",
     "mainNavigation": "التنقل الرئيسي",
     "openMoreNavigation": "فتح المزيد من التنقل",
-    "more": "المزيد",
     "back": "رجوع",
     "backToMenu": "العودة إلى القائمة",
     "closeMenu": "إغلاق القائمة",
@@ -60,7 +39,6 @@
     "privacy": "الخصوصية",
     "cookies": "ملفات تعريف الارتباط",
     "affiliateDisclosure": "إفصاح الشراكة",
-    "language": "اللغة",
     "liveResults": "النتائج المباشرة",
     "liveMatches": "المباريات المباشرة",
     "plVideos": "🎬 فيديوهات الدوري",
@@ -76,11 +54,7 @@
     "plTable2627": "الدوري الإنجليزي 26/27",
     "wc26GroupTables": "جداول مجموعات كأس العالم 2026",
     "wc26Bracket": "جدول خروج المغلوب — كأس العالم 2026",
-    "videoAudio": "فيديو وصوت",
-    "facebook": "Facebook",
-    "instagram": "Instagram",
-    "tiktok": "TikTok",
-    "twitter": "X / Twitter"
+    "videoAudio": "فيديو وصوت"
   },
   "layout": {
     "cookieConsent": {
@@ -91,24 +65,10 @@
       "accept": "قبول ✓"
     },
     "footer": {
-      "ariaLabel": "Footer",
-      "socialAria": "Social media",
-      "nordVpn": "🔒 Stream securely abroad — NordVPN affiliate",
-      "nordAd": "AD",
-      "nordCta": "Get NordVPN →",
-      "copyright": "© {year} Ashna4All · Ahmad Zafarani · {siteName} independent fan site · Not affiliated with FIFA, UEFA or the Premier League.",
-      "platform": "المنصة",
-      "company": "الشركة",
       "tagline": "نتائج كرة القدم المباشرة وجداول المباريات والأخبار — كأس العالم 2026 والدوري الإنجليزي 26/27."
     },
     "liveRibbon": {
-      "live": "LIVE",
-      "ft": "FT",
-      "vs": "vs",
       "viewAllFixtures": "عرض جميع المباريات",
-      "worldCup2026": "WORLD CUP 2026",
-      "liveNow": "LIVE NOW",
-      "latestResults": "LATEST RESULTS",
       "emptyMessage": "جدول من التقويم المحلي — النتائج عند تفعيل مزامنة API",
       "liveMatchesAria": "المباريات المباشرة",
       "latestResultsAria": "أحدث النتائج",
@@ -122,14 +82,12 @@
   },
   "errors": {
     "notFound": {
-      "code": "404",
       "title": "الصفحة غير موجودة",
       "description": "الصفحة التي تبحث عنها غير موجودة أو ربما تم نقلها.",
       "returnHome": "العودة إلى الرئيسية",
       "liveScores": "النتائج المباشرة"
     },
     "generic": {
-      "code": "Error",
       "title": "حدث خطأ ما",
       "description": "يُرجى المحاولة مرة أخرى أو العودة إلى الرئيسية.",
       "tryAgain": "حاول مرة أخرى",
@@ -137,7 +95,6 @@
     }
   },
   "match": {
-    "title": "{home} ضد {away}",
     "liveMatch": "مباراة مباشرة",
     "matchCentre": "مركز المباراة",
     "noEvents": "لم تُسجَّل أي أحداث بعد.",
@@ -256,23 +213,12 @@
     }
   },
   "pl": {
-    "hubTitle": "Premier League",
-    "table": {
-      "zoneCl": "CL",
-      "zoneEl": "EL",
-      "zoneConf": "Conf",
-      "zoneRel": "Rel"
-    },
     "loading": "جارٍ تحميل بيانات الدوري الإنجليزي…"
   },
   "home": {
     "title": "نتائج كرة القدم المباشرة ومركز المباريات",
     "badge": "كأس العالم 2026 · البطولة الرئيسية",
     "featuredMatch": "المباراة المميزة",
-    "liveNow": "Live Now",
-    "viewAllLive": "View All Live Matches",
-    "noLiveMatches": "No live matches right now.",
-    "subtitle": "Live results, fixtures and news from {siteName} — World Cup 2026 is the lead competition.",
     "matchDetails": "تفاصيل المباراة",
     "allFixtures": "جميع المباريات",
     "noFixturesLoaded": "لم يتم تحميل مباريات كأس العالم.",
@@ -282,41 +228,7 @@
     "upcomingFixtures": "المباريات القادمة",
     "viewAllFixtures": "عرض جميع المباريات",
     "noUpcomingFixtures": "لا توجد مباريات قادمة مجدولة.",
-    "wc26Title": "World Cup 2026",
-    "viewAll": "View All",
-    "wc26Summary": "الولايات المتحدة · المكسيك · كندا · 11 يونيو – 19 يوليو 2026 · {gamesPlayed} لُعبت · {gamesLeft} متبقية",
-    "heroHeadline1": "كرة القدم مباشرة.",
-    "heroHeadline2": "كل هدف.",
-    "heroHeadline3": "كل لحظة.",
-    "viewAllMatches": "عرض كل المباريات",
-    "heroAria": "بانر الصفحة الرئيسية",
-    "featuredHeroAria": "المباراة المميزة"
-  },
-  "favourites": {
-    "add": "إضافة {team} إلى المفضلة",
-    "remove": "إزالة {team} من المفضلة",
-    "title": "المفضلة",
-    "empty": "لا توجد مفضلات بعد.",
-    "stripTitle": "المفضلة لديك",
-    "manage": "Manage",
-    "emptyStripLead": "Star a match or team to see them here. Browse",
-    "liveScores": "live scores",
-    "worldCupTeams": "World Cup teams",
-    "or": "or",
-    "pageIntro": "فرقك ومبارياتك على {siteName}.",
-    "emptyTitle": "لا توجد مفضلات",
-    "emptyHint": "ضع نجمة على فريق أو مباراة من صفحة الفرق أو الجدول أو الصفحة الرئيسية.",
-    "teamsSection": "الفرق المفضلة",
-    "noTeams": "لا توجد فرق محفوظة بعد.",
-    "wc26Competition": "FIFA World Cup 2026",
-    "removeBtn": "إزالة",
-    "matchesSection": "المباريات المفضلة",
-    "noMatches": "لا توجد مباريات محفوظة بعد.",
-    "matchDetailsCta": "⚽ التفاصيل والنتيجة المباشرة",
-    "savedMatch": "مباراة محفوظة ({matchId})",
-    "noLongerAvailable": "لم تعد متاحة",
-    "competitionsSection": "البطولات المفضلة",
-    "noCompetitions": "لا توجد بطولات محفوظة بعد."
+    "wc26Summary": "الولايات المتحدة · المكسيك · كندا · 11 يونيو – 19 يوليو 2026 · {gamesPlayed} لُعبت · {gamesLeft} متبقية"
   },
   "news": {
     "loading": "جارٍ التحميل…",
@@ -329,45 +241,15 @@
     "matchDescription": "مباراة كأس العالم 2026 — {title}. مركز مباشر وجدول زمني وإحصائيات وتشكيلات على {siteName}.",
     "titleTemplate": "{title} - {siteName}"
   },
-  "auth": {
-    "account": "الحساب",
-    "signIn": "تسجيل الدخول",
-    "signOut": "تسجيل الخروج",
-    "continueWithGoogle": "المتابعة مع Google",
-    "continueWithApple": "المتابعة مع Apple",
-    "signedInAs": "تم تسجيل الدخول باسم {name}",
-    "enableNotifications": "تفعيل الإشعارات",
-    "notificationsEnabled": "الإشعارات مفعّلة",
-    "notificationsBlocked": "الإشعارات محظورة في المتصفح",
-    "signInError": "فشل تسجيل الدخول. حاول مرة أخرى.",
-    "loading": "جارٍ التحميل…"
-  },
   "live": {
-    "pageTitle": "النتائج المباشرة — {competition}",
-    "competition": "كأس العالم 2026",
     "pageIntro": "نتائج كأس العالم 2026 من النتائج المؤكدة ومزامنة API المباشرة. المباريات المنتهية تعرض النتيجة النهائية؛ المباريات المباشرة تُحدَّد كل 10 ثوانٍ عند تفعيل المزوِّد.",
-    "syncPending": "جارٍ المزامنة…",
     "syncDegraded": "عرض آخر النتائج المعروفة — مزوِّد البث المباشر محدود مؤقتاً.",
-    "sections": {
-      "liveNow": "مباشر الآن",
-      "today": "اليوم",
-      "upcoming": "المباريات القادمة",
-      "completed": "منتهية"
-    },
     "empty": {
       "liveNow": "لا توجد مباريات مباشرة الآن. تظهر النتائج المباشرة هنا عند بدء البطولة وتفعيل مزامنة API.",
       "today": "لا توجد مباريات كأس العالم مجدولة اليوم في الجدول المحلي.",
       "completed": "لا توجد مباريات منتهية بعد. تظهر النتائج النهائية عند انتهاء المباريات."
     },
-    "backToHub": "← Back to World Cup 2026 hub",
     "countdown": {
-      "liveNow": "Live now",
-      "liveBadge": "● LIVE",
-      "elapsed": "{min}' elapsed",
-      "upNext": "Up next",
-      "untilKickoff": "until kick-off",
-      "viewMatchCentre": "View match centre",
-      "viewMatchCentreArrow": "View match centre →",
       "liveNowAria": "{home} ضد {away} — مباشر الآن، حوالي {min} دقيقة من اللعب",
       "nextMatchAria": "المباراة التالية: {home} ضد {away}، البداية خلال {countdown}"
     }

@@ -53,6 +53,7 @@ export default function HeaderLocaleDropdown() {
     closeMenu();
     if (nextLocale !== locale) {
       router.replace(pathname, { locale: nextLocale });
+      router.refresh();
     }
   };
 

@@ -22,7 +22,7 @@ export default defineConfig({
   webServer: {
     command: useDevServer
       ? `npm run dev -- -p ${port}`
-      : `npm run start -- -p ${port}`,
+      : `npm run build && npm run start -- -p ${port}`,
     url: baseURL,
     reuseExistingServer: false,
     timeout: 180_000,

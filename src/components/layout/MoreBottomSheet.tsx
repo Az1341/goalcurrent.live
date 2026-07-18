@@ -56,6 +56,7 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
       return;
     }
     router.replace(pathname, { locale: nextLocale });
+    router.refresh();
     handleNavigate();
   };
 

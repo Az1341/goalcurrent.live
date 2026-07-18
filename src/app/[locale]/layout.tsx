@@ -150,7 +150,7 @@ export default async function LocaleLayout({
       <body className="gc-body">
         <ThemeProvider>
           <ThemeBootstrap />
-          <NextIntlClientProvider messages={messages}>
+          <NextIntlClientProvider locale={locale} messages={messages} key={locale}>
             <SiteJsonLd locale={locale} />
             <Layout>{children}</Layout>
             <GA />

@@ -18,6 +18,31 @@ Set on Vercel project **`goalcurrent.live`** (Production + Preview):
 |----------|-------|-------------|
 | `API_FOOTBALL_KEY` | Server only | api-sports.io key for live scores and match detail |
 | `YOUTUBE_API_KEY` | Server only | YouTube Data API v3 for video ingestion |
+
+### Video feeds (`YOUTUBE_API_KEY`)
+
+Without this key, `/api/videos` and homepage trending clips return empty — the site still builds and runs.
+
+**Vercel (production host for goalcurrent.live):**
+
+1. Vercel → project **`goalcurrent.live`** → **Settings → Environment Variables**
+2. Add `YOUTUBE_API_KEY` = your [YouTube Data API v3](https://console.cloud.google.com/apis/library/youtube.googleapis.com) key
+3. Enable for **Production** and **Preview**
+4. Redeploy `main`
+
+**Verify after deploy:**
+
+```powershell
+Invoke-RestMethod "https://goalcurrent.live/api/videos?limit=3"
+# expect videos[] length > 0 when key is set
+
+Invoke-RestMethod "https://goalcurrent.live/api/cron/refresh-content" `
+  -Headers @{ Authorization = "Bearer YOUR_CRON_SECRET" }
+# expect debug.youtubeKeyPresent: true and sources.videos includes "YouTube"
+```
+
+If you mirror the site on **Netlify**, set the same `YOUTUBE_API_KEY` in **Site configuration → Environment variables** (server-side, not `NEXT_PUBLIC_`).
+
 | `CRON_SECRET` | Server only | Bearer token for `/api/cron/refresh-content` |
 
 ## Optional variables

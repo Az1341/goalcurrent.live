@@ -24,7 +24,8 @@
     "test:unit": "tsx --test tests/i18n/*.test.mjs tests/content/*.test.mjs tests/wc26/*.test.mjs tests/lib/*.test.mjs",
     "test:e2e": "playwright test --project=chromium",
     "test:visual": "playwright test --project=visual",
-    "test:visual:update": "playwright test --project=visual --update-snapshots"
+    "test:visual:update": "playwright test --project=visual --update-snapshots",
+    "lighthouse:home": "node scripts/lighthouse-home.mjs https://goalcurrent.live"
   },
   "dependencies": {
     "@fontsource/big-shoulders-display": "^5.2.5",
