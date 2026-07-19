@@ -1,6 +1,26 @@
 import { z } from "zod";
 import type { ExplanationRequest, ExplanationResponse } from "@/types/domain";
 
+export {
+  EXPLANATION_PROMPT_VERSION,
+  EXPLANATION_SYSTEM_PROMPT,
+  buildExplanationUserPrompt,
+  buildSectionRegenerationPrompt,
+} from "@/lib/explanation-engine/prompts";
+export {
+  ALLOWED_EVIDENCE_SOURCE_TABLES,
+  REQUIRED_BRIEF_SECTIONS,
+  splitEvidenceSource,
+  validateBriefGenerationDraft,
+  validateSectionRegenerationDraft,
+} from "@/lib/explanation-engine/quality";
+export type {
+  BriefGenerationDraft,
+  BriefQualityResult,
+  BriefSectionDraft,
+  EvidenceAnalysisDraft,
+} from "@/lib/explanation-engine/quality";
+
 const evidenceItemSchema = z.object({
   type: z.enum(["stat", "event", "lineup", "context"]),
   source: z.string().min(1),
