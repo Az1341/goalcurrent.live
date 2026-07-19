@@ -10,6 +10,7 @@ import {
 } from "@/lib/i18n/urls";
 import { routing } from "@/i18n/routing";
 import { absoluteUrl } from "@/lib/site-url";
+import { normalizePageTitleText } from "@/lib/seo/canonical-titles";
 
 type PageMetadataInput = {
   title: string;
@@ -86,9 +87,10 @@ export function buildPageMetadata({
   ogImage,
   ogType = "website",
 }: PageMetadataInput): Metadata {
+  const normalizedTitle = normalizePageTitleText(title);
   const url = localizedUrl(path, locale);
   const social = buildSocialMetadata({
-    title,
+    title: normalizedTitle,
     description,
     url,
     ogType,
@@ -96,7 +98,7 @@ export function buildPageMetadata({
   });
 
   return {
-    title: absoluteTitle ? { absolute: title } : title,
+    title: absoluteTitle ? { absolute: normalizedTitle } : normalizedTitle,
     description,
     alternates: {
       canonical: url,
@@ -126,9 +128,10 @@ export function buildArticleMetadata({
   absoluteTitle = true,
   ogImage,
 }: ArticleMetadataInput): Metadata {
+  const normalizedTitle = normalizePageTitleText(title);
   const url = localizedUrl(path, locale);
   const social = buildSocialMetadata({
-    title,
+    title: normalizedTitle,
     description,
     url,
     ogType: "article",
@@ -139,7 +142,7 @@ export function buildArticleMetadata({
   });
 
   return {
-    title: absoluteTitle ? { absolute: title } : title,
+    title: absoluteTitle ? { absolute: normalizedTitle } : normalizedTitle,
     description,
     keywords,
     alternates: {
