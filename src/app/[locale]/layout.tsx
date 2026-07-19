@@ -13,6 +13,7 @@ import { ThemeBootstrap, ThemeProvider } from "@/lib/theme/theme";
 import { isFirebaseConfigured } from "@/lib/firebase/config";
 import SiteJsonLd from "@/components/seo/SiteJsonLd";
 import { FinalLineupVerifier } from "@/components/match/FinalLineupVerifier";
+import FinalWinnerCelebration from "@/components/wc26/FinalWinnerCelebration";
 import { routing } from "@/i18n/routing";
 import { getDirection } from "@/i18n/locales";
 import { BRAND_THEME_COLOR } from "@/lib/site-integrations";
@@ -154,6 +155,7 @@ export default async function LocaleLayout({
           <NextIntlClientProvider locale={locale} messages={messages} key={locale}>
             <SiteJsonLd locale={locale} />
             <Layout>{children}</Layout>
+            <FinalWinnerCelebration />
             <FinalLineupVerifier />
             <GA />
             {isFirebaseConfigured() ? <FirebaseRoot /> : <OneSignalInit />}
