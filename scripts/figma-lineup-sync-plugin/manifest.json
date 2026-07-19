@@ -1,0 +1,12 @@
+{
+  "name": "GoalCurrent Lineup Sync",
+  "id": "goalcurrent-lineup-sync",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "devAllowedDomains": ["http://localhost:8765", "http://127.0.0.1:8765"]
+  }
+}

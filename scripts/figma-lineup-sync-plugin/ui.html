@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font: 12px/1.4 Inter, sans-serif;
+        margin: 12px;
+        color: #111;
+      }
+      button {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background: #fff;
+        cursor: pointer;
+      }
+      #log {
+        white-space: pre-wrap;
+        margin-top: 10px;
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>GoalCurrent Lineup Sync</h3>
+    <p>Pulls payload from the local sync script and updates named text layers.</p>
+    <button id="sync">Sync from localhost</button>
+    <p id="log">Ready.</p>
+    <script>
+      const log = document.getElementById("log");
+      const port = 8765;
+      document.getElementById("sync").onclick = async () => {
+        log.textContent = "Fetching payload…";
+        try {
+          const res = await fetch("http://127.0.0.1:" + port + "/payload");
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || res.statusText);
+          parent.postMessage({ pluginMessage: { type: "apply", payload: data } }, "*");
+          log.textContent = "Applying " + data.updateCount + " text updates…";
+        } catch (error) {
+          log.textContent =
+            "Error: " +
+            error.message +
+            "\nRun: node scripts/sync-figma-final-lineups.mjs --poll --serve";
+        }
+      };
+      onmessage = (event) => {
+        const msg = event.data.pluginMessage;
+        if (msg?.type === "done") log.textContent = msg.text;
+        if (msg?.type === "error") log.textContent = "Error: " + msg.text;
+      };
+    </script>
+  </body>
+</html>

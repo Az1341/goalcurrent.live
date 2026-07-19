@@ -13,6 +13,7 @@
   "homepage": "https://goalcurrent.live",
   "scripts": {
     "sync:flags": "node scripts/sync-wc26-flags.mjs",
+    "sync:figma-lineups": "node scripts/sync-figma-final-lineups.mjs",
     "prebuild": "node scripts/sync-wc26-flags.mjs",
     "dev": "next dev",
     "build": "next build",
