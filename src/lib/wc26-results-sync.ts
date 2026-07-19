@@ -138,11 +138,12 @@ function applyScoresOutcome(outcome: FetchScoresOutcome): boolean {
 
   setSyncStatus("synced");
 
-  if (outcome.data.matches.length === 0) {
+  const matches = Array.isArray(outcome.data.matches) ? outcome.data.matches : [];
+  if (matches.length === 0) {
     return true;
   }
 
-  mergeFixtureOverlay(overlayFromMatches(outcome.data.matches));
+  mergeFixtureOverlay(overlayFromMatches(matches));
   return true;
 }
 
@@ -153,11 +154,14 @@ export function applyWc26ScoresToOverlay(data: Wc26ScoresApiResponse): void {
     return;
   }
 
-  if (data.error) {
+  const matches = Array.isArray(data.matches) ? data.matches : [];
+  const normalized: Wc26ScoresApiResponse = { ...data, matches };
+
+  if (normalized.error) {
     setSyncStatus("degraded");
-    if (data.matches.length > 0) {
-      const partial = overlayFromMatches(data.matches);
-      if (data.phase === "live") {
+    if (matches.length > 0) {
+      const partial = overlayFromMatches(matches);
+      if (normalized.phase === "live") {
         replaceLiveFixtureOverlay(partial);
       } else {
         mergeFixtureOverlay(partial);
@@ -166,13 +170,13 @@ export function applyWc26ScoresToOverlay(data: Wc26ScoresApiResponse): void {
     return;
   }
 
-  if (data.phase === "live") {
+  if (normalized.phase === "live") {
     setSyncStatus("synced");
-    replaceLiveFixtureOverlay(overlayFromMatches(data.matches));
+    replaceLiveFixtureOverlay(overlayFromMatches(matches));
     return;
   }
 
-  applyScoresOutcome({ status: "ok", data });
+  applyScoresOutcome({ status: "ok", data: normalized });
 }
 
 export function isLiveOverlayStatus(status: string): boolean {

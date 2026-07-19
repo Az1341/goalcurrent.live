@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import MatchLineupBroadcast from "@/components/match/MatchLineupBroadcast";
 import { getFixtureById } from "@/data/wc26";
 import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
+import { isWc26FinalLineupFixture } from "@/data/wc26/final-lineups-esp-arg";
 import { isLineupRevealWindow } from "@/lib/match-lineup-timing";
 import { resolveMatchLineupView } from "@/lib/match-lineup-view";
 import { useMatchDetail } from "@/lib/use-match-detail";
@@ -30,30 +31,6 @@ export type MatchLineupPitchSectionProps = {
 
 export type MatchLineupProps = MatchLineupPitchSectionProps;
 
-function BenchList({
-  title,
-  players,
-}: {
-  title: string;
-  players: readonly { name: string; number: number | null }[];
-}) {
-  if (players.length === 0) return null;
-
-  return (
-    <div className={styles.lineupBench}>
-      <p className={styles.lineupMeta}>{title}</p>
-      <ul className={styles.lineupList}>
-        {players.map((player) => (
-          <li key={`${player.number}-${player.name}`} className={styles.lineupPlayer}>
-            <span className={styles.lineupNum}>{player.number ?? "-"}</span>
-            <span>{player.name}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 export default function MatchLineupPitchSection({
   fixtureId,
   matchNumber,
@@ -73,9 +50,11 @@ export default function MatchLineupPitchSection({
   const [nowMs, setNowMs] = useState(() => Date.now());
   const status = matchStatus ?? fixture?.status;
 
+  const editorialFinalReady = isWc26FinalLineupFixture(matchNumber);
   const revealWindowOpen =
     (status != null && isLiveMatchStatus(status)) ||
-    isLineupRevealWindow(kickoffUtc, nowMs);
+    isLineupRevealWindow(kickoffUtc, nowMs) ||
+    editorialFinalReady;
 
   const fetched = useMatchDetail(
     fixtureId,
@@ -149,14 +128,16 @@ export default function MatchLineupPitchSection({
                 homeTeamId={homeTeamId}
                 awayTeamId={awayTeamId}
                 matchMetaLabel={matchMetaLabel}
+                homeBench={view.homeBench}
+                awayBench={view.awayBench}
+                kickoffLabel={kickoffTime ? `Kick-off ${kickoffTime}` : null}
+                venueLabel={
+                  fixture
+                    ? `${formatStageLabel(fixture.stage)} · Match ${fixture.matchNumber}`
+                    : null
+                }
               />
             </div>
-            {view.homeBench.length > 0 || view.awayBench.length > 0 ? (
-              <div className={styles.lineupBenchGrid}>
-                <BenchList title={`${view.homeTeamName} bench`} players={view.homeBench} />
-                <BenchList title={`${view.awayTeamName} bench`} players={view.awayBench} />
-              </div>
-            ) : null}
           </>
         )}
       </div>

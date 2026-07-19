@@ -9,6 +9,11 @@ import {
   isRsaKorDemoFixture,
 } from "@/data/wc26/demo-lineups-rsa-kor";
 import {
+  FINAL_ARG_LINEUP,
+  FINAL_ESP_LINEUP,
+  isWc26FinalLineupFixture,
+} from "@/data/wc26/final-lineups-esp-arg";
+import {
   getFixtureScore,
   isEffectiveFixtureCompleted,
   type EffectiveFixture,
@@ -40,6 +45,7 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
   const score = getFixtureScore(fixture);
   const { detail, loading } = useMatchDetail(fixture.id, isLive);
   const useDemoLineup = isRsaKorDemoFixture(fixture.matchNumber);
+  const useFinalLineup = isWc26FinalLineupFixture(fixture.matchNumber);
   const kickoffTime = useLocalizedKickoffTime(fixture.kickoffUtc);
   const timezoneLabel = useDeviceTimezoneLabel();
   const venueLabel = formatVenueKickoffLabel(fixture.kickoffUtc, fixture.venueId);
@@ -54,15 +60,19 @@ export default function MatchCardFinalRound({ fixture }: MatchCardFinalRoundProp
   const homeLineup =
     detail.lineups.home?.startXI?.length
       ? detail.lineups.home.startXI
-      : useDemoLineup
-        ? DEMO_RSA_LINEUP
-        : [];
+      : useFinalLineup
+        ? FINAL_ESP_LINEUP
+        : useDemoLineup
+          ? DEMO_RSA_LINEUP
+          : [];
   const awayLineup =
     detail.lineups.away?.startXI?.length
       ? detail.lineups.away.startXI
-      : useDemoLineup
-        ? DEMO_KOR_LINEUP
-        : [];
+      : useFinalLineup
+        ? FINAL_ARG_LINEUP
+        : useDemoLineup
+          ? DEMO_KOR_LINEUP
+          : [];
   const hasLineup = homeLineup.length > 0 || awayLineup.length > 0;
 
   return (

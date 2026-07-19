@@ -71,9 +71,12 @@ export function useMatchDetail(
   );
 
   const fixture = fixtures.find((entry) => entry.id === fixtureId);
+  const liveMatches = Array.isArray(liveScores?.matches)
+    ? liveScores.matches
+    : [];
   const apiFixtureId =
     fixture?.apiFixtureId ??
-    liveScores?.matches.find((match) => match.fixtureId === fixtureId)?.apiFixtureId ??
+    liveMatches.find((match) => match.fixtureId === fixtureId)?.apiFixtureId ??
     storedApiFixtureId;
 
   useEffect(() => {
