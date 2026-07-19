@@ -7,6 +7,7 @@ import {
   checkRateLimitAsync,
   clientIpFromRequest,
 } from "@/lib/rate-limit";
+import { updateSupabaseSession } from "@/lib/supabase/proxy";
 
 const LEGACY_GROUP_PATH = /^\/worldcup2026\/groups\/group-([a-l])$/i;
 const LOCALE_PREFIX = /^\/(en|fa|ar|fr|de|nl|es|pt|it)(\/|$)/;
@@ -182,7 +183,8 @@ export async function proxy(request: NextRequest) {
         },
       );
     }
-    return NextResponse.next();
+    const apiResponse = await updateSupabaseSession(request, NextResponse.next());
+    return apiResponse;
   }
 
   // Locale-prefixed /public assets (flags, images, icons, logo)
@@ -208,8 +210,9 @@ export async function proxy(request: NextRequest) {
     return legacyRedirect;
   }
 
-  const response = handleI18n(request);
-  return applySecurityHeaders(response);
+  const i18nResponse = handleI18n(request);
+  const sessionResponse = await updateSupabaseSession(request, i18nResponse);
+  return applySecurityHeaders(sessionResponse);
 }
 
 export const proxyConfig = {

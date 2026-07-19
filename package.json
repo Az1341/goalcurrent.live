@@ -31,6 +31,8 @@
   "dependencies": {
     "@fontsource/big-shoulders-display": "^5.2.5",
     "@sentry/nextjs": "^10.60.0",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.7",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "firebase": "^12.15.0",
@@ -39,6 +41,7 @@
     "next": "16.2.9",
     "next-axiom": "^1.10.0",
     "next-intl": "^4.13.0",
+    "openai": "^6.48.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "swr": "^2.4.2",
