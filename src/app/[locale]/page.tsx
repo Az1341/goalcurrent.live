@@ -7,11 +7,14 @@ import { WC26_FIXTURES } from "@/data/wc26";
 import { HOME_HERO_BG } from "@/lib/critical-assets";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import { SITE_NAME } from "@/lib/site-url";
+import { normalizePageTitleText } from "@/lib/seo/canonical-titles";
 import { selectFeaturedFixtures } from "@/lib/wc26-live";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${SITE_NAME} — Live Football Scores, Fixtures & News`,
-  description: `${SITE_NAME} — live football scores, fixtures, results, standings and news from leagues and tournaments worldwide.`,
+  title: normalizePageTitleText(
+    `${SITE_NAME} | Live Football Scores, Fixtures and News`,
+  ),
+  description: `${SITE_NAME} | live football scores, fixtures, results, standings and news from leagues and tournaments worldwide.`,
   path: "/",
   absoluteTitle: true,
 });
