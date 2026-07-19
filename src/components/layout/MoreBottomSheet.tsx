@@ -17,6 +17,7 @@ import {
   type MoreSheetSubmenuId,
   isMoreSheetLinkActive,
 } from "@/lib/nav";
+import { trackLanguageChange } from "@/lib/analytics";
 import AuthMenu from "@/components/firebase/AuthMenu";
 import styles from "./MoreBottomSheet.module.css";
 
@@ -55,6 +56,11 @@ export default function MoreBottomSheet({ open, onClose }: MoreBottomSheetProps)
       handleNavigate();
       return;
     }
+    trackLanguageChange({
+      previous_language: locale,
+      selected_language: nextLocale,
+      source_surface: "more_sheet_language",
+    });
     router.replace(pathname, { locale: nextLocale });
     router.refresh();
     handleNavigate();

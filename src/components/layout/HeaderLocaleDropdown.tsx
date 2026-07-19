@@ -9,6 +9,7 @@ import {
   LOCALES,
   type AppLocale,
 } from "@/i18n/locales";
+import { trackLanguageChange } from "@/lib/analytics";
 import styles from "./master-chrome.module.css";
 
 export default function HeaderLocaleDropdown() {
@@ -52,6 +53,11 @@ export default function HeaderLocaleDropdown() {
   const handleSelect = (nextLocale: AppLocale) => {
     closeMenu();
     if (nextLocale !== locale) {
+      trackLanguageChange({
+        previous_language: locale,
+        selected_language: nextLocale,
+        source_surface: "header_locale_dropdown",
+      });
       router.replace(pathname, { locale: nextLocale });
       router.refresh();
     }

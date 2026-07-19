@@ -1,7 +1,9 @@
-﻿/** Shared integration IDs for GoalCurrent.live. */
-export const ONESIGNAL_APP_ID = "27dd2cba-29fc-4c6a-9183-54db03eef92d";
-export const GA_MEASUREMENT_ID = "G-X84HCE5KGT";
+﻿import { shouldEnableAnalytics } from "@/lib/analytics/config";
 
+/** Shared integration IDs for GoalCurrent.live. */
+export const ONESIGNAL_APP_ID = "27dd2cba-29fc-4c6a-9183-54db03eef92d";
+
+export { GA_MEASUREMENT_ID } from "@/lib/analytics/config";
 /** PWA theme-color (burgundy .live brand - not header gradient) */
 export const BRAND_THEME_COLOR = "#5c0a1a";
 
@@ -24,14 +26,10 @@ export function isProductionSiteHost(hostname: string): boolean {
 }
 
 /**
- * GA is safe on localhost and preview (no domain lock).
+ * GA4 loads only on approved production hosts (see src/lib/analytics/config.ts).
  */
 export function isAnalyticsHost(hostname: string): boolean {
-  const host = normalizeHost(hostname);
-  if (isProductionSiteHost(host)) return true;
-  if (host === "localhost" || host.endsWith(".localhost")) return true;
-  if (host.endsWith(".vercel.app")) return true;
-  return false;
+  return shouldEnableAnalytics(hostname);
 }
 
 /** Firebase is preferred for auth + FCM when configured; otherwise OneSignal remains. */

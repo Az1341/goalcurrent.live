@@ -1,18 +1,46 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useSyncExternalStore } from "react";
-import { GA_MEASUREMENT_ID, isAnalyticsHost } from "@/lib/site-integrations";
+import { Suspense, useEffect, useSyncExternalStore } from "react";
+import {
+  COOKIE_CONSENT_ACCEPTED,
+  COOKIE_CONSENT_KEY,
+} from "@/lib/site-keys";
+import {
+  GA_MEASUREMENT_ID,
+  shouldEnableAnalytics,
+} from "@/lib/analytics";
+import AnalyticsRouteListener from "@/components/analytics/AnalyticsRouteListener";
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID?.trim() || GA_MEASUREMENT_ID;
+const CONSENT_EVENT = "gc:cookie-consent-change";
 
-export function GA() {
+function subscribeConsent(onStoreChange: () => void) {
+  window.addEventListener(CONSENT_EVENT, onStoreChange);
+  return () => window.removeEventListener(CONSENT_EVENT, onStoreChange);
+}
+
+function hasAnalyticsConsent(): boolean {
+  try {
+    return localStorage.getItem(COOKIE_CONSENT_KEY) === COOKIE_CONSENT_ACCEPTED;
+  } catch {
+    return false;
+  }
+}
+
+function AnalyticsScripts() {
   const hostname = useSyncExternalStore(
     () => () => {},
     () => window.location.hostname,
     () => "",
   );
-  const enabled = Boolean(GA_ID) && isAnalyticsHost(hostname);
+  const consent = useSyncExternalStore(
+    subscribeConsent,
+    hasAnalyticsConsent,
+    () => false,
+  );
+
+  const enabled =
+    consent && Boolean(GA_MEASUREMENT_ID) && shouldEnableAnalytics(hostname);
 
   useEffect(() => {
     if (!enabled) {
@@ -20,26 +48,6 @@ export function GA() {
     }
 
     if ("serviceWorker" in navigator) {
-      const host = window.location.hostname;
-      const isLocalDev =
-        host === "localhost" || host.endsWith(".localhost");
-
-      if (isLocalDev) {
-        void (async () => {
-          const registrations =
-            await navigator.serviceWorker.getRegistrations();
-          if (registrations.length === 0) {
-            return;
-          }
-          const cacheKeys = await caches.keys();
-          await Promise.all(cacheKeys.map((key) => caches.delete(key)));
-          await Promise.all(
-            registrations.map((registration) => registration.unregister()),
-          );
-        })();
-        return;
-      }
-
       if (window.__gc_sw_registered) {
         return;
       }
@@ -58,21 +66,32 @@ export function GA() {
   return (
     <>
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
         strategy="afterInteractive"
       />
       <Script id="ga-init" strategy="afterInteractive">
         {`
           if (!window.__gc_gtag_init) {
-            window.__gc_gtag_init = true;
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             window.gtag = gtag;
+            window.__gc_gtag_init = true;
             gtag('js', new Date());
-            gtag('config', '${GA_ID}');
+            gtag('config', '${GA_MEASUREMENT_ID}', {
+              send_page_view: false,
+              allow_google_signals: false,
+              allow_ad_personalization_signals: false
+            });
           }
         `}
       </Script>
+      <Suspense fallback={null}>
+        <AnalyticsRouteListener />
+      </Suspense>
     </>
   );
+}
+
+export function GA() {
+  return <AnalyticsScripts />;
 }

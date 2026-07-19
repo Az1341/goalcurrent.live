@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import MatchPageClient from "@/app/[locale]/match/[fixtureId]/MatchPageClient";
+import MatchOpenTracker from "@/components/analytics/MatchOpenTracker";
 import MatchSeo from "@/components/seo/MatchSeo";
 import ErrorBoundary from "@/components/system/ErrorBoundary";
 import { WC26_FIXTURES, getFixtureById, getVenueById } from "@/data/wc26";
@@ -8,6 +9,11 @@ import { isKnownFixtureId, matchHref } from "@/lib/wc26-match";
 import { resolveFixtureParticipantLabel } from "@/lib/wc26-live";
 import { getSeoEffectiveFixtures } from "@/lib/wc26/seo-fixtures";
 import { buildMatchMetadata } from "@/lib/page-metadata";
+import {
+  analyticsTeamLabel,
+  buildMatchCentreDescription,
+  buildStableMatchTitle,
+} from "@/lib/seo/canonical-titles";
 import { sportsEventStatus } from "@/lib/seo/sports-event-status";
 import { getScoreBatEmbedForFixture } from "@/lib/scorebat/getScoreBatEmbed";
 import { absoluteUrl, SITE_NAME } from "@/lib/site-url";
@@ -34,11 +40,16 @@ export async function generateMetadata({ params }: MatchPageProps): Promise<Meta
   const seoFixtures = getSeoEffectiveFixtures();
   const homeName = resolveFixtureParticipantLabel(fixture, "home", seoFixtures);
   const awayName = resolveFixtureParticipantLabel(fixture, "away", seoFixtures);
-  const title = `${homeName} vs ${awayName}`;
+  const title = buildStableMatchTitle(homeName, awayName, fixtureId);
 
   return buildMatchMetadata({
     title,
-    description: `World Cup 2026 match — ${title}. Live centre, timeline, statistics and lineups on ${SITE_NAME}.`,
+    description: buildMatchCentreDescription(
+      homeName,
+      awayName,
+      fixtureId,
+      SITE_NAME,
+    ),
     path: matchHref(fixtureId),
     ogImage: absoluteUrl("/icons/screenshot-desktop.png"),
   });
@@ -82,6 +93,13 @@ export default async function MatchPage({ params }: MatchPageProps) {
           { name: "Fixtures", path: "/worldcup2026/fixtures" },
           { name: `${homeName} vs ${awayName}`, path: matchHref(fixtureId) },
         ]}
+      />
+      <MatchOpenTracker
+        matchId={fixtureId}
+        competition="FIFA World Cup 2026"
+        homeTeam={analyticsTeamLabel(homeName)}
+        awayTeam={analyticsTeamLabel(awayName)}
+        matchStatus={String(fixture.status)}
       />
       <MatchPageClient fixtureId={fixtureId} scorebatHighlight={scorebatHighlight} />
     </ErrorBoundary>

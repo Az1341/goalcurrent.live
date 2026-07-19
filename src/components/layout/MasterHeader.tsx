@@ -15,11 +15,20 @@ import {
 import HeaderNavDropdown from "./HeaderNavDropdown";
 import LiveRibbon from "./LiveRibbon";
 import HeaderLocaleDropdown from "./HeaderLocaleDropdown";
+import { trackSubscriptionStart } from "@/lib/analytics";
 import AuthMenu from "@/components/firebase/AuthMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import styles from "./master-chrome.module.css";
 
 function openSubscribeDialog() {
+  trackSubscriptionStart({
+    plan_id: "newsletter_pending",
+    plan_name: "Newsletter",
+    billing_period: "unknown",
+    currency: "GBP",
+    value: 0,
+    source_surface: "header_subscribe",
+  });
   window.dispatchEvent(new CustomEvent("gc:subscribe-open"));
 }
 

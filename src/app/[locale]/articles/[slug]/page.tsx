@@ -4,6 +4,7 @@ import Link from "next/link";
 import ArticleSeo from "@/components/seo/ArticleSeo";
 import RelatedInternalLinks from "@/components/seo/RelatedInternalLinks";
 import ArticleBodyWithAd from "@/components/articles/ArticleBodyWithAd";
+import ArticleViewTracker from "@/components/analytics/ArticleViewTracker";
 import { getArticleBySlug, getDynamicArticleSlugs } from "@/data/articles";
 import {
   articleBreadcrumbs,
@@ -23,7 +24,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
-  if (!article) return { title: "Article — GoalCurrent.live" };
+  if (!article) return { title: "Article not found" };
   return buildStaticArticleMetadata(slug);
 }
 
@@ -43,6 +44,12 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <>
+      <ArticleViewTracker
+        articleId={slug}
+        slug={slug}
+        category={article.category}
+        author={EDITORIAL_SOURCE_LABEL}
+      />
       <ArticleSeo
         article={seo}
         breadcrumbs={articleBreadcrumbs(slug, article.title)}

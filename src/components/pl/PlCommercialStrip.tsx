@@ -1,5 +1,5 @@
-import { NORDVPN_HREF } from "@/lib/site-keys";
 import { SITE_NAME } from "@/lib/site-url";
+import NordVpnAffiliateCta from "@/components/analytics/NordVpnAffiliateCta";
 import styles from "./PlCommercialStrip.module.css";
 
 export default function PlCommercialStrip() {
@@ -14,14 +14,12 @@ export default function PlCommercialStrip() {
       <p className={styles.stripText}>
         Watch Premier League abroad securely on {SITE_NAME} with NordVPN.
       </p>
-      <a
+      <NordVpnAffiliateCta
         className={styles.stripCta}
-        href={NORDVPN_HREF}
-        target="_blank"
-        rel="noopener noreferrer sponsored"
+        sourceSurface="pl_commercial_strip"
       >
         Get NordVPN →
-      </a>
+      </NordVpnAffiliateCta>
     </aside>
   );
 }
