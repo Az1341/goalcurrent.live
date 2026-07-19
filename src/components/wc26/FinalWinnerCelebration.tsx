@@ -160,7 +160,7 @@ export default function FinalWinnerCelebration() {
       >
         <span className={styles.bannerTrophy} aria-hidden="true">{TROPHY}</span>
         <span>
-          <strong>{result.winnerName}</strong> won today&apos;s final — tap for full breakdown
+          <strong>{result.winnerName}</strong>{" "}won today&apos;s final — tap for full breakdown
         </span>
         <span className={styles.bannerChevron} aria-hidden="true">›</span>
       </Link>
