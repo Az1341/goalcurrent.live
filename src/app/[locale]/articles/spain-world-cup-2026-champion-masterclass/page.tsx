@@ -108,7 +108,7 @@ export default function ArticleSpainWorldCupChampionMasterclass() {
 
           <div className={styles.copyrightCard}>
             <p>
-              <strong>(c) 2026 GoalCurrent.live - All Rights Reserved.</strong>
+              <strong>&copy; 2026 GoalCurrent.live &mdash; All Rights Reserved.</strong>
               <br />
               <ArticleCopyrightNotice />
               <br />
