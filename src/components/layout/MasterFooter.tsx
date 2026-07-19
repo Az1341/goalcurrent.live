@@ -2,11 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import NordVpnAffiliateCta from "@/components/analytics/NordVpnAffiliateCta";
 import {
   FOOTER_COMPANY_LINKS,
   FOOTER_PLATFORM_LINKS,
 } from "@/lib/nav";
-import { NORDVPN_HREF } from "@/lib/site-keys";
 import { SITE_NAME } from "@/lib/site-url";
 import GooglePlayBadge from "./GooglePlayBadge";
 import SocialLinks from "./SocialLinks";
@@ -72,9 +72,9 @@ export default function MasterFooter() {
       >
         <span>{tLayout("nordVpn")}</span>
         <span className={styles.nordAd}>{tLayout("nordAd")}</span>
-        <a className={styles.nordCta} href={NORDVPN_HREF} rel="noopener noreferrer sponsored">
+        <NordVpnAffiliateCta className={styles.nordCta} sourceSurface="footer_nordvpn">
           {tLayout("nordCta")}
-        </a>
+        </NordVpnAffiliateCta>
       </div>
 
       <p className={styles.footerCopy}>
