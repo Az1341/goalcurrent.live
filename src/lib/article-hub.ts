@@ -28,6 +28,8 @@ export const ARTICLE_CARD_IMAGES: Record<string, string> = {
     "/images/news/england-france-third-place-preview/hero.svg",
   "england-6-4-france-third-place-recap":
     "/images/news/england-6-4-france-third-place-recap/hero.jpg",
+  "spain-world-cup-2026-champion-masterclass":
+    "/images/news/spain-world-cup-2026-champion-masterclass/hero.svg",
 };
 
 const DEFAULT_ARTICLE_CARD_IMAGE = "/images/football-hero-bg.jpg";

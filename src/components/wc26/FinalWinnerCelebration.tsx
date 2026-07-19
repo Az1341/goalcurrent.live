@@ -1,11 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Link } from "@/i18n/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import TeamFlag from "@/components/TeamFlag";
 import { getTeamById } from "@/data/wc26";
 import { LIVE_API_PATHS, useLiveApi } from "@/lib/client/live-data";
 import { LIVE_POLL_MATCH_MS } from "@/lib/client/fetcher";
+import { matchHref } from "@/lib/wc26-match";
 import {
   resolveFinalWinner,
   WC26_FINAL_FIXTURE_ID,
@@ -17,6 +18,7 @@ import type { Wc26ApiMatch, Wc26ScoresApiResponse } from "@/types/fixture-overla
 import styles from "./FinalWinnerCelebration.module.css";
 
 const STORAGE_PREFIX = "gc:final-winner:dismissed:";
+const BANNER_STORAGE_PREFIX = "gc:final-winner:banner-hidden:";
 const TROPHY = "\u{1F3C6}";
 
 const CONFETTI = [
@@ -90,6 +92,10 @@ function storageKey(resultKey: string): string {
   return `${STORAGE_PREFIX}${resultKey}`;
 }
 
+function bannerHiddenKey(resultKey: string): string {
+  return `${BANNER_STORAGE_PREFIX}${resultKey}`;
+}
+
 export default function FinalWinnerCelebration() {
   const { data: liveData } = useLiveApi<Wc26ScoresApiResponse>(LIVE_API_PATHS.wc26LiveScores, {
     fresh: true,
@@ -100,7 +106,9 @@ export default function FinalWinnerCelebration() {
     refreshInterval: LIVE_POLL_MATCH_MS,
   });
   const [previewMatch, setPreviewMatch] = useState<Wc26ApiMatch | null>(null);
-  const [dismissed, setDismissed] = useState<boolean | null>(null);
+  /** null = loading from storage; false = show overlay; true = show compact banner */
+  const [overlayDismissed, setOverlayDismissed] = useState<boolean | null>(null);
+  const [bannerHidden, setBannerHidden] = useState<boolean | null>(null);
 
   useEffect(() => {
     setPreviewMatch(readPreviewMatch());
@@ -114,61 +122,109 @@ export default function FinalWinnerCelebration() {
 
   useEffect(() => {
     if (!result) {
-      setDismissed(null);
+      setOverlayDismissed(null);
+      setBannerHidden(null);
       return;
     }
     try {
-      setDismissed(localStorage.getItem(storageKey(result.resultKey)) === "1");
+      setOverlayDismissed(
+        localStorage.getItem(storageKey(result.resultKey)) === "1",
+      );
+      setBannerHidden(
+        localStorage.getItem(bannerHiddenKey(result.resultKey)) === "1",
+      );
     } catch {
-      setDismissed(false);
+      setOverlayDismissed(false);
+      setBannerHidden(false);
     }
   }, [result]);
 
+  const dismissOverlay = useCallback(() => {
+    if (!result) return;
+    try {
+      localStorage.setItem(storageKey(result.resultKey), "1");
+    } catch {
+      /* ignore */
+    }
+    setOverlayDismissed(true);
+  }, [result]);
+
+  const hideBanner = useCallback(() => {
+    if (!result) return;
+    try {
+      localStorage.setItem(bannerHiddenKey(result.resultKey), "1");
+    } catch {
+      /* ignore */
+    }
+    setBannerHidden(true);
+  }, [result]);
+
   useEffect(() => {
-    if (!result || dismissed !== false) return;
+    if (!result || overlayDismissed !== false) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        try { localStorage.setItem(storageKey(result.resultKey), "1"); } catch { /* ignore */ }
-        setDismissed(true);
-      }
+      if (event.key === "Escape") dismissOverlay();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [dismissed, result]);
+  }, [dismissOverlay, overlayDismissed, result]);
 
-  if (!result || dismissed == null) return null;
+  if (!result || overlayDismissed == null || bannerHidden == null) {
+    return null;
+  }
 
-  const dismiss = () => {
-    try { localStorage.setItem(storageKey(result.resultKey), "1"); } catch { /* ignore */ }
-    setDismissed(true);
-  };
+  if (overlayDismissed && bannerHidden) {
+    return null;
+  }
 
-  const matchHref = `/match/${WC26_FINAL_FIXTURE_ID}`;
-  const highlightsHref = `${matchHref}#match-highlights-heading`;
+  const finalMatchPath = matchHref(WC26_FINAL_FIXTURE_ID);
+  const highlightsHref = `${finalMatchPath}#match-highlights-heading`;
 
-  if (dismissed) {
+  if (overlayDismissed) {
     return (
-      <Link
-        href={matchHref}
-        className={styles.banner}
-        aria-label={`${result.winnerName} won the World Cup final. View the full match breakdown.`}
-      >
-        <span className={styles.bannerTrophy} aria-hidden="true">{TROPHY}</span>
-        <span>
-          <strong>{result.winnerName}</strong>{" "}won today&apos;s final — tap for full breakdown
-        </span>
-        <span className={styles.bannerChevron} aria-hidden="true">›</span>
-      </Link>
+      <div className={styles.banner} role="region" aria-label="World Cup final winner">
+        <Link
+          href={finalMatchPath}
+          className={styles.bannerLink}
+          aria-label={`${result.winnerName} crowned World Cup 2026 champion. View M104 breakdown.`}
+        >
+          <span className={styles.bannerTrophy} aria-hidden="true">
+            {TROPHY}
+          </span>
+          <span className={styles.bannerText}>
+            <strong>{result.winnerName} Crowned World Cup 2026 Champion</strong>
+            {" — "}
+            View M104 Breakdown
+          </span>
+          <span className={styles.bannerChevron} aria-hidden="true">
+            ›
+          </span>
+        </Link>
+        <button
+          type="button"
+          className={styles.bannerClose}
+          onClick={(event) => {
+            event.stopPropagation();
+            hideBanner();
+          }}
+          aria-label="Dismiss winner banner"
+        >
+          ×
+        </button>
+      </div>
     );
   }
 
   return (
-    <div className={styles.overlay} onMouseDown={dismiss}>
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onClick={dismissOverlay}
+    >
       <div className={styles.glow} aria-hidden="true" />
       <div className={styles.confetti} aria-hidden="true">
         {CONFETTI.map(([top, left, tone, rotate], index) => (
@@ -191,9 +247,14 @@ export default function FinalWinnerCelebration() {
         aria-modal="true"
         aria-labelledby="final-winner-title"
         aria-describedby="final-winner-score"
-        onMouseDown={(event) => event.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
       >
-        <button type="button" className={styles.close} onClick={dismiss} aria-label="Dismiss winner announcement">
+        <button
+          type="button"
+          className={styles.close}
+          onClick={dismissOverlay}
+          aria-label="Dismiss winner announcement"
+        >
           ×
         </button>
         <div className={styles.trophy} aria-hidden="true">{TROPHY}</div>
@@ -218,14 +279,22 @@ export default function FinalWinnerCelebration() {
           <p className={styles.opponent}>vs {result.opponentName}</p>
         </div>
         <div className={styles.actions}>
-          <Link href={matchHref} className={styles.primaryAction} onClick={dismiss}>
-            View Match Summary
+          <Link
+            href={finalMatchPath}
+            className={styles.primaryAction}
+            onClick={dismissOverlay}
+          >
+            View M104 Breakdown
           </Link>
-          <Link href={highlightsHref} className={styles.secondaryAction} onClick={dismiss}>
+          <Link
+            href={highlightsHref}
+            className={styles.secondaryAction}
+            onClick={dismissOverlay}
+          >
             Watch Key Highlights
           </Link>
         </div>
-        <button type="button" className={styles.dismissText} onClick={dismiss}>
+        <button type="button" className={styles.dismissText} onClick={dismissOverlay}>
           Tap anywhere to dismiss
         </button>
       </section>

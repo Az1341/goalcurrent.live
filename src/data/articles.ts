@@ -204,6 +204,15 @@ export const ARTICLE_INDEX: readonly ArticleIndexEntry[] = [
       "Rice and Saka fired England into a 4-0 half-time lead before Mbappé dragged France back to 4-3 — but Saka's hat-trick and Bellingham's 90+8' finish sealed a breathless 6-4 bronze win in Miami.",
     date: "18 July 2026",
   },
+  {
+    slug: "spain-world-cup-2026-champion-masterclass",
+    category: "Match Report",
+    title:
+      "Spain's Masterclass: How the Spanish Dominated to Reclaim the World Cup",
+    excerpt:
+      "Spain lifted the 2026 World Cup trophy with a 1-0 victory over defending champions Argentina at the New York/New Jersey Stadium — a composed, possession-led masterclass that sealed their second world title.",
+    date: "19 July 2026",
+  },
 ];
 
 export function articleHref(slug: string): string {

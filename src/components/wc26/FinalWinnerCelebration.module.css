@@ -260,12 +260,10 @@
   display: flex;
   width: min(520px, calc(100vw - 32px));
   min-height: 48px;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
   color: #f8fafc;
-  font: 500 14px/1.35 var(--gc-font);
-  text-decoration: none;
   border: 1.5px solid #f5c542;
   border-radius: 999px;
   background: rgba(10, 26, 47, 0.96);
@@ -274,10 +272,61 @@
     0 0 12px rgba(245, 197, 66, 0.25);
   transform: translateX(-50%);
   backdrop-filter: blur(12px);
+  overflow: hidden;
 }
 
-.banner strong {
+.bannerLink {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  color: inherit;
+  font: 500 14px/1.35 var(--gc-font);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bannerLink:hover {
+  color: inherit;
+}
+
+.bannerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.bannerClose {
+  display: grid;
+  width: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  color: rgba(248, 250, 252, 0.85);
+  font: 400 22px/1 var(--gc-font);
+  border: 0;
+  border-left: 1px solid rgba(245, 197, 66, 0.35);
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bannerClose:hover,
+.bannerClose:focus-visible {
+  color: #f5c542;
+  outline: none;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.bannerLink strong {
   margin-inline-end: 0.25em;
+}
+
+.bannerLink:hover {
+  box-shadow: none;
 }
 
 .banner:hover {
