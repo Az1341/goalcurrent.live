@@ -13,6 +13,7 @@ import { fetcher, LIVE_SWR_OPTIONS } from "@/lib/client/fetcher";
 import type { PlFixturesApiResponse } from "@/lib/pl/types";
 import LiveRibbon from "@/components/layout/LiveRibbon";
 import HomeHero from "@/components/home/v5/HomeHero";
+import HomeChampionSnippet from "@/components/home/v5/HomeChampionSnippet";
 import styles from "@/components/home/home-v5.module.css";
 
 const HomeTodaysMatches = dynamic(
@@ -65,6 +66,7 @@ export default function HomeClient() {
       </div>
 
       <main className={styles.main}>
+        <HomeChampionSnippet />
         <HomeHero
           featuredMatch={featuredMatch}
           wc26Views={heroWc26Views}

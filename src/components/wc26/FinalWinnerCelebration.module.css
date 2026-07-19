@@ -258,7 +258,7 @@
   top: calc(var(--gc-site-header-height) + 14px);
   left: 50%;
   display: flex;
-  width: min(520px, calc(100vw - 32px));
+  width: min(640px, calc(100vw - 32px));
   min-height: 48px;
   align-items: stretch;
   gap: 0;

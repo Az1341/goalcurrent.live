@@ -149,6 +149,90 @@
   margin: 0 calc(-1 * var(--gc-home-gutter));
 }
 
+.championSnippet {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 calc(-1 * var(--gc-home-gutter));
+  padding: 20px var(--gc-home-gutter) 24px;
+  border-bottom: 1px solid color-mix(in srgb, var(--text-primary, #0a1a2f) 12%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, #c60b1e 14%, var(--bg-surface, #fff)) 0%,
+      color-mix(in srgb, #f1bf00 10%, var(--bg-page, #f7f8fa)) 55%,
+      var(--bg-page, #f7f8fa) 100%
+    );
+}
+
+.championSnippetEyebrow {
+  margin: 0;
+  font-family: var(--font-heading), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-red, #c8102e);
+}
+
+.championSnippetTitle {
+  margin: 0;
+  font-family: var(--font-heading), sans-serif;
+  font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-primary, var(--gc-v5-text));
+}
+
+.championSnippetBody {
+  margin: 0;
+  max-width: 62rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-secondary, color-mix(in srgb, var(--text-primary, #0a1a2f) 78%, transparent));
+}
+
+.championSnippetActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.championSnippetPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: var(--accent-red, var(--gc-brand-from, #c8102e));
+  color: #fff;
+  font-family: var(--font-heading), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.championSnippetPrimary:hover {
+  filter: brightness(1.05);
+}
+
+.championSnippetSecondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 4px;
+  color: var(--text-primary, var(--gc-v5-text));
+  font-family: var(--font-heading), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.championSnippetSecondary:hover {
+  text-decoration: underline;
+}
+
 .section {
   display: flex;
   flex-direction: column;

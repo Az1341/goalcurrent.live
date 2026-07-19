@@ -259,7 +259,7 @@ export default function FinalWinnerCelebration() {
         </button>
         <div className={styles.trophy} aria-hidden="true">{TROPHY}</div>
         <div className={styles.winnerBlock}>
-          <p className={styles.eyebrow}>{TROPHY} Match winner confirmed!</p>
+          <p className={styles.eyebrow}>{TROPHY} World Cup champions!</p>
           <div className={styles.winnerRow}>
             <h2 id="final-winner-title">{result.winnerName}</h2>
             <span className={styles.flag}>
