@@ -1,4 +1,4 @@
-﻿# GA4 validation report
+# GA4 validation report
 
 Date: 2026-07-19
 Branch: goalcurrent-v2-rebuild
@@ -26,3 +26,8 @@ Branch: goalcurrent-v2-rebuild
 ## Preview / localhost
 
 - GA scripts do not load without production host + cookie consent (code review + gating tests)
+
+## Enhanced Measurement follow-up (2026-07-20)
+
+- Root cause of delayed duplicate `page_view` (missing `dp`): GA4 Enhanced Measurement history events — see `GA4-ENHANCED-MEASUREMENT.md`.
+- Founder Admin change required before claiming full page_view uniqueness in production.
