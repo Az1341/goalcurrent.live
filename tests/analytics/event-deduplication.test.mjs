@@ -39,4 +39,15 @@ describe("analytics event deduplication", async () => {
     resetDedupeKey("article:slug-a");
     assert.equal(shouldSkipDuplicateEvent("article:slug-a", { ttlMs: 60_000 }), false);
   });
+
+  it("suppresses page_view remount duplicates within short TTL", () => {
+    assert.equal(
+      shouldSkipDuplicateEvent("page_view:/videos", { ttlMs: 2500 }),
+      false,
+    );
+    assert.equal(
+      shouldSkipDuplicateEvent("page_view:/videos", { ttlMs: 2500 }),
+      true,
+    );
+  });
 });

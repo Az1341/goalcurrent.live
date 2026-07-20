@@ -8,8 +8,8 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    // jsx-a11y is already registered by eslint-config-next; do not redefine it.
     plugins: {
-      "jsx-a11y": jsxA11y,
       security,
     },
     rules: {
