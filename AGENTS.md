@@ -15,3 +15,13 @@ Run `npm run verify:design` and confirm in the browser:
 - **Language** — header `🌐 EN ▾` (desktop) and More sheet → زبان (mobile)
 
 Do **not** set `HOME_HERO_BG` to `null` or remove `image` fields from article hubs. Do not route `/flags`, `/images`, or `/icons` through the service-worker cache-first path.
+
+## Mandatory private-preview release policy
+
+Every GoalCurrent change must follow:
+
+Build → Automated tests → Protected private preview → Ahmad’s review → Explicit Founder Approval → Merge into main → Public deployment
+
+Nothing may be merged into main or published publicly without explicit Founder Approval after Ahmad has reviewed the protected private preview.
+
+Full policy: `docs/governance/PRIVATE-PREVIEW-RELEASE-POLICY.md`
