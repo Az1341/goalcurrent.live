@@ -1,6 +1,6 @@
 # Blocker Report
 
-> Conforms to `docs/standards/REPORTING_STANDARD.md`  
+> Conforms to `docs/standards/REPORTING_STANDARD.md` **v1.0.0**  
 > Report Type: Blocker
 
 ```text
@@ -15,7 +15,7 @@
 | **Execution Batch** | |
 | **Report Type** | |
 | **Status** | |
-| **Repository** | |
+| **Repository** | Az1341/goalcurrent.live |
 | **Branch** | |
 | **PR Number** | |
 
@@ -27,14 +27,18 @@
 - 
 - 
 
-## Time block
+## Execution Timeline
+
+| Event | Timestamp |
+| --- | --- |
+| **Task Started** | `[DD/MM/YYYY – HH:MM]` |
+| **Task Completed** | `[DD/MM/YYYY – HH:MM]` / IN PROGRESS / BLOCKED |
+| **Status Checked** | `[DD/MM/YYYY – HH:MM]` |
+| **Report Generated** | `[DD/MM/YYYY – HH:MM]` |
 
 | Field | Value |
 | --- | --- |
-| **Generated at** | `[DD/MM/YYYY – HH:MM]` |
-| **Task started** | `[DD/MM/YYYY – HH:MM]` |
-| **Task completed** | `[DD/MM/YYYY – HH:MM]` / IN PROGRESS / BLOCKED |
-| **Status checked** | `[DD/MM/YYYY – HH:MM]` |
+| **Generated at** | |
 | **Started** | HH:MM |
 | **Finished** | HH:MM or — |
 | **Duration** | N minutes |
@@ -58,6 +62,9 @@
 | --- | --- |
 | **Current Commit** | |
 | **Previous Commit** | |
+| **Commit URL** | https://github.com/Az1341/goalcurrent.live/commit/<SHA> |
+| **Pull Request URL** | https://github.com/Az1341/goalcurrent.live/pull/<N> or none |
+| **Branch URL** | https://github.com/Az1341/goalcurrent.live/tree/<branch> |
 | **Commits Created** | |
 | **Files Added** | |
 | **Files Modified** | |
@@ -76,6 +83,19 @@
 ### Files Deleted
 
 - (alphabetically)
+
+## Executive Metrics Dashboard
+
+| Metric | Value |
+| --- | --- |
+| **Tasks Completed** | |
+| **Tasks Failed** | |
+| **Tasks Skipped** | |
+| **Commits Created** | |
+| **Files Created** | |
+| **Files Modified** | |
+| **Files Deleted** | |
+| **Documentation Pages Updated** | |
 
 ## When discovered
 
@@ -101,6 +121,44 @@ Critical | High | Medium | Low
 
 -
 
+## Decision Log
+
+| When | Category | Decision |
+| --- | --- | --- |
+| | Founder / Architecture / Repository / Documentation | |
+
+## Known Issues
+
+| Issue | Severity | Impact | Planned Resolution |
+| --- | --- | --- | --- |
+| None | | | |
+
+## Rollback Assessment
+
+| Field | Value |
+| --- | --- |
+| **Rollback Required** | Yes / No / N/A |
+| **Rollback Complexity** | NONE / LOW / MEDIUM / HIGH |
+| **Rollback Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Recovery Method** | |
+
+## Dependencies
+
+| Type | Item |
+| --- | --- |
+| Previous execution batches | |
+| Required documentation | |
+| Required repositories | |
+| Required standards | docs/standards/REPORTING_STANDARD.md v1.0.0 |
+
+## Success Criteria
+
+| Objective | Status |
+| --- | --- |
+| | PASS / FAIL |
+
+**Overall completion percentage:** N%
+
 ## Risk Assessment
 
 | Risk | Severity |
@@ -112,11 +170,23 @@ Critical | High | Medium | Low
 
 ## Founder Action Required
 
-- None | (only founder-approval actions)
+- None | (founder-approval actions only)
 
 ## Next Recommended Task
 
 - 
+
+## Audit Trail
+
+| Field | Value |
+| --- | --- |
+| **Repository** | Az1341/goalcurrent.live |
+| **Branch** | |
+| **Execution Environment** | |
+| **Executor** | |
+| **Founder Approval Status** | Pending / Approved / Rejected / N/A |
+| **Approval Date** | N/A |
+| **Report Version** | 1.0.0 |
 
 ## Footer
 
