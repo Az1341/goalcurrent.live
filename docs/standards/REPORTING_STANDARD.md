@@ -1,78 +1,50 @@
 # GoalCurrent Reporting Standard
 
-**Standard ID:** GC-REPORTING-STANDARD-BATCH-001  
-**Supersedes:** GC-STANDARD-REPORTING-001 (timestamp-only rule)  
+**Standard ID:** GC-REPORTING-STANDARD-BATCH-002  
+**Supersedes:** GC-REPORTING-STANDARD-BATCH-001 / GC-STANDARD-REPORTING-001  
 **Status:** MANDATORY  
 **Scope:** GoalCurrent, SepanAI and FAMVI work unless the Founder explicitly overrides  
 **Owner:** Ahmad Zafarani (Founder)  
 **Authority:** This file is the single source of truth for execution, validation, CI, deployment and blocker reports.
 
-Related templates live under `templates/`. Agents must follow this standard via `AGENTS.md`.
+Templates: `templates/`. Examples: `docs/examples/reporting/`. Validator: `scripts/validate-reporting-standard.mjs`.
 
 ---
 
 ## 1. Purpose
 
-Every execution report, progress update, validation report, CI report, deployment report and blocker report must be:
-
-- timestamped with fresh local time
-- structured and comparable across batches
-- suitable for founder audit and release gates
-- free of estimates, vague status language and conflicting formats
+Every report must be timestamped, structured, comparable, executive-ready and suitable for founder audit. Never estimate times. Never invent SHAs, URLs or Founder Approval.
 
 ---
 
 ## 2. Timestamp format
 
-### Required envelope
-
-Every report **begins** with:
+### Required opening
 
 ```text
-[DD/MM/YYYY – HH:MM]
-```
-
-Every **final** report **ends** with:
-
-```text
-Report generated:
 [DD/MM/YYYY – HH:MM]
 ```
 
 ### Rules
 
-1. Generate the timestamp **immediately before** producing the report.
-2. Use **local project / founder time** (UK local for GoalCurrent founder workflow).
-3. Use an en dash `–` between date and time (not a hyphen).
-4. Use 24-hour `HH:MM`.
-5. **Never reuse** an older timestamp.
-6. **Never estimate** times. If a clock value is unknown, state `UNKNOWN` and explain why — do not invent.
+1. Generate immediately before producing the report.
+2. Use local project / founder time.
+3. Use en dash `–` (not hyphen).
+4. 24-hour `HH:MM`.
+5. Never reuse an older timestamp.
+6. Never estimate. If unknown, write `UNKNOWN` and explain.
 
 ### Mandatory time labels (never omit)
 
 | Label | Meaning |
 | --- | --- |
 | **Generated at** | Instant the report content was assembled |
-| **Task started** | When the named task execution began |
-| **Task completed** | When the named task finished (or `IN PROGRESS`) |
-| **Status checked** | When live status (CI / deploy / long job) was last queried |
-| **Report generated** | Closing stamp on final reports (same format as opening) |
+| **Task started** | When the named task began |
+| **Task completed** | When finished, or `IN PROGRESS` / `BLOCKED` |
+| **Status checked** | When live status was last queried |
+| **Report Generated** | Footer stamp on every final report |
 
-For long-running work, always pair historical facts with a fresh check:
-
-```text
-Task completed:
-[21/07/2026 – 15:32]
-
-Status checked:
-[21/07/2026 – 15:47]
-```
-
----
-
-## 3. Execution duration (mandatory)
-
-Every report that covers a finished or in-progress task must include duration derived from real start/finish clocks:
+### Execution duration (mandatory)
 
 ```text
 Started:  15:18
@@ -80,80 +52,73 @@ Finished: 15:54
 Duration: 36 minutes
 ```
 
-Rules:
-
-- Duration = finish − start (or `elapsed so far` if still running, labelled clearly).
-- Never invent duration.
-- Prefer minutes for human audit; include seconds only when sub-minute precision matters.
-
 ---
 
-## 4. Git / PR identity (mandatory on every report)
+## 3. Executive report header (mandatory)
 
-Every report must include:
+Every report begins with the opening timestamp, then this header:
 
 | Field | Requirement |
 | --- | --- |
+| **Project** | e.g. GoalCurrent / SepanAI / FAMVI |
+| **Execution Batch** | Batch / task ID |
+| **Report Type** | Progress / Completion / CI / Deployment / Blocker / Validation |
+| **Status** | Short live status string |
 | **Repository** | e.g. `Az1341/goalcurrent.live` |
-| **Current branch** | Exact branch name |
-| **Current commit SHA** | Full or unambiguous short SHA of HEAD |
-| **Previous commit SHA** | Parent of current tip (or `N/A` on orphan root) |
-| **Pull Request** | URL or `none` |
-| **Draft or Ready** | `Draft` / `Ready` / `N/A` |
+| **Branch** | Exact branch name |
+| **PR Number** | Number or `N/A` |
 
 ---
 
-## 5. Report types and templates
+## 4. Executive Summary (mandatory)
 
-| Type | Template | When to use |
-| --- | --- | --- |
-| Progress | `templates/progress-report.md` | Mid-task updates |
-| Completion | `templates/completion-report.md` | Task / batch finished |
-| CI | `templates/ci-report.md` | GitHub Actions / pipeline status |
-| Deployment | `templates/deployment-report.md` | Preview or production deploys |
-| Blocker | `templates/blocker-report.md` | Hard stops, missing routes, policy gates |
-
-Chat / Cursor responses that are formal reports must follow the same sections even when not pasted into a file.
+Immediately below the header. **Maximum five** concise bullet points.
 
 ---
 
-## 6. Mandatory section order
+## 5. Environment Summary (mandatory)
 
-### 6.1 All reports (common header)
-
-1. Opening timestamp `[DD/MM/YYYY – HH:MM]`
-2. Task ID / Title
-3. Repository identity (branch, commits, PR, draft/ready)
-4. Time block (Generated at, Task started, Task completed, Status checked, Duration)
-5. Body sections for the report type (see templates)
-6. Overall Status (final reports — see §13)
-7. Closing `Report generated:` stamp (final reports)
-
-### 6.2 Progress report body order
-
-Date → Time → Task ID → Branch → Commit → Current status → Completed → Remaining → Blockers → Next action
-
-### 6.3 Completion report body order
-
-Start time → Finish time → Duration → Validation summary → Files changed → Commits → Deployment status → Final verdict
-
-### 6.4 CI report body order
-
-Workflow → Run number → Start / End / Duration → Per-job matrix (Queued / Running / Passed / Failed / Skipped)
-
-### 6.5 Deployment report body order
-
-Git commit → Branch → Environment → Deploy start / finish / duration → Smoke tests → Rollback status
-
-### 6.6 Blocker report body order
-
-When discovered → Severity → Impact → Root cause → Evidence → Recommended action → Owner
+| Field | Requirement |
+| --- | --- |
+| **Repository** | |
+| **Branch** | |
+| **Commit** | Current HEAD SHA |
+| **Previous Commit** | Parent SHA |
+| **Draft/Ready PR** | Draft / Ready / N/A |
+| **Production Status** | NOT DEPLOYED / DEPLOYED / UNKNOWN |
+| **Preview URL** | URL or `none` |
+| **PR URL** | URL or `none` |
 
 ---
 
-## 7. Validation summary standard
+## 6. Git Summary (mandatory)
 
-Every validation or completion report that claims quality gates must list **each** of the following individually as one of: `PASS` | `FAIL` | `SKIPPED` | `RUNNING`
+| Field | Requirement |
+| --- | --- |
+| **Current Commit** | |
+| **Previous Commit** | |
+| **Commits Created** | List or count for this batch |
+| **Files Added** | Count |
+| **Files Modified** | Count |
+| **Files Deleted** | Count |
+
+Also include Pull Request identity: URL and Draft or Ready.
+
+---
+
+## 7. Files Changed Report (mandatory)
+
+Alphabetically sorted lists:
+
+- **Files Created**
+- **Files Modified**
+- **Files Deleted**
+
+---
+
+## 8. Validation Dashboard (mandatory when claiming quality gates)
+
+Each row must be exactly one of: `PASS` | `FAIL` | `RUNNING` | `SKIPPED` | `BLOCKED`
 
 | Check |
 | --- |
@@ -165,118 +130,114 @@ Every validation or completion report that claims quality gates must list **each
 | Visual Tests |
 | Accessibility |
 | i18n |
+| Markdown |
 | Production Build |
 | Vercel Preview |
-
-Do not collapse multiple gates into a single “tests passed” line.
-
----
-
-## 8. CI monitoring rules
-
-Long-running jobs (Playwright, visual suites, Vercel builds, GitHub Actions) must always report:
-
-- **Status checked:** `[DD/MM/YYYY – HH:MM]`
-- **Current state:** exactly one of  
-  `Waiting` | `Running` | `Retrying` | `Passed` | `Failed`
-
-**Prohibited:** writing only “Still running.” without Status checked + Current state.
+| GitHub Actions |
 
 ---
 
-## 9. Overall Status (final reports)
+## 9. Risk Assessment (mandatory)
 
-Every final report ends its body with **Overall Status** set to exactly one of:
+| Risk | Severity |
+| --- | --- |
+| **Production Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Deployment Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Documentation Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Merge Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
 
-- `READY FOR REVIEW`
-- `READY FOR PRODUCTION`
-- `BLOCKED`
-- `FAILED`
-- `Requires Founder Approval`
+---
 
-GoalCurrent product changes that are not founder-approved for public release must also state:
+## 10. Founder Action Required (mandatory)
+
+List **only** actions that require Founder approval. If none, write `None`.
+
+---
+
+## 11. Next Recommended Task (mandatory)
+
+Name the logical next execution batch or task ID.
+
+---
+
+## 12. Report footer (mandatory on final reports)
+
+| Field | Values |
+| --- | --- |
+| **Overall Status** | READY FOR REVIEW / READY FOR PRODUCTION / BLOCKED / FAILED / Requires Founder Approval |
+| **Production Status** | NOT DEPLOYED / DEPLOYED / UNKNOWN |
+| **Main Branch Status** | UNCHANGED / CHANGED (must stay UNCHANGED without Founder Approval) |
+| **Draft PR Status** | Draft / Ready / none |
+| **Public Deployment Status** | NOT PUBLICLY DEPLOYED / PUBLICLY DEPLOYED |
+| **Report Generated** | `[DD/MM/YYYY – HH:MM]` |
+
+GoalCurrent product changes without Founder Approval must also state:
 
 **NOT MERGED AND NOT PUBLICLY DEPLOYED.**
 
-(See `docs/governance/PRIVATE-PREVIEW-RELEASE-POLICY.md`.)
+---
+
+## 13. CI monitoring
+
+Long-running jobs must report:
+
+- **Status checked:** `[DD/MM/YYYY – HH:MM]`
+- **Current state:** Waiting | Running | Retrying | Passed | Failed
+
+Prohibited: writing only "Still running."
 
 ---
 
-## 10. Prohibited formats
+## 14. Report types and templates
 
-Agents and humans must **not**:
+| Type | Template | Example |
+| --- | --- | --- |
+| Progress | `templates/progress-report.md` | `docs/examples/reporting/progress-report.example.md` |
+| Completion | `templates/completion-report.md` | `docs/examples/reporting/completion-report.example.md` |
+| CI | `templates/ci-report.md` | `docs/examples/reporting/ci-report.example.md` |
+| Deployment | `templates/deployment-report.md` | `docs/examples/reporting/deployment-report.example.md` |
+| Blocker | `templates/blocker-report.md` | `docs/examples/reporting/blocker-report.example.md` |
 
-- Omit the opening timestamp
-- Reuse a previous timestamp
-- Estimate clocks or durations
-- Use vague CI language without Status checked + Current state
-- Invent routes, SHAs, PR numbers or deploy URLs
+Type-specific body fields remain required inside the templates.
+
+---
+
+## 15. Mandatory section order
+
+1. Opening timestamp
+2. Executive header (section 3)
+3. Executive Summary (section 4)
+4. Time block
+5. Environment Summary (section 5)
+6. Git Summary (section 6)
+7. Files Changed Report (section 7)
+8. Type-specific body
+9. Validation Dashboard (section 8) when applicable
+10. Risk Assessment (section 9)
+11. Founder Action Required (section 10)
+12. Next Recommended Task (section 11)
+13. Footer (section 12)
+
+---
+
+## 16. Prohibited formats
+
+- Omit opening timestamp or required sections
+- Reuse timestamps or estimate clocks
+- Collapse validation into a single "tests passed" line
+- Duplicate competing report schemas outside this file
 - Claim Founder Approval that was not given
-- Use conflicting alternate report schemas when this standard applies
-- Dump unstructured walls of log without the mandatory sections
 
 ---
 
-## 11. Minimal examples
+## 17. Backward compatibility
 
-### 11.1 Progress (excerpt)
-
-```text
-[21/07/2026 – 16:10]
-
-Task ID: GC-EXAMPLE-001
-Repository: Az1341/goalcurrent.live
-Current branch: feature/example
-Current commit SHA: abc1234
-Previous commit SHA: def5678
-Pull Request: https://github.com/Az1341/goalcurrent.live/pull/99
-Draft or Ready: Draft
-
-Generated at: [21/07/2026 – 16:10]
-Task started: [21/07/2026 – 16:00]
-Task completed: IN PROGRESS
-Status checked: [21/07/2026 – 16:10]
-Started: 16:00
-Finished: —
-Duration: 10 minutes elapsed so far
-
-Current status: Implementing docs only
-Completed:
-- Spec drafted
-Remaining:
-- Templates
-Blockers: none
-Next action: Commit Task 01
-```
-
-### 11.2 CI status line (excerpt)
-
-```text
-Status checked: [21/07/2026 – 16:12]
-Current state: Running
-Job: Playwright E2E + visual regression
-```
-
-### 11.3 Final closing
-
-```text
-Overall Status: Requires Founder Approval
-NOT MERGED AND NOT PUBLICLY DEPLOYED.
-
-Report generated:
-[21/07/2026 – 16:20]
-```
+- `AGENTS.md` must point here only.
+- `docs/governance/PRIVATE-PREVIEW-RELEASE-POLICY.md` remains the release-gate authority; reports must satisfy **both**.
+- Older `reports/` narratives are historical.
 
 ---
 
-## 12. Backward compatibility
+## 18. Change control
 
-- `AGENTS.md` must point here and must not redefine a competing schema.
-- `docs/governance/PRIVATE-PREVIEW-RELEASE-POLICY.md` remains authoritative for release gates; reports must satisfy **both** this standard and that policy.
-- Older batch narrative docs under `reports/` are historical; new work must use this standard and the templates under `templates/`.
-
----
-
-## 13. Change control
-
-Amendments to this standard require Founder awareness. Documentation-only PRs still must not merge to `main` without Explicit Founder Approval.
+Amendments require Founder awareness. Docs PRs must not merge to `main` without Explicit Founder Approval.
