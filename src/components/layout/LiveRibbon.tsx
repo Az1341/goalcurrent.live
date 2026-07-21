@@ -106,6 +106,11 @@ export default function LiveRibbon({
   const fixtures = useEffectiveFixtures();
   const allMatches = selectRibbonFixtures(fixtures);
 
+  // Archive era: hide the live/latest-results ticker entirely.
+  if (isWc26TournamentComplete()) {
+    return null;
+  }
+
   if (allMatches.length === 0) {
     return (
       <div

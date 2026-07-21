@@ -13,6 +13,7 @@ import {
   WC26_FINAL_MATCH_NUMBER,
   type FinalWinnerResult,
 } from "@/lib/wc26/final-winner";
+import { isWc26TournamentComplete } from "@/lib/wc26/archive";
 import type { TeamId } from "@/types/team";
 import type { Wc26ApiMatch, Wc26ScoresApiResponse } from "@/types/fixture-overlay";
 import styles from "./FinalWinnerCelebration.module.css";
@@ -97,14 +98,19 @@ function bannerHiddenKey(resultKey: string): string {
 }
 
 export default function FinalWinnerCelebration() {
-  const { data: liveData } = useLiveApi<Wc26ScoresApiResponse>(LIVE_API_PATHS.wc26LiveScores, {
-    fresh: true,
-    refreshInterval: LIVE_POLL_MATCH_MS,
-  });
-  const { data: resultsData } = useLiveApi<Wc26ScoresApiResponse>(LIVE_API_PATHS.wc26Results, {
-    fresh: true,
-    refreshInterval: LIVE_POLL_MATCH_MS,
-  });
+  const archiveComplete = isWc26TournamentComplete();
+  const { data: liveData } = useLiveApi<Wc26ScoresApiResponse>(
+    archiveComplete ? null : LIVE_API_PATHS.wc26LiveScores,
+    archiveComplete
+      ? undefined
+      : { fresh: true, refreshInterval: LIVE_POLL_MATCH_MS },
+  );
+  const { data: resultsData } = useLiveApi<Wc26ScoresApiResponse>(
+    archiveComplete ? null : LIVE_API_PATHS.wc26Results,
+    archiveComplete
+      ? undefined
+      : { fresh: true, refreshInterval: LIVE_POLL_MATCH_MS },
+  );
   const [previewMatch, setPreviewMatch] = useState<Wc26ApiMatch | null>(null);
   /** null = loading from storage; false = show overlay; true = show compact banner */
   const [overlayDismissed, setOverlayDismissed] = useState<boolean | null>(null);
@@ -172,6 +178,11 @@ export default function FinalWinnerCelebration() {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [dismissOverlay, overlayDismissed, result]);
+
+  // Archive era: no champion overlay or sticky banner.
+  if (archiveComplete) {
+    return null;
+  }
 
   if (!result || overlayDismissed == null || bannerHidden == null) {
     return null;

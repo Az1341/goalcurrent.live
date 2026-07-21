@@ -11,7 +11,6 @@ import {
   isMainNavActive,
 } from "@/lib/nav";
 import HeaderNavDropdown from "./HeaderNavDropdown";
-import LiveRibbon from "./LiveRibbon";
 import HeaderLocaleDropdown from "./HeaderLocaleDropdown";
 import { trackSubscriptionStart } from "@/lib/analytics";
 import AuthMenu from "@/components/firebase/AuthMenu";
@@ -35,7 +34,6 @@ export default function MasterHeader() {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const isHome = pathname === "/";
-  const isMatchPage = pathname.startsWith("/match/");
   const chromeRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -122,8 +120,6 @@ export default function MasterHeader() {
           </div>
         </div>
       </header>
-
-      {!isHome && !isMatchPage ? <LiveRibbon /> : null}
     </div>
   );
 }
