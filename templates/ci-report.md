@@ -1,22 +1,31 @@
 # CI Report
 
-> Conforms to `docs/standards/REPORTING_STANDARD.md`
+> Conforms to `docs/standards/REPORTING_STANDARD.md`  
+> Report Type: CI
 
 ```text
 [DD/MM/YYYY – HH:MM]
 ```
 
-## Identity
+## Executive header
 
 | Field | Value |
 | --- | --- |
-| **Task ID** | |
+| **Project** | GoalCurrent |
+| **Execution Batch** | |
+| **Report Type** | |
+| **Status** | |
 | **Repository** | |
-| **Current branch** | |
-| **Current commit SHA** | |
-| **Previous commit SHA** | |
-| **Pull Request** | |
-| **Draft or Ready** | Draft / Ready / N/A |
+| **Branch** | |
+| **PR Number** | |
+
+## Executive Summary
+
+- 
+- 
+- 
+- 
+- 
 
 ## Time block
 
@@ -24,45 +33,116 @@
 | --- | --- |
 | **Generated at** | `[DD/MM/YYYY – HH:MM]` |
 | **Task started** | `[DD/MM/YYYY – HH:MM]` |
-| **Task completed** | `[DD/MM/YYYY – HH:MM]` or `IN PROGRESS` |
+| **Task completed** | `[DD/MM/YYYY – HH:MM]` / IN PROGRESS / BLOCKED |
 | **Status checked** | `[DD/MM/YYYY – HH:MM]` |
 | **Started** | HH:MM |
 | **Finished** | HH:MM or — |
 | **Duration** | N minutes |
 
+## Environment Summary
+
+| Field | Value |
+| --- | --- |
+| **Repository** | |
+| **Branch** | |
+| **Commit** | |
+| **Previous Commit** | |
+| **Draft/Ready PR** | Draft / Ready / N/A |
+| **Production Status** | NOT DEPLOYED / DEPLOYED / UNKNOWN |
+| **Preview URL** | |
+| **PR URL** | |
+
+## Git Summary
+
+| Field | Value |
+| --- | --- |
+| **Current Commit** | |
+| **Previous Commit** | |
+| **Commits Created** | |
+| **Files Added** | |
+| **Files Modified** | |
+| **Files Deleted** | |
+
+## Files Changed Report
+
+### Files Created
+
+- (alphabetically)
+
+### Files Modified
+
+- (alphabetically)
+
+### Files Deleted
+
+- (alphabetically)
+
 ## Workflow
 
 | Field | Value |
 | --- | --- |
-| **Workflow** | e.g. CI |
+| **Workflow** | |
 | **Run number** | |
 | **Run URL** | |
-| **Start time** | `[DD/MM/YYYY – HH:MM]` |
-| **End time** | `[DD/MM/YYYY – HH:MM]` or — |
-| **Duration** | N minutes |
+| **Start time** | |
+| **End time** | |
+| **Duration** | |
 
 ## Current state (long-running)
 
 **Status checked:** `[DD/MM/YYYY – HH:MM]`  
-**Current state:** `Waiting` | `Running` | `Retrying` | `Passed` | `Failed`
-
-Do not write only "Still running."
+**Current state:** Waiting | Running | Retrying | Passed | Failed
 
 ## Jobs
 
-For every individual job, mark exactly one column:
-
 | Job | Queued | Running | Passed | Failed | Skipped |
 | --- | --- | --- | --- | --- | --- |
-| Lint, types, i18n, unit tests | | | | | |
-| Playwright E2E + visual regression | | | | | |
-| (add rows as needed) | | | | | |
+| | | | | | |
 
-## Overall Status
+## Validation Dashboard
 
-`READY FOR REVIEW` | `READY FOR PRODUCTION` | `BLOCKED` | `FAILED` | `Requires Founder Approval`
+| Check | Status |
+| --- | --- |
+| TypeScript | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| ESLint | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Unit Tests | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Integration Tests | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Playwright | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Visual Tests | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Accessibility | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| i18n | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Markdown | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Production Build | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Vercel Preview | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| GitHub Actions | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
 
----
+## Risk Assessment
 
-Report generated:  
-`[DD/MM/YYYY – HH:MM]`
+| Risk | Severity |
+| --- | --- |
+| **Production Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Deployment Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Documentation Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Merge Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+
+## Founder Action Required
+
+- None | (only founder-approval actions)
+
+## Next Recommended Task
+
+- 
+
+## Footer
+
+| Field | Value |
+| --- | --- |
+| **Overall Status** | READY FOR REVIEW / READY FOR PRODUCTION / BLOCKED / FAILED / Requires Founder Approval |
+| **Production Status** | NOT DEPLOYED / DEPLOYED / UNKNOWN |
+| **Main Branch Status** | UNCHANGED / CHANGED |
+| **Draft PR Status** | Draft / Ready / none |
+| **Public Deployment Status** | NOT PUBLICLY DEPLOYED / PUBLICLY DEPLOYED |
+| **Report Generated** | `[DD/MM/YYYY – HH:MM]` |
+
+**NOT MERGED AND NOT PUBLICLY DEPLOYED.** (until Explicit Founder Approval)
+
