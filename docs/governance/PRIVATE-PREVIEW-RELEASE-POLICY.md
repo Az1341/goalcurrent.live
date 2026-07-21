@@ -127,7 +127,16 @@ Every batch or release report that has not received Explicit Founder Approval fo
 
 After approval and merge, reports must state the approved SHA and production URL checked — never imply approval that was not given.
 
+### Reporting format (mandatory)
+
+All progress, completion, CI, deployment, validation and blocker reports must follow:
+
+**[`docs/standards/REPORTING_STANDARD.md`](../standards/REPORTING_STANDARD.md)**
+
+Use templates under [`templates/`](../../templates/). Do not invent alternate report schemas. Release-gate wording in this policy remains binding; the reporting standard defines structure, timestamps, duration, validation matrices and Overall Status values.
+
 ## Relationship to other work
 
 - SEPANAI / Batch 003 foundation docs remain subject to this policy for any future implementation merge.
 - World Cup archive Batch 004 and all future GoalCurrent work are bound by this policy without exception unless Ahmad grants a written emergency exception.
+- Founder reporting standard (`GC-REPORTING-STANDARD-BATCH-001`) applies to GoalCurrent, SepanAI and FAMVI agent work unless the Founder explicitly overrides.

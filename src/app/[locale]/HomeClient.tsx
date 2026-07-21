@@ -11,7 +11,6 @@ import {
 } from "@/lib/wc26-live";
 import { fetcher, LIVE_SWR_OPTIONS } from "@/lib/client/fetcher";
 import type { PlFixturesApiResponse } from "@/lib/pl/types";
-import LiveRibbon from "@/components/layout/LiveRibbon";
 import HomeHero from "@/components/home/v5/HomeHero";
 import HomeChampionSnippet from "@/components/home/v5/HomeChampionSnippet";
 import { isWc26TournamentComplete } from "@/lib/wc26/archive";
@@ -63,10 +62,6 @@ export default function HomeClient() {
 
   return (
     <div className={styles.root} data-gc-home-v5>
-      <div className={styles.tickerWrap}>
-        <LiveRibbon embedded variant="v5" />
-      </div>
-
       <main className={styles.main}>
         <HomeChampionSnippet />
         <HomeHero

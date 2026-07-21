@@ -43,10 +43,10 @@
     "venues": "Venues",
     "bracket": "Bracket",
     "pl2627": "PL 26/27",
-    "wc26": "WC26 Archive",
+    "wc26": "WC26",
     "overview": "Overview",
     "plHome": "PL Home",
-    "wc26Home": "WC26 Archive",
+    "wc26Home": "WC26",
     "mainNavigation": "Main navigation",
     "openMoreNavigation": "Open more navigation",
     "more": "More",
@@ -80,7 +80,8 @@
     "facebook": "Facebook",
     "instagram": "Instagram",
     "tiktok": "TikTok",
-    "twitter": "X / Twitter"
+    "twitter": "X / Twitter",
+    "epl": "EPL"
   },
   "layout": {
     "cookieConsent": {

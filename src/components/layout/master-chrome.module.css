@@ -125,6 +125,27 @@
   font-weight: 700;
 }
 
+/* Intermediate desktop: keep Home/Live/EPL/WC26; overflow editorial links. */
+.navOverflow {
+  display: none;
+}
+
+@media (min-width: 769px) and (max-width: 1279px) {
+  .navLinkSecondary {
+    display: none;
+  }
+
+  .navOverflow {
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 1280px) {
+  .navOverflow {
+    display: none;
+  }
+}
+
 .headerActions {
   flex-shrink: 0;
   display: flex;
