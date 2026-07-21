@@ -1,0 +1,50 @@
+{
+    "asOf":  "2026-07-19",
+    "matches":  [
+                    {
+                        "matchNumber":  104,
+                        "awayScore":  0,
+                        "homeTeamId":  "esp",
+                        "fixtureId":  "fixture-104",
+                        "lineups":  {
+                                        "verifiedPath":  "src/data/wc26/final-lineups-esp-arg.ts",
+                                        "note":  "See src/data/wc26/final-lineups-esp-arg.ts when used"
+                                    },
+                        "events":  [
+
+                                   ],
+                        "matchStatus":  "aet",
+                        "awayTeamId":  "arg",
+                        "winnerTeamId":  "esp",
+                        "homeScore":  1,
+                        "statistics":  {
+
+                                       },
+                        "stage":  "final"
+                    },
+                    {
+                        "matchNumber":  103,
+                        "awayScore":  6,
+                        "homeTeamId":  "fra",
+                        "fixtureId":  "fixture-103",
+                        "lineups":  {
+                                        "verified":  false,
+                                        "note":  "Not bundled in this fixture pack"
+                                    },
+                        "events":  [
+
+                                   ],
+                        "matchStatus":  "ft",
+                        "awayTeamId":  "eng",
+                        "winnerTeamId":  "eng",
+                        "homeScore":  4,
+                        "statistics":  {
+
+                                       },
+                        "stage":  "third-place"
+                    }
+                ],
+    "schemaVersion":  1,
+    "source":  "src/data/wc26-confirmed-results.json",
+    "prohibition":  "No AI provider calls. Private SEPANAI pilot testing only after Founder Approval."
+}
