@@ -7,9 +7,7 @@ import NavLink from "@/components/nav/NavLink";
 import {
   DESKTOP_PL_DROPDOWN,
   DESKTOP_PRIMARY_NAV,
-  DESKTOP_WC26_DROPDOWN,
   isDesktopPlActive,
-  isDesktopWc26Active,
   isMainNavActive,
 } from "@/lib/nav";
 import HeaderNavDropdown from "./HeaderNavDropdown";
@@ -107,11 +105,6 @@ export default function MasterHeader() {
               label={t("pl2627")}
               links={DESKTOP_PL_DROPDOWN}
               isActive={isDesktopPlActive(pathname)}
-            />
-            <HeaderNavDropdown
-              label={t("wc26")}
-              links={DESKTOP_WC26_DROPDOWN}
-              isActive={isDesktopWc26Active(pathname)}
             />
           </nav>
 

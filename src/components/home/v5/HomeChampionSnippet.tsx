@@ -1,42 +1,48 @@
 import { Link } from "@/i18n/navigation";
+import {
+  WC26_ARCHIVE_LABEL,
+  formatArchiveScoreLine,
+  getWc26ArchiveFinalSummary,
+} from "@/lib/wc26/archive";
 import styles from "../home-v5.module.css";
 
 const ARTICLE_HREF = "/articles/spain-world-cup-2026-champion-masterclass";
+const ARCHIVE_HREF = "/worldcup2026";
 const MATCH_HREF = "/match/fixture-104";
-const TROPHY = "\u{1F3C6}";
 
 /**
- * Homepage champion news snippet — pinned announcement under the live ticker.
- * Facts: Spain 1-0 Argentina, Match 104 / fixture-104, New York/New Jersey Stadium.
+ * Homepage historical archive card — not a live World Cup module.
+ * Facts from curated SSOT only.
  */
 export default function HomeChampionSnippet() {
+  const finalSummary = getWc26ArchiveFinalSummary();
+  const scoreLine = finalSummary ? formatArchiveScoreLine(finalSummary) : null;
+
   return (
     <section
       className={styles.championSnippet}
-      aria-labelledby="home-champion-snippet-heading"
+      aria-labelledby="home-archive-snippet-heading"
     >
-      <p className={styles.championSnippetEyebrow}>Breaking · World Cup Final</p>
-      <h2 id="home-champion-snippet-heading" className={styles.championSnippetTitle}>
-        <span aria-hidden="true">{TROPHY} </span>
-        Spain Crowned World Cup 2026 Champion
+      <p className={styles.championSnippetEyebrow}>{WC26_ARCHIVE_LABEL}</p>
+      <h2 id="home-archive-snippet-heading" className={styles.championSnippetTitle}>
+        {finalSummary
+          ? `${finalSummary.winnerName} won World Cup 2026`
+          : "World Cup 2026 Archive"}
       </h2>
       <p className={styles.championSnippetBody}>
-        Spain claimed their second World Cup title with a commanding 1-0 victory over Argentina in
-        the final at New York/New Jersey Stadium. The Spanish side delivered a composed, tactical
-        masterclass to lift the trophy, cementing their status as one of the tournament&apos;s
-        dominant forces. Argentina, defending champions, saw their bid for back-to-back titles ended
-        by an imperious display of possession football. The win marks a triumphant return to the
-        World Cup summit for Spain, 16 years after their last triumph.
-      </p>
-      <p className={styles.championSnippetBody}>
-        Full breakdown: See match stats, lineup analysis, and post-match reactions on GoalCurrent.
+        {finalSummary && scoreLine
+          ? `${finalSummary.winnerName} defeated ${finalSummary.runnerUpName} in the final (${scoreLine}). Explore the permanent GoalCurrent archive for the bracket, results and tournament articles.`
+          : "Explore GoalCurrent permanent World Cup 2026 Archive for final results, bracket and tournament articles."}
       </p>
       <div className={styles.championSnippetActions}>
-        <Link href={MATCH_HREF} className={styles.championSnippetPrimary}>
-          View M104 Breakdown
+        <Link href={ARCHIVE_HREF} className={styles.championSnippetPrimary}>
+          Open World Cup 2026 Archive
+        </Link>
+        <Link href={MATCH_HREF} className={styles.championSnippetSecondary}>
+          Final match report
         </Link>
         <Link href={ARTICLE_HREF} className={styles.championSnippetSecondary}>
-          Read the full report →
+          Champion article
         </Link>
       </div>
     </section>

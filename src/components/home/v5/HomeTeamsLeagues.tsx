@@ -53,7 +53,7 @@ export default function HomeTeamsLeagues({ fixtures }: HomeTeamsLeaguesProps) {
           <span className={styles.leagueCardBody}>
             <span className={styles.leagueCardTitle}>World Cup 2026</span>
             <span className={styles.leagueCardMeta}>
-              {wc26TodayCount} match{wc26TodayCount === 1 ? "" : "es"} today
+              World Cup 2026 Archive
             </span>
           </span>
         </Link>
