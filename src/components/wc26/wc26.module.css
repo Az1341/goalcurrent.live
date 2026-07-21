@@ -2955,3 +2955,114 @@ a.standingsHead:hover {
   display: grid;
   gap: 4px;
 }
+
+/* —— World Cup 2026 Archive hub —— */
+.archiveBadge {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 4px 10px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #7b0d1e;
+  border-radius: 4px;
+}
+
+.archiveTimestamp {
+  font-size: 0.8125rem;
+  color: var(--gc-text-muted);
+  margin: -8px 0 20px;
+}
+
+.archiveChampion {
+  margin-bottom: 28px;
+}
+
+.archiveChampionCard {
+  padding: 16px 18px;
+  border: 1px solid rgba(123, 13, 30, 0.22);
+  background: linear-gradient(180deg, rgba(123, 13, 30, 0.06) 0%, transparent 100%);
+  border-radius: 8px;
+}
+
+.archiveChampionTeams {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.archiveTeam {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.archiveChampionTag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #7b0d1e;
+}
+
+.archiveScore {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gc-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.archiveChampionMeta {
+  font-size: 0.9375rem;
+  color: var(--gc-text-secondary);
+  margin: 0 0 10px;
+  line-height: 1.45;
+}
+
+.archiveLinkList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: grid;
+  gap: 8px;
+}
+
+.archiveLinkList a {
+  color: #7b0d1e;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.archiveLinkList a:hover,
+.archiveLinkList a:focus-visible {
+  text-decoration: underline;
+  outline: 2px solid #7b0d1e;
+  outline-offset: 2px;
+}
+
+.archiveNotice {
+  margin: 8px 0 32px;
+  padding: 14px 16px;
+  border-left: 3px solid #7b0d1e;
+  background: rgba(123, 13, 30, 0.05);
+}
+
+.archiveNotice p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--gc-text-secondary);
+  line-height: 1.5;
+}
+
+@media (max-width: 720px) {
+  .archiveChampionTeams {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

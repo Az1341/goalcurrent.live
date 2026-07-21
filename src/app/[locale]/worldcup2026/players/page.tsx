@@ -5,24 +5,24 @@ import {
 } from "@/lib/coming-soon-page";
 
 export const metadata: Metadata = buildComingSoonMetadata({
-  title: "World Cup 2026 Players",
+  title: "World Cup 2026 Archive · Players",
   path: "/worldcup2026/players",
 });
 
 export default function WorldCupPlayersPage() {
   return (
     <ComingSoonPage
-      title="World Cup 2026 Players"
+      title="World Cup 2026 Archive · Players"
       path="/worldcup2026/players"
       emoji="👤"
-      description="World Cup 2026 player profiles are coming soon on GoalCurrent.live."
+      description="Detailed World Cup 2026 player profiles are not published in this archive yet. Top scorers remain available from tournament statistics."
       links={[
         { href: "/worldcup2026/teams", label: "Teams" },
         { href: "/statistics/top-scorers", label: "Top Scorers" },
-        { href: "/worldcup2026", label: "WC26 Hub" },
+        { href: "/worldcup2026", label: "World Cup 2026 Archive" },
       ]}
       backHref="/worldcup2026"
-      backLabel="← WC26 Hub"
+      backLabel="← World Cup 2026 Archive"
     />
   );
 }

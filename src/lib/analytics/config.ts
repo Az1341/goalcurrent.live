@@ -2,6 +2,10 @@
 export const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_ID?.trim() || "G-X84HCE5KGT";
 
+/** Microsoft Clarity project ID (override via NEXT_PUBLIC_CLARITY_PROJECT_ID). */
+export const CLARITY_PROJECT_ID =
+  process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID?.trim() || "xmag3yk04j";
+
 /**
  * Hostnames that may send GA4 hits. Preview, localhost and branch deploys are excluded.
  * Primary production host: www.goalcurrent.live (apex allowed when it serves the same site).
