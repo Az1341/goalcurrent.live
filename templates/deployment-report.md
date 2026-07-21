@@ -12,7 +12,7 @@
 | --- | --- |
 | **Task ID** | |
 | **Repository** | |
-| **Current branch** | |
+| **Branch** | |
 | **Git commit** | (deployed SHA) |
 | **Previous commit SHA** | |
 | **Pull Request** | |
