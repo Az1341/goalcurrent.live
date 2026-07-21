@@ -43,10 +43,10 @@
     "venues": "Stadions",
     "bracket": "Schema",
     "pl2627": "PL 26/27",
-    "wc26": "WC26 Archive",
+    "wc26": "WC26",
     "overview": "Overzicht",
     "plHome": "PL Home",
-    "wc26Home": "WK Home",
+    "wc26Home": "WC26",
     "mainNavigation": "Hoofdnavigatie",
     "openMoreNavigation": "Meer navigatie openen",
     "more": "Meer",
@@ -80,7 +80,8 @@
     "facebook": "Facebook",
     "instagram": "Instagram",
     "tiktok": "TikTok",
-    "twitter": "X / Twitter"
+    "twitter": "X / Twitter",
+    "epl": "EPL"
   },
   "layout": {
     "cookieConsent": {

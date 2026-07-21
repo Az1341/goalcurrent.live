@@ -43,20 +43,38 @@ export type DesktopDropdownSection = {
 /** Global favourites — saved items across all competitions. */
 export const FAVOURITES_HREF = "/favourites";
 
-/** Desktop primary links (before dropdowns). */
-export const DESKTOP_PRIMARY_NAV: NavItem[] = [
+/** Canonical competition landing routes used by global navigation. */
+export const EPL_HUB_HREF = "/premier-league";
+export const WC26_HUB_HREF = "/worldcup2026";
+
+/**
+ * Desktop header order:
+ * Home · Live · EPL · WC26 · Favourites · News · Articles · Videos
+ * Core items stay visible; secondary items may move into overflow below 1280px.
+ */
+export const DESKTOP_CORE_NAV: NavItem[] = [
   { href: "/", labelKey: "home", exact: true },
   { href: "/live", labelKey: "live" },
+  { href: EPL_HUB_HREF, labelKey: "epl", exact: true },
+  { href: WC26_HUB_HREF, labelKey: "wc26", exact: true },
+];
+
+export const DESKTOP_SECONDARY_NAV: NavItem[] = [
   { href: FAVOURITES_HREF, labelKey: "favourites" },
   { href: "/news", labelKey: "news" },
   { href: "/articles", labelKey: "articles" },
   { href: "/videos", labelKey: "videos" },
 ];
 
+/** Full desktop primary list (legacy consumers + wide layouts). */
+export const DESKTOP_PRIMARY_NAV: NavItem[] = [
+  ...DESKTOP_CORE_NAV,
+  ...DESKTOP_SECONDARY_NAV,
+];
+
 /** Legacy / footer — full primary list for other consumers. */
 export const MAIN_NAV: NavItem[] = [
   ...DESKTOP_PRIMARY_NAV,
-  { href: "/premier-league", labelKey: "premierLeague", exact: true },
 ];
 
 /** Premier League 2026/27 section links */
@@ -91,13 +109,13 @@ export const MORE_NAV: NavLinkItem[] = [
   ...WC26_NAV,
 ];
 
-/** Mobile bottom tab bar — primary tabs only (<769px) */
+/** Mobile bottom tab bar — primary tabs only (<769px). More is a separate button. */
 export const MOBILE_BOTTOM_TABS: MobileBottomTab[] = [
   { id: "home", href: "/", labelKey: "home", exact: true },
   { id: "live", href: "/live", labelKey: "live" },
   { id: "favourites", href: FAVOURITES_HREF, labelKey: "favourites" },
-  { id: "pl", href: "/premier-league", labelKey: "pl2627" },
-  { id: "articles", href: "/articles", labelKey: "articles" },
+  { id: "pl", href: EPL_HUB_HREF, labelKey: "pl2627" },
+  { id: "wc26", href: WC26_HUB_HREF, labelKey: "wc26" },
 ];
 
 /** More bottom sheet — level 1 categories + site footer links */

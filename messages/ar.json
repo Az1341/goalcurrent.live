@@ -43,10 +43,10 @@
     "venues": "الملاعب",
     "bracket": "جدول خروج المغلوب",
     "pl2627": "PL 26/27",
-    "wc26": "WC26 Archive",
+    "wc26": "WC26",
     "overview": "نظرة عامة",
     "plHome": "الرئيسية — الدوري",
-    "wc26Home": "الرئيسية — كأس العالم",
+    "wc26Home": "WC26",
     "mainNavigation": "التنقل الرئيسي",
     "openMoreNavigation": "فتح المزيد من التنقل",
     "more": "المزيد",
@@ -80,7 +80,8 @@
     "facebook": "Facebook",
     "instagram": "Instagram",
     "tiktok": "TikTok",
-    "twitter": "X / Twitter"
+    "twitter": "X / Twitter",
+    "epl": "EPL"
   },
   "layout": {
     "cookieConsent": {

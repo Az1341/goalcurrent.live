@@ -4,7 +4,12 @@ import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import NavLink from "@/components/nav/NavLink";
-import { useCallback, useEffect, useState, type MouseEvent } from "react";
+import {
+  useCallback,
+  useState,
+  useSyncExternalStore,
+  type MouseEvent,
+} from "react";
 import {
   MOBILE_BOTTOM_TABS,
   isMobileBottomTabActive,
@@ -14,6 +19,8 @@ import styles from "./BottomTabBar.module.css";
 const MoreBottomSheet = dynamic(() => import("./MoreBottomSheet"), {
   ssr: false,
 });
+
+const emptySubscribe = () => () => {};
 
 function HomeIcon() {
   return (
@@ -91,7 +98,7 @@ function TabIcon({ tabId }: { tabId: string }) {
       return <FavouriteIcon />;
     case "pl":
       return <PlIcon />;
-    case "articles":
+    case "wc26":
       return <Wc26Icon />;
     default:
       return null;
@@ -102,13 +109,8 @@ export default function BottomTabBar() {
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("nav");
-  const tCommon = useTranslations("common");
   const [moreOpen, setMoreOpen] = useState(false);
-  const [navReady, setNavReady] = useState(false);
-
-  useEffect(() => {
-    setNavReady(true);
-  }, []);
+  const navReady = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   const handleTabNavigate = useCallback(
     (href: (typeof MOBILE_BOTTOM_TABS)[number]["href"]) =>

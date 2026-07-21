@@ -5,9 +5,8 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import NavLink from "@/components/nav/NavLink";
 import {
-  DESKTOP_PL_DROPDOWN,
-  DESKTOP_PRIMARY_NAV,
-  isDesktopPlActive,
+  DESKTOP_CORE_NAV,
+  DESKTOP_SECONDARY_NAV,
   isMainNavActive,
 } from "@/lib/nav";
 import HeaderNavDropdown from "./HeaderNavDropdown";
@@ -35,6 +34,9 @@ export default function MasterHeader() {
   const tCommon = useTranslations("common");
   const isHome = pathname === "/";
   const chromeRef = useRef<HTMLDivElement>(null);
+  const secondaryActive = DESKTOP_SECONDARY_NAV.some((item) =>
+    isMainNavActive(pathname, item.href, item.exact),
+  );
 
   useLayoutEffect(() => {
     const chrome = chromeRef.current;
@@ -87,23 +89,37 @@ export default function MasterHeader() {
           </NavLink>
 
           <nav className={styles.desktopNav} aria-label={t("mainNavigation")}>
-            {DESKTOP_PRIMARY_NAV.map((item) => {
+            {DESKTOP_CORE_NAV.map((item) => {
               const active = isMainNavActive(pathname, item.href, item.exact);
               return (
                 <NavLink
                   key={item.href}
                   href={item.href}
-                  className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}
+                  className={`${styles.navLink} ${styles.navLinkCore} ${active ? styles.navLinkActive : ""}`}
                 >
                   {t(item.labelKey)}
                 </NavLink>
               );
             })}
-            <HeaderNavDropdown
-              label={t("pl2627")}
-              links={DESKTOP_PL_DROPDOWN}
-              isActive={isDesktopPlActive(pathname)}
-            />
+            {DESKTOP_SECONDARY_NAV.map((item) => {
+              const active = isMainNavActive(pathname, item.href, item.exact);
+              return (
+                <NavLink
+                  key={item.href}
+                  href={item.href}
+                  className={`${styles.navLink} ${styles.navLinkSecondary} ${active ? styles.navLinkActive : ""}`}
+                >
+                  {t(item.labelKey)}
+                </NavLink>
+              );
+            })}
+            <div className={styles.navOverflow}>
+              <HeaderNavDropdown
+                label={t("more")}
+                links={DESKTOP_SECONDARY_NAV}
+                isActive={secondaryActive}
+              />
+            </div>
           </nav>
 
           <div className={styles.headerActions}>
