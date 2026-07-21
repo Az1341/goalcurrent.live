@@ -27,7 +27,7 @@
     "news": "News",
     "articles": "Articles",
     "videos": "Videos",
-    "worldCup2026": "World Cup 2026",
+    "worldCup2026": "World Cup 2026 Archive",
     "premierLeague": "Premier League",
     "table": "Table",
     "fixtures": "Fixtures",
@@ -43,7 +43,7 @@
     "venues": "Venues",
     "bracket": "Bracket",
     "pl2627": "PL 26/27",
-    "wc26": "WC26",
+    "wc26": "WC26 Archive",
     "overview": "Overview",
     "plHome": "PL Home",
     "wc26Home": "WC26 Home",
@@ -188,12 +188,12 @@
   "wc26": {
     "group": "Group {id}",
     "groupStage": "Group Stage",
-    "hubTitle": "FIFA World Cup 2026",
+    "hubTitle": "World Cup 2026 Archive",
     "sections": {
       "groups": {
         "label": "Groups",
         "title": "Groups",
-        "description": "All twelve groups for the expanded 48-team tournament. Browse each group for live standings, fixtures and qualified teams."
+        "description": "All twelve groups for the expanded 48-team tournament. Browse each group for final standings, fixtures and qualified teams."
       },
       "fixtures": {
         "label": "Fixtures",
@@ -203,7 +203,7 @@
       "standings": {
         "label": "Standings",
         "title": "Standings",
-        "description": "Live group tables for all twelve groups — P, W, D, L, GF, GA, GD and Pts updated from verified match results."
+        "description": "Final group tables for all twelve groups — P, W, D, L, GF, GA, GD and Pts from verified match results."
       },
       "teams": {
         "label": "Teams",
@@ -218,7 +218,7 @@
       "bracket": {
         "label": "Bracket",
         "title": "Knockout Bracket",
-        "description": "Knockout stage path from the Round of 32 through to the final. Bracket fills in as knockout fixtures are confirmed."
+        "description": "Final knockout path from the Round of 32 through to the final."
       }
     },
     "standings": {
