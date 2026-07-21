@@ -8,7 +8,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Every Cursor execution report, progress update, validation report, CI report, deployment report and blocker report **must** follow:
 
-**[`docs/standards/REPORTING_STANDARD.md`](docs/standards/REPORTING_STANDARD.md)** (GC-REPORTING-STANDARD-BATCH-002)
+**[`docs/standards/REPORTING_STANDARD.md`](docs/standards/REPORTING_STANDARD.md)** (GC-REPORTING-STANDARD-BATCH-003 (v1.0.0))
 
 Use [`templates/`](templates/) and follow examples in [`docs/examples/reporting/`](docs/examples/reporting/). Run `node scripts/validate-reporting-standard.mjs` after reporting-doc changes.
 
@@ -16,8 +16,8 @@ Mandatory envelope (no exceptions):
 
 1. Begin with a fresh local timestamp: `[DD/MM/YYYY – HH:MM]`
 2. Include executive header (Project, Execution Batch, Report Type, Status, Repository, Branch, PR Number)
-3. Include Executive Summary (max five bullets), Environment Summary, Git Summary, Files Changed Report
-4. Include Validation Dashboard, Risk Assessment, Founder Action Required, Next Recommended Task when producing a final report
+3. Include Executive Summary (max five bullets), Execution Timeline, Environment Summary, Git Summary with GitHub Evidence Links, Files Changed Report, Executive Metrics Dashboard
+4. Include Validation Dashboard, Decision Log, Known Issues, Rollback Assessment, Dependencies, Success Criteria, Risk Assessment, Founder Action Required, Next Recommended Task, Audit Trail when producing a final report
 5. End with footer: Overall Status, Production Status, Main Branch Status, Draft PR Status, Public Deployment Status, Report Generated
 6. Never estimate times; never reuse timestamps; never write bare "Still running." for long jobs
 
