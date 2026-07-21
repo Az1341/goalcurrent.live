@@ -5,7 +5,6 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { GA } from "@/components/analytics/GA";
-import { Clarity } from "@/components/analytics/Clarity";
 import Layout from "@/components/layout/Layout";
 import { FirebaseRoot } from "@/components/firebase/FirebaseRoot";
 import { OneSignalInit } from "@/components/push/OneSignalInit";
@@ -149,7 +148,6 @@ export default async function LocaleLayout({
     >
       <head>
         <ThemeScript />
-        <Clarity />
       </head>
       <body className="gc-body">
         <ThemeProvider>
