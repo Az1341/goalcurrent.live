@@ -8,16 +8,18 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Every Cursor execution report, progress update, validation report, CI report, deployment report and blocker report **must** follow:
 
-**[`docs/standards/REPORTING_STANDARD.md`](docs/standards/REPORTING_STANDARD.md)**
+**[`docs/standards/REPORTING_STANDARD.md`](docs/standards/REPORTING_STANDARD.md)** (GC-REPORTING-STANDARD-BATCH-002)
 
-Use the templates in [`templates/`](templates/) when producing formal reports.
+Use [`templates/`](templates/) and follow examples in [`docs/examples/reporting/`](docs/examples/reporting/). Run `node scripts/validate-reporting-standard.mjs` after reporting-doc changes.
 
 Mandatory envelope (no exceptions):
 
-1. Begin every report with a fresh local timestamp: `[DD/MM/YYYY – HH:MM]`
-2. End every final report with `Report generated:` and a fresh `[DD/MM/YYYY – HH:MM]`
-3. Include Generated at, Task started, Task completed, Status checked, Duration, git/PR identity, and Overall Status as defined in the standard
-4. Never estimate times; never reuse timestamps; never write bare “Still running.” for long jobs
+1. Begin with a fresh local timestamp: `[DD/MM/YYYY – HH:MM]`
+2. Include executive header (Project, Execution Batch, Report Type, Status, Repository, Branch, PR Number)
+3. Include Executive Summary (max five bullets), Environment Summary, Git Summary, Files Changed Report
+4. Include Validation Dashboard, Risk Assessment, Founder Action Required, Next Recommended Task when producing a final report
+5. End with footer: Overall Status, Production Status, Main Branch Status, Draft PR Status, Public Deployment Status, Report Generated
+6. Never estimate times; never reuse timestamps; never write bare "Still running." for long jobs
 
 This applies to GoalCurrent, SepanAI and FAMVI work unless the Founder explicitly overrides.
 
