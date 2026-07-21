@@ -1,22 +1,31 @@
 # Completion Report
 
-> Conforms to `docs/standards/REPORTING_STANDARD.md`
+> Conforms to `docs/standards/REPORTING_STANDARD.md`  
+> Report Type: Completion
 
 ```text
 [DD/MM/YYYY – HH:MM]
 ```
 
-## Identity
+## Executive header
 
 | Field | Value |
 | --- | --- |
-| **Task ID** | |
+| **Project** | GoalCurrent |
+| **Execution Batch** | |
+| **Report Type** | |
+| **Status** | |
 | **Repository** | |
-| **Current branch** | |
-| **Current commit SHA** | |
-| **Previous commit SHA** | |
-| **Pull Request** | |
-| **Draft or Ready** | Draft / Ready / N/A |
+| **Branch** | |
+| **PR Number** | |
+
+## Executive Summary
+
+- 
+- 
+- 
+- 
+- 
 
 ## Time block
 
@@ -24,36 +33,53 @@
 | --- | --- |
 | **Generated at** | `[DD/MM/YYYY – HH:MM]` |
 | **Task started** | `[DD/MM/YYYY – HH:MM]` |
-| **Task completed** | `[DD/MM/YYYY – HH:MM]` |
+| **Task completed** | `[DD/MM/YYYY – HH:MM]` / IN PROGRESS / BLOCKED |
 | **Status checked** | `[DD/MM/YYYY – HH:MM]` |
-| **Start time** | HH:MM |
-| **Finish time** | HH:MM |
+| **Started** | HH:MM |
+| **Finished** | HH:MM or — |
 | **Duration** | N minutes |
 
-## Validation summary
+## Environment Summary
 
-| Check | Result |
+| Field | Value |
 | --- | --- |
-| TypeScript | PASS / FAIL / SKIPPED / RUNNING |
-| ESLint | PASS / FAIL / SKIPPED / RUNNING |
-| Unit Tests | PASS / FAIL / SKIPPED / RUNNING |
-| Integration Tests | PASS / FAIL / SKIPPED / RUNNING |
-| Playwright | PASS / FAIL / SKIPPED / RUNNING |
-| Visual Tests | PASS / FAIL / SKIPPED / RUNNING |
-| Accessibility | PASS / FAIL / SKIPPED / RUNNING |
-| i18n | PASS / FAIL / SKIPPED / RUNNING |
-| Production Build | PASS / FAIL / SKIPPED / RUNNING |
-| Vercel Preview | PASS / FAIL / SKIPPED / RUNNING |
+| **Repository** | |
+| **Branch** | |
+| **Commit** | |
+| **Previous Commit** | |
+| **Draft/Ready PR** | Draft / Ready / N/A |
+| **Production Status** | NOT DEPLOYED / DEPLOYED / UNKNOWN |
+| **Preview URL** | |
+| **PR URL** | |
 
-## Files changed
+## Git Summary
 
-- path/to/file
-
-## Commits
-
-| SHA | Message |
+| Field | Value |
 | --- | --- |
-| | |
+| **Current Commit** | |
+| **Previous Commit** | |
+| **Commits Created** | |
+| **Files Added** | |
+| **Files Modified** | |
+| **Files Deleted** | |
+
+## Files Changed Report
+
+### Files Created
+
+- (alphabetically)
+
+### Files Modified
+
+- (alphabetically)
+
+### Files Deleted
+
+- (alphabetically)
+
+## Final verdict
+
+(summary of outcome)
 
 ## Deployment status
 
@@ -61,17 +87,50 @@
 | --- | --- | --- |
 | | | |
 
-## Final verdict
+## Validation Dashboard
 
-(summary of outcome)
+| Check | Status |
+| --- | --- |
+| TypeScript | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| ESLint | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Unit Tests | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Integration Tests | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Playwright | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Visual Tests | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Accessibility | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| i18n | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Markdown | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Production Build | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| Vercel Preview | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
+| GitHub Actions | PASS / FAIL / RUNNING / SKIPPED / BLOCKED |
 
-## Overall Status
+## Risk Assessment
 
-`READY FOR REVIEW` | `READY FOR PRODUCTION` | `BLOCKED` | `FAILED` | `Requires Founder Approval`
+| Risk | Severity |
+| --- | --- |
+| **Production Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Deployment Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Documentation Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+| **Merge Risk** | NONE / LOW / MEDIUM / HIGH / CRITICAL |
+
+## Founder Action Required
+
+- None | (only founder-approval actions)
+
+## Next Recommended Task
+
+- 
+
+## Footer
+
+| Field | Value |
+| --- | --- |
+| **Overall Status** | READY FOR REVIEW / READY FOR PRODUCTION / BLOCKED / FAILED / Requires Founder Approval |
+| **Production Status** | NOT DEPLOYED / DEPLOYED / UNKNOWN |
+| **Main Branch Status** | UNCHANGED / CHANGED |
+| **Draft PR Status** | Draft / Ready / none |
+| **Public Deployment Status** | NOT PUBLICLY DEPLOYED / PUBLICLY DEPLOYED |
+| **Report Generated** | `[DD/MM/YYYY – HH:MM]` |
 
 **NOT MERGED AND NOT PUBLICLY DEPLOYED.** (until Explicit Founder Approval)
 
----
-
-Report generated:  
-`[DD/MM/YYYY – HH:MM]`
