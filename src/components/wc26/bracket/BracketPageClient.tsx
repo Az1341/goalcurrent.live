@@ -14,6 +14,11 @@ import {
   hasLiveKnockoutMatch,
   pickNextKnockoutFixture,
 } from "@/lib/wc26/bracket-view";
+import {
+  WC26_ARCHIVE_DATA_AS_OF,
+  WC26_ARCHIVE_LABEL,
+  isWc26TournamentComplete,
+} from "@/lib/wc26/archive";
 import BracketPageBand from "./BracketPageBand";
 import BracketView, { BracketViewSkeleton } from "./BracketView";
 import BracketDegradedBanner from "./BracketDegradedBanner";
@@ -36,6 +41,7 @@ export default function BracketPageClient() {
   const syncStatus = useWc26SyncStatus();
   const [hydrated, setHydrated] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const archiveComplete = isWc26TournamentComplete();
 
   useEffect(() => {
     setHydrated(true);
@@ -68,12 +74,12 @@ export default function BracketPageClient() {
   );
 
   const liveKnockout = useMemo(
-    () => hasLiveKnockoutMatch(fixtures),
-    [fixtures],
+    () => !archiveComplete && hasLiveKnockoutMatch(fixtures),
+    [fixtures, archiveComplete],
   );
   const spotlightFixture = useMemo(
-    () => pickNextKnockoutFixture(fixtures),
-    [fixtures],
+    () => (archiveComplete ? null : pickNextKnockoutFixture(fixtures)),
+    [fixtures, archiveComplete],
   );
 
   const hasMatches = convergingView.matchByNumber.size > 0;
@@ -81,14 +87,20 @@ export default function BracketPageClient() {
 
   return (
     <main className={bracketStyles.bracketPage}>
-      <BracketLivePolling enabled={liveKnockout} />
+      <BracketLivePolling enabled={liveKnockout} archiveMode={archiveComplete} />
 
       <Wc26Breadcrumb
         items={[
-          { label: "World Cup 2026", href: WC26_HUB_HREF },
+          { label: WC26_ARCHIVE_LABEL, href: WC26_HUB_HREF },
           { label: t("tabs.bracket") },
         ]}
       />
+
+      {archiveComplete ? (
+        <p className={bracketStyles.archiveBadgeInline}>
+          {WC26_ARCHIVE_LABEL} · data as of {WC26_ARCHIVE_DATA_AS_OF}
+        </p>
+      ) : null}
 
       <BracketPageBand
         eyebrow={t("eyebrow")}
@@ -104,7 +116,7 @@ export default function BracketPageClient() {
         }}
       />
 
-      {hydrated && lastUpdated ? (
+      {hydrated && lastUpdated && !archiveComplete ? (
         <p className={viewStyles.lastUpdated}>
           {t("lastUpdated", {
             time: formatLastUpdated(lastUpdated, "en"),
@@ -112,7 +124,7 @@ export default function BracketPageClient() {
         </p>
       ) : null}
 
-      {syncStatus === "degraded" ? (
+      {syncStatus === "degraded" && !archiveComplete ? (
         <BracketDegradedBanner message={t("degraded")} />
       ) : null}
 
@@ -131,11 +143,13 @@ export default function BracketPageClient() {
         </>
       )}
 
-      <BracketLiveLineupBar
-        fixture={spotlightFixture}
-        lineupsBanner={t("live.lineupsBanner")}
-        matchCenterLabel={t("live.matchCenter")}
-      />
+      {!archiveComplete ? (
+        <BracketLiveLineupBar
+          fixture={spotlightFixture}
+          lineupsBanner={t("live.lineupsBanner")}
+          matchCenterLabel={t("live.matchCenter")}
+        />
+      ) : null}
 
       <div className={bracketStyles.topScorersBlock}>
         <Wc26TopScorers />

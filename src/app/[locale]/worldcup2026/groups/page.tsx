@@ -6,7 +6,7 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 const section = getWc26Section("groups")!;
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Groups — World Cup 2026",
+  title: "Groups — World Cup 2026 Archive",
   description: section.description,
   path: section.href,
 });
