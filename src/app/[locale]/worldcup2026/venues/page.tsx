@@ -10,7 +10,7 @@ import { buildVenueDescription, getVenueStats } from "@/lib/wc26-venue-stats";
 const section = getWc26Section("venues")!;
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${section.label} — World Cup 2026 Archive`,
+  title: `${section.label} — World Cup 2026`,
   description: section.description,
   path: section.href,
 });

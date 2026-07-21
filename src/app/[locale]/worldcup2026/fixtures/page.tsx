@@ -7,7 +7,7 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 const section = getWc26Section("fixtures")!;
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${section.label} — World Cup 2026 Archive`,
+  title: `${section.label} — World Cup 2026`,
   description: section.description,
   path: section.href,
 });

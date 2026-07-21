@@ -14,7 +14,6 @@ import type { PlFixturesApiResponse } from "@/lib/pl/types";
 import LiveRibbon from "@/components/layout/LiveRibbon";
 import HomeHero from "@/components/home/v5/HomeHero";
 import HomeChampionSnippet from "@/components/home/v5/HomeChampionSnippet";
-import { isWc26TournamentComplete } from "@/lib/wc26/archive";
 import styles from "@/components/home/home-v5.module.css";
 
 const HomeTodaysMatches = dynamic(
@@ -53,10 +52,9 @@ export default function HomeClient() {
     LIVE_SWR_OPTIONS,
   );
 
-  const archiveComplete = isWc26TournamentComplete();
   const heroWc26Views = useMemo(
-    () => (archiveComplete ? [] : selectHomepageFixtures(fixtures, [], 3)),
-    [fixtures, archiveComplete],
+    () => selectHomepageFixtures(fixtures, [], 3),
+    [fixtures],
   );
 
   const plFixtures = plData?.fixtures ?? [];

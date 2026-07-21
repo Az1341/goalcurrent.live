@@ -56,6 +56,7 @@ export const DESKTOP_PRIMARY_NAV: NavItem[] = [
 /** Legacy / footer — full primary list for other consumers. */
 export const MAIN_NAV: NavItem[] = [
   ...DESKTOP_PRIMARY_NAV,
+  { href: "/worldcup2026", labelKey: "worldCup2026", exact: true },
   { href: "/premier-league", labelKey: "premierLeague", exact: true },
 ];
 
@@ -97,7 +98,7 @@ export const MOBILE_BOTTOM_TABS: MobileBottomTab[] = [
   { id: "live", href: "/live", labelKey: "live" },
   { id: "favourites", href: FAVOURITES_HREF, labelKey: "favourites" },
   { id: "pl", href: "/premier-league", labelKey: "pl2627" },
-  { id: "articles", href: "/articles", labelKey: "articles" },
+  { id: "wc26", href: "/worldcup2026", labelKey: "wc26" },
 ];
 
 /** More bottom sheet — level 1 categories + site footer links */
@@ -125,6 +126,7 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
   language: [],
   wc26: [
     { href: "/worldcup2026", labelKey: "overview" },
+    { href: "/live", labelKey: "liveResults" },
     { href: "/worldcup2026/fixtures", labelKey: "fixtures" },
     { href: "/worldcup2026/standings", labelKey: "standings" },
     { href: "/worldcup2026/groups", labelKey: "groups" },
@@ -195,12 +197,16 @@ export const DESKTOP_PL_DROPDOWN: NavLinkItem[] = [
   { href: "/premier-league/statistics", labelKey: "statistics" },
 ];
 
-/** Archive links for More sheet — not a live competition dropdown. */
+/** Desktop WC26 header dropdown — existing routes only */
 export const DESKTOP_WC26_DROPDOWN: NavLinkItem[] = [
   { href: "/worldcup2026", labelKey: "wc26Home" },
-  { href: "/worldcup2026/bracket", labelKey: "bracket" },
   { href: "/worldcup2026/fixtures", labelKey: "fixtures" },
+  { href: "/worldcup2026/groups", labelKey: "groups" },
   { href: "/worldcup2026/standings", labelKey: "standings" },
+  { href: "/worldcup2026/teams", labelKey: "teams" },
+  { href: "/worldcup2026/venues", labelKey: "venues" },
+  { href: "/worldcup2026/bracket", labelKey: "bracket" },
+  { href: FAVOURITES_HREF, labelKey: "favourites" },
 ];
 
 /** About and contact */
@@ -219,9 +225,9 @@ export const TOP_NAV: NavItem[] = [
 
 export const FOOTER_PLATFORM_LINKS: NavLinkItem[] = [
   { href: "/live", labelKey: "live" },
+  { href: "/worldcup2026/fixtures", labelKey: "fixtures" },
+  { href: "/worldcup2026/teams", labelKey: "teams" },
   { href: "/premier-league/table", labelKey: "table" },
-  { href: "/articles", labelKey: "articles" },
-  { href: "/worldcup2026", labelKey: "worldCup2026" },
 ];
 
 export const FOOTER_COMPANY_LINKS: NavLinkItem[] = [

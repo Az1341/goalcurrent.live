@@ -1,9 +1,5 @@
 import Link from "next/link";
 import { WC26_HUB_HREF } from "@/lib/wc26-sections";
-import {
-  WC26_ARCHIVE_DATA_AS_OF,
-  WC26_ARCHIVE_LABEL,
-} from "@/lib/wc26/archive";
 import Wc26Breadcrumb from "./Wc26Breadcrumb";
 import styles from "./wc26.module.css";
 
@@ -24,24 +20,20 @@ export default function Wc26SectionPage({
     <main className={styles.wc26Content}>
       <Wc26Breadcrumb
         items={[
-          { label: WC26_ARCHIVE_LABEL, href: WC26_HUB_HREF },
+          { label: "World Cup 2026", href: WC26_HUB_HREF },
           { label: breadcrumb },
         ]}
       />
 
-      <p className={styles.archiveBadge}>{WC26_ARCHIVE_LABEL}</p>
       <h1 className={styles.pageTitle}>
-        FIFA World Cup 2026 Archive — <span>{titleHighlight}</span>
+        FIFA World Cup 2026 — <span>{titleHighlight}</span>
       </h1>
       <p className={styles.pageIntro}>{intro}</p>
-      <p className={styles.archiveTimestamp}>
-        Archived data as of {WC26_ARCHIVE_DATA_AS_OF} (curated repository results).
-      </p>
 
       {children}
 
       <p className={styles.hubBack}>
-        <Link href={WC26_HUB_HREF}>← Back to World Cup 2026 Archive</Link>
+        <Link href={WC26_HUB_HREF}>← Back to World Cup 2026 hub</Link>
       </p>
     </main>
   );

@@ -68,7 +68,7 @@ export const WC26_SECTIONS: Wc26Section[] = [
     breadcrumb: "Bracket",
     titleHighlight: "Knockout Bracket",
     description:
-      "Final knockout path from the Round of 32 through to the final.",
+      "Knockout stage path from the Round of 32 through to the final. Bracket fills in as knockout fixtures are confirmed.",
     hubDescription: "Round of 32 through to the final.",
   },
 ];

@@ -5,7 +5,6 @@ import { getFixtureById, groupLabel } from "@/data/wc26";
 import { buildMatchDetailHeader } from "@/lib/wc26-match";
 import { groupHref } from "@/lib/wc26-groups";
 import { resolveFixtureParticipant, shouldShowLiveMatchCard, shouldShowUpcomingCountdown } from "@/lib/wc26-live";
-import { isWc26TournamentComplete, WC26_ARCHIVE_LABEL } from "@/lib/wc26/archive";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
 import type { MatchDetailPayload } from "@/types/match-detail";
 import UpcomingMatchCountdown from "@/components/live/UpcomingMatchCountdown";
@@ -66,7 +65,7 @@ export default function MatchDetailContent({
   return (
     <main className={styles.matchPage}>
       <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-        <Link href="/worldcup2026">{WC26_ARCHIVE_LABEL}</Link>
+        <Link href="/worldcup2026">World Cup 2026</Link>
         <span className={styles.breadcrumbSep}>/</span>
         <Link href="/worldcup2026/fixtures">Fixtures</Link>
         <span className={styles.breadcrumbSep}>/</span>
@@ -82,11 +81,11 @@ export default function MatchDetailContent({
         url={absoluteUrl(`/match/${fixtureId}`)}
         title={`${header.homeName} vs ${header.awayName} — Live Score & Highlights`}
       />
-      {!isWc26TournamentComplete() && shouldShowUpcomingCountdown(effectiveFixture) ? (
+      {shouldShowUpcomingCountdown(effectiveFixture) ? (
         <div className={styles.upcomingCountdownWrap}>
           <UpcomingMatchCountdown fixture={effectiveFixture} />
         </div>
-      ) : !isWc26TournamentComplete() && shouldShowLiveMatchCard(effectiveFixture) ? (
+      ) : shouldShowLiveMatchCard(effectiveFixture) ? (
         <section
           className={styles.matchLiveCardWrap}
           aria-label="Live match snapshot"
@@ -132,7 +131,7 @@ export default function MatchDetailContent({
       <MatchRelatedLinks fixtureId={fixtureId} groupId={effectiveFixture.groupId} />
 
       <p className={styles.backLink}>
-        <Link href="/worldcup2026">← World Cup 2026 Archive</Link>
+        <Link href="/live">← Live centre</Link>
         {" · "}
         <Link href="/worldcup2026/fixtures">Fixtures</Link>
       </p>

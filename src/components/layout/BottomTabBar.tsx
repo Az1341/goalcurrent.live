@@ -91,7 +91,7 @@ function TabIcon({ tabId }: { tabId: string }) {
       return <FavouriteIcon />;
     case "pl":
       return <PlIcon />;
-    case "articles":
+    case "wc26":
       return <Wc26Icon />;
     default:
       return null;

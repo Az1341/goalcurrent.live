@@ -14,12 +14,9 @@ import {
 } from "@/lib/wc26-ticker-names";
 import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import { useEffectiveFixtures } from "@/lib/use-effective-fixtures";
-import { isWc26TournamentComplete } from "@/lib/wc26/archive";
 import styles from "./live-ribbon.module.css";
 
-const FIXTURES_HREF = isWc26TournamentComplete()
-  ? "/worldcup2026"
-  : "/worldcup2026/fixtures";
+const FIXTURES_HREF = "/worldcup2026/fixtures";
 /** Max matches in the desktop marquee loop (matches widest breakpoint). */
 const DESKTOP_MARQUEE_LIMIT = 4;
 
