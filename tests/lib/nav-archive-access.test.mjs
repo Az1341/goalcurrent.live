@@ -84,6 +84,8 @@ test("ticker and champion popup remain disabled in archive era", () => {
   assert.match(ribbon, /isWc26TournamentComplete/);
   assert.match(ribbon, /return null/);
   assert.match(celebration, /archiveComplete/);
+  assert.match(celebration, /return null/);
+  assert.doesNotMatch(celebration, /role=\"dialog\"/);
   assert.doesNotMatch(home, /LiveRibbon/);
   assert.doesNotMatch(header, /LiveRibbon/);
 });
