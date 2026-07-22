@@ -11,7 +11,7 @@
 | **Project** | GoalCurrent |
 | **Execution Batch** | GC-EXECUTION-BATCH-005 / GC-REC-005-01 |
 | **Report Type** | Completion |
-| **Status** | Freeze ledger complete; gate open for Task 02 after Founder acknowledges |
+| **Status** | Freeze ledger + CI incident addendum complete; overall CI **IN PROGRESS** — not fixed |
 | **Repository** | Az1341/goalcurrent.live |
 | **Branch** | recovery/gc-exec-batch-005 |
 | **PR Number** | N/A (recovery branch; PR #11 remains Draft and separate) |
@@ -301,17 +301,143 @@ Gate for Task 01: approved SHA **established** and matches `origin/main` + Produ
 | **Executor** | Cursor agent under Explicit Founder Approval |
 | **Founder Approval Status** | Approved (Batch 005 / Task 01) |
 | **Approval Date** | 22/07/2026 |
-| **Report Version** | 1.0.0 |
+| **Report Version** | 1.1.0 (addendum § CI incident evidence) |
+
+## CI INCIDENT EVIDENCE ADDENDUM
+
+```text
+[22/07/2026 – 21:10 UTC+1]
+Task: GC-REC-005-01 — evidence capture only. No main mutation. PR #11 not merged. No public deploy.
+```
+
+### 1. Approved recovery baseline
+
+| Field | Value |
+| --- | --- |
+| **Full SHA** | `20515a11b12026bb6e90c47b023cfb582ab8f718` |
+| **Short** | `20515a1` |
+| **Commit purpose** | `fix: restore missing Clarity.tsx for CI and production` |
+| **Commit URL** | https://github.com/Az1341/goalcurrent.live/commit/20515a11b12026bb6e90c47b023cfb582ab8f718 |
+
+**Changed files (immutable, `git show 20515a1 --stat`):**
+
+| Path | Change |
+| --- | --- |
+| `src/components/analytics/Clarity.tsx` | +66 lines (added) |
+
+### 2. Confirmed root-cause chain
+
+1. `src/app/[locale]/layout.tsx` imports and renders `@/components/analytics/Clarity` (line 8 import; line 152 `<Clarity />` in `<head>`).
+2. `Clarity.tsx` was absent from tracked `main` after revert `3752dfd` undid accidental commit `35d6726` while layout wiring from `067364f` remained.
+3. TypeScript failed with **TS2307: Cannot find module '@/components/analytics/Clarity'** (CI job evidence at `827c708`).
+4. Missing file resulted from inconsistent revert/staging: broad `git add` on `35d6726` staged unrelated archive deletions; revert restored those paths but did not restore `Clarity.tsx`.
+5. **GitHub Pages / Jekyll** failures are **separate** from Vercel Production (encoding/`_config.yml` issues; Pages hosts `az1341.github.io/goalcurrent.live`, not `goalcurrent.live`).
+6. Some CI runs show **conclusion: cancelled** when newer pushes to `main` triggered workflow concurrency (`cancel-in-progress`); those runs are **not** completion evidence for E2E health.
+
+### 3. Required status classifications (22/07/2026 evidence pass)
+
+| Area | Classification | Evidence basis |
+| --- | --- | --- |
+| Clarity.tsx restoration | **IMPLEMENTED BUT UNVERIFIED** | File present at baseline SHA; production telemetry for project `xmag3yk04j` not observed in this task |
+| Lint / typecheck recovery | **IMPLEMENTED BUT UNVERIFIED** | Quality job **passed** on run `29836640169` at `20515a1`; single green run is not declared “fixed forever” without sustained gate policy |
+| GitHub Pages UTF-8 / Jekyll | **IMPLEMENTED BUT UNVERIFIED** | No successful `pages-build-deployment` at `20515a1`; latest failure is `_config.yml` control characters (see §5) |
+| Playwright / E2E | **IMPLEMENTED BUT UNVERIFIED** (treat as **BLOCKED** until uncancelled full success) | Run `29836640169` E2E job **failed**; visual **skipped**; no uncancelled full green E2E at baseline in captured runs |
+| Overall CI health | **IN PROGRESS** | Workflow `CI` conclusion **failure** at `20515a1`; do **not** state CI is fixed |
+| Clarity production collection | **IMPLEMENTED BUT UNVERIFIED** | Wiring at baseline; live Clarity ingest for `xmag3yk04j` not verified here |
+
+**Explicit non-claim:** CI is **not** reported as fixed. Fixing requires, independently: lint/typecheck pass (sustained), required build checks pass, one **uncancelled** successful E2E run (or separate evidence for any remaining failure), and Pages workflow classified on its own merits.
+
+### 4. Immutable GitHub Actions evidence (`origin/main` tip `20515a1`)
+
+**Current `origin/main` SHA (fetched 22/07/2026):** `20515a11b12026bb6e90c47b023cfb582ab8f718`
+
+| Run ID | Workflow | headSha | Created (UTC) | Updated (UTC) | Conclusion | URL |
+| --- | --- | --- | --- | --- | --- | --- |
+| 29836640169 | CI | `20515a1` | 2026-07-21T13:54:59Z | 2026-07-21T14:35:51Z | **failure** | https://github.com/Az1341/goalcurrent.live/actions/runs/29836640169 |
+| 29836640971 | pages-build-deployment | `20515a1` | 2026-07-21T13:55:00Z | 2026-07-21T13:55:40Z | **failure** | https://github.com/Az1341/goalcurrent.live/actions/runs/29836640971 |
+| 29836371864 | CI | `827c708` | 2026-07-21T13:51:32Z | 2026-07-21T13:52:41Z | **failure** | https://github.com/Az1341/goalcurrent.live/actions/runs/29836371864 |
+| 29836370628 | pages-build-deployment | `827c708` | 2026-07-21T13:51:31Z | — | **failure** | https://github.com/Az1341/goalcurrent.live/actions/runs/29836370628 |
+| 29835931715 | CI | `35d6726` | 2026-07-21T13:45:49Z | — | **cancelled** | https://github.com/Az1341/goalcurrent.live/actions/runs/29835931715 |
+| 29829659897 | CI | `067364f` | 2026-07-21T12:20:03Z | — | **cancelled** | https://github.com/Az1341/goalcurrent.live/actions/runs/29829659897 |
+| 29829658115 | pages-build-deployment | `067364f` | 2026-07-21T12:20:01Z | — | **failure** | https://github.com/Az1341/goalcurrent.live/actions/runs/29829658115 |
+
+#### Run 29836640169 — CI @ `20515a1` (jobs)
+
+| Job ID | Name | Conclusion | Started (UTC) | Completed (UTC) |
+| --- | --- | --- | --- | --- |
+| 88654578242 | Lint, types, i18n, unit tests | **success** | 2026-07-21T13:55:02Z | 2026-07-21T13:55:49Z |
+| 88654805040 | Playwright E2E + visual regression | **failure** | 2026-07-21T13:55:51Z | 2026-07-21T14:35:50Z |
+
+Quality job steps passed including: lint (gate), `npx tsc --noEmit`, `i18n:check`, `test:unit`, `verify:design`.
+
+E2E job: `npm run build` **success**; `npm run test:e2e` **failure**; `npm run test:visual` **skipped**.
+
+Failure excerpt (log): `TimeoutError: page.waitForSelector: Timeout 60000ms exceeded` at `tests/e2e/articles-404-pl.spec.ts` (404 test ~1.0m); selector `[data-gc-shell]` line ~40.
+
+#### Run 29836371864 — CI @ `827c708` (jobs)
+
+| Job ID | Name | Conclusion |
+| --- | --- | --- |
+| 88653718032 | Lint, types, i18n, unit tests | **failure** (`tsc` step) |
+| 88653952644 | Playwright E2E + visual regression | **skipped** |
+
+`tsc` error (log): `src/app/[locale]/layout.tsx(8,25): error TS2307: Cannot find module '@/components/analytics/Clarity'`.
+
+#### Run 29836640971 — Pages @ `20515a1` (jobs)
+
+| Job ID | Name | Conclusion |
+| --- | --- | --- |
+| 88654586238 | build (Jekyll) | **failure** |
+| 88654732691 | report-build-status | **success** |
+| 88654733826 | deploy | **skipped** |
+
+Jekyll error (log): `Error: (/github/workspace/./_config.yml): control characters are not allowed at line 1 column 1`.
+
+Historical Pages UTF-8 context @ `067364f` run `29829658115`: invalid UTF-8 in `docs/analytics/GA4-EVENT-DICTIONARY.md` and `GA4-INTERNAL-TRAFFIC-FILTER.md` (separate failure mode from `_config.yml` at `20515a1`).
+
+### 5. Production vs GitHub Pages
+
+| Question | Finding | Evidence |
+| --- | --- | --- |
+| Does GitHub Pages host **goalcurrent.live**? | **No** | Production user-facing domain is Vercel (`goalcurrent.live` / `www.goalcurrent.live`). GitHub Pages API: `html_url` = `https://az1341.github.io/goalcurrent.live/`, `status` = `errored`, `cname` = null |
+| Latest **Production** deployment SHA | `20515a11b12026bb6e90c47b023cfb582ab8f718` | GitHub Deployments API `environment=Production`, id `5539597252`, `created_at` 2026-07-21T13:57:06Z |
+
+### 6. Microsoft Clarity wiring (baseline `20515a1`)
+
+| Item | Path / value |
+| --- | --- |
+| Component file | `src/components/analytics/Clarity.tsx` |
+| Layout import | `src/app/[locale]/layout.tsx` — `@/components/analytics/Clarity` |
+| Project ID | `src/lib/analytics/config.ts` — `CLARITY_PROJECT_ID` default **`xmag3yk04j`** (`NEXT_PUBLIC_CLARITY_PROJECT_ID` override) |
+
+### 7. Governance finding — release-control failure
+
+| Event | SHA | Finding |
+| --- | --- | --- |
+| Accidental broad staging | `35d67261d96093082223d2e1eadcd7bf197a4d25` | Unrelated WC26 archive file deletions were staged and committed — **release-control failure** (path scope not verified before commit) |
+| Revert | `3752dfd` (revert of `35d6726`) | Restored deleted archive paths but left layout importing missing `Clarity.tsx` |
+| Recovery commit | `20515a1` | Restored `Clarity.tsx` only |
+
+**Recommendation (deferred — not implemented in GC-REC-005-01):** mandatory pre-commit changed-file review and path-scope verification before any push to protected branches.
+
+### 8. Addendum controls honored
+
+| Control | Status |
+| --- | --- |
+| Do not change `main` | **PASS** (ledger commits on `recovery/gc-exec-batch-005` only) |
+| Do not merge PR #11 | **PASS** |
+| Do not deploy publicly | **PASS** |
+| Do not start Task 02 | **PASS** |
 
 ## Footer
 
 | Field | Value |
 | --- | --- |
-| **Overall Status** | READY FOR REVIEW |
+| **Overall Status** | ADDENDUM RECORDED — CI **IN PROGRESS** (not fixed) |
 | **Production Status** | DEPLOYED at `20515a1` (unchanged; leave live) |
-| **Main Branch Status** | UNCHANGED |
-| **Draft PR Status** | Draft (#11) |
-| **Public Deployment Status** | NOT PUBLICLY DEPLOYED |
-| **Report Generated** | [22/07/2026 – 21:01] |
+| **Main Branch Status** | UNCHANGED at `20515a1` |
+| **Draft PR Status** | Draft (#11) — not merged |
+| **Public Deployment Status** | NOT PUBLICLY DEPLOYED (no new deploy by this task) |
+| **Report Generated** | [22/07/2026 – 21:10] |
 
-**NOT MERGED AND NOT PUBLICLY DEPLOYED.**
+**NOT MERGED AND NOT PUBLICLY DEPLOYED. CI NOT DECLARED FIXED.**
