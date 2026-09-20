@@ -10,7 +10,7 @@ import TeamFlag from "@/components/TeamFlag";
 import { PlTeamBadge } from "@/components/pl/PlShared";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
-import { isLocalToday } from "@/lib/date-utils";
+import { selectFeaturedMatches, scorePair } from "@/lib/home/matchday";
 import styles from "../home-v5.module.css";
 import favouriteStyles from "./HomeMatchFavourite.module.css";
 
@@ -114,12 +114,9 @@ function PlMatchCard({
   fixture: PlFixtureRow;
   compact?: boolean;
 }) {
-  const hasScore =
-    fixture.status === "FT" ||
-    fixture.status === "LIVE" ||
-    (fixture.homeScore != null && fixture.awayScore != null);
-  const homeScore = hasScore ? (fixture.homeScore ?? 0) : "–";
-  const awayScore = hasScore ? (fixture.awayScore ?? 0) : "–";
+  const scores = scorePair(fixture);
+  const homeScore = scores?.[0] ?? "–";
+  const awayScore = scores?.[1] ?? "–";
   const cardClass = compact ? styles.todayMatchCard : styles.liveCard;
   const label = `${fixture.homeTeamName} vs ${fixture.awayTeamName}`;
 
@@ -167,20 +164,6 @@ function PlMatchCard({
   );
 }
 
-function orderPlForFeatured(fixtures: readonly PlFixtureRow[]): PlFixtureRow[] {
-  const live = fixtures.filter((f) => f.status === "LIVE");
-  const todayRest = fixtures.filter(
-    (f) => f.status !== "LIVE" && isLocalToday(f.kickoffUtc),
-  );
-  const upcoming = fixtures.filter(
-    (f) => f.status !== "LIVE" && !isLocalToday(f.kickoffUtc),
-  );
-  return [...live, ...todayRest, ...upcoming].sort(
-    (a, b) =>
-      new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime(),
-  );
-}
-
 type HomeFeaturedMatchCardsProps = {
   wc26Views: readonly HomepageMatchView[];
   plFixtures: readonly PlFixtureRow[];
@@ -202,7 +185,7 @@ export default function HomeFeaturedMatchCards({
       );
     }
     if (nodes.length < limit) {
-      for (const fixture of orderPlForFeatured(plFixtures).slice(
+      for (const fixture of selectFeaturedMatches(plFixtures).slice(
         0,
         limit - nodes.length,
       )) {
