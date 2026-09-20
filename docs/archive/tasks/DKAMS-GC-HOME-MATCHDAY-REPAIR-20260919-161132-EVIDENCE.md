@@ -3,7 +3,7 @@
 **UK date/time:** 20.09.2026 11:43:47 BST (Europe/London)
 **Verdict:** BLOCKED (implementation complete for founder review; Playwright local webServer + Aikido sign-in + protected preview verification pending)
 **Baseline SHA:** 09389adae99c89a0a60bd7a7a922eb81f6f7bd52
-**Final head SHA:** 42336b8 (branch `fix/gc-home-matchday-repair-20260919`)
+**Final head SHA:** 539d753715229b2542be3bbbc2e5efa01e4cc92c (branch `fix/gc-home-matchday-repair-20260919`)
 **PR:** https://github.com/Az1341/goalcurrent.live/pull/84 (draft)
 **NOT MERGED AND NOT PUBLICLY DEPLOYED**
 
@@ -38,7 +38,7 @@
 | Loading/error/empty | Explicit section states; never silent null section |
 | Date rollover / stale | 60s now tick; stale warning uses fetchedAt; unknown if absent |
 | Shared cache / no per-card fan-out | Parent hook only; FE-010 updated; +3 competition list requests at hub poll cadence |
-| Tests on reported head | Unit/i18n/design/build PASS on 42336b8; Playwright BLOCKED locally |
+| Tests on reported head | Unit/i18n/design/build PASS on 539d753715229b2542be3bbbc2e5efa01e4cc92c; Playwright BLOCKED locally |
 
 ## Competition coverage matrix
 | Comp | Live scores API | Dedicated hub | Homepage feed |
@@ -86,5 +86,5 @@ UCL/FA Cup hubs are schedule/score from fixtures list ? no new events/lineups pr
 - This report: `docs/archive/tasks/DKAMS-GC-HOME-MATCHDAY-REPAIR-20260919-161132-EVIDENCE.md`
 
 ## Founder review checkpoint
-Ready for Ahmad to review protected private preview of PR #84 / SHA `42336b8` after Playwright CI + protection evidence.
+Ready for Ahmad to review protected private preview of PR #84 / SHA `539d753715229b2542be3bbbc2e5efa01e4cc92c` after Playwright CI + protection evidence.
 **No merge / no public deployment authorised by this card.**
