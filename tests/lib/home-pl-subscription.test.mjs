@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-test("homepage PL fixtures are fetched once in HomeClient and passed to children", () => {
+test("homepage fixtures are fetched once in HomeClient and passed to children", () => {
   const home = readFileSync(join(root, "src/app/[locale]/HomeClient.tsx"), "utf8");
   const today = readFileSync(
     join(root, "src/components/home/v5/HomeTodaysMatches.tsx"),
@@ -16,12 +16,20 @@ test("homepage PL fixtures are fetched once in HomeClient and passed to children
     join(root, "src/components/home/v5/HomeTeamsLeagues.tsx"),
     "utf8",
   );
+  const hook = readFileSync(
+    join(root, "src/lib/client/useHomeMatchdayFixtures.ts"),
+    "utf8",
+  );
 
-  assert.match(home, /useLiveFixtures/);
+  assert.match(home, /useHomeMatchdayFixtures/);
   assert.doesNotMatch(home, /useSWR<PlFixturesApiResponse>|["']\/api\/pl\/fixtures["']/);
+  assert.match(hook, /useLiveFixtures/);
+  assert.match(hook, /useLiveUclFixtures/);
+  assert.match(hook, /useLiveFacupFixtures/);
+  assert.match(hook, /useLiveUnlFixtures/);
+  assert.match(home, /cards=\{matchday\.cards\}/);
   assert.match(home, /plFixtures=\{plFixtures\}/);
-  assert.doesNotMatch(today, /useSWR/);
+  assert.doesNotMatch(today, /useSWR|useLiveFixtures|useLiveUcl|useLiveFacup|useLiveUnl/);
   assert.doesNotMatch(leagues, /useSWR/);
-  assert.match(today, /plFixtures/);
   assert.match(leagues, /plFixtures/);
 });

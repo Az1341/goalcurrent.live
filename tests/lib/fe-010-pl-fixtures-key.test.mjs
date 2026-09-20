@@ -20,16 +20,26 @@ test("FE-010: HomeClient and PlHubClient share useLiveFixtures (one fetcher)", (
     join(root, "src/app/[locale]/HomeClient.tsx"),
     "utf8",
   );
+  const homeHook = readFileSync(
+    join(root, "src/lib/client/useHomeMatchdayFixtures.ts"),
+    "utf8",
+  );
   const hub = readFileSync(
     join(root, "src/components/pl/PlHubClient.tsx"),
     "utf8",
   );
 
-  assert.match(home, /useLiveFixtures/);
+  assert.match(home, /useHomeMatchdayFixtures/);
+  assert.match(homeHook, /useLiveFixtures/);
   assert.doesNotMatch(
     home,
     /useSWR<PlFixturesApiResponse>|["']\/api\/pl\/fixtures["']/,
     "HomeClient must not register a parallel SWR owner for PL fixtures",
+  );
+  assert.doesNotMatch(
+    homeHook,
+    /useSWR<PlFixturesApiResponse>|["']\/api\/pl\/fixtures["']/,
+    "useHomeMatchdayFixtures must reuse useLiveFixtures, not a parallel SWR owner",
   );
 
   assert.match(hub, /useLiveFixtures/);
