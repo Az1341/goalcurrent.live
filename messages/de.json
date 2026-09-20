@@ -364,6 +364,25 @@
       "seasonStartsSoon": "Die Premier-League-Saison beginnt bald",
       "aria": "Countdown {home} gegen {away}: {days} Tage, {hours} Stunden, {minutes} Minuten",
       "ariaEmpty": "Premier-League-Countdown nicht verfugbar"
+    },
+    "matchday": {
+      "title": "Heutige Spiele",
+      "timezoneLabel": "{tz}",
+      "filterAll": "Alle",
+      "filterLive": "Live",
+      "filterFinished": "Beendet",
+      "filterUpcoming": "Bevorstehend",
+      "filtersAria": "Spiel-Filter",
+      "showAll": "Alle anzeigen ({count})",
+      "matchHub": "Spielzentrum",
+      "loading": "Heutige Spiele werden geladen...",
+      "empty": "Heute keine Spiele in den unterstuetzten Wettbewerben.",
+      "emptyFilter": "Keine Spiele in diesem Filter.",
+      "partialError": "Einige Wettbewerbsfeeds sind nicht verfuegbar. Gesunde Wettbewerbe werden angezeigt.",
+      "staleWarning": "Ergebnisse koennen veraltet sein (Quelle abgerufen um {fetchedAt}).",
+      "freshnessUnknown": "Aktualitaet der Ergebnisse unbekannt.",
+      "liveScoreUnavailable": "Live-Ergebnis fuer diesen Wettbewerb nicht verfuegbar.",
+      "competitionHub": "Wettbewerbs-Hub"
     }
   },
   "favourites": {
