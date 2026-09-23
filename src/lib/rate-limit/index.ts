@@ -27,6 +27,13 @@ function getUpstashLimiters(): {
   if (!url || !token) {
     upstashLimiterGeneral = null;
     upstashLimiterUpstream = null;
+    if (process.env.VERCEL_ENV === "production") {
+      // Per-instance in-memory limiting does not share state across
+      // serverless instances — production should always configure Upstash.
+      console.error(
+        "[rate-limit] Upstash Redis is NOT configured — falling back to per-instance in-memory limiting. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.",
+      );
+    }
     return { general: null, upstream: null };
   }
 
@@ -71,7 +78,8 @@ export async function checkRateLimitAsync(
   }
 
   const key = `${ip}:${isUpstreamPath(pathname) ? "upstream" : "general"}`;
-  const result = await limiter.limit(key);
+  const result =
+ await limiter.limit(key);
 
   if (result.success) {
     return { allowed: true };
