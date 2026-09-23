@@ -28,6 +28,10 @@ const STYLE_SRC = [
   "https://onesignal.com",
 ] as const;
 
+// SECURITY: do not add a bare "https:" wildcard here. It would make the
+// REMOTE_IMAGE_HOSTNAMES allowlist pointless by allowing images from any
+// origin. New image hosts must be added to src/lib/images.ts and then flow
+// into both the CSP and Next.js remotePatterns.
 const IMG_SRC = [
   "blob:",
   "data:",
@@ -35,7 +39,6 @@ const IMG_SRC = [
   "https://goalcurrent.live",
   "https://www.goalcurrent.live",
   ...REMOTE_IMAGE_HOSTNAMES.map((host) => `https://${host}`),
-  "https:",
 ] as const;
 
 const CONNECT_SRC = [
