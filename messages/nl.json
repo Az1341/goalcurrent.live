@@ -364,6 +364,25 @@
       "seasonStartsSoon": "Premier League-seizoen begint binnenkort",
       "aria": "Aftellen {home} vs {away}: {days} dagen, {hours} uur, {minutes} minuten",
       "ariaEmpty": "Premier League-aftelling niet beschikbaar"
+    },
+    "matchday": {
+      "title": "Wedstrijden vandaag",
+      "timezoneLabel": "{tz}",
+      "filterAll": "Alles",
+      "filterLive": "Live",
+      "filterFinished": "Afgelopen",
+      "filterUpcoming": "Komend",
+      "filtersAria": "Wedstrijdfilters",
+      "showAll": "Alles tonen ({count})",
+      "matchHub": "Wedstrijdhub",
+      "loading": "Wedstrijden van vandaag laden...",
+      "empty": "Geen wedstrijden vandaag in de ondersteunde competities.",
+      "emptyFilter": "Geen wedstrijden in dit filter.",
+      "partialError": "Sommige competitiefeeds zijn niet beschikbaar. Gezonde competities worden getoond.",
+      "staleWarning": "Scores kunnen verouderd zijn (bron opgehaald om {fetchedAt}).",
+      "freshnessUnknown": "Scoreversheid onbekend.",
+      "liveScoreUnavailable": "Live-score niet beschikbaar voor deze competitie.",
+      "competitionHub": "Competitiehub"
     }
   },
   "favourites": {
