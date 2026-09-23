@@ -1,6 +1,7 @@
 "use client";
 
 import useSWR from "swr";
+import { useMemo } from "react";
 import {
   fetcher,
   LIVE_POLL_HUB_MS,
@@ -65,7 +66,14 @@ export function useLiveApi<T = unknown>(
   options?: UseLiveApiOptions<T>,
 ) {
   // Single unconditional useSWR call - options vary; Hook order does not.
-  return useSWR<T>(path, fetcher, buildUseLiveApiSwrOptions(options));
+  // A ticking date/minute display must not restart SWR's refresh timer on
+  // every render, otherwise a 30s clock can indefinitely defer a 75s poll.
+  const { fresh, refreshInterval, fallbackData } = options ?? {};
+  const swrOptions = useMemo(
+    () => buildUseLiveApiSwrOptions({ fresh, refreshInterval, fallbackData }),
+    [fresh, refreshInterval, fallbackData],
+  );
+  return useSWR<T>(path, fetcher, swrOptions);
 }
 
 export { LIVE_POLL_MATCH_MS, LIVE_POLL_HUB_MS };

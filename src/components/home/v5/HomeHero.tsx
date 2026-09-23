@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { HOME_HERO_CONFIG } from "@/lib/home/hero-config";
+import { HOME_HERO_BG } from "@/lib/critical-assets";
 import type { HomepageMatchView } from "@/lib/wc26-live";
 import type { PlFixtureRow } from "@/lib/pl/types";
 import TeamFlag from "@/components/TeamFlag";
@@ -38,12 +39,14 @@ function MarqueeMatchCard({ match }: { match: HomepageMatchView }) {
 }
 
 type HomeHeroProps = {
+  compact?: boolean;
   featuredMatch?: HomepageMatchView;
   wc26Views: readonly HomepageMatchView[];
   plFixtures: readonly PlFixtureRow[];
 };
 
 export default function HomeHero({
+  compact = false,
   featuredMatch,
   wc26Views,
   plFixtures,
@@ -51,6 +54,13 @@ export default function HomeHero({
   const t = useTranslations("home");
   const config = HOME_HERO_CONFIG;
   const marquee = config.marquee;
+
+  if (compact) {
+    return <section className={styles.heroCompact} aria-label={t("heroAria")} style={{ backgroundImage: `linear-gradient(90deg, rgba(10,20,35,.94), rgba(10,20,35,.60)), url(${HOME_HERO_BG})` }}>
+      <h1>{t("heroHeadline1")}</h1>
+      <p>{t("heroHeadline2")} {t("heroHeadline3")}</p>
+    </section>;
+  }
 
   if (config.variant === "marquee" && marquee) {
     return (

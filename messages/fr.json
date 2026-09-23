@@ -466,5 +466,54 @@
     "scoreAria": "Score du match",
     "kickoffTbc": "Coup d'envoi TBC",
     "unavailable": "Les details du match ne sont pas encore disponibles."
+  },
+  "matchday": {
+    "today": "Matchs du jour",
+    "loading": "Chargement des matchs…",
+    "filters": "Filtrer les matchs",
+    "filtersLabel": {
+      "all": "Tous",
+      "live": "En direct",
+      "finished": "Résultats",
+      "upcoming": "À venir"
+    },
+    "matchCount": "{count, plural, one {# match} other {# matchs}}",
+    "noMatches": "Aucun match aujourd’hui dans cette compétition.",
+    "noFilterMatches": "Aucun match pour ce filtre.",
+    "showLess": "Afficher moins de matchs",
+    "showAll": "Voir les {count} matchs",
+    "nextUp": "À suivre",
+    "matchHub": "Centre du match",
+    "lastReportedLive": "Dernier état : en direct",
+    "kickoffTbc": "Horaire à confirmer",
+    "scoreUnavailable": "Score indisponible",
+    "penaltyScore": "Tirs au but : {home}–{away}",
+    "status": {
+      "halfTime": "Mi-temps",
+      "penalties": "Tirs au but",
+      "extraTime": "Prolongation",
+      "live": "EN DIRECT",
+      "finished": "Terminé",
+      "finishedPenalties": "Terminé · Tirs au but",
+      "finishedExtraTime": "Terminé · Prolongation",
+      "postponed": "Reporté",
+      "cancelled": "Annulé",
+      "abandoned": "Abandonné",
+      "upcoming": "À venir",
+      "unknown": "Statut indisponible",
+      "interrupted": "Interrompu"
+    },
+    "health": {
+      "loading": "Chargement du calendrier…",
+      "unavailable": "La couverture en direct est actuellement indisponible.",
+      "delayed": "Mises à jour retardées. Les scores affichés peuvent être anciens.",
+      "scheduleOnly": "Calendrier disponible. Les scores en direct ne sont pas confirmés.",
+      "unknown": "Impossible de confirmer la dernière mise à jour.",
+      "available": "Données vérifiées"
+    },
+    "backToToday": "Retour aux matchs du jour",
+    "groupTable": "Voir le classement et les matchs du groupe",
+    "detailCoverage": "Calendrier et score uniquement. Compositions, événements et statistiques indisponibles ici.",
+    "matchNotFound": "Ce match ne figure pas dans les données actuelles de la compétition."
   }
 }

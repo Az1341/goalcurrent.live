@@ -466,5 +466,54 @@
     "scoreAria": "Match score",
     "kickoffTbc": "Kick-off TBC",
     "unavailable": "Fixture details are not available yet."
+  },
+  "matchday": {
+    "today": "Today's matches",
+    "loading": "Loading matches…",
+    "filters": "Filter matches",
+    "filtersLabel": {
+      "all": "All",
+      "live": "Live",
+      "finished": "Results",
+      "upcoming": "Upcoming"
+    },
+    "matchCount": "{count, plural, one {# match} other {# matches}}",
+    "noMatches": "No matches today in this competition.",
+    "noFilterMatches": "No matches match this filter.",
+    "showLess": "Show fewer matches",
+    "showAll": "Show all {count} matches",
+    "nextUp": "Next up",
+    "matchHub": "Match hub",
+    "lastReportedLive": "Last reported live",
+    "kickoffTbc": "Kickoff TBC",
+    "scoreUnavailable": "Score unavailable",
+    "penaltyScore": "Penalties: {home}–{away}",
+    "status": {
+      "halfTime": "Half-time",
+      "penalties": "Penalties",
+      "extraTime": "Extra time",
+      "live": "LIVE",
+      "finished": "Full-time",
+      "finishedPenalties": "FT · Penalties",
+      "finishedExtraTime": "FT · Extra time",
+      "postponed": "Postponed",
+      "cancelled": "Cancelled",
+      "abandoned": "Abandoned",
+      "upcoming": "Upcoming",
+      "unknown": "Status unavailable",
+      "interrupted": "Interrupted"
+    },
+    "health": {
+      "loading": "Loading fixtures…",
+      "unavailable": "Live coverage is currently unavailable.",
+      "delayed": "Updates delayed. Displayed scores may be out of date.",
+      "scheduleOnly": "Schedule available. Live scores are not confirmed.",
+      "unknown": "Unable to confirm the latest update.",
+      "available": "Data checked"
+    },
+    "backToToday": "Back to today's matches",
+    "groupTable": "View group table and fixtures",
+    "detailCoverage": "Fixture and score coverage only. Lineups, events and statistics are not available here.",
+    "matchNotFound": "This match is not in the current competition feed."
   }
 }
