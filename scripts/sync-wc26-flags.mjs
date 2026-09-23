@@ -40,24 +40,46 @@ async function fetchFlagSvg(code) {
   return null;
 }
 
+import { access } from "node:fs/promises";
+
+async function flagFileExists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 let ok = 0;
 let fail = 0;
+let stale = 0;
 
 for (const code of FLAG_CODES) {
+  const target = join(outDir, `${code}.svg`);
   const svg = await fetchFlagSvg(code);
   if (svg === null) {
-    console.error(`FAIL ${code}: giving up after ${RETRY_ATTEMPTS} attempts`);
+    // BUILD GUARD (resilient): a network hiccup must not brick the deploy
+    // when a previously synced flag is already committed/present. Only a
+    // flag that would be genuinely MISSING after this run fails the build.
+    if (await flagFileExists(target)) {
+      console.warn(`WARN ${code}: kept existing file (download failed)`);
+      stale += 1;
+      continue;
+    }
+    console.error(`FAIL ${code}: missing and download failed after ${RETRY_ATTEMPTS} attempts`);
     fail += 1;
     continue;
   }
-  await writeFile(join(outDir, `${code}.svg`), svg, "utf8");
+  await writeFile(target, svg, "utf8");
   ok += 1;
 }
 
-console.log(`Synced ${ok} flags, ${fail} failed → public/flags/4x3/`);
+console.log(`Synced ${ok} flags, ${stale} kept from previous sync, ${fail} failed → public/flags/4x3/`);
 
 // BUILD GUARD: a partially-synced flag set must never deploy silently.
-// Missing flag SVGs break team badges/lineups at runtime, so fail the
+// Missing flag SVGs break team badges/lineups at 
+runtime, so fail the
 // prebuild step and the whole build instead of shipping without them.
 if (fail > 0) {
   process.exitCode = 1;
