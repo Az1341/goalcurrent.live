@@ -64,7 +64,8 @@ async function fetchJson<T>(url: string): Promise<T | null> {
   try {
     const res = await fetch(url);
     if (!res.ok) return null;
-    return (await res.json()) as T;
+    return (a
+wait res.json()) as T;
   } catch {
     return null;
   }
@@ -120,7 +121,8 @@ export default function FixtureCalendarClient() {
   const chipRefs = useRef<Map<string, HTMLElement>>(new Map());
   const initialCenterDone = useRef(false);
 
-  // Hydration-safe "today": computed only on the client, refreshed when the
+  // Hydration-safe "today": computed only on the client, refres
+hed when the
   // tab regains visibility (handles the calendar rolling past midnight).
   useEffect(() => {
     const refreshToday = () => {
@@ -174,7 +176,8 @@ export default function FixtureCalendarClient() {
           months[0]!;
         setMonth(bestMonth);
 
-        // Pre-select today when it has fixtures in the chosen month so the
+        // Pre-select toda
+y when it has fixtures in the chosen month so the
         // list opens on the live matchday instead of dumping the month.
         const todayRow = next.find(
           (row) => isoDayKey(row.kickoffUtc) === todayDay,
@@ -238,7 +241,8 @@ export default function FixtureCalendarClient() {
     return activeDay === "all" ? "" : activeDay;
   }, [todayKey, daysInMonth, activeDay]);
 
-  const filtered = useMemo(() => {
+  c
+onst filtered = useMemo(() => {
     if (activeDay === "all") return filteredByComp;
     return filteredByComp.filter((row) => isoDayKey(row.kickoffUtc) === activeDay);
   }, [filteredByComp, activeDay]);
@@ -306,7 +310,8 @@ export default function FixtureCalendarClient() {
   }, [centerTargetKey, daysInMonth.length]);
 
   useEffect(() => {
-    if (!centerTargetKey) return;
+    if (!centerTargetKey) 
+return;
     let cancelled = false;
     const recenter = () => {
       if (!cancelled) scrollChipIntoCenter(centerTargetKey, "instant");
@@ -362,7 +367,8 @@ export default function FixtureCalendarClient() {
                 <option key={ym} value={ym}>
                   {formatYearMonthLabel(ym)}
                 </option>
-              ))}
+        
+      ))}
             </select>
           </label>
           <button
@@ -399,9 +405,32 @@ export default function FixtureCalendarClient() {
           className={styles.dayPicker}
           role="group"
           aria-label="Pick a date"
+          onKeyDown={(e) => {
+            if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+            const keys = ["all", ...daysInMonth];
+            const current =
+              (e.target instanceof HTMLElement && e.target.dataset.dayKey) ||
+              activeDay;
+            const index = keys.indexOf(current);
+            if (index === -1) return;
+            e.preventDefault();
+            const delta = e.key === "ArrowRight" ? 1 : -1;
+            const next = keys[index + delta];
+            if (!next) return;
+            setSelectedDay(next);
+            chipRefs.current.get(next)?.focus();
+          }}
         >
           <button
             type="button"
+            data-day-key="all"
+            ref={(node) => {
+              if (node) {
+                chipRefs.current.set("all", node);
+              } else {
+                chipRefs.current.delete("all");
+              }
+            }}
             className={styles.dayChip + " " + (activeDay === "all" ? styles.dayChipActive : "")}
             onClick={() => setSelectedDay("all")}
           >
@@ -425,7 +454,9 @@ export default function FixtureCalendarClient() {
                   } else {
                     chipRefs.current.delete(day);
                   }
-                }}
+                }
+}
+                data-day-key={day}
                 aria-current={isToday ? "date" : undefined}
                 className={classes}
                 onClick={() => setSelectedDay(day)}
