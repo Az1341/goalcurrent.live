@@ -67,7 +67,7 @@ export type DesktopDropdownSection = {
   links: NavLinkItem[];
 };
 
-/** Global favourites Ã¢â‚¬â€ saved items across all competitions. */
+/** Global favourites — saved items across all competitions. */
 export const FAVOURITES_HREF = "/favourites";
 
 /**
@@ -82,12 +82,13 @@ export const DESKTOP_PRIMARY_NAV: NavItem[] = [
   { href: "/transfers", labelKey: "transfers" },
   { href: "/premier-league/table", labelKey: "tables" },
   { href: "/news", labelKey: "news" },
-  { href: FAVOURITES_HREF, labelKey: "favourites" },
+  { href: FAVOURITES_HREF, labelKey: "favourites" 
+},
   { href: "/videos", labelKey: "videos" },
   { href: "/articles", labelKey: "articles" },
 ];
 
-/** Legacy / footer Ã¢â‚¬â€ full primary list for other consumers. */
+/** Legacy / footer — full primary list for other consumers. */
 export const MAIN_NAV: NavItem[] = [
   ...DESKTOP_PRIMARY_NAV,
   { href: "/premier-league", labelKey: "premierLeague", exact: true },
@@ -99,7 +100,7 @@ export const PL_NAV: NavItem[] = [
   { href: "/premier-league/fixtures", labelKey: "fixtures" },
 ];
 
-/** Premier League hub Ã¢â‚¬â€ extended section links */
+/** Premier League hub — extended section links */
 export const PL_SECTION_NAV: NavItem[] = [
   { href: "/premier-league/table", labelKey: "table2627" },
   { href: "/premier-league/fixtures", labelKey: "fixtures2627" },
@@ -119,19 +120,20 @@ export const WC26_NAV: NavItem[] = [
   { href: "/worldcup2026/bracket", labelKey: "bracket" },
 ];
 
-/** More dropdown Ã¢â‚¬â€ WC26 hub + section links (legacy) */
+/** More dropdown — WC26 hub + section links (legacy) */
 export const MORE_NAV: NavLinkItem[] = [
   { href: "/worldcup2026", labelKey: "overview" },
   ...WC26_NAV,
 ];
 
-/** Mobile bottom tab bar Ã¢â‚¬â€ primary tabs only (<769px) */
+/** Mobile bottom tab bar — primary tabs only (<769px) */
 export const MOBILE_BOTTOM_TABS: MobileBottomTab[] = [
   { id: "home", href: "/", labelKey: "home", exact: true },
   { id: "live", href: "/live", labelKey: "live" },
   { id: "favourites", href: FAVOURITES_HREF, labelKey: "favourites" },
   { id: "pl", href: "/premier-league", labelKey: "pl2627" },
-  { id: "articles", href: "/articles", labelKey: "articles" },
+  { id: "articles", href: "/articles", labelKey: "artic
+les" },
 ];
 
 /** More bottom sheet — level 1 categories + site footer links */
@@ -174,7 +176,8 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/worldcup2026/standings", labelKey: "standings" },
     { href: "/worldcup2026/groups", labelKey: "groups" },
     { href: "/worldcup2026/teams", labelKey: "teams" },
-    { href: "/worldcup2026/venues", labelKey: "venues" },
+    { href: "/worldcup2026/venue
+s", labelKey: "venues" },
     { href: "/worldcup2026/bracket", labelKey: "bracket" },
     { href: "/news/world-cup", labelKey: "news" },
     { href: "/videos/world-cup", labelKey: "wcVideos" },
@@ -214,7 +217,8 @@ export const MORE_SHEET_SUBMENUS: Record<MoreSheetSubmenuId, NavLinkItem[]> = {
     { href: "/nations-league/league/a/group/2", labelKey: "groupA2" },
     { href: "/nations-league/league/a/group/3", labelKey: "groupA3" },
     { href: "/nations-league/league/a/group/4", labelKey: "groupA4" },
-    { href: "/nations-league/league/b/group/1", labelKey: "groupB1" },
+    { href: "/
+nations-league/league/b/group/1", labelKey: "groupB1" },
     { href: "/nations-league/league/b/group/2", labelKey: "groupB2" },
     { href: "/nations-league/league/b/group/3", labelKey: "groupB3" },
     { href: "/nations-league/league/b/group/4", labelKey: "groupB4" },
@@ -266,13 +270,14 @@ export const MORE_SHEET_SUBMENU_TITLE_KEYS: Record<MoreSheetSubmenuId, string> =
   clubs: "clubs",
   players: "players",
   tables: "table",
-  statistics: "statistics",
+  statistics: "statistics"
+,
   news: "news",
   video: "videoAudio",
   transfers: "transfers",
 };
 
-/** Desktop PL 26/27 header dropdown Ã¢â‚¬â€ existing routes only */
+/** Desktop PL 26/27 header dropdown — existing routes only */
 export const DESKTOP_PL_DROPDOWN: NavLinkItem[] = [
   { href: "/premier-league", labelKey: "plHome" },
   { href: "/premier-league/fixtures", labelKey: "fixtures" },
@@ -333,7 +338,8 @@ export const DESKTOP_COMPETITIONS_NAV: readonly DesktopCompetitionNavGroup[] = [
     href: "/fa-cup",
     links: [
       { href: "/fa-cup", labelKey: "overview" },
-      { href: "/fa-cup#facup-fixtures", labelKey: "fixtures" },
+      { href: "/fa-cup#facup-fixtures", labelKey: "fix
+tures" },
       { href: "/fa-cup#facup-results", labelKey: "results" },
       { href: "/fa-cup#facup-rounds", labelKey: "rounds" },
     ],
@@ -400,7 +406,8 @@ export const DESKTOP_SIDEBAR_LEAGUES_NAV: readonly DesktopSidebarLeagueItem[] = 
   },
   {
     id: "ucl",
-    labelKey: DESKTOP_SIDEBAR_UCL.labelKey,
+    
+labelKey: DESKTOP_SIDEBAR_UCL.labelKey,
     shortLabel: "UCL",
     href: DESKTOP_SIDEBAR_UCL.href,
   },
@@ -428,7 +435,7 @@ export const SITE_NAV: NavItem[] = [
   { href: "/contact", labelKey: "contact" },
 ];
 
-/** Desktop top bar Ã¢â‚¬â€ all navigation links in one horizontal row */
+/** Desktop top bar — all navigation links in one horizontal row */
 export const TOP_NAV: NavItem[] = [
   ...MAIN_NAV,
   ...WC26_NAV,
@@ -462,7 +469,8 @@ export const FOOTER_LINKS: NavLinkItem[] = [
 export type SocialLinkItem = {
   href: string;
   labelKey: "facebook" | "instagram" | "tiktok" | "twitter";
-  icon: "facebook" | "instagram" | "tiktok" | "twitter";
+  icon: "facebook" | 
+"instagram" | "tiktok" | "twitter";
 };
 
 export const FOOTER_SOCIAL: SocialLinkItem[] = [
@@ -530,7 +538,8 @@ export function isDesktopSidebarLeagueActive(
   item: DesktopSidebarLeagueItem,
 ): boolean {
   if (item.id === "pl") {
-    return isDesktopPlActive(pathname);
+    retur
+n isDesktopPlActive(pathname);
   }
 
   const base = item.href.split("#")[0] ?? item.href;
@@ -589,7 +598,8 @@ const MOBILE_BACK_PARENT_RULES: Array<{ match: RegExp; parent: string }> = [
   { match: /^\/videos\/[^/]+$/, parent: "/videos" },
   { match: /^\/video\/[^/]+$/, parent: "/video" },
   { match: /^\/statistics\/[^/]+$/, parent: "/statistics" },
-  { match: /^\/transfers\/[^/]+$/, parent: "/transfers" },
+  { match: /^\/transfers\/[^/]+$/, parent: "/trans
+fers" },
   { match: /^\/favourites\/[^/]+$/, parent: "/favourites" },
   { match: /^\/premier-league\/2025-26\/[^/]+$/, parent: "/premier-league/table" },
 ];
