@@ -126,7 +126,8 @@
 }
 
 .time {
-  font-size: 0.8125rem;
+  fon
+t-size: 0.8125rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--gc-text-primary);
@@ -250,7 +251,8 @@
 .flag {
   width: 18px;
   height: 18px;
-  border-radius: 2px;
+  border-radius:
+ 2px;
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -306,4 +308,19 @@
   .teams {
     font-size: 0.8125rem;
   }
+}
+/* Today's chip — always visible, highlighted, and centred in the strip.
+   Non-negotiable layout rule: today is never hidden, cut off, or pushed
+   out of view. Ring + underline keep it distinguishable even when another
+   day is selected (dayChipActive). */
+.dayChipToday {
+  border-color: #111827;
+  box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.25);
+  color: var(--gc-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dayChipToday.dayChipActive {
+  box-shadow: none;
 }

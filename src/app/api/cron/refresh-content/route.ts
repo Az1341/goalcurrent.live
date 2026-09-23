@@ -38,9 +38,14 @@ export async function GET(request: Request): Promise<NextResponse> {
     const result = await refreshContentCache();
     await writeDevCacheSnapshots(result);
 
-    revalidateTag("content-news", "days");
-    revalidateTag("content-videos", "days");
-    revalidateTag("content-articles", "days");
+    // These tags are consumed by unstable_cache({ tags }) — the classic Data
+    // Cache API. revalidateTag's second argument is a cacheLife *profile*
+    // name, which is only valid for "use cache" entries; no "days" profile
+    // is registered anywhere in this repo, so passing it risks a runtime
+    // error inside the daily cron. Plain tag revalidation is correct here.
+    revalidateTag("content-news");
+    revalidateTag("content-videos");
+    revalidateTag("content-articles");
 
     return respondOk({
       refreshedAt: new Date().toISOString(),
@@ -64,7 +69,8 @@ export async function GET(request: Request): Promise<NextResponse> {
       "refresh_failed",
       "Refresh failed - serving cached seed content.",
       503,
-      { usedSeed: true, refreshedAt: new Date().toISOString() },
+      { usedSeed: true, refreshedAt: new Dat
+e().toISOString() },
     );
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import {
   type CalendarCompetitionKey,
@@ -31,6 +31,8 @@ const FILTERS: { key: FilterKey; label: string }[] = [
   { key: "unl", label: "UNL" },
 ];
 
+const CENTER_MAX_RAF_RETRIES = 32;
+
 function formatTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "TBC";
@@ -46,7 +48,7 @@ function isoDayKey(iso: string): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+  return y + "-" + m + "-" + day;
 }
 
 function formatDayChip(isoDay: string): string {
@@ -62,7 +64,8 @@ async function fetchJson<T>(url: string): Promise<T | null> {
   try {
     const res = await fetch(url);
     if (!res.ok) return null;
-    return (await res.json()) as T;
+    return (a
+wait res.json()) as T;
   } catch {
     return null;
   }
@@ -76,13 +79,59 @@ function Flag({ code }: { code?: string | null }) {
   );
 }
 
+/**
+ * Rect-based centring — offsetLeft is unreliable inside the scroll strip
+ * because the chips' offsetParent sits outside it. Mirrors the proven
+ * implementation in src/components/wc26/FixturesCalendar.tsx.
+ */
+function centerChipInStrip(
+  container: HTMLDivElement,
+  chip: HTMLElement,
+  behavior: ScrollBehavior,
+): boolean {
+  if (container.clientWidth <= 0 || chip.offsetWidth <= 0) {
+    return false;
+  }
+  const containerRect = container.getBoundingClientRect();
+  const chipRect = chip.getBoundingClientRect();
+  const delta =
+    chipRect.left +
+    chipRect.width / 2 -
+    (containerRect.left + containerRect.width / 2);
+  const maxScroll = Math.max(0, container.scrollWidth - container.clientWidth);
+  container.scrollTo({
+    left: Math.min(maxScroll, Math.max(0, container.scrollLeft + delta)),
+    behavior,
+  });
+  return true;
+}
+
 export default function FixtureCalendarClient() {
-  const [month, setMonth] = useState("2026-09");
+  // No hardcoded months — derived from the device clock after mount so the
+  // calendar always opens on (or nearest to) TODAY. Non-negotiable.
+  const [month, setMonth] = useState("");
   const [selectedDay, setSelectedDay] = useState<string | "all">("all");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [fixtures, setFixtures] = useState<CalendarFixture[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [todayKey, setTodayKey] = useState("");
+
+  const dayPickerRef = useRef<HTMLDivElement>(null);
+  const chipRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const initialCenterDone = useRef(false);
+
+  // Hydration-safe "today": computed only on the client, refres
+hed when the
+  // tab regains visibility (handles the calendar rolling past midnight).
+  useEffect(() => {
+    const refreshToday = () => {
+      setTodayKey(isoDayKey(new Date().toISOString()));
+    };
+    refreshToday();
+    window.addEventListener("visibilitychange", refreshToday);
+    return () => window.removeEventListener("visibilitychange", refreshToday);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,8 +159,35 @@ export default function FixtureCalendarClient() {
 
       setFixtures(next);
       setLoadError(next.length === 0 && !pl && !ucl && !facup && !unl);
+
+      const now = new Date();
+      const todayMonth = yearMonthKey(now);
+      const todayDay = isoDayKey(now.toISOString());
+
       if (next.length > 0) {
-        setMonth(yearMonthKey(new Date(next[0].kickoffUtc)));
+        const months = [...new Set(
+          next.map((row) => yearMonthKey(new Date(row.kickoffUtc))),
+        )].sort();
+        // Open on TODAY's month when it has fixtures; otherwise the nearest
+        // future month; otherwise the first available month.
+        const bestMonth =
+          months.find((m) => m === todayMonth) ??
+          months.find((m) => m > todayMonth) ??
+          months[0]!;
+        setMonth(bestMonth);
+
+        // Pre-select toda
+y when it has fixtures in the chosen month so the
+        // list opens on the live matchday instead of dumping the month.
+        const todayRow = next.find(
+          (row) => isoDayKey(row.kickoffUtc) === todayDay,
+        );
+        const todayInMonth =
+          todayRow !== undefined &&
+          yearMonthKey(new Date(todayRow.kickoffUtc)) === bestMonth;
+        setSelectedDay(todayInMonth ? todayDay : "all");
+      } else {
+        setMonth(todayMonth);
       }
       setLoading(false);
     })();
@@ -158,7 +234,15 @@ export default function FixtureCalendarClient() {
       ? selectedDay
       : "all";
 
-  const filtered = useMemo(() => {
+  /** TODAY is centred whenever it is visible in the strip; otherwise the
+   *  active day chip is. Zero tolerance for today being off-screen. */
+  const centerTargetKey = useMemo(() => {
+    if (todayKey && daysInMonth.includes(todayKey)) return todayKey;
+    return activeDay === "all" ? "" : activeDay;
+  }, [todayKey, daysInMonth, activeDay]);
+
+  c
+onst filtered = useMemo(() => {
     if (activeDay === "all") return filteredByComp;
     return filteredByComp.filter((row) => isoDayKey(row.kickoffUtc) === activeDay);
   }, [filteredByComp, activeDay]);
@@ -185,6 +269,71 @@ export default function FixtureCalendarClient() {
     setFilter(key);
     setSelectedDay("all");
   }
+
+  function scrollChipIntoCenter(
+    dateKey: string,
+    behavior: ScrollBehavior,
+  ): boolean {
+    const container = dayPickerRef.current;
+    const chip = chipRefs.current.get(dateKey);
+    if (!container || !chip) return false;
+    return centerChipInStrip(container, chip, behavior);
+  }
+
+  // Initial + follow-up centring. Late layout settles (web fonts,
+  // hydration of surrounding sections) shift offsets after the first pass,
+  // so re-centre on fonts.ready, window load, and container resize — the
+  // same strategy as the WC26 fixtures calendar.
+  useLayoutEffect(() => {
+    if (!centerTargetKey) return;
+
+    let cancelled = false;
+    const behavior: ScrollBehavior = initialCenterDone.current
+      ? "smooth"
+      : "instant";
+
+    const attempt = (retriesLeft: number) => {
+      if (cancelled) return;
+      if (scrollChipIntoCenter(centerTargetKey, behavior)) {
+        initialCenterDone.current = true;
+        return;
+      }
+      if (retriesLeft > 0) {
+        requestAnimationFrame(() => attempt(retriesLeft - 1));
+      }
+    };
+
+    attempt(CENTER_MAX_RAF_RETRIES);
+    return () => {
+      cancelled = true;
+    };
+  }, [centerTargetKey, daysInMonth.length]);
+
+  useEffect(() => {
+    if (!centerTargetKey) 
+return;
+    let cancelled = false;
+    const recenter = () => {
+      if (!cancelled) scrollChipIntoCenter(centerTargetKey, "instant");
+    };
+    if (typeof document !== "undefined" && "fonts" in document) {
+      document.fonts.ready.then(recenter).catch(() => {});
+    }
+    window.addEventListener("load", recenter, { once: true });
+    const settleTimer = window.setTimeout(recenter, 600);
+    const container = dayPickerRef.current;
+    let observer: ResizeObserver | null = null;
+    if (container) {
+      observer = new ResizeObserver(() => recenter());
+      observer.observe(container);
+    }
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", recenter);
+      window.clearTimeout(settleTimer);
+      observer?.disconnect();
+    };
+  }, [centerTargetKey]);
 
   return (
     <main className={styles.page}>
@@ -218,7 +367,8 @@ export default function FixtureCalendarClient() {
                 <option key={ym} value={ym}>
                   {formatYearMonthLabel(ym)}
                 </option>
-              ))}
+        
+      ))}
             </select>
           </label>
           <button
@@ -240,7 +390,7 @@ export default function FixtureCalendarClient() {
             <button
               key={item.key}
               type="button"
-              className={`${styles.pill} ${filter === item.key ? styles.pillActive : ""}`}
+              className={styles.pill + " " + (filter === item.key ? styles.pillActive : "")}
               onClick={() => chooseFilter(item.key)}
             >
               {item.label}
@@ -250,24 +400,71 @@ export default function FixtureCalendarClient() {
       </div>
 
       {daysInMonth.length > 0 ? (
-        <div className={styles.dayPicker} role="group" aria-label="Pick a date">
+        <div
+          ref={dayPickerRef}
+          className={styles.dayPicker}
+          role="group"
+          aria-label="Pick a date"
+          onKeyDown={(e) => {
+            if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+            const keys = ["all", ...daysInMonth];
+            const current =
+              (e.target instanceof HTMLElement && e.target.dataset.dayKey) ||
+              activeDay;
+            const index = keys.indexOf(current);
+            if (index === -1) return;
+            e.preventDefault();
+            const delta = e.key === "ArrowRight" ? 1 : -1;
+            const next = keys[index + delta];
+            if (!next) return;
+            setSelectedDay(next);
+            chipRefs.current.get(next)?.focus();
+          }}
+        >
           <button
             type="button"
-            className={`${styles.dayChip} ${activeDay === "all" ? styles.dayChipActive : ""}`}
+            data-day-key="all"
+            ref={(node) => {
+              if (node) {
+                chipRefs.current.set("all", node);
+              } else {
+                chipRefs.current.delete("all");
+              }
+            }}
+            className={styles.dayChip + " " + (activeDay === "all" ? styles.dayChipActive : "")}
             onClick={() => setSelectedDay("all")}
           >
             All dates
           </button>
-          {daysInMonth.map((day) => (
-            <button
-              key={day}
-              type="button"
-              className={`${styles.dayChip} ${activeDay === day ? styles.dayChipActive : ""}`}
-              onClick={() => setSelectedDay(day)}
-            >
-              {formatDayChip(day)}
-            </button>
-          ))}
+          {daysInMonth.map((day) => {
+            const isToday = todayKey !== "" && day === todayKey;
+            const classes =
+              styles.dayChip +
+              " " +
+              (activeDay === day ? styles.dayChipActive : "") +
+              " " +
+              (isToday ? styles.dayChipToday : "");
+            return (
+              <button
+                key={day}
+                type="button"
+                ref={(node) => {
+                  if (node) {
+                    chipRefs.current.set(day, node);
+                  } else {
+                    chipRefs.current.delete(day);
+                  }
+                }
+}
+                data-day-key={day}
+                aria-current={isToday ? "date" : undefined}
+                className={classes}
+                onClick={() => setSelectedDay(day)}
+              >
+                {formatDayChip(day)}
+              </button>
+            );
+          })}
         </div>
       ) : null}
 
