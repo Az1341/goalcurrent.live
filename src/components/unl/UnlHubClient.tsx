@@ -9,6 +9,7 @@ import { SITE_NAME } from "@/lib/site-url";
 import {
   isFinishedUnlStatus,
   isLiveUnlStatus,
+  isUnlResultPending,
   sanitiseUnlProviderError,
 } from "@/lib/unl/contract";
 import {
@@ -93,6 +94,12 @@ function statusLabel(status: UnlFixtureRow["status"]): string {
     default:
       return "Upcoming";
   }
+}
+
+function fixtureStatusLabel(fixture: UnlFixtureRow): string {
+  return isUnlResultPending(fixture)
+    ? "Result pending"
+    : statusLabel(fixture.status);
 }
 
 function TeamBadge({
@@ -280,7 +287,7 @@ function FixtureBlock({
             <div key={fixture.fixtureId}>
               <div className={styles.metaLine}>
                 <span className={statusClass(fixture.status)}>
-                  {statusLabel(fixture.status)}
+                  {fixtureStatusLabel(fixture)}
                 </span>
                 <span>
                   {fixture.kickoffUtc ? (
@@ -320,6 +327,7 @@ function allUpcoming(fixtures: UnlFixtureRow[]): UnlFixtureRow[] {
   const now = Date.now();
   return fixtures
     .filter((f) => {
+      if (isUnlResultPending(f)) return false;
       if (f.status === "UPCOMING" || isLiveUnlStatus(f.status)) return true;
       if (f.status === "POSTPONED") {
         if (!f.kickoffUtc) return true;
@@ -340,7 +348,7 @@ function allUpcoming(fixtures: UnlFixtureRow[]): UnlFixtureRow[] {
 
 function allResults(fixtures: UnlFixtureRow[]): UnlFixtureRow[] {
   return fixtures
-    .filter((f) => isFinishedUnlStatus(f.status))
+    .filter((f) => isFinishedUnlStatus(f.status) || isUnlResultPending(f))
     .sort((a, b) => {
       const at = a.kickoffUtc ? new Date(a.kickoffUtc).getTime() : 0;
       const bt = b.kickoffUtc ? new Date(b.kickoffUtc).getTime() : 0;
