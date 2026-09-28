@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import PlHubClient from "@/components/pl/PlHubClient";
 import JsonLdScript from "@/components/seo/JsonLdScript";
 import { buildPageMetadata } from "@/lib/page-metadata";
+import { fetchPlFixtures, fetchPlStandings } from "@/lib/pl/api";
 import { getPlSsotFixtures } from "@/lib/pl/fixtures-ssot";
+import type { PlFixtureRow, PlStandingsApiResponse } from "@/lib/pl/types";
 import { SITE_NAME, absoluteUrl } from "@/lib/site-url";
 
 type PageProps = {
@@ -21,8 +23,23 @@ export async function generateMetadata({
   });
 }
 
-export default function PremierLeagueHubPage() {
-  const initialFixtures = getPlSsotFixtures();
+export default async function PremierLeagueHubPage() {
+  // Sprint-1 P0 (C3): seed the server-rendered snapshot from live API data
+  // with the SSOT schedule as fallback, so crawlers and first paint see the
+  // current season state (latest result, real table) instead of the frozen
+  // June SSOT pre-season snapshot.
+  const [fixturesBody, standingsBody] = await Promise.all([
+    fetchPlFixtures("en-GB").catch(() => null),
+    fetchPlStandings().catch(() => null),
+  ]);
+
+  const initialFixtures: PlFixtureRow[] = fixturesBody?.fixtures.length
+    ? fixturesBody.fixtures
+    : getPlSsotFixtures();
+
+  const initialStandings: PlStandingsApiResponse | undefined =
+    standingsBody?.standings.length ? standingsBody : undefined;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SportsOrganization",
@@ -34,7 +51,10 @@ export default function PremierLeagueHubPage() {
   return (
     <>
       <JsonLdScript data={jsonLd} />
-      <PlHubClient initialFixtures={initialFixtures} />
+      <PlHubClient
+        initialFixtures={initialFixtures}
+        initialStandings={initialStandings}
+      />
     </>
   );
 }

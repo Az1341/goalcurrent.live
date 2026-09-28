@@ -45,6 +45,24 @@ export function isLiveUnlStatus(status: UnlFixtureStatus): boolean {
   return status === "LIVE";
 }
 
+/**
+ * Buffer after kickoff (kickoff + 3h) before a still-"UPCOMING" fixture is
+ * treated as played. UNL SSOT statuses are frozen at publish time, so this
+ * keeps past matches out of "Upcoming" lists without inventing FT results —
+ * display layers should show "Result pending" for these rows.
+ */
+export const UNL_RESULT_PENDING_BUFFER_MS = 3 * 60 * 60 * 1000;
+
+export function isUnlResultPending(
+  fixture: Pick<UnlFixtureRow, "kickoffUtc" | "status">,
+  now: Date = new Date(),
+): boolean {
+  if (fixture.status !== "UPCOMING") return false;
+  const kickoff = Date.parse(fixture.kickoffUtc);
+  if (!Number.isFinite(kickoff)) return false;
+  return now.getTime() >= kickoff + UNL_RESULT_PENDING_BUFFER_MS;
+}
+
 export function isUnlGroupId(value: string): value is UnlGroupId {
   return (UNL_GROUP_IDS as readonly string[]).includes(value);
 }

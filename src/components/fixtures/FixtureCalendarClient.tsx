@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import {
   type CalendarCompetitionKey,
@@ -58,6 +58,26 @@ function formatDayChip(isoDay: string): string {
   });
 }
 
+/**
+ * Resolve the month to display. Keeps the user's choice when it still has
+ * fixtures; otherwise anchors on today, then the nearest month with fixtures
+ * after today, then the most recent month before today. Never falls back to
+ * the earliest dataset month while a later month is closer to today
+ * (Sprint-1 P0: today must be the landing month).
+ */
+function resolveActiveMonth(
+  current: string,
+  options: readonly string[],
+  todayYm: string,
+): string {
+  if (!options.length) return current;
+  if (options.includes(current)) return current;
+  if (options.includes(todayYm)) return todayYm;
+  const afterToday = options.find((ym) => ym > todayYm);
+  if (afterToday) return afterToday;
+  return options[options.length - 1];
+}
+
 async function fetchJson<T>(url: string): Promise<T | null> {
   try {
     const res = await fetch(url);
@@ -77,12 +97,18 @@ function Flag({ code }: { code?: string | null }) {
 }
 
 export default function FixtureCalendarClient() {
-  const [month, setMonth] = useState("2026-09");
+  // Today anchors — computed once per mount. All dependent UI renders after
+  // the client data load, so these are hydration-safe.
+  const todayYm = useMemo(() => yearMonthKey(new Date()), []);
+  const todayDayKey = useMemo(() => isoDayKey(new Date().toISOString()), []);
+
+  const [month, setMonth] = useState<string>("");
   const [selectedDay, setSelectedDay] = useState<string | "all">("all");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [fixtures, setFixtures] = useState<CalendarFixture[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const dayStripRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,9 +136,8 @@ export default function FixtureCalendarClient() {
 
       setFixtures(next);
       setLoadError(next.length === 0 && !pl && !ucl && !facup && !unl);
-      if (next.length > 0) {
-        setMonth(yearMonthKey(new Date(next[0].kickoffUtc)));
-      }
+      // Note: no setMonth here — resolveActiveMonth anchors on today,
+      // never the earliest fixture month in the dataset.
       setLoading(false);
     })();
 
@@ -130,12 +155,10 @@ export default function FixtureCalendarClient() {
     return [...set].sort();
   }, [fixtures, filter]);
 
-  const activeMonth =
-    monthOptions.length === 0
-      ? month
-      : monthOptions.includes(month)
-        ? month
-        : monthOptions[0];
+  const activeMonth = useMemo(
+    () => resolveActiveMonth(month, monthOptions, todayYm),
+    [month, monthOptions, todayYm],
+  );
 
   const filteredByComp = useMemo(() => {
     return fixtures.filter((row) => {
@@ -175,6 +198,27 @@ export default function FixtureCalendarClient() {
   }, [filtered]);
 
   const monthIndex = monthOptions.indexOf(activeMonth);
+  const todayHasFixtures = monthOptions.includes(todayYm);
+  const showJumpToToday = !loading && todayHasFixtures && activeMonth !== todayYm;
+
+  // Sprint-1 P0: centre today's day chip whenever today's month is in view.
+  useEffect(() => {
+    if (loading) return;
+    if (activeMonth !== todayYm) return;
+    const strip = dayStripRef.current;
+    if (!strip) return;
+    const todayChip = strip.querySelector<HTMLElement>('[data-today="true"]');
+    if (!todayChip) return;
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    todayChip.scrollIntoView({
+      inline: "center",
+      block: "nearest",
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  }, [loading, activeMonth, todayYm]);
 
   function chooseMonth(ym: string) {
     setMonth(ym);
@@ -183,6 +227,11 @@ export default function FixtureCalendarClient() {
 
   function chooseFilter(key: FilterKey) {
     setFilter(key);
+    setSelectedDay("all");
+  }
+
+  function jumpToToday() {
+    setMonth(todayYm);
     setSelectedDay("all");
   }
 
@@ -199,6 +248,7 @@ export default function FixtureCalendarClient() {
           <button
             type="button"
             className={styles.monthBtn}
+            aria-label="Previous month"
             disabled={monthIndex <= 0}
             onClick={() => {
               if (monthIndex > 0) chooseMonth(monthOptions[monthIndex - 1]);
@@ -212,7 +262,6 @@ export default function FixtureCalendarClient() {
               className={styles.monthSelect}
               value={activeMonth}
               onChange={(e) => chooseMonth(e.target.value)}
-              aria-label="Select month"
             >
               {(monthOptions.length ? monthOptions : [activeMonth]).map((ym) => (
                 <option key={ym} value={ym}>
@@ -224,6 +273,7 @@ export default function FixtureCalendarClient() {
           <button
             type="button"
             className={styles.monthBtn}
+            aria-label="Next month"
             disabled={monthIndex < 0 || monthIndex >= monthOptions.length - 1}
             onClick={() => {
               if (monthIndex >= 0 && monthIndex < monthOptions.length - 1) {
@@ -233,6 +283,15 @@ export default function FixtureCalendarClient() {
           >
             Next
           </button>
+          {showJumpToToday ? (
+            <button
+              type="button"
+              className={styles.todayBtn}
+              onClick={jumpToToday}
+            >
+              Today
+            </button>
+          ) : null}
         </div>
 
         <div className={styles.filters} role="group" aria-label="Competition filter">
@@ -240,6 +299,7 @@ export default function FixtureCalendarClient() {
             <button
               key={item.key}
               type="button"
+              aria-pressed={filter === item.key}
               className={`${styles.pill} ${filter === item.key ? styles.pillActive : ""}`}
               onClick={() => chooseFilter(item.key)}
             >
@@ -250,24 +310,36 @@ export default function FixtureCalendarClient() {
       </div>
 
       {daysInMonth.length > 0 ? (
-        <div className={styles.dayPicker} role="group" aria-label="Pick a date">
+        <div
+          ref={dayStripRef}
+          className={styles.dayPicker}
+          role="group"
+          aria-label="Pick a date"
+        >
           <button
             type="button"
+            aria-pressed={activeDay === "all"}
             className={`${styles.dayChip} ${activeDay === "all" ? styles.dayChipActive : ""}`}
             onClick={() => setSelectedDay("all")}
           >
             All dates
           </button>
-          {daysInMonth.map((day) => (
-            <button
-              key={day}
-              type="button"
-              className={`${styles.dayChip} ${activeDay === day ? styles.dayChipActive : ""}`}
-              onClick={() => setSelectedDay(day)}
-            >
-              {formatDayChip(day)}
-            </button>
-          ))}
+          {daysInMonth.map((day) => {
+            const isToday = day === todayDayKey;
+            return (
+              <button
+                key={day}
+                type="button"
+                data-today={isToday || undefined}
+                aria-current={isToday ? "date" : undefined}
+                aria-pressed={activeDay === day}
+                className={`${styles.dayChip} ${activeDay === day ? styles.dayChipActive : ""} ${isToday ? styles.dayChipToday : ""}`}
+                onClick={() => setSelectedDay(day)}
+              >
+                {formatDayChip(day)}
+              </button>
+            );
+          })}
         </div>
       ) : null}
 

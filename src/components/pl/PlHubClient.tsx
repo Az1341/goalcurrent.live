@@ -92,8 +92,11 @@ function HubStandingRow({ row }: { row: PlStandingRow }) {
 
 export default function PlHubClient({
   initialFixtures,
+  initialStandings,
 }: {
   initialFixtures?: PlFixtureRow[];
+  /** Server-seeded live standings so SSR renders the real table snapshot. */
+  initialStandings?: PlStandingsApiResponse;
 }) {
   const t = useTranslations("nav");
 
@@ -130,10 +133,15 @@ export default function PlHubClient({
   );
 
   const { data: standingsData, error: standingsError } =
-    useSWR<PlStandingsApiResponse>("/api/pl/standings", fetcher, LIVE_SWR_OPTIONS);
+    useSWR<PlStandingsApiResponse>("/api/pl/standings", fetcher, {
+      ...LIVE_SWR_OPTIONS,
+      fallbackData: initialStandings,
+    });
 
   const isLoading = !fixturesData && fixturesLoading;
-  const hasError = (fixturesError && !fixturesData) || standingsError;
+  // With SSR fallbackData the snapshot still renders if the live fetch fails.
+  const hasError =
+    (fixturesError && !fixturesData) || (standingsError && !standingsData);
   const errorMessage = hasError
     ? "Could not load Premier League hub data."
     : null;
