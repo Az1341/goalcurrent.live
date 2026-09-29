@@ -3,15 +3,21 @@ type MatchweekFixture = {
   matchweek: number | null;
 };
 
-/** How long a matchweek stays the default after its median kickoff. */
-const RECENT_WEEK_GRACE_MS = 48 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** How long a matchweek stays the default after its last kickoff. */
+const RECENT_WEEK_GRACE_MS = DAY_MS;
+/**
+ * Kickoffs further than this from the round's median are rescheduled
+ * outliers (postponed games) and don't extend the round.
+ */
+const ROUND_SPAN_MS = 4 * DAY_MS;
 
 /**
- * Picks the matchweek the fixtures page should open on: the most recently
- * played round for ~48h after its median kickoff, then the next round.
- * Median kickoff (not min/max) keeps postponed/rescheduled games from
- * pinning the default to an old round. Returns null when no fixture has a
- * matchweek.
+ * Picks the matchweek the fixtures page should open on: the current round
+ * until 24h after its last kickoff (so Monday-night games keep it selected),
+ * then the next round. Kickoffs more than 4 days from the round's median are
+ * ignored so a postponed game can't pin the default to an old round.
+ * Returns null when no fixture has a matchweek.
  */
 export function resolveCurrentMatchweek(
   fixtures: readonly MatchweekFixture[],
@@ -31,12 +37,16 @@ export function resolveCurrentMatchweek(
   const weeks = [...kickoffsByWeek.entries()]
     .map(([week, kickoffs]) => {
       const sorted = kickoffs.sort((a, b) => a - b);
-      return { week, median: sorted[Math.floor(sorted.length / 2)] };
+      const median = sorted[Math.floor(sorted.length / 2)];
+      const lastKickoff = sorted
+        .filter((kickoff) => kickoff - median <= ROUND_SPAN_MS)
+        .at(-1) as number;
+      return { week, median, lastKickoff };
     })
     .sort((a, b) => a.median - b.median || a.week - b.week);
 
   const current = weeks.find(
-    ({ median }) => median + RECENT_WEEK_GRACE_MS >= now,
+    ({ lastKickoff }) => lastKickoff + RECENT_WEEK_GRACE_MS >= now,
   );
   return (current ?? weeks[weeks.length - 1]).week;
 }
