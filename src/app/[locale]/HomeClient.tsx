@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useLiveFixtures } from "@/lib/client/useLiveFixtures";
+import { useHomeMatchdayFixtures } from "@/lib/client/useHomeMatchdayFixtures";
 import HomeHero from "@/components/home/v5/HomeHero";
 import HomePlKickoffCountdown from "@/components/home/v5/HomePlKickoffCountdown";
 import HomeCommunityShieldNews from "@/components/home/v5/HomeCommunityShieldNews";
@@ -33,20 +33,33 @@ const HomeTeamsLeagues = dynamic(
 );
 
 export default function HomeClient() {
-  const { data: plData, isLoading: plLoading } = useLiveFixtures();
-  const plFixtures = plData?.fixtures ?? [];
+  const matchday = useHomeMatchdayFixtures();
+  const plFixtures = matchday.plFixtures;
+  const plLoading = matchday.feeds.pl.isLoading;
 
   return (
     <div className={styles.root} data-gc-home-v5>
       <main className={styles.main}>
+        <HomeHero featuredMatch={undefined} wc26Views={[]} plFixtures={plFixtures} matchdayCards={matchday.cards} />
+        <HomeTodaysMatches
+          cards={matchday.cards}
+          loading={matchday.allLoadingEmpty}
+          anyError={matchday.anyError}
+          anyStale={matchday.anyStale}
+          fetchedAt={matchday.earliestFetchedAt}
+          feedErrors={{
+            pl: matchday.feeds.pl.error,
+            ucl: matchday.feeds.ucl.error,
+            facup: matchday.feeds.facup.error,
+            unl: matchday.feeds.unl.error,
+          }}
+        />
         <HomePlKickoffCountdown
           plFixtures={plFixtures}
-          loading={plLoading && !plData}
+          loading={plLoading && plFixtures.length === 0}
         />
-        <HomeHero featuredMatch={undefined} wc26Views={[]} plFixtures={plFixtures} />
         <HomeEcosystemPromo />
         <HomeSepanaiVideoAd />
-        <HomeTodaysMatches plFixtures={plFixtures} />
         <HomeCommunityShieldNews />
         <HomeLatestNews />
         <HomeTrendingClips />

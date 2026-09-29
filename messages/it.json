@@ -364,6 +364,25 @@
       "seasonStartsSoon": "La Premier League inizia presto",
       "aria": "Countdown {home} vs {away}: {days} giorni, {hours} ore, {minutes} minuti",
       "ariaEmpty": "Countdown Premier League non disponibile"
+    },
+    "matchday": {
+      "title": "Partite di oggi",
+      "timezoneLabel": "{tz}",
+      "filterAll": "Tutte",
+      "filterLive": "Live",
+      "filterFinished": "Finite",
+      "filterUpcoming": "In arrivo",
+      "filtersAria": "Filtri partite",
+      "showAll": "Mostra tutte ({count})",
+      "matchHub": "Hub partita",
+      "loading": "Caricamento partite di oggi...",
+      "empty": "Nessuna partita oggi nelle competizioni supportate.",
+      "emptyFilter": "Nessuna partita in questo filtro.",
+      "partialError": "Alcuni feed di competizione non sono disponibili. Mostro le competizioni sane.",
+      "staleWarning": "I punteggi possono essere obsoleti (fonte recuperata alle {fetchedAt}).",
+      "freshnessUnknown": "Freschezza del punteggio sconosciuta.",
+      "liveScoreUnavailable": "Punteggio live non disponibile per questa competizione.",
+      "competitionHub": "Hub competizione"
     }
   },
   "favourites": {

@@ -364,6 +364,25 @@
       "seasonStartsSoon": "Premier League season starts soon",
       "aria": "Countdown to {home} vs {away}: {days} days, {hours} hours, {minutes} minutes",
       "ariaEmpty": "Premier League kickoff countdown unavailable"
+    },
+    "matchday": {
+      "title": "Today's Matches",
+      "timezoneLabel": "{tz}",
+      "filterAll": "All",
+      "filterLive": "Live",
+      "filterFinished": "Finished",
+      "filterUpcoming": "Upcoming",
+      "filtersAria": "Match filters",
+      "showAll": "Show all ({count})",
+      "matchHub": "Match hub",
+      "loading": "Loading today's matches...",
+      "empty": "No matches scheduled for today across supported competitions.",
+      "emptyFilter": "No matches in this filter.",
+      "partialError": "Some competition feeds are unavailable. Showing healthy competitions.",
+      "staleWarning": "Scores may be stale (source fetched at {fetchedAt}).",
+      "freshnessUnknown": "Score freshness unknown.",
+      "liveScoreUnavailable": "Live score unavailable for this competition.",
+      "competitionHub": "Competition hub"
     }
   },
   "favourites": {

@@ -916,3 +916,95 @@
   text-align: center;
   padding: 4px 0;
 }
+
+/* Matchday board (DKAMS-GC-HOME-MATCHDAY-REPAIR) */
+.matchdayHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 10px;
+}
+
+.matchdayMeta {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary, var(--gc-v5-muted));
+}
+
+.matchdayFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.matchdayFilter,
+.matchdayFilterActive {
+  border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.12));
+  background: transparent;
+  color: var(--text-primary, var(--gc-v5-text));
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.matchdayFilterActive {
+  background: var(--accent-red, var(--gc-brand-from, #c8102e));
+  border-color: transparent;
+  color: #fff;
+}
+
+.matchdayWarning {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(200, 16, 46, 0.08);
+  color: var(--text-primary, var(--gc-v5-text));
+  font-size: 0.8125rem;
+}
+
+.matchdayEmpty {
+  margin: 8px 0 0;
+  color: var(--text-secondary, var(--gc-v5-muted));
+  font-size: 0.9375rem;
+}
+
+.matchdayShowAll {
+  margin-top: 10px;
+  border: none;
+  background: none;
+  color: var(--accent-red, var(--gc-brand-from, #c8102e));
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.matchdayCompCount {
+  margin-left: 6px;
+  font-weight: 500;
+  color: var(--text-secondary, var(--gc-v5-muted));
+}
+
+.matchdayCompLink {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+}
+
+.matchdayCoverageNote {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  color: var(--text-secondary, var(--gc-v5-muted));
+}
+
+.matchHubAffordance {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-red, var(--gc-brand-from, #c8102e));
+}

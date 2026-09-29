@@ -364,6 +364,25 @@
       "seasonStartsSoon": "La saison de Premier League commence bientot",
       "aria": "Compte a rebours {home} vs {away}: {days} jours, {hours} heures, {minutes} minutes",
       "ariaEmpty": "Compte a rebours Premier League indisponible"
+    },
+    "matchday": {
+      "title": "Matchs du jour",
+      "timezoneLabel": "{tz}",
+      "filterAll": "Tous",
+      "filterLive": "En direct",
+      "filterFinished": "Termines",
+      "filterUpcoming": "A venir",
+      "filtersAria": "Filtres de matchs",
+      "showAll": "Tout afficher ({count})",
+      "matchHub": "Centre du match",
+      "loading": "Chargement des matchs du jour...",
+      "empty": "Aucun match aujourd'hui dans les competitions prises en charge.",
+      "emptyFilter": "Aucun match dans ce filtre.",
+      "partialError": "Certains flux de competition sont indisponibles. Affichage des competitions saines.",
+      "staleWarning": "Les scores peuvent etre obsolete (source recuperee a {fetchedAt}).",
+      "freshnessUnknown": "Fraicheur du score inconnue.",
+      "liveScoreUnavailable": "Score en direct indisponible pour cette competition.",
+      "competitionHub": "Hub de la competition"
     }
   },
   "favourites": {

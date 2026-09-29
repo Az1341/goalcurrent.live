@@ -11,7 +11,9 @@ test("homepage match cards expose a real favourite star control", () => {
   const cards = read("src/components/home/v5/HomeLiveMatchCards.tsx");
   assert.match(cards, /FavouriteMatchButton/);
   assert.match(cards, /matchId=\{match\.fixtureId\}/);
-  assert.match(cards, /matchId=\{`pl:\$\{fixture\.fixtureId\}`\}/);
+  assert.match(cards, /matchId=\{card\.favouriteMatchId\}/);
+  assert.match(cards, /matchdayFavouriteId|favouriteMatchId/);
+  assert.match(read("src/lib/home/matchday.ts"), /return `\$\{competitionId\}:\$\{fixtureId\}`/);
   assert.match(cards, /HomeMatchFavourite\.module\.css/);
 });
 
