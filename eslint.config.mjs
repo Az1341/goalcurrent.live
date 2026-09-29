@@ -18,6 +18,20 @@ const eslintConfig = defineConfig([
     rules: {
       ...security.configs.recommended.rules,
       "security/detect-object-injection": "off",
+      // GC-CLEANUP-20260806: the cn helper was removed on purpose (see
+      // .gitignore history). Ban re-introducing it via imports instead of
+      // the old gitignore file-level ban, which only hid the problem.
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@/lib/cn",
+              message: "Use the project's existing class helpers instead of recreating src/lib/cn.ts.",
+            },
+          ],
+        },
+      ],
     },
   },
   globalIgnores([
@@ -27,7 +41,6 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Non-application artefacts (audit evidence, one-off local scripts)
     "reports/**",
-    "ss-figma*.js",
     "scripts/_*.py",
     "scripts/_fix_closure.py",
     "GC-SOT-*.md",

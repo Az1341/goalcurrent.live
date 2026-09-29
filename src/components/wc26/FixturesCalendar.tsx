@@ -57,7 +57,8 @@ import { WC26_GROUP_IDS } from "@/types/group";
 import Wc26GamesProgress from "./Wc26GamesProgress";
 import styles from "./wc26.module.css";
 
-function topStatusLabel(fixture: EffectiveFixture, matchClass: FixtureMatchClass): string {
+function to
+pStatusLabel(fixture: EffectiveFixture, matchClass: FixtureMatchClass): string {
   if (matchClass === "live") {
     const label = formatFixtureStatusLabel(fixture.status);
     return label === "Live" ? "LIVE" : label;
@@ -116,7 +117,8 @@ function FixtureMatchCard({
       data-gc-light-surface="true"
       aria-label={`${label} — ${topStatusLabel(fixture, matchClass)}`}
     >
-      <div className={styles.fixMatchTop}>
+      <div classNa
+me={styles.fixMatchTop}>
         <div>
           <div className={styles.fixMatchStage}>
             {groupPrefix}
@@ -170,7 +172,8 @@ function FixtureMatchCard({
           ) : matchClass === "ft" ? (
             <>
               {score ? (
-                <div className={`${styles.fixCentreScore} ${styles.fixCentreScoreFt}`}>
+                <div className={`${styles.fixCentreSc
+ore} ${styles.fixCentreScoreFt}`}>
                   {score.home} – {score.away}
                 </div>
               ) : (
@@ -228,7 +231,8 @@ function centerCalendarDay(
   day: HTMLButtonElement,
   behavior: ScrollBehavior,
 ): boolean {
-  if (container.clientWidth <= 0 || day.offsetWidth <= 0) {
+  if (container.clientWidth <= 0 || day.offsetWidt
+h <= 0) {
     return false;
   }
   // Rect-based math — offsetLeft is unreliable here because the buttons'
@@ -281,7 +285,8 @@ export default function FixturesCalendar() {
   const dayButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const initialScrollDone = useRef(false);
 
-  const scrollActiveDayIntoView = useCallback(
+  const scrollActiveDayI
+ntoView = useCallback(
     (dateKey: string, behavior: ScrollBehavior = "smooth"): boolean => {
       const container = calRowRef.current;
       const day = dayButtonRefs.current.get(dateKey);
@@ -344,7 +349,8 @@ export default function FixturesCalendar() {
     if (isWc26TournamentComplete()) {
       const lastWithFixtures = [...calendarDays]
         .reverse()
-        .find((day) => day.count > 0);
+ 
+       .find((day) => day.count > 0);
       return (
         lastWithFixtures?.dateKey ??
         calendarDays[calendarDays.length - 1]?.dateKey ??
@@ -420,7 +426,8 @@ export default function FixturesCalendar() {
       }
     });
 
-    observer.observe(container);
+  
+  observer.observe(container);
     return () => observer.disconnect();
   }, [clientReady, calendarCenterKey, scrollActiveDayIntoView]);
 
@@ -474,7 +481,8 @@ export default function FixturesCalendar() {
         <div className={`${styles.fixMetric} ${styles.fixMetricMatches}`}>
           <b>{WC26_TOURNAMENT.fixtureCount}</b>
           <span>Matches</span>
-        </div>
+        
+</div>
         <div className={`${styles.fixMetric} ${styles.fixMetricVenues}`}>
           <b>{WC26_VENUE_COUNT}</b>
           <span>Venues</span>
@@ -537,7 +545,8 @@ export default function FixturesCalendar() {
         >
           <option value="">All matches</option>
           <option value="upcoming">Upcoming</option>
-          <option value="live">Live</option>
+          <
+option value="live">Live</option>
           <option value="ft">Finished</option>
         </select>
       </div>
@@ -559,7 +568,7 @@ export default function FixturesCalendar() {
         <div
           ref={calRowRef}
           className={styles.fixCalRow}
-          role="tablist"
+          role="group"
           aria-label="Match days"
         >
           {calendarDays.map((day) => {
@@ -569,7 +578,6 @@ export default function FixturesCalendar() {
               <button
                 key={day.dateKey}
                 type="button"
-                role="tab"
                 ref={(node) => {
                   if (node) {
                     dayButtonRefs.current.set(day.dateKey, node);
@@ -577,7 +585,7 @@ export default function FixturesCalendar() {
                     dayButtonRefs.current.delete(day.dateKey);
                   }
                 }}
-                aria-selected={isSelected}
+                aria-pressed={isSelected}
                 aria-current={isToday ? "date" : undefined}
                 className={`${styles.fixCalDay} ${isSelected ? styles.fixCalDayActive : ""} ${isToday ? styles.fixCalDayToday : ""}`}
                 onClick={() => {
@@ -587,7 +595,8 @@ export default function FixturesCalendar() {
                 <span className={styles.fixCalDow}>{day.dow}</span>
                 <span className={styles.fixCalNum}>{day.dayNum}</span>
                 <span className={styles.fixCalCnt}>{day.count}m</span>
-              </button>
+   
+           </button>
             );
           })}
         </div>
@@ -643,7 +652,8 @@ export default function FixturesCalendar() {
           </div>
         </section>
       ) : (
-        <p className={styles.fixEmpty}>No fixtures loaded.</p>
+        <p class
+Name={styles.fixEmpty}>No fixtures loaded.</p>
       )}
     </section>
   );

@@ -53,4 +53,3 @@ src/components/relay/
 src/components/novaai/
 src/app/**/preview-relay/
 src/app/**/preview-novaai/
-src/lib/cn.ts
