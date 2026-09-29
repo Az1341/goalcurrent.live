@@ -71,6 +71,21 @@ export async function POST(request: Request) {
     topics.push(`lang-${locale}`);
   }
 
+  // BE-007 follow-up: a client-supplied FCM token is untrusted input. A
+  // logged-in user could subscribe an arbitrary token to their user-${uid}
+  // topic (e.g. spam someone with push). A dry-run send validates that the
+  // token is a REAL registration in THIS Firebase project before we
+  // subscribe it to any topic.
+  try {
+    await messaging.send({ token }, true);
+  } catch {
+    return respondError(
+      "invalid_fcm_token",
+      "The provided FCM token is not a valid registration for this project.",
+      400,
+    );
+  }
+
   try {
     await Promise.all(
       topics.map((topic) => messaging.subscribeToTopic(token, topic)),

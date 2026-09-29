@@ -52,7 +52,8 @@ function isRootPublicStaticPath(pathname: string): boolean {
 function malformedPremierLeagueMatchPath(pathname: string): boolean {
   const match = PL_MATCH_PATH.exec(pathname);
   if (!match) return false;
-  const fixtureId = match[1] ?? "";
+  const
+ fixtureId = match[1] ?? "";
   if (!/^\d+$/.test(fixtureId)) return true;
   const parsed = Number(fixtureId);
   return !Number.isSafeInteger(parsed) || parsed <= 0;
@@ -92,7 +93,8 @@ function legacyAndroidTwaRedirect(request: NextRequest): NextResponse | null {
   const { pathname } = request.nextUrl;
   if (!LEGACY_ANDROID_TWA_WC26_PATH.test(pathname)) return null;
 
-  const referrer = request.headers.get("referer") ?? "";
+  const referrer = request.headers.get("refere
+r") ?? "";
   const userAgent = request.headers.get("user-agent") ?? "";
   const requestedWith = request.headers.get("x-requested-with") ?? "";
   const launchedByGoalCurrentApp =
@@ -147,7 +149,8 @@ function applyLegacyRedirects(request: NextRequest): NextResponse | null {
   const legacyGroup = LEGACY_GROUP_PATH.exec(pathWithoutLocale);
   if (legacyGroup) {
     const url = request.nextUrl.clone();
-    url.pathname = `${localePrefix}/worldcup2026/groups/${legacyGroup[1]!.toLowerCase()}`;
+    url.pathname = `${localePrefix}/w
+orldcup2026/groups/${legacyGroup[1]!.toLowerCase()}`;
     return applySecurityHeaders(NextResponse.redirect(url, 307));
   }
 
@@ -162,6 +165,13 @@ function applyLegacyRedirects(request: NextRequest): NextResponse | null {
 
   return null;
 }
+
+const RATE_LIMIT_DISABLED_WARNING =
+  process.env.RATE_LIMIT_DISABLED === "true" && process.env.VERCEL_ENV === "production"
+    ? console.error(
+        "[proxy] RATE_LIMIT_DISABLED=true in production — /api rate limiting is OFF.",
+      )
+    : undefined;
 
 /** Next.js 16 proxy — canonical host, locale routing, legacy redirects, CSP. */
 export async function proxy(request: NextRequest) {
@@ -214,7 +224,8 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname === "/robots.txt") {
-    const url = request.nextUrl.clone();
+  
+  const url = request.nextUrl.clone();
     url.pathname = "/api/robots";
     const response = NextResponse.rewrite(url);
     if (shouldNoIndexDeploy()) {
@@ -238,10 +249,10 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname.startsWith("/api/")) {
-    // The browser regression suite runs all journeys through one localhost IP.
-    // Do not let that synthetic shared IP exhaust production rate-limit buckets;
-    // the limiter itself is covered independently by unit tests.
-    if (process.env.CI !== "true") {
+    // Opt-out must be EXPLICIT. The old CI!=="true" gate meant a stray CI
+    // variable in the deployment environment silently disabled ALL /api rate
+    // limiting. RATE_LIMIT_DISABLED is loud, intentional, and never set by CI.
+    if (process.env.RATE_LIMIT_DISABLED !== "true") {
       const ip = clientIpFromRequest(request);
       const rateLimit = await checkRateLimitAsync(ip, pathname);
       if (!rateLimit.allowed) {
@@ -275,7 +286,8 @@ export async function proxy(request: NextRequest) {
     /^\/(en|es|it|de|fr|nl)\/preview-pastel\/?$/.test(pathname);
   if (pastelPath && process.env.VERCEL_ENV === "production") {
     return applySecurityHeaders(
-      new NextResponse("Not Found", {
+      new NextResponse
+("Not Found", {
         status: 404,
         headers: { "Content-Type": "text/plain; charset=utf-8" },
       }),
