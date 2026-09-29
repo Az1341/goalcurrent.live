@@ -4,10 +4,12 @@ import {
   useDeferredValue,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import PlFixtureCard from "@/components/pl/PlFixtureCard";
 import { useLiveFixtures } from "@/lib/client/useLiveFixtures";
+import { resolveCurrentMatchweek } from "@/lib/pl/current-matchweek";
 import type { PlFixtureRow, PlFixturesApiResponse } from "@/lib/pl/types";
 import {
   PL_BROADCASTER_UNAVAILABLE,
@@ -53,8 +55,19 @@ export default function PlFixturesClient() {
     [rawData],
   );
 
-  /** Default to matchweek 1 — rendering all 380 cards blocks the main thread. */
-  const [selectedWeek, setSelectedWeek] = useState<WeekFilter>(1);
+  /**
+   * Default to the current matchweek (never "all" — rendering all 380 cards
+   * blocks the main thread). `null` until the visitor picks a chip.
+   */
+  const [chosenWeek, setChosenWeek] = useState<WeekFilter | null>(null);
+  const defaultWeek = useMemo(
+    () => (data ? resolveCurrentMatchweek(data.fixtures) : null) ?? 1,
+    [data],
+  );
+  const selectedWeek: WeekFilter = chosenWeek ?? defaultWeek;
+  const setSelectedWeek = setChosenWeek;
+  const activeChipRef = useRef<HTMLButtonElement | null>(null);
+  const didScrollToDefault = useRef(false);
   const [allTabVisible, setAllTabVisible] = useState(ALL_TAB_BATCH);
 
   useEffect(() => {
@@ -65,6 +78,15 @@ export default function PlFixturesClient() {
       window.location.replace(`/premier-league/match/${id}`);
     }
   }, []);
+
+  /** Bring the default chip into view — W6+ sits off-screen on mobile. */
+  useEffect(() => {
+    if (didScrollToDefault.current || chosenWeek !== null || !data) return;
+    const chip = activeChipRef.current;
+    if (!chip) return;
+    didScrollToDefault.current = true;
+    chip.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [chosenWeek, data, defaultWeek]);
 
   const availableWeeks = useMemo(() => {
     if (!data?.fixtures.length) return [] as number[];
@@ -169,6 +191,7 @@ export default function PlFixturesClient() {
               return (
                 <button
                   key={week}
+                  ref={selectedWeek === week ? activeChipRef : undefined}
                   type="button"
                   role="tab"
                   aria-selected={selectedWeek === week}
