@@ -40,11 +40,18 @@ test("old routes inform visitors without soft-404 redirects; provider endpoints 
 });
 test("known old worker registrations and only GoalCurrent caches are retired", async ({page}) => {
   await page.goto("/");
+  // The migration deliberately reloads its existing clients. Observe that
+  // navigation before checking registration/cache state in the new document.
+  const navigation = page.waitForEvent("framenavigated", {
+    predicate: (frame) => frame === page.mainFrame(),
+  });
   await page.evaluate(async () => {
     await caches.open("goalcurrent-online-old");
     await caches.open("unrelated-cache");
     await navigator.serviceWorker.register("/sw.js");
   });
+  await navigation;
+  await page.waitForLoadState("domcontentloaded");
   await expect.poll(() => page.evaluate(async () => (await navigator.serviceWorker.getRegistrations()).length)).toBe(0);
   expect(await page.evaluate(() => caches.keys())).toContain("unrelated-cache");
   expect(await page.evaluate(() => caches.keys())).not.toContain("goalcurrent-online-old");
