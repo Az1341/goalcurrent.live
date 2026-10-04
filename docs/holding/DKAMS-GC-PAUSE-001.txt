@@ -1,0 +1,29 @@
+DKAMS-GC-PAUSE-001 — CONTROLLED GOALCURRENT PAUSE
+Date/time: 04/10/2026 – 08:13 BST
+Execution owner: ChatGPT. Verification owner: Cursor. Release owner: Ahmad.
+Repository: https://github.com/Az1341/goalcurrent.live
+Branch: feat/gc-pause-20261009
+Target: 09/10/2026 morning Europe/London (not 10 October).
+New Cursor chat: YES. Use the cheapest capable model; stop before 50% context.
+
+PROBLEM: Very low recorded traffic, paid football API renewal, and insufficient founder time.
+BENEFIT: Preserve GoalCurrent and its domain while reducing provider usage and operational work.
+APPROACH: Static burgundy stadium holding page, exact approved copy, source app retained in Git.
+RISKS: Existing deep pages lose search visibility; historical deployments may retain credentials; API billing is independent; old installed workers need retirement.
+
+TEN CONTROLLED CHECKS (one task, sequential):
+1. Verify canonical main SHA and domain-serving Vercel project before any change.
+2. Preserve pre-pause production deployment and source SHA in the runbook.
+3. Confirm option 1 assets, original logo, exact copy and self-hosted fonts.
+4. Build ONLY the holding output; no Next functions, provider calls or package scripts in output.
+5. Run node --test tests/lib/holding-pause.test.mjs.
+6. Run npx playwright test --config holding/playwright.config.mjs for desktop, tablet, phone, API routes, accessibility and worker retirement.
+7. Run type, i18n, fundamentals and source unit regression checks; document environment blockers honestly.
+8. Inspect protected Vercel branch preview; confirm anonymous access is blocked. Show Ahmad the exact PR/SHA.
+9. On the scheduled date, require private review approval plus relevant green gates before merge/deployment. Stop cron/provider work. Do not pause the hosting project in a way that hides the holding page.
+10. Smoke apex/www and old routes, confirm no paid provider requests, retain rollback; report actual costs. Check all historical previews/cron jobs before claiming usage is zero.
+
+ACCEPTANCE: Homepage HTTP 200, apex canonical, single-entry sitemap, readable at 320px+, no overflow, no page errors, no third-party requests, API HTTP 503, retired routes HTTP 404, originals preserved, protected preview and explicit founder approval before public release.
+Do not merge or publish before 09/10/2026. API auto-renewal has NOT been cancelled by this task.
+Archive this card under docs/holding/archive/ only after the approved pause is completed and verified; retain evidence and permanent DKAMS ID.
+NOT MERGED AND NOT PUBLICLY DEPLOYED.

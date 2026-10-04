@@ -1,0 +1,29 @@
+@font-face { font-family: "GC Heading"; src: url("/assets/heading.woff2") format("woff2"); font-weight: 900; font-display: swap; }
+@font-face { font-family: "GC Body"; src: url("/assets/body.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+* { box-sizing: border-box; }
+html { min-height: 100%; background: #230408; color-scheme: dark; }
+body { margin: 0; min-width: 280px; font-family: "GC Body", Arial, sans-serif; color: #fff; }
+.stadium { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; z-index: 0; }
+.page { position: relative; display: flex; flex-direction: column; min-height: 100svh; padding: 48px 4%; }
+.brand { display: flex; align-items: center; gap: 10px; font-size: 28px; font-weight: 700; letter-spacing: -1px; }
+.brand-accent { color: #e31b45; }
+main { margin: auto 0; padding: 48px 0 112px; }
+h1 { max-width: 960px; margin: 0 0 24px; font-family: "GC Heading", Impact, sans-serif; font-size: clamp(68px, 7.4vw, 110px); line-height: 1; letter-spacing: -1.8px; font-weight: 900; }
+.message { max-width: min(730px, 49.1vw); font-size: clamp(20px, 1.85vw, 28px); line-height: 1.5; }
+.message p { margin: 0; }
+.message p + p { margin-top: 32px; max-width: min(700px, 47vw); }
+footer { color: #d4bdc0; font-size: 16px; }
+@media (min-width: 1800px) { .page { padding-inline: max(4%, calc((100vw - 1680px) / 2)); } }
+@media (max-width: 700px) {
+  .stadium { object-position: 64% center; opacity: .45; }
+  .page { padding: 28px 24px; }
+  .brand { font-size: 23px; gap: 8px; }
+  .brand img { width: 30px; height: 30px; }
+  main { padding: 80px 0; }
+  h1 { font-size: clamp(49px, 13.8vw, 82px); line-height: 1.07; letter-spacing: -.5px; margin-bottom: 28px; }
+  .desktop-break { display: none; }
+  .message { max-width: none; font-size: 18px; line-height: 1.6; }
+  .message p + p { max-width: none; margin-top: 28px; }
+  footer { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
