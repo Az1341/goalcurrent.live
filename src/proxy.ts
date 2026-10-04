@@ -230,6 +230,22 @@ export async function proxy(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  if (process.env.GC_FOOTBALL_MODE === "free") {
+    const apiPath = pathname.replace(/^\/(en|es|it|de|fr|nl)(?=\/api\/)/, "");
+    if (/^\/api\/(pl|ucl|unl|facup|la-liga|serie-a|bundesliga|community-shield|fixtures|scores|live|match|standings|teams|players|statistics|transfers|debug)(?:\/|$)/.test(apiPath)) {
+      return NextResponse.json({ error: "live_service_paused", message: "Final results and fixtures are available on the homepage." }, {status:503,headers:{"Cache-Control":"no-store"}});
+    }
+    const pagePath = pathname.replace(/^\/(en|es|it|de|fr|nl)(?=\/|$)/, "") || "/";
+    const competitionPaths: Record<string,string> = {"premier-league":"PL","champions-league":"CL","la-liga":"PD","bundesliga":"BL1","serie-a":"SA"};
+    const first = pagePath.split("/")[1];
+    if (competitionPaths[first] || ["live","match","transfers","fa-cup","nations-league","community-shield"].includes(first)) {
+      const destination = request.nextUrl.clone();
+      destination.pathname = "/";
+      destination.search = `?competition=${competitionPaths[first] || "ALL"}`;
+      return applySecurityHeaders(NextResponse.redirect(destination,307));
+    }
+  }
+
   const localeApi = LOCALE_API.exec(pathname);
   if (localeApi) {
     const url = request.nextUrl.clone();

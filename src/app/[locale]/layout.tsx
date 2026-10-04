@@ -35,18 +35,18 @@ const inter = Inter({
   adjustFontFallback: true,
 });
 
-const ROOT_DESCRIPTION = `${SITE_NAME} — live football scores, fixtures, results, standings and news from major leagues and competitions.`;
+const ROOT_DESCRIPTION = `${SITE_NAME} — delayed final football results, upcoming fixtures, news and videos.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   ...deployRobotsMetadata(),
   title: {
     template: `%s - ${SITE_NAME}`,
-    default: `${SITE_NAME} | Live Football Scores, Fixtures and News`,
+    default: `${SITE_NAME} | Football Results, Fixtures and News`,
   },
   description: ROOT_DESCRIPTION,
   openGraph: {
-    title: `${SITE_NAME} | Live Football Scores, Fixtures and News`,
+    title: `${SITE_NAME} | Football Results, Fixtures and News`,
     description: ROOT_DESCRIPTION,
     url: SITE_URL,
     siteName: SITE_NAME,
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: DEFAULT_TWITTER_CARD,
-    title: `${SITE_NAME} | Live Football Scores, Fixtures and News`,
+    title: `${SITE_NAME} | Football Results, Fixtures and News`,
     description: ROOT_DESCRIPTION,
     images: [DEFAULT_OG_IMAGE.url],
   },

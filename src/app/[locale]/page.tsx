@@ -1,4 +1,5 @@
-export const revalidate = 30;
+export const revalidate = 600;
+import { getFootballSnapshot } from "@/lib/free-football/server";
 
 import HomeClient from "@/app/[locale]/HomeClient";
 import type { Metadata } from "next";
@@ -17,16 +18,17 @@ export async function generateMetadata({
   const { locale } = await params;
   return buildPageMetadata({
     title: normalizePageTitleText(
-      `${SITE_NAME} | Live Football Scores, Fixtures and News`,
+      `${SITE_NAME} | Football Results, Fixtures and News`,
     ),
-    description: `${SITE_NAME} | live football scores, fixtures, results, standings and news from leagues and tournaments worldwide.`,
+    description: `${SITE_NAME} | delayed final football results, upcoming fixtures, news and videos from supported competitions.`,
     path: "/",
     absoluteTitle: true,
     locale,
   });
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const snapshot = await getFootballSnapshot();
   return (
     <>
       <link
@@ -36,7 +38,7 @@ export default function HomePage() {
         fetchPriority="high"
         media="(min-width: 768px)"
       />
-      <HomeClient />
+      <HomeClient snapshot={snapshot} />
     </>
   );
 }

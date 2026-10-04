@@ -1,0 +1,19 @@
+.board{padding:28px 0 0;color:var(--text-primary,#221a1d)}
+.intro{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:24px;border-radius:16px;background:linear-gradient(115deg,rgba(95,9,23,.95),rgba(123,13,30,.88)),url(/images/football-hero-bg.jpg) center/cover;color:white}
+.intro h1{font-family:var(--font-heading),sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin:6px 0 12px}
+.intro p{max-width:620px}.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.filter{display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:600;min-width:220px}
+.filter select{color:#23151b;background:#fff;padding:12px;border:1px solid #ddd;border-radius:8px;font:inherit;width:100%}
+.filter select:focus-visible{outline:3px solid #ffcc70;outline-offset:3px}
+.notice{display:flex;flex-wrap:wrap;gap:8px 20px;padding:16px 0;font-size:13px;color:var(--text-secondary,#65565b)}
+.warning{padding:12px;border:1px solid #a36d10;border-radius:8px;color:var(--text-primary,#221a1d);font-size:14px}
+.section{margin:24px 0}.section h2{font-family:var(--font-heading),sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:12px}
+.group{margin:12px 0 20px;border:1px solid var(--border-default,#ded7da);border-radius:12px;overflow:hidden;background:var(--bg-surface,#fff)}
+.group h3{display:flex;align-items:center;gap:10px;background:var(--bg-muted,#f5f0f2);padding:12px 16px;font-size:14px;font-weight:700}
+.group ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.match{padding:18px 16px;border-top:1px solid var(--border-default,#ded7da)}
+.teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;font-weight:600;font-size:15px}.teams>span:last-child{text-align:right}.teams strong{font-size:22px;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--text-primary,#221a1d)}
+.meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:12px;color:var(--text-secondary,#65565b);font-size:12px}
+.empty{padding:18px;background:var(--bg-surface,#fff);border:1px solid var(--border-default,#ded7da);border-radius:12px;font-size:14px}
+.attribution{font-size:12px;color:var(--text-secondary,#65565b)}.attribution a{text-decoration:underline}
+@media(max-width:650px){.intro{flex-direction:column;align-items:stretch;padding:20px}.filter{min-width:0}.group ul{grid-template-columns:1fr}.teams{font-size:14px;gap:8px}.board{padding-top:16px}}
