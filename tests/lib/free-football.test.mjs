@@ -32,3 +32,20 @@ test('invalid provider payload rejected rather than creating invented results',(
 test('missing and old timestamps are stale; provider timestamp is never moved forward',()=>{
  const now=new Date('2026-10-04T09:00:00Z');assert.equal(isStale(null,now),true);assert.equal(isStale('2026-10-01T09:00:00Z',now),true);assert.equal(isStale('2026-10-04T05:00:00Z',now),false);
 });
+test('free mode refuses legacy paid API calls even when an old credential remains',async()=>{
+ const client=await import('../../src/lib/api-football/client.ts');
+ const api=client.default??client;
+ const oldMode=process.env.GC_FOOTBALL_MODE,oldKey=process.env.API_FOOTBALL_KEY;
+ const oldFetch=globalThis.fetch;let requests=0;
+ try {
+  process.env.GC_FOOTBALL_MODE='free';process.env.API_FOOTBALL_KEY='test-only-retained-key';
+  globalThis.fetch=async()=>{requests++;throw new Error('Unexpected paid request');};
+  assert.equal(api.isApiFootballConfigured(),false);
+  await assert.rejects(()=>api.apiFootballFetch('/fixtures'));
+  assert.equal(requests,0);
+ } finally {
+  globalThis.fetch=oldFetch;
+  if(oldMode===undefined)delete process.env.GC_FOOTBALL_MODE;else process.env.GC_FOOTBALL_MODE=oldMode;
+  if(oldKey===undefined)delete process.env.API_FOOTBALL_KEY;else process.env.API_FOOTBALL_KEY=oldKey;
+ }
+});

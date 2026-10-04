@@ -60,7 +60,7 @@ test("Android/PWA cleanup cannot revive a World Cup-era app shell", () => {
   assert.match(bootstrap, /navigator\.serviceWorker\.register\("\/sw\.js"/);
   assert.match(bootstrap, /updateViaCache:\s*"none"/);
 
-  assert.match(home, /wc26Views=\{\[\]\}/);
+  assert.doesNotMatch(home, /HomeHero|HomeChampionSnippet/);
 
   const mobileTabs = nav.slice(
     nav.indexOf("export const MOBILE_BOTTOM_TABS"),

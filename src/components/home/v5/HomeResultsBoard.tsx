@@ -1,14 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { FREE_COMPETITIONS, hasFinalScore, isCompetitionCode, isStale, partitionMatches, type FootballSnapshot, type FreeMatch } from "@/lib/free-football/model";
 import styles from "./HomeResultsBoard.module.css";
 
 export default function HomeResultsBoard({ snapshot }: { snapshot: FootballSnapshot }) {
   const t = useTranslations("freeFootball");
+  const locale = useLocale();
   const [competition, setCompetition] = useState("PL");
-  const [clock, setClock] = useState<{now: Date; zone: string} | null>(null);
+  const [clock, setClock] = useState(() => ({now: new Date(snapshot.renderedAt), zone: "UTC"}));
   useEffect(() => {
     const update = () => setClock({now: new Date(), zone: Intl.DateTimeFormat().resolvedOptions().timeZone});
     const initial = window.setTimeout(() => {
@@ -25,7 +26,7 @@ export default function HomeResultsBoard({ snapshot }: { snapshot: FootballSnaps
   const stale = clock && selected.some(c => isStale(c.fetchedAt, clock.now));
   const dates = selected.map(c => c.fetchedAt).filter((v):v is string => Boolean(v)).sort();
   const updated = dates[0]; // Oldest selected feed, never claim all are newer.
-  const dateText = (iso: string) => new Intl.DateTimeFormat(undefined, {dateStyle:"medium",timeStyle:"short",timeZone:clock?.zone || "UTC"}).format(new Date(iso));
+  const dateText = (iso: string) => new Intl.DateTimeFormat(locale, {dateStyle:"medium",timeStyle:"short",timeZone:clock?.zone || "UTC"}).format(new Date(iso));
   const renderMatch = (m: FreeMatch) => {
     const started = clock && Date.parse(m.kickoffUtc) <= clock.now.getTime();
     const status = hasFinalScore(m) ? t("final") : m.status === "POSTPONED" ? t("postponed") : m.status === "CANCELLED" ? t("cancelled") : started ? t("pending") : t("scheduled");

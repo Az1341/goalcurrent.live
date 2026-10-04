@@ -18,7 +18,7 @@ export type CompetitionSnapshot = {
   code: CompetitionCode; matches: FreeMatch[]; fetchedAt: string | null;
   available: boolean;
 };
-export type FootballSnapshot = { competitions: CompetitionSnapshot[] };
+export type FootballSnapshot = { competitions: CompetitionSnapshot[]; renderedAt: string };
 
 export function isCompetitionCode(value: string): value is CompetitionCode {
   return FREE_COMPETITIONS.some(item => item.code === value);

@@ -69,16 +69,17 @@ test("mobile competitions lives in bottom navigation and pins Community Shield i
   assert.match(sheet, /t\(["']communityShield["']\)/);
 });
 
-test("homepage ads are visibly labelled, directly after hero and use non-PII attribution", () => {
+test("homepage match board and editorial feeds precede labelled non-PII ads", () => {
   const home = read("src/app/[locale]/HomeClient.tsx");
   const promo = read("src/components/home/v5/HomeEcosystemPromo.tsx");
   const video = read("src/components/home/v5/HomeSepanaiVideoAd.tsx");
-  const heroIndex = home.indexOf("<HomeHero");
+  const boardIndex = home.indexOf("<HomeResultsBoard");
+  const newsIndex = home.indexOf("<HomeLatestNews");
+  const clipsIndex = home.indexOf("<HomeTrendingClips");
   const promoIndex = home.indexOf("<HomeEcosystemPromo");
   const videoIndex = home.indexOf("<HomeSepanaiVideoAd");
-  const matchesIndex = home.indexOf("<HomeTodaysMatches");
 
-  assert.ok(heroIndex >= 0 && promoIndex > heroIndex && videoIndex > promoIndex && matchesIndex > videoIndex);
+  assert.ok(boardIndex >= 0 && newsIndex > boardIndex && clipsIndex > newsIndex && promoIndex > clipsIndex && videoIndex > promoIndex);
   assert.match(promo, />Advertisement</);
   assert.match(video, />Advertisement</);
   assert.doesNotMatch(promo, /OWNED ADVERTISEMENT|owned promotion/i);

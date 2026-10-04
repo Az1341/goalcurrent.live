@@ -27,5 +27,9 @@ const getCompetition = unstable_cache(async (code: CompetitionCode, season: numb
 export async function getFootballSnapshot(): Promise<FootballSnapshot> {
   const now = new Date();
   const season = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
-  return { competitions: await Promise.all(FREE_COMPETITIONS.map(c => getCompetition(c.code, season))) };
+  if (process.env.NODE_ENV === "development" && process.env.CI === "true" && process.env.GC_FREE_TEST_DATA === "1" && !process.env.VERCEL_ENV) {
+    const { testSnapshot } = await import("./test-snapshot");
+    return testSnapshot(now);
+  }
+  return { renderedAt: now.toISOString(), competitions: await Promise.all(FREE_COMPETITIONS.map(c => getCompetition(c.code, season))) };
 }

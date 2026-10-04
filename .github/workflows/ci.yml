@@ -59,14 +59,23 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - name: Select deployed football surface
+        id: surface
+        run: |
+          node -e "const fs=require('fs'); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'free=' + fs.readFileSync('next.config.ts','utf8').includes('GC_FOOTBALL_MODE: \"free\"') + '\\n')"
       - run: npm run build
       - run: npx playwright install --with-deps chromium
 
+      - name: Free results browser and accessibility checks
+        if: steps.surface.outputs.free == 'true'
+        run: npx playwright test --config playwright.free.config.ts
       - run: npm run test:e2e
+        if: steps.surface.outputs.free != 'true'
       - run: npm run test:visual
+        if: steps.surface.outputs.free != 'true'
 
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: playwright-report
           path: |

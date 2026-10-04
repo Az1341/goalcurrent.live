@@ -20,13 +20,7 @@ const HomeTrendingClips = dynamic(
   },
 );
 
-const HomeTeamsLeagues = dynamic(
-  () => import("@/components/home/v5/HomeTeamsLeagues"),
-  { loading: () => <div className={`${styles.skeleton} animate-skeleton-shimmer`} /> },
-);
-
 export default function HomeClient({ snapshot }: { snapshot: FootballSnapshot }) {
-  const plFixtures: never[] = [];
 
   return (
     <div className={styles.root} data-gc-home-v5>
@@ -36,7 +30,6 @@ export default function HomeClient({ snapshot }: { snapshot: FootballSnapshot })
         <HomeTrendingClips />
         <HomeEcosystemPromo />
         <HomeSepanaiVideoAd />
-        <HomeTeamsLeagues plFixtures={plFixtures} />
       </main>
     </div>
   );
