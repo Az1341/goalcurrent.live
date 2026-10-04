@@ -466,5 +466,54 @@
     "scoreAria": "Spielergebnis",
     "kickoffTbc": "Anstoss TBC",
     "unavailable": "Spieldetails sind noch nicht verfugbar."
+  },
+  "matchday": {
+    "today": "Spiele heute",
+    "loading": "Spiele werden geladen…",
+    "filters": "Spiele filtern",
+    "filtersLabel": {
+      "all": "Alle",
+      "live": "Live",
+      "finished": "Ergebnisse",
+      "upcoming": "Demnächst"
+    },
+    "matchCount": "{count, plural, one {# Spiel} other {# Spiele}}",
+    "noMatches": "Heute keine Spiele in diesem Wettbewerb.",
+    "noFilterMatches": "Keine Spiele für diesen Filter.",
+    "showLess": "Weniger Spiele anzeigen",
+    "showAll": "Alle {count} Spiele anzeigen",
+    "nextUp": "Als Nächstes",
+    "matchHub": "Matchcenter",
+    "lastReportedLive": "Zuletzt als live gemeldet",
+    "kickoffTbc": "Anstoß offen",
+    "scoreUnavailable": "Spielstand nicht verfügbar",
+    "penaltyScore": "Elfmeterschießen: {home}–{away}",
+    "status": {
+      "halfTime": "Halbzeit",
+      "penalties": "Elfmeterschießen",
+      "extraTime": "Verlängerung",
+      "live": "LIVE",
+      "finished": "Endstand",
+      "finishedPenalties": "Endstand · Elfmeterschießen",
+      "finishedExtraTime": "Endstand · Verlängerung",
+      "postponed": "Verschoben",
+      "cancelled": "Abgesagt",
+      "abandoned": "Abgebrochen",
+      "upcoming": "Demnächst",
+      "unknown": "Status nicht verfügbar",
+      "interrupted": "Unterbrochen"
+    },
+    "health": {
+      "loading": "Spielplan wird geladen…",
+      "unavailable": "Live-Berichterstattung ist derzeit nicht verfügbar.",
+      "delayed": "Aktualisierung verzögert. Spielstände können veraltet sein.",
+      "scheduleOnly": "Spielplan verfügbar. Live-Spielstände sind nicht bestätigt.",
+      "unknown": "Die letzte Aktualisierung kann nicht bestätigt werden.",
+      "available": "Daten geprüft"
+    },
+    "backToToday": "Zurück zu den heutigen Spielen",
+    "groupTable": "Gruppentabelle und Spielplan ansehen",
+    "detailCoverage": "Nur Spieltermin und Spielstand. Aufstellungen, Ereignisse und Statistiken sind hier nicht verfügbar.",
+    "matchNotFound": "Dieses Spiel ist nicht im aktuellen Wettbewerbsfeed enthalten."
   }
 }

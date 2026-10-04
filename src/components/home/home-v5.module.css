@@ -29,6 +29,26 @@
   color: var(--text-primary, var(--gc-v5-text));
 }
 
+.heroCompact {
+  padding: 20px;
+  margin-top: 16px;
+  margin-bottom: -20px;
+  border-radius: 12px;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+}
+.heroCompact h1 {
+  margin: 0;
+  font: 900 clamp(2rem, 6vw, 3rem)/1.05 var(--font-heading), sans-serif;
+  text-transform: uppercase;
+}
+.heroCompact p {
+  margin: 6px 0 0;
+  color: #e4e8ee;
+  font: 500 1rem/1.4 Arial, sans-serif;
+}
+
 .sectionTitleLarge {
   font-family: var(--font-heading), sans-serif;
   font-size: clamp(1.75rem, 5vw, 2.25rem);

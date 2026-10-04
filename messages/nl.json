@@ -466,5 +466,54 @@
     "scoreAria": "Wedstrijdscore",
     "kickoffTbc": "Aftrap TBC",
     "unavailable": "Wedstrijddetails zijn nog niet beschikbaar."
+  },
+  "matchday": {
+    "today": "Wedstrijden vandaag",
+    "loading": "Wedstrijden laden…",
+    "filters": "Wedstrijden filteren",
+    "filtersLabel": {
+      "all": "Alle",
+      "live": "Live",
+      "finished": "Uitslagen",
+      "upcoming": "Komend"
+    },
+    "matchCount": "{count, plural, one {# wedstrijd} other {# wedstrijden}}",
+    "noMatches": "Vandaag geen wedstrijden in deze competitie.",
+    "noFilterMatches": "Geen wedstrijden voor dit filter.",
+    "showLess": "Minder wedstrijden tonen",
+    "showAll": "Alle {count} wedstrijden tonen",
+    "nextUp": "Hierna",
+    "matchHub": "Wedstrijdcentrum",
+    "lastReportedLive": "Laatst gemeld als live",
+    "kickoffTbc": "Aftrap nog onbekend",
+    "scoreUnavailable": "Score niet beschikbaar",
+    "penaltyScore": "Strafschoppen: {home}–{away}",
+    "status": {
+      "halfTime": "Rust",
+      "penalties": "Strafschoppen",
+      "extraTime": "Verlenging",
+      "live": "LIVE",
+      "finished": "Afgelopen",
+      "finishedPenalties": "Afgelopen · Strafschoppen",
+      "finishedExtraTime": "Afgelopen · Verlenging",
+      "postponed": "Uitgesteld",
+      "cancelled": "Afgelast",
+      "abandoned": "Gestaakt",
+      "upcoming": "Komend",
+      "unknown": "Status niet beschikbaar",
+      "interrupted": "Onderbroken"
+    },
+    "health": {
+      "loading": "Programma laden…",
+      "unavailable": "Liveverslaggeving is momenteel niet beschikbaar.",
+      "delayed": "Updates vertraagd. Scores kunnen verouderd zijn.",
+      "scheduleOnly": "Programma beschikbaar. Livescores zijn niet bevestigd.",
+      "unknown": "De laatste update kan niet worden bevestigd.",
+      "available": "Gegevens gecontroleerd"
+    },
+    "backToToday": "Terug naar de wedstrijden van vandaag",
+    "groupTable": "Bekijk de groepsstand en wedstrijden",
+    "detailCoverage": "Alleen wedstrijdinformatie en scores. Opstellingen, gebeurtenissen en statistieken zijn hier niet beschikbaar.",
+    "matchNotFound": "Deze wedstrijd staat niet in de huidige competitiegegevens."
   }
 }

@@ -466,5 +466,54 @@
     "scoreAria": "Punteggio",
     "kickoffTbc": "Orario TBC",
     "unavailable": "I dettagli della partita non sono ancora disponibili."
+  },
+  "matchday": {
+    "today": "Partite di oggi",
+    "loading": "Caricamento partite…",
+    "filters": "Filtra partite",
+    "filtersLabel": {
+      "all": "Tutte",
+      "live": "In diretta",
+      "finished": "Risultati",
+      "upcoming": "In programma"
+    },
+    "matchCount": "{count, plural, one {# partita} other {# partite}}",
+    "noMatches": "Nessuna partita oggi in questa competizione.",
+    "noFilterMatches": "Nessuna partita per questo filtro.",
+    "showLess": "Mostra meno partite",
+    "showAll": "Mostra tutte le {count} partite",
+    "nextUp": "Prossime partite",
+    "matchHub": "Centro partita",
+    "lastReportedLive": "Ultimo stato: in diretta",
+    "kickoffTbc": "Orario da confermare",
+    "scoreUnavailable": "Punteggio non disponibile",
+    "penaltyScore": "Rigori: {home}–{away}",
+    "status": {
+      "halfTime": "Intervallo",
+      "penalties": "Rigori",
+      "extraTime": "Supplementari",
+      "live": "IN DIRETTA",
+      "finished": "Terminata",
+      "finishedPenalties": "Terminata · Rigori",
+      "finishedExtraTime": "Terminata · Supplementari",
+      "postponed": "Rinviata",
+      "cancelled": "Annullata",
+      "abandoned": "Abbandonata",
+      "upcoming": "In programma",
+      "unknown": "Stato non disponibile",
+      "interrupted": "Interrotta"
+    },
+    "health": {
+      "loading": "Caricamento calendario…",
+      "unavailable": "La copertura in diretta non è attualmente disponibile.",
+      "delayed": "Aggiornamenti in ritardo. I punteggi potrebbero non essere aggiornati.",
+      "scheduleOnly": "Calendario disponibile. Punteggi in diretta non confermati.",
+      "unknown": "Impossibile confermare l’ultimo aggiornamento.",
+      "available": "Dati verificati"
+    },
+    "backToToday": "Torna alle partite di oggi",
+    "groupTable": "Vedi classifica e partite del girone",
+    "detailCoverage": "Solo calendario e punteggio. Formazioni, eventi e statistiche non sono disponibili qui.",
+    "matchNotFound": "Questa partita non è presente nei dati attuali della competizione."
   }
 }

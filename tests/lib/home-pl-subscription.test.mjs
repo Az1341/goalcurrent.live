@@ -22,6 +22,8 @@ test("homepage PL fixtures are fetched once in HomeClient and passed to children
   assert.match(home, /plFixtures=\{plFixtures\}/);
   assert.doesNotMatch(today, /useSWR/);
   assert.doesNotMatch(leagues, /useSWR/);
-  assert.match(today, /plFixtures/);
+  assert.match(home, /sources=\{sources\}/);
+  assert.match(today, /sources: MatchdaySource\[\]/);
+  assert.doesNotMatch(today, /useLiveApi|useLiveFixtures/);
   assert.match(leagues, /plFixtures/);
 });

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import MatchSeo from "@/components/seo/MatchSeo";
 import UnlMatchClient from "@/components/unl/UnlMatchClient";
+import CompetitionMatchHub from "@/components/home/v5/CompetitionMatchHub";
+import { parseMatchdayId } from "@/lib/home/matchday";
 import { getUnlSsotFixtureById } from "@/lib/unl/fixtures-ssot";
 import { UNL_DISPLAY_NAME, UNL_HUB_PATH } from "@/lib/unl/constants";
 import { sportsEventStatus } from "@/lib/seo/sports-event-status";
@@ -28,10 +30,10 @@ export async function generateMetadata({
 
 export default async function UnlMatchPage({ params }: PageProps) {
   const { fixtureId } = await params;
-  const id = Number(fixtureId);
-  if (!Number.isFinite(id) || id <= 0) notFound();
+  const id = parseMatchdayId(fixtureId);
+  if (id === null) notFound();
   const fixture = getUnlSsotFixtureById(id);
-  if (!fixture) notFound();
+  if (!fixture) return <CompetitionMatchHub competition="unl" fixtureId={id} />;
 
   const path = `${UNL_HUB_PATH}/match/${fixture.fixtureId}`;
   const name = `${fixture.homeTeamName} vs ${fixture.awayTeamName}`;
