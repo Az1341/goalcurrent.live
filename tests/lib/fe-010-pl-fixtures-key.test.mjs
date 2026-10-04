@@ -15,7 +15,7 @@ test("FE-010: useLiveFixtures owns the canonical /api/pl/fixtures SWR key", () =
   assert.match(hook, /useLiveApi/);
 });
 
-test("FE-010: HomeClient and PlHubClient share useLiveFixtures (one fetcher)", () => {
+test("FE-010: free homepage has no live owner; retained PL hub has one canonical owner", () => {
   const home = readFileSync(
     join(root, "src/app/[locale]/HomeClient.tsx"),
     "utf8",
@@ -25,7 +25,7 @@ test("FE-010: HomeClient and PlHubClient share useLiveFixtures (one fetcher)", (
     "utf8",
   );
 
-  assert.match(home, /useLiveFixtures/);
+  assert.doesNotMatch(home, /useLiveFixtures/);
   assert.doesNotMatch(
     home,
     /useSWR<PlFixturesApiResponse>|["']\/api\/pl\/fixtures["']/,

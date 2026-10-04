@@ -23,10 +23,11 @@ export type ApiFootballFetchResult<T> = {
 };
 
 export function isApiFootballConfigured(): boolean {
-  return Boolean(process.env.API_FOOTBALL_KEY?.trim());
+  return process.env.GC_FOOTBALL_MODE !== "free" && Boolean(process.env.API_FOOTBALL_KEY?.trim());
 }
 
 export function getApiFootballKey(): string | undefined {
+  if (process.env.GC_FOOTBALL_MODE === "free") return undefined;
   return process.env.API_FOOTBALL_KEY?.trim() || undefined;
 }
 

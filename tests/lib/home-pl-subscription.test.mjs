@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-test("homepage PL fixtures are fetched once in HomeClient and passed to children", () => {
+test("free homepage receives the server snapshot and registers no PL polling", () => {
   const home = readFileSync(join(root, "src/app/[locale]/HomeClient.tsx"), "utf8");
   const today = readFileSync(
     join(root, "src/components/home/v5/HomeTodaysMatches.tsx"),
@@ -17,9 +17,10 @@ test("homepage PL fixtures are fetched once in HomeClient and passed to children
     "utf8",
   );
 
-  assert.match(home, /useLiveFixtures/);
+  assert.doesNotMatch(home, /useLiveFixtures/);
+  assert.match(home, /HomeResultsBoard snapshot=\{snapshot\}/);
   assert.doesNotMatch(home, /useSWR<PlFixturesApiResponse>|["']\/api\/pl\/fixtures["']/);
-  assert.match(home, /plFixtures=\{plFixtures\}/);
+  assert.doesNotMatch(home, /HomeTeamsLeagues|HomeTodaysMatches/);
   assert.doesNotMatch(today, /useSWR/);
   assert.doesNotMatch(leagues, /useSWR/);
   assert.match(today, /plFixtures/);

@@ -466,5 +466,31 @@
     "scoreAria": "Marcador",
     "kickoffTbc": "Hora de inicio TBC",
     "unavailable": "Los detalles del partido aun no estan disponibles."
+  },
+  "freeFootball": {
+    "eyebrow": "El fútbol de un vistazo",
+    "heading": "Resultados y próximos partidos",
+    "description": "Partidos de hoy, últimos resultados finales y próximos encuentros.",
+    "competition": "Elegir competición",
+    "all": "Todas las competiciones disponibles",
+    "updated": "Última actualización: {date}",
+    "unavailable": "Los datos verificados aún no están disponibles.",
+    "stale": "Actualización retrasada — se muestran datos guardados.",
+    "delayed": "Solo resultados finales. Actualizaciones con retraso; sin marcadores en directo.",
+    "missing": "Faltan datos de algunas competiciones. Nunca inventamos resultados.",
+    "today": "Partidos de hoy",
+    "noToday": "No hay partidos programados hoy. Los próximos encuentros aparecen abajo.",
+    "next": "Próximos partidos",
+    "noUpcoming": "No hay próximos encuentros verificados disponibles.",
+    "results": "Últimos resultados",
+    "noResults": "No hay resultados finales verificados disponibles.",
+    "upcoming": "Próximos encuentros",
+    "localising": "Preparando los horarios para tu ubicación…",
+    "final": "Finalizado",
+    "postponed": "Aplazado",
+    "cancelled": "Cancelado",
+    "pending": "Resultado pendiente",
+    "scheduled": "Programado",
+    "score": "{home} a {away}"
   }
 }

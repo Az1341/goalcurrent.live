@@ -466,5 +466,31 @@
     "scoreAria": "Wedstrijdscore",
     "kickoffTbc": "Aftrap TBC",
     "unavailable": "Wedstrijddetails zijn nog niet beschikbaar."
+  },
+  "freeFootball": {
+    "eyebrow": "Voetbal in één oogopslag",
+    "heading": "Uitslagen en komende wedstrijden",
+    "description": "Wedstrijden van vandaag, recente eindstanden en komende duels.",
+    "competition": "Kies competitie",
+    "all": "Alle beschikbare competities",
+    "updated": "Laatst bijgewerkt: {date}",
+    "unavailable": "Geverifieerde wedstrijdgegevens zijn nog niet beschikbaar.",
+    "stale": "Updates vertraagd — opgeslagen gegevens worden getoond.",
+    "delayed": "Alleen eindstanden. Vertraagde updates; geen live uitslagen.",
+    "missing": "Sommige competitiegegevens ontbreken. We verzinnen nooit uitslagen.",
+    "today": "Wedstrijden van vandaag",
+    "noToday": "Vandaag zijn geen wedstrijden gepland. De volgende duels staan hieronder.",
+    "next": "Volgende wedstrijden",
+    "noUpcoming": "Geen geverifieerde komende wedstrijden beschikbaar.",
+    "results": "Laatste uitslagen",
+    "noResults": "Geen geverifieerde eindstanden beschikbaar.",
+    "upcoming": "Komende wedstrijden",
+    "localising": "Wedstrijdtijden worden aangepast aan je locatie…",
+    "final": "Afgelopen",
+    "postponed": "Uitgesteld",
+    "cancelled": "Afgelast",
+    "pending": "Uitslag nog niet beschikbaar",
+    "scheduled": "Gepland",
+    "score": "{home} tegen {away}"
   }
 }

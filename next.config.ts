@@ -69,6 +69,7 @@ const SITE_REDIRECTS: RouteRedirect[] = [
 ];
 
 const nextConfig: NextConfig = {
+  env: { GC_FOOTBALL_MODE: "free" },
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: "inline",

@@ -466,5 +466,31 @@
     "scoreAria": "Spielergebnis",
     "kickoffTbc": "Anstoss TBC",
     "unavailable": "Spieldetails sind noch nicht verfugbar."
+  },
+  "freeFootball": {
+    "eyebrow": "Fußball auf einen Blick",
+    "heading": "Ergebnisse und nächste Spiele",
+    "description": "Heutige Spiele, letzte Endstände und kommende Begegnungen.",
+    "competition": "Wettbewerb auswählen",
+    "all": "Alle unterstützten Wettbewerbe",
+    "updated": "Zuletzt aktualisiert: {date}",
+    "unavailable": "Verifizierte Spieldaten sind noch nicht verfügbar.",
+    "stale": "Aktualisierung verzögert — gespeicherte Daten werden angezeigt.",
+    "delayed": "Nur Endstände. Verzögerte Aktualisierung; keine Live-Ergebnisse.",
+    "missing": "Einige Wettbewerbsdaten fehlen. Ergebnisse werden niemals erfunden.",
+    "today": "Heutige Spiele",
+    "noToday": "Heute sind keine Spiele geplant. Die nächsten Begegnungen stehen unten.",
+    "next": "Nächste Spiele",
+    "noUpcoming": "Keine verifizierten kommenden Begegnungen verfügbar.",
+    "results": "Letzte Ergebnisse",
+    "noResults": "Keine verifizierten Endstände verfügbar.",
+    "upcoming": "Kommende Begegnungen",
+    "localising": "Spielzeiten werden für Ihren Standort vorbereitet…",
+    "final": "Endstand",
+    "postponed": "Verschoben",
+    "cancelled": "Abgesagt",
+    "pending": "Ergebnis ausstehend",
+    "scheduled": "Geplant",
+    "score": "{home} zu {away}"
   }
 }

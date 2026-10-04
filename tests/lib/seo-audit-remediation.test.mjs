@@ -12,7 +12,7 @@ test("root SEO metadata is competition-neutral and uses the shared brand theme c
   assert.doesNotMatch(layout, /default:\s*`\$\{SITE_NAME\} - FIFA World Cup 2026/);
   assert.doesNotMatch(layout, /themeColor:\s*["']#8B0000["']/i);
   assert.match(layout, /themeColor:\s*BRAND_THEME_COLOR/);
-  assert.match(layout, /Live Football Scores, Fixtures and News/);
+  assert.match(layout, /Football Results, Fixtures and News/);
 });
 
 test("site-wide fallback social image is not WC26-branded", () => {
@@ -31,7 +31,7 @@ test("homepage source surfaces exclude WC26 archive content and clips", () => {
 
   assert.doesNotMatch(page, /HomeFeaturedMatchJsonLd|getSeoEffectiveFixtures|wc26Selection/);
   assert.doesNotMatch(client, /HomeChampionSnippet|selectHomepageFixtures|heroWc26Views/);
-  assert.match(client, /wc26Views=\{\[\]\}/);
+  assert.doesNotMatch(client, /HomeHero|HomeChampionSnippet/);
   assert.doesNotMatch(leagues, /worldcup2026|World Cup 2026/i);
   assert.doesNotMatch(today, /Wc26MatchCard|World Cup 2026|wc26Today/);
   assert.match(clips, /WC26_VIDEO_TERMS/);
