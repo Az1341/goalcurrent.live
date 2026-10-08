@@ -1,8 +1,17 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/refresh-content",
-      "schedule": "0 6 * * *"
-    }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "node --version",
+  "buildCommand": "node scripts/build-holding.mjs",
+  "outputDirectory": "holding-dist",
+  "crons": [],
+  "routes": [
+    { "src": "/(.*)", "has": [{ "type": "host", "value": "www.goalcurrent.live" }], "headers": { "Location": "https://goalcurrent.live/$1" }, "status": 308 },
+    { "src": "/(.*)", "headers": { "Content-Security-Policy": "default-src 'none'; img-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; connect-src 'none'; worker-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'", "X-Content-Type-Options": "nosniff", "X-Frame-Options": "DENY", "Referrer-Policy": "strict-origin-when-cross-origin", "Permissions-Policy": "geolocation=(), microphone=(), camera=()", "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload" }, "continue": true },
+    { "src": "/(?:sw|firebase-messaging-sw|OneSignalSDKWorker|OneSignalSDKUpdaterWorker)\\.js", "headers": { "Cache-Control": "no-store", "Service-Worker-Allowed": "/" }, "continue": true },
+    { "src": "/api(?:/.*)?", "dest": "/paused-api.json", "status": 503, "headers": { "Content-Type": "application/json", "Cache-Control": "no-store", "X-Robots-Tag": "noindex" } },
+    { "src": "/", "dest": "/index.html", "headers": { "Cache-Control": "public, max-age=0, must-revalidate" } },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/404.html", "status": 404, "headers": { "Cache-Control": "no-store", "X-Robots-Tag": "noindex" } }
   ]
 }

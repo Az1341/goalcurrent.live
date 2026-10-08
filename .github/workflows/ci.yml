@@ -11,6 +11,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  holding:
+    name: Static pause build, routes and responsive accessibility
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: node --test tests/lib/holding-pause.test.mjs
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config holding/playwright.config.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: holding-evidence
+          path: holding/evidence/
+          retention-days: 14
+
   quality:
     name: Lint, types, i18n, unit tests
     runs-on: ubuntu-latest
@@ -53,17 +73,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The paused deployment contains no Next app. Its browser/routing gate is
+      # the separate holding job above; keep full-app E2E for normal releases.
+      - name: Select deployed surface
+        id: surface
+        run: |
+          node -e "const fs=require('fs'); const c=JSON.parse(fs.readFileSync('vercel.json')); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'football=' + (c.framework !== null) + '\\n')"
+
       - uses: actions/setup-node@v4
+        if: steps.surface.outputs.football == 'true'
         with:
           node-version: "20"
           cache: npm
 
       - run: npm ci
+        if: steps.surface.outputs.football == 'true'
       - run: npm run build
+        if: steps.surface.outputs.football == 'true'
       - run: npx playwright install --with-deps chromium
+        if: steps.surface.outputs.football == 'true'
 
       - run: npm run test:e2e
+        if: steps.surface.outputs.football == 'true'
       - run: npm run test:visual
+        if: steps.surface.outputs.football == 'true'
 
       - uses: actions/upload-artifact@v4
         if: failure()

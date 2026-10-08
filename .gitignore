@@ -25,6 +25,10 @@
 
 # production
 /build
+/holding-dist/
+/holding/node_modules/
+/holding/evidence/
+/.holding-preview/
 
 # misc
 .DS_Store
