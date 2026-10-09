@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useLocalizedKickoffTime } from "@/lib/client/use-local-kickoff";
 import type { HomepageMatchView } from "@/lib/wc26-live";
@@ -10,7 +11,12 @@ import TeamFlag from "@/components/TeamFlag";
 import { PlTeamBadge } from "@/components/pl/PlShared";
 import { FavouriteMatchButton } from "@/components/FavouriteButton";
 import { matchHref } from "@/lib/wc26-match";
-import { isLocalToday } from "@/lib/date-utils";
+import {
+  formatMatchdayScore,
+  normalizePlFixtures,
+  orderMatchdayForFeatured,
+  type MatchdayCard,
+} from "@/lib/home/matchday";
 import styles from "../home-v5.module.css";
 import favouriteStyles from "./HomeMatchFavourite.module.css";
 
@@ -27,10 +33,10 @@ function Wc26StatusPill({ match }: { match: HomepageMatchView }) {
   return <span className={styles.statusUpcoming}>{kickoffTime}</span>;
 }
 
-function PlStatusPill({ fixture }: { fixture: PlFixtureRow }) {
-  const kickoffTime = useLocalizedKickoffTime(fixture.kickoffUtc);
-  if (fixture.status === "LIVE") {
-    const short = fixture.statusShort?.trim().toUpperCase();
+function MatchdayStatusPill({ card }: { card: MatchdayCard }) {
+  const kickoffTime = useLocalizedKickoffTime(card.kickoffUtc ?? "");
+  if (card.bucket === "live") {
+    const short = card.statusShort?.trim().toUpperCase();
     const period =
       short === "1H" || short === "2H" || short === "HT" || short === "ET" || short === "P"
         ? short === "P"
@@ -38,24 +44,26 @@ function PlStatusPill({ fixture }: { fixture: PlFixtureRow }) {
           : short
         : null;
     const label =
-      fixture.elapsed != null
-        ? `LIVE ${fixture.elapsed}'`
-        : period ?? "LIVE";
+      card.elapsed != null ? `LIVE ${card.elapsed}'` : period ?? "LIVE";
     return <span className={styles.statusLive}>{label}</span>;
   }
-  if (fixture.status === "FT") {
-    const short = fixture.statusShort?.trim().toUpperCase();
+  if (card.bucket === "finished") {
+    const short = card.statusShort?.trim().toUpperCase();
     const label =
-      short === "AET" || short === "PEN" ? short : "FT";
+      short === "AET" || short === "PEN" ? short : card.status === "ABANDONED" ? "ABD" : "FT";
     return <span className={styles.statusFt}>{label}</span>;
   }
-  if (fixture.status === "POSTPONED") {
+  if (card.status === "POSTPONED") {
     return <span className={styles.statusUpcoming}>PST</span>;
   }
-  if (fixture.status === "CANCELLED") {
+  if (card.status === "CANCELLED") {
     return <span className={styles.statusUpcoming}>CANC</span>;
   }
-  return <span className={styles.statusUpcoming}>{kickoffTime}</span>;
+  return (
+    <span className={styles.statusUpcoming}>
+      {card.kickoffUtc ? kickoffTime : "TBC"}
+    </span>
+  );
 }
 
 function Wc26MatchCard({
@@ -65,12 +73,16 @@ function Wc26MatchCard({
   match: HomepageMatchView;
   compact?: boolean;
 }) {
-  const hasScore =
+  const score = formatMatchdayScore(
+    match.score?.home ?? null,
+    match.score?.away ?? null,
+  );
+  const showScore =
     match.matchClass === "live" ||
     match.matchClass === "ft" ||
     match.score != null;
-  const homeScore = hasScore ? (match.score?.home ?? 0) : "–";
-  const awayScore = hasScore ? (match.score?.away ?? 0) : "–";
+  const displayHome = showScore ? score.home : "\u2013";
+  const displayAway = showScore ? score.away : "\u2013";
   const cardClass = compact ? styles.todayMatchCard : styles.liveCard;
   const label = `${match.homeName} vs ${match.awayName}`;
 
@@ -87,14 +99,14 @@ function Wc26MatchCard({
               <TeamFlag teamId={match.homeTeamId} teamName={match.homeName} size={32} />
               <span className={styles.liveCardTeamName}>{match.homeName}</span>
             </div>
-            <span className={styles.liveCardScore}>{homeScore}</span>
+            <span className={styles.liveCardScore}>{displayHome}</span>
           </div>
           <div className={styles.liveCardTeamRow}>
             <div className={styles.liveCardTeamLeft}>
               <TeamFlag teamId={match.awayTeamId} teamName={match.awayName} size={32} />
               <span className={styles.liveCardTeamName}>{match.awayName}</span>
             </div>
-            <span className={styles.liveCardScore}>{awayScore}</span>
+            <span className={styles.liveCardScore}>{displayAway}</span>
           </div>
         </div>
       </Link>
@@ -107,59 +119,63 @@ function Wc26MatchCard({
   );
 }
 
-function PlMatchCard({
-  fixture,
+export function MatchdayMatchCard({
+  card,
   compact = false,
 }: {
-  fixture: PlFixtureRow;
+  card: MatchdayCard;
   compact?: boolean;
 }) {
-  const hasScore =
-    fixture.status === "FT" ||
-    fixture.status === "LIVE" ||
-    (fixture.homeScore != null && fixture.awayScore != null);
-  const homeScore = hasScore ? (fixture.homeScore ?? 0) : "–";
-  const awayScore = hasScore ? (fixture.awayScore ?? 0) : "–";
+  const t = useTranslations("home.matchday");
+  const score = formatMatchdayScore(card.homeScore, card.awayScore);
+  const wantsScore =
+    card.bucket === "live" ||
+    card.bucket === "finished" ||
+    (card.homeScore != null && card.awayScore != null);
+  const homeScore = wantsScore ? score.home : "\u2013";
+  const awayScore = wantsScore ? score.away : "\u2013";
   const cardClass = compact ? styles.todayMatchCard : styles.liveCard;
-  const label = `${fixture.homeTeamName} vs ${fixture.awayTeamName}`;
+  const label = `${card.homeTeamName} vs ${card.awayTeamName}`;
 
   return (
-    <div className={favouriteStyles.cardShell}>
-      <Link
-        href={`/premier-league/match/${fixture.fixtureId}`}
-        className={cardClass}
-      >
+    <div className={favouriteStyles.cardShell} data-gc-matchday-card={card.qualifiedId}>
+      <Link href={card.hubHref} className={cardClass} data-gc-match-hub={card.hubHref}>
         <div className={styles.liveCardTop}>
-          <span className={styles.liveCardComp}>Premier League 26/27</span>
-          <PlStatusPill fixture={fixture} />
+          <span className={styles.liveCardComp}>{card.competitionLabel}</span>
+          <MatchdayStatusPill card={card} />
         </div>
         <div className={styles.liveCardTeams}>
           <div className={styles.liveCardTeamRow}>
             <div className={styles.liveCardTeamLeft}>
               <PlTeamBadge
-                name={fixture.homeTeamName}
-                logo={fixture.homeTeamLogo}
+                name={card.homeTeamName}
+                logo={card.homeTeamLogo}
                 size={32}
               />
-              <span className={styles.liveCardTeamName}>{fixture.homeTeamName}</span>
+              <span className={styles.liveCardTeamName}>{card.homeTeamName}</span>
             </div>
-            <span className={styles.liveCardScore}>{homeScore}</span>
+            <span className={styles.liveCardScore} data-gc-score-home>
+              {homeScore}
+            </span>
           </div>
           <div className={styles.liveCardTeamRow}>
             <div className={styles.liveCardTeamLeft}>
               <PlTeamBadge
-                name={fixture.awayTeamName}
-                logo={fixture.awayTeamLogo}
+                name={card.awayTeamName}
+                logo={card.awayTeamLogo}
                 size={32}
               />
-              <span className={styles.liveCardTeamName}>{fixture.awayTeamName}</span>
+              <span className={styles.liveCardTeamName}>{card.awayTeamName}</span>
             </div>
-            <span className={styles.liveCardScore}>{awayScore}</span>
+            <span className={styles.liveCardScore} data-gc-score-away>
+              {awayScore}
+            </span>
           </div>
         </div>
+        <span className={styles.matchHubAffordance}>{t("matchHub")}</span>
       </Link>
       <FavouriteMatchButton
-        matchId={`pl:${fixture.fixtureId}`}
+        matchId={card.favouriteMatchId}
         label={label}
         className={favouriteStyles.star}
       />
@@ -167,23 +183,22 @@ function PlMatchCard({
   );
 }
 
-function orderPlForFeatured(fixtures: readonly PlFixtureRow[]): PlFixtureRow[] {
-  const live = fixtures.filter((f) => f.status === "LIVE");
-  const todayRest = fixtures.filter(
-    (f) => f.status !== "LIVE" && isLocalToday(f.kickoffUtc),
-  );
-  const upcoming = fixtures.filter(
-    (f) => f.status !== "LIVE" && !isLocalToday(f.kickoffUtc),
-  );
-  return [...live, ...todayRest, ...upcoming].sort(
-    (a, b) =>
-      new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime(),
-  );
+/** @deprecated Prefer MatchdayMatchCard; kept for PL-only call sites. */
+function PlMatchCard({
+  fixture,
+  compact = false,
+}: {
+  fixture: PlFixtureRow;
+  compact?: boolean;
+}) {
+  const [card] = normalizePlFixtures([fixture]);
+  return <MatchdayMatchCard card={card} compact={compact} />;
 }
 
 type HomeFeaturedMatchCardsProps = {
   wc26Views: readonly HomepageMatchView[];
   plFixtures: readonly PlFixtureRow[];
+  matchdayCards?: readonly MatchdayCard[];
   compact?: boolean;
   limit?: number;
 };
@@ -191,6 +206,7 @@ type HomeFeaturedMatchCardsProps = {
 export default function HomeFeaturedMatchCards({
   wc26Views,
   plFixtures,
+  matchdayCards,
   compact = false,
   limit = 3,
 }: HomeFeaturedMatchCardsProps) {
@@ -202,21 +218,25 @@ export default function HomeFeaturedMatchCards({
       );
     }
     if (nodes.length < limit) {
-      for (const fixture of orderPlForFeatured(plFixtures).slice(
+      const pool =
+        matchdayCards && matchdayCards.length > 0
+          ? matchdayCards
+          : normalizePlFixtures(plFixtures);
+      for (const fixture of orderMatchdayForFeatured(pool).slice(
         0,
         limit - nodes.length,
       )) {
         nodes.push(
-          <PlMatchCard
-            key={`pl-${fixture.fixtureId}`}
-            fixture={fixture}
+          <MatchdayMatchCard
+            key={fixture.qualifiedId}
+            card={fixture}
             compact={compact}
           />,
         );
       }
     }
     return nodes;
-  }, [wc26Views, plFixtures, compact, limit]);
+  }, [wc26Views, plFixtures, matchdayCards, compact, limit]);
 
   if (cards.length === 0) {
     return null;

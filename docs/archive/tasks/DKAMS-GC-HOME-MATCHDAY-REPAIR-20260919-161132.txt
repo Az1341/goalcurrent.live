@@ -1,0 +1,96 @@
+CURSOR TASK — GOALCURRENT HOMEPAGE MATCHDAY REPAIR
+DKAMS Code: DKAMS-GC-HOME-MATCHDAY-REPAIR-20260919-161132
+Date: 19.09.2026
+Time: 16:11:32
+Time zone: Europe/London (BST)
+Owner: Ahmad Zafarani
+Repository verified: Az1341/goalcurrent.live
+Status: Implementation task prepared; implementation has not been executed by this audit.
+Release: Protected private review only. NO MERGE OR PUBLIC DEPLOYMENT.
+
+PROBLEM
+The homepage does not make today's football across supported competitions its primary experience. Scores and Premier League match hubs exist, but the homepage underuses them and gives promotions priority. Ahmad requires live scores, today's results and upcoming games, competition grouping, and a clear dedicated match-hub link on each card.
+
+USER BENEFIT
+A visitor can immediately understand what is live, see the current score and match status, find today's finished/upcoming matches, and open the correct match hub in one action on desktop or mobile.
+
+EVIDENCE ALREADY VERIFIED — DO NOT RESTART THE AUDIT
+Reference code inspected: 09389adae99c89a0a60bd7a7a922eb81f6f7bd52. Revalidate the current remote head before implementation; this is not a verified production deployment SHA.
+1. src/app/[locale]/HomeClient.tsx calls useLiveFixtures(), receives only PL fixtures, and renders HomeEcosystemPromo and HomeSepanaiVideoAd before HomeTodaysMatches.
+2. src/components/home/v5/HomeTodaysMatches.tsx accepts only plFixtures, filters isLocalToday(), sorts by kickoff, silently slices to six, and returns null when none are available. Loading, genuinely empty, and missing/error data are not distinguished here.
+3. src/components/home/v5/HomeLiveMatchCards.tsx: orderPlForFeatured() concatenates live/today/other groups, then sorts the whole array by ascending kickoff. This destroys live-first priority. Its 'upcoming' bucket includes non-live historical fixtures. The first three featured cards can therefore be old completed matches.
+4. PlMatchCard converts missing LIVE/FT scores to zero via null-coalescing. Missing score data must not become a fabricated 0-0.
+5. src/lib/client/useLiveFixtures.ts wraps only LIVE_API_PATHS.plFixtures. src/lib/client/live-data.ts already defines PL, UCL, FA Cup and Nations League fixture routes and shared visibility-aware SWR polling. Reuse these contracts.
+6. Browser observation on 19 September: homepage eventually rendered three live PL games, one finished PL game and one upcoming PL game below promotions. Initial content lacked the match section before data loaded. This is not evidence of a complete football-feed outage.
+7. /live exposes PL, FA Cup, Nations League and UCL competition content, but places long upcoming lists above live PL scores. FA Cup/UCL fixture links observed there point to competition-page anchors, not individual hubs.
+8. A dedicated PL hub was opened successfully at https://goalcurrent.live/premier-league/match/1557409, showing score, status, timeline, line-ups and statistics. Preserve and reuse it. No independent verification of the live score's sporting accuracy or freshness was completed in this audit.
+9. Homepage screenshot supplied by Ahmad: 8386e6b6-07ea-4b3d-870f-ea8cd7d6341c.png. Do not assume its apparent tiny desktop scale proves a CSS-width defect; validate at 100% zoom.
+
+TECHNICAL APPROACH AND SCOPE
+One focused draft PR, with small sequential commits and tests after each meaningful change. Reuse the existing data layer, fixture IDs, timezone helpers, routes, card styles, cache and polling. Add only a small presentation adapter/selector where existing competition contracts need normalisation. Do not create a second provider integration, database, scheduler, polling system or parallel match model.
+
+Required layout:
+Compact existing brand/header -> Today/date/timezone + All/Live/Finished/Upcoming filters -> competition groups containing match cards -> small upcoming-competition preview when useful -> existing promotions -> news/content.
+Live matches lead within the default view; finished and upcoming matches remain discoverable. Use the existing product timezone policy and display it. Dates must roll over without requiring a full reload. Move the countdown below the primary match content or keep it compact; it must not push live scores off the first screen.
+
+Initial coverage is the competitions already wired into the product: Premier League, Champions League, FA Cup and Nations League. Their current data capabilities must be established per competition. Do not promise every world competition. A schedule-only source must say 'Live score unavailable' when appropriate, never imply a live feed or infer a score from kickoff time.
+
+SEQUENTIAL CURSOR TASKS — 14 BOUNDED STEPS
+01. Read AGENTS.md, nested instructions, and docs/governance/PRIVATE-PREVIEW-RELEASE-POLICY.md. Record current main SHA, branch and clean/dirty state. Preserve unrelated work in place and create a clean worktree if needed; do not require Ahmad to clean it.
+02. Check for an existing overlapping homepage repair PR before creating a branch. Use one isolated branch/PR for this issue and leave existing SEO/favourites work untouched. Inspect relevant Next.js 16 local documentation before implementation as AGENTS.md requires.
+03. Capture baseline desktop/mobile screenshots, relevant UI errors, and existing tests. Reproduce featured selection with historical FT, today's live/FT/upcoming, and tomorrow's fixtures using a fixed clock. Add a failing regression test for the global-sort bug first.
+04. Trace the four existing fixture contracts, cache behaviour, identity mapping, freshness fields and match routes. Record which competitions actually support live scores and dedicated hubs. Confirm source coverage without exposing keys or directly calling paid providers.
+05. Fix the selector: preserve live-first priority, sort within groups, exclude old FT fixtures from today's featured selection, use deterministic ties, and deduplicate using competition-qualified IDs. Keep historical results in an explicitly dated context only.
+06. Feed the homepage from existing competition APIs/hooks using the smallest adapter needed. Subscribe at one appropriate parent level and share the result with cards/filters/counts. A failure in one competition must not hide healthy competitions. Do not add one request per card.
+07. Move today's scoreboard ahead of promotional sections, shorten the hero, and provide All/Live/Finished/Upcoming filters plus competition counts derived from the same dataset. Provide a per-competition 'Show all' expansion for any initial limit; never silently truncate today's matches.
+08. Make every card readable: competition, team names/badges, score when known, provider-backed status/period/minute, timezone-labelled kickoff when upcoming, and a visible 'Match hub' affordance. Preserve valid 0-0 scores; use an unavailable marker for missing scores. Handle HT, stoppage time, extra time, penalties, postponement, cancellation and unknown status honestly.
+09. Route every displayed match card to its own canonical fixture hub. Reuse PL/Nations League routes. For any missing UCL/FA Cup hub, first check for an existing shared detail route; otherwise add only a minimal page backed by existing fixture data and shared components. Do not send a 'Match hub' link to a generic league anchor or reuse a World Cup route incorrectly. Unknown IDs must have a truthful not-found state. No new commentary/line-up/provider work is in scope.
+10. Preserve shared cache, request deduplication and hidden-tab polling pause. Distinguish loading, no matches, unavailable coverage, stale data and network error. Retain last-known scores with a visible freshness warning when appropriate. Never present old cached data as freshly live or use UI-render time as the data timestamp. If source freshness is absent, report it as unknown.
+11. Update meaningful unit tests for selection/grouping, competition ID collisions, true zero versus null score, status handling, filter counts, stale/error isolation, no-match days, timezone midnight/DST and canonical routing. Use offline fixtures; no live provider spend.
+12. Add Playwright journeys for homepage -> filters -> card -> correct hub -> back; score/status update without reload; football above ads; more than six fixtures; multi-competition data; partial outage; and empty/loading states. Test 320, 375, 390 and 1440 CSS-pixel widths at 100% zoom. Verify keyboard navigation, focus, favourite buttons and no horizontal overflow. Include one fully visible match card in the initial 390x844 viewport when data exists, after normal consent handling.
+13. Run required regression gates once per final meaningful revision: targeted lint, typecheck, unit suite, i18n parity, verify:design, affected Playwright journeys and production build. Confirm flags/logos/assets and existing PL hub/favourites navigation. Report pre-existing failures separately; do not claim PASS for skipped or failed gates. Review actual prebuild scripts before running; do not invoke forbidden WC26 live data calls.
+14. Audit the diff and capture before/after screenshots plus a short homepage-to-hub recording. Provide a protected preview only through existing verified protection. If protection is unavailable, complete local validation and record that specific preview blocker. Return one evidence report and a clear founder review checkpoint. Archive the completed task as described below.
+
+ACCEPTANCE CRITERIA — ALL REQUIRED FOR PASS
+- Live matches take priority over older completed games; today is explicitly identified.
+- Today's results/upcoming fixtures remain visible through reliable filters.
+- Every supported competition with today's data is represented; failures and unsupported live coverage are disclosed locally.
+- Card scores/statuses agree with the same backing fixture used by the hub; missing values never become invented scores.
+- Every match card opens the dedicated correct hub; no generic competition-anchor substitute.
+- Promotions sit below the primary scoreboard. Mobile and desktop are readable and accessible.
+- A loading/error/no-match condition never leaves an unexplained missing section or false zero count.
+- Date boundaries, stale responses, live updates, retries and hidden tabs behave correctly.
+- Network evidence shows shared subscriptions/cache reuse and no per-card request fan-out. Document additional competition requests and expected provider/cache implications; do not claim zero cost without evidence.
+- Required tests pass on the reported exact head, with screenshots and protection evidence for founder review.
+
+RISKS AND CONTROLS
+Data coverage: reused endpoints may have partial or schedule-only data; label coverage and do not invent it.
+Cost: extra competitions can raise usage; retain existing caching/budgets and report the measured request change. No paid plan, budget, cron-frequency or credential changes.
+Routing: fixture IDs may collide across sources; preserve provider mapping and competition identity.
+Accuracy: stale scores, nulls, timezone boundaries and status transitions require business-logic tests.
+Scope: if completing a competition requires a new provider or substantial hub redesign, deliver the independently testable priority repair and report the exact residual gap. Do not call the whole request complete or hide the gap.
+
+PERMANENT GUARDRAILS
+Never use/re-enable the live World Cup 2026 API. Preserve archive behaviour without live polling. No unrelated redesign, dependency upgrades, schema migrations, new paid service, SEO/AEO expansion or replacement data pipeline. Preserve existing logo/flags, canonical URLs, localisation, favourites and production stability. Do not change protection settings or release gates.
+
+REQUIRED SINGLE EVIDENCE REPORT
+DKAMS code; real UK date/time; verdict PASS/FAIL/BLOCKED; baseline and final SHAs; branch/PR; root causes; files changed; each acceptance criterion with evidence; competition coverage/freshness/hub matrix; commands and outcomes; before/after desktop/mobile screenshots; recording; request/cache comparison; provider/Vercel spend (measured or explicitly unknown); preview URL and access-protection evidence; remaining risks; rollback commit/reference; archive path.
+State clearly what was observed live versus tested with mocked data. Do not claim that automated tests independently audited sporting accuracy.
+
+ARCHIVE RULE — MANDATORY
+Keep this card active while implementation/audit is unfinished. After the task is completed and no longer needed as an active instruction, move the repository working copy into the existing task archive convention, preserving this exact DKAMS filename and content. If there is no convention, use docs/archive/tasks/. Record completion outcome, final head and evidence-report path in the existing task register/report. Archive; do not delete. Do not create a second competing source of truth.
+
+RELEASE GATE
+Build -> automated tests -> protected private preview -> Ahmad's review -> explicit approval naming reviewed PR/SHA -> merge -> public deployment.
+No merge or public deployment is authorised by this card. The repository's AGENTS.md and private-preview policy require founder review first.
+NOT MERGED AND NOT PUBLICLY DEPLOYED.
+
+AUDIT SOURCES
+https://goalcurrent.live/
+https://goalcurrent.live/live
+https://goalcurrent.live/premier-league/match/1557409
+https://github.com/Az1341/goalcurrent.live/blob/09389adae99c89a0a60bd7a7a922eb81f6f7bd52/src/app/%5Blocale%5D/HomeClient.tsx
+https://github.com/Az1341/goalcurrent.live/blob/09389adae99c89a0a60bd7a7a922eb81f6f7bd52/src/components/home/v5/HomeTodaysMatches.tsx
+https://github.com/Az1341/goalcurrent.live/blob/09389adae99c89a0a60bd7a7a922eb81f6f7bd52/src/components/home/v5/HomeLiveMatchCards.tsx
+https://github.com/Az1341/goalcurrent.live/blob/main/AGENTS.md
+https://github.com/Az1341/goalcurrent.live/blob/main/docs/governance/PRIVATE-PREVIEW-RELEASE-POLICY.md

@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { HOME_HERO_CONFIG } from "@/lib/home/hero-config";
 import type { HomepageMatchView } from "@/lib/wc26-live";
 import type { PlFixtureRow } from "@/lib/pl/types";
+import type { MatchdayCard } from "@/lib/home/matchday";
 import TeamFlag from "@/components/TeamFlag";
 import HomeFeaturedMatchCards from "./HomeLiveMatchCards";
 import styles from "../home-v5.module.css";
@@ -41,12 +42,14 @@ type HomeHeroProps = {
   featuredMatch?: HomepageMatchView;
   wc26Views: readonly HomepageMatchView[];
   plFixtures: readonly PlFixtureRow[];
+  matchdayCards?: readonly MatchdayCard[];
 };
 
 export default function HomeHero({
   featuredMatch,
   wc26Views,
   plFixtures,
+  matchdayCards,
 }: HomeHeroProps) {
   const t = useTranslations("home");
   const config = HOME_HERO_CONFIG;
@@ -101,6 +104,7 @@ export default function HomeHero({
       <HomeFeaturedMatchCards
         wc26Views={wc26Views}
         plFixtures={plFixtures}
+        matchdayCards={matchdayCards}
         limit={3}
       />
       <Link href="/live" className={`${styles.ctaPrimary} ${styles.ctaFullMobile}`}>
