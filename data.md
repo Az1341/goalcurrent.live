@@ -1,19 +1,19 @@
-# data.md — goalcurrent.live
+# data.md — GoalCurrent.live
 
-**Review draft:** 12 October 2026. Do not create a new database, migration or retention policy from this document alone.
+**Purpose:** Existing data-boundary review guide, not a new data policy or schema. **Status:** DRAFT / NOT CERTIFIED, 12 October 2026 (Europe/London).
 
-## Data inventory
-In scope for verification: football public content and protected external API configuration. Inspect the existing schema, source-of-truth documents, storage and data processing code; these are the technical authority.
+## Authority
+`AGENTS.md`, `docs/ENVIRONMENT.md`, football archive requirements and release policy govern; environment documentation may reflect an older live-feed phase.
 
-## Data contract
-1. Classify public, internal, confidential and sensitive data. Identify owners, purpose, lawful basis where required, tenancy and approved processors.
-2. Restrict reads and writes using existing server-side permissions, row policies where applicable, and auditable service privileges.
-3. Minimise collection and avoid sensitive data in prompts, logs, analytics, fixtures and public Git history.
-4. Document retention, secure deletion, export, restoration and backups from actual implementation. Treat unverified capabilities as UNVERIFIED.
-5. Test access denial across accounts/brands/families/projects using synthetic records. Document data lineage and migration reversibility.
-6. No production data migration, write, import or export is authorised by these documentation additions.
+## Data separation and handling
+- Distinguish publicly published football/fixture/archive content from licensed third-party media and server-only provider API credentials.
+- Do not reactivate retired World Cup live score fetches or replace final archived results without separate approved evidence.
+- Check sources, attribution and licence for flags, still images, external feeds and videos before display.
+- Protect any logged IP, access/analytics metadata and host secrets; do not claim a public page needs sign-in.
 
-## Evidence needed
-Schema and migration references; retention register; boundary checks; backup/restore test; privacy and incident contacts; exact-SHA automated test results.
+## Evidence and approval
+Required verification: External feed secret access, archive finality and publish rights, analytics handling and approved page output. Use real code/schema paths and synthetic records for testing. Unexecuted checks are **NOT RUN**, not PASS. No database migration, retention change, live export, production write or credentials are authorised by this document.
 
-See [security.md](security.md), [auth.md](auth.md), [checklist.md](checklist.md).
+**Current gate:** HOLD — no live-feed reactivation or production publication.
+
+Related: [security.md](security.md), [auth.md](auth.md), [hack.md](hack.md), [checklist.md](checklist.md).
