@@ -1,19 +1,23 @@
-# hack.md — goalcurrent.live
+# hack.md — Authorised defensive assessment: goalcurrent.live
 
-**Purpose:** Authorised defensive review plan only. No offensive activity or production penetration tests are approved by this file.
-**Status:** Review draft — 12 October 2026 (Europe/London).
+**Status:** DRAFT scope statement, 12 October 2026 (Europe/London). The filename is a checklist label only; it is **not** authorisation to hack, penetrate, scan or attack systems.
 
-## Permitted approach
-- Obtain the approved test scope, environments, accounts, owners and stop conditions before any active security testing.
-- Prefer static checks, dependency audits, code review and synthetic-data tests in isolated local or test environments.
-- Assess trust-boundary bypasses, broken access control, injection, input handling, secrets exposure, insecure defaults, unsafe action execution and rate-limit failure.
-- Test only owned/authorised systems. Never attack external providers, real customers, production services or third-party accounts.
-- Stop immediately on real personal information, secret exposure or unexpected side effects. Report privately; redact evidence.
+## Assessment target
+public web security and server-only feed/cron boundaries.
 
-## Test records
-Capture test case ID, scoped revision, expected control, observed evidence, severity, remediation owner and retest outcome. A passing checklist alone is not proof of security. All findings must enter the project's existing issue/evidence mechanism.
+## Allowed review
+Review static source for admin/cron auth, secret handling, third-party asset rights and release policy. For a later separately authorised isolated QA session, test unauthorised cron requests and fail-closed behaviour.
 
-## Release barrier
-No deployments, credential rotations, live hacking, exploitation or disabling protection is authorised by this documentation. Follow existing project governance and explicit founder approvals.
+## Explicitly prohibited
+No unauthorised production requests, key disclosure, live-feed activation, deployment or bypass of protected private preview.
 
-Related: [security.md](security.md), [auth.md](auth.md), [data.md](data.md).
+## Required safeguards and evidence
+1. Confirm owner, approved environment, test identity, exact code revision and stop conditions before any active test. A documentation review alone is not active-test approval.
+2. Prefer static source and dependency review. Use synthetic fixtures and offline deterministic test execution only where authorised and accessible; never fabricate runtime output.
+3. Capture finding ID, severity, verified code line or observed test result, remediation, retest outcome, and reviewer. Label missing tests **NOT RUN**.
+4. Stop if real secrets or personal data are discovered, preserve minimal redacted evidence and escalate privately according to existing policy.
+5. Fix any verified issues via a separate scoped change when code changes are required. This documentation-only PR is not a vulnerability-remediation branch.
+
+No project access, vendor key, deployment, destructive activity or production testing is conferred by this file. Existing approved policies take precedence.
+
+See [security.md](security.md), [auth.md](auth.md), [data.md](data.md) and [checklist.md](checklist.md).
