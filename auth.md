@@ -1,19 +1,20 @@
-# auth.md — goalcurrent.live
+# auth.md — GoalCurrent.live
 
-**Status:** Review draft, 12 October 2026. This is a checklist, not a claim that controls are implemented.
+**Scope:** Authentication, authorisation and access review guide. **Status:** DRAFT / NOT CERTIFIED (12 October 2026, Europe/London). This file grants no permissions and does not supersede existing controls.
 
-## Scope
-Admin accounts and protected deployment controls. Review existing authentication, authorisation, roles, session logic, and approved source-of-truth documents before any implementation. Do not introduce a second identity provider or competing access model.
+## Governing authority
+`AGENTS.md`, `docs/governance/PRIVATE-PREVIEW-RELEASE-POLICY.md`, `src/app/api/cron/refresh-content/route.ts` and `docs/ENVIRONMENT.md`.
 
-## Verification requirements
-- Identify real principals, service identities, role/permission mappings and trusted boundaries from the existing code.
-- Enforce authorisation at every server-side data read, mutation, webhook or external action; client-side hiding is insufficient.
-- Test unauthenticated, expired session, revoked account, cross-tenant access, token replay and least-privilege denial with synthetic fixtures.
-- Preserve MFA/passkey rules where deployed, use secure session cookies and CSRF/origin defences where applicable.
-- Keep provider tokens server-side and document token rotation, revocation and audit logging without publishing secrets.
-- Mark any unavailable test or undocumented policy as **UNVERIFIED**, not PASS.
+## Specific boundaries
+- Public football pages are intentionally readable without sign-in; do not impose universal login or SaaS tenant semantics.
+- Protect administrative/cron endpoints with server-side credentials, and keep API/YouTube and other provider tokens out of browser code.
+- The cron source permits no-secret access only in `NODE_ENV=development`; verify that no production host accidentally uses development semantics.
+- Do not permit an agent, deploy hook, or CI status to bypass protected preview and founder release approval.
 
-## Approval
-Any auth behaviour change needs a dedicated design review, isolated tests and the existing founder release gate. Never treat documentation as authorisation to open signups or relax controls.
+## Negative-case evidence to collect
+- Unauthorised cron access in production; provider token exposure; unprotected preview; prohibited API reactivation.
 
-Related: [security.md](security.md), [data.md](data.md), [checklist.md](checklist.md).
+## Approval and audit
+Founder review of the exact docs PR before merge, per release policy. Use isolated test fixtures; record test outcomes and reviewed exact commit SHA. If a verification has not run, state **NOT RUN** rather than PASS.
+
+Related: [security.md](security.md), [data.md](data.md), [hack.md](hack.md), [checklist.md](checklist.md).
